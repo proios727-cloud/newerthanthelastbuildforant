@@ -136,7 +136,8 @@ class CliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             d = pathlib.Path(d)
             paths = {"DIR": d, "STATE": d / "state.json", "PREVIEWS": d / "previews.json",
-                     "EVENTS": d / "events.jsonl", "FEED": d / "feed.json"}
+                     "EVENTS": d / "events.jsonl", "FEED": d / "feed.json",
+                     "HISTORY": d / "history.jsonl", "SIGNALS": d / "signals.json"}
             with mock.patch.multiple(cli, **paths), mock.patch.object(cli, "cmd_sync_board") as sync:
                 cli.main(["init"])
                 qf = d / "q.json"

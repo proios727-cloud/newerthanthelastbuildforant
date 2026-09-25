@@ -8,6 +8,10 @@
   python -m fund sync-board          # write ledger numbers into desk.json tiles/funnel, rebuild board.html
   python -m fund loop [--once] [--every SEC] [--max-ticks N] [--no-sync]   # live Alpha Vantage marks
   python -m fund ingest FILE|-       # mark from agent-pushed quotes JSON (no request budget)
+  python -m fund scan [--no-sync]    # quant seat: rank momentum / mean-reversion / breakout signals
+  python -m fund thesis SIGNAL_ID "TEXT" [--invalidation PX]   # analyst seat: required before risk
+  python -m fund preview-signal SIGNAL_ID                      # trader seat: risk-sized, EXECUTE-gated preview
+  python -m fund loop --scan ...     # scan after every pass that took new marks
 """
 import argparse
 import json
@@ -17,13 +21,13 @@ import subprocess
 import sys
 import time
 
-from . import clock, config, feed, preview, risk
+from . import clock, config, feed, preview, risk, scan
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
 DIR = ROOT / "ledger"
 STATE, PREVIEWS, EVENTS = DIR / "state.json", DIR / "previews.json", DIR / "events.jsonl"
-FEED = DIR / "feed.json"
+FEED, HISTORY, SIGNALS = DIR / "feed.json", DIR / "history.jsonl", DIR / "signals.json"
 
 
 def log(kind, **data):
@@ -64,6 +68,7 @@ def cmd_mark(a, cfg):
     L.mark(a.symbol, a.price, ts_arg(a), a.bid, a.ask)
     L.save(STATE)
     log("mark", symbol=a.symbol, price=a.price, bid=a.bid, ask=a.ask)
+    scan.record(HISTORY, [{"symbol": a.symbol, "price": a.price, "ts": L.marks[a.symbol]["ts"]}])
     print(json.dumps(L.snapshot(), indent=2))
 
 
@@ -133,7 +138,9 @@ def cmd_sync_board(a, cfg):
     for t in desk["tiles"]:
         if t["label"] in tiles:
             t["value"], t["trend"] = tiles[t["label"]]
-    counts = {"Previewed": len(ps),
+    sc_counts = scan.load_book(SIGNALS)["counts"]
+    counts = {"Scanned": sc_counts["scanned"], "Thesis written": sc_counts["thesis"],
+              "Risk-passed": sc_counts["risk_passed"], "Previewed": len(ps),
               "Approved": sum(1 for p in ps.values() if p["status"] == "filled_paper"),
               "Filled (paper)": len(L.fills)}
     for f in desk["funnel"]:
@@ -151,7 +158,7 @@ def cmd_sync_board(a, cfg):
             w["value"] = f"{m['price']:,.2f}"
             w["delta"] = f"bid {m['bid']:,.2f} / ask {m['ask']:,.2f}" if m.get("bid") and m.get("ask") else ""
     if getattr(a, "note", None):
-        desk["feed"] = (desk["feed"] + [{"t": f"{clock.to_et(clock.now()):%H:%M}", "agent": "quant", "msg": a.note}])[-FEED_KEEP:]
+        desk["feed"] = (desk["feed"] + [{"t": f"{clock.to_et(clock.now()):%H:%M}", "agent": getattr(a, "agent", "quant"), "msg": a.note}])[-FEED_KEEP:]
     path.write_text(json.dumps(desk, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     subprocess.run([sys.executable, str(ROOT / "scripts/build_board.py"), str(path), "--out", str(ROOT / "board.html")], check=True)
 
@@ -169,11 +176,86 @@ def run_tick(cfg, source, now, sync=True, sleep=time.sleep):
     rep = feed.tick(L, st, source, cfg.universe, fcfg, now, sleep=sleep)
     L.save(STATE)
     feed.save_state(st, FEED)
+    scan.record(HISTORY, rep["marked"])
     if rep["planned"]:
         log("feed_tick", **{k: rep[k] for k in ("planned", "marked", "skipped", "errors", "used")})
     if sync and (rep["marked"] or rep["errors"]):
         cmd_sync_board(argparse.Namespace(note=_feed_note(rep)), cfg)
     return rep
+
+
+def desk_fund():
+    return json.loads((ROOT / "desk.json").read_text(encoding="utf-8"))["fund"]
+
+
+def run_scan(cfg, now, sync=True):
+    L, book, sc = load_ledger(), scan.load_book(SIGNALS), scan.scan_config(desk_fund())
+    hist = scan.load_history(HISTORY)
+    ranked = scan.scan(hist, cfg.universe, L.positions, sc)
+    posted = scan.post(book, ranked, now, sc)
+    scan.save_book(book, SIGNALS)
+    log("scan", posted=[{k: s[k] for k in ("id", "symbol", "side", "setup", "score")} for s in posted])
+    short = [s for s in cfg.universe if len(hist.get(s, [])) < max(sc["min_obs"], sc["window"] + 1)]
+    if sync:
+        msg = ("Scan: " + ", ".join(f"{s['symbol']} {s['side']} {s['setup']} ({s['score']:.1f})" for s in posted)
+               + ". Waiting on analyst theses") if posted else "Scan: no signals"
+        if short:
+            msg += f" · {len(short)} symbols still building history"
+        cmd_sync_board(argparse.Namespace(note=msg, agent="quant"), cfg)
+    return {"posted": posted, "building_history": short}
+
+
+def cmd_scan(a, cfg):
+    r = run_scan(cfg, clock.now(), sync=not a.no_sync)
+    print(json.dumps(r, indent=2))
+    for s in r["posted"]:
+        print(f"\nAnalyst: python -m fund thesis {s['id']} \"<why this trade>\" --invalidation <price>")
+
+
+def cmd_thesis(a, cfg):
+    book, sc = scan.load_book(SIGNALS), scan.scan_config(desk_fund())
+    try:
+        s = scan.attach_thesis(book, a.id, a.text, a.invalidation, clock.now(), sc)
+    except (KeyError, ValueError) as e:
+        scan.save_book(book, SIGNALS)
+        sys.exit(str(e))
+    scan.save_book(book, SIGNALS)
+    log("thesis", id=a.id, symbol=s["symbol"], invalidation=a.invalidation)
+    print(json.dumps(s, indent=2))
+    print(f"\nTrader: python -m fund preview-signal {a.id}")
+
+
+def cmd_preview_signal(a, cfg):
+    L, book, sc = load_ledger(), scan.load_book(SIGNALS), scan.scan_config(desk_fund())
+    now = clock.now()
+    scan.expire(book, now, sc)
+    s = book["signals"].get(a.id) or sys.exit(f"no signal {a.id}")
+    if s["status"] != "thesis":
+        scan.save_book(book, SIGNALS)
+        sys.exit(f"signal {a.id} is {s['status']}: previews need a live thesis (python -m fund thesis {a.id} ...)")
+    m = L.marks.get(s["symbol"]) or sys.exit(f"no mark for {s['symbol']}")
+    qty, stop = scan.risk_qty(s, L.nav(), sc)
+    o = risk.Order(s["symbol"], s["side"], qty, m["price"], parse_ts(m["ts"]), m.get("bid"), m.get("ask"))
+    try:
+        p = preview.build(o, L, cfg, now, stop=stop, target=s["target"]) if qty > 0 else None
+        if p is None:
+            raise preview.GateError("VETO sizing: stop distance is zero")
+    except preview.GateError as e:
+        s["status"], s["veto"] = "vetoed", str(e)
+        scan.save_book(book, SIGNALS)
+        log("veto", id=a.id, symbol=s["symbol"], reason=str(e))
+        sys.exit(str(e))
+    p["signal_id"] = a.id
+    ps = load_previews()
+    ps[p["id"]] = p
+    save_previews(ps)
+    s["status"], s["preview_id"] = "previewed", p["id"]
+    book["counts"]["risk_passed"] += 1
+    book["counts"]["previewed"] += 1
+    scan.save_book(book, SIGNALS)
+    log("preview", id=p["id"], signal=a.id, symbol=p["symbol"], side=p["side"], qty=p["qty"], limit=p["limit"])
+    print(json.dumps(p, indent=2))
+    print(f"\nReply `python -m fund approve {p['id']} {cfg.approval_word}` within {cfg.limits.preview_ttl_sec:.0f}s.")
 
 
 def cmd_loop(a, cfg):
@@ -187,6 +269,8 @@ def cmd_loop(a, cfg):
     while True:
         rep = run_tick(cfg, source, clock.now(), sync=not a.no_sync)
         print(json.dumps(rep), flush=True)
+        if a.scan and rep["marked"]:
+            print(json.dumps(run_scan(cfg, clock.now(), sync=not a.no_sync)), flush=True)
         n += 1
         if a.once or (a.max_ticks and n >= a.max_ticks):
             break
@@ -202,6 +286,7 @@ def cmd_ingest(a, cfg):
         sys.exit(f"bad quotes: {e}")
     marked, skipped = feed.apply(L, quotes, cfg.universe)
     L.save(STATE)
+    scan.record(HISTORY, marked)
     log("ingest", marked=marked, skipped=skipped)
     rep = {"ts": clock.now().isoformat(), "marked": marked, "skipped": skipped, "errors": [],
            "rate_limited": False, "used": "-", "daily": "-"}
@@ -228,12 +313,17 @@ def main(argv=None):
     p = sub.add_parser("loop")
     p.add_argument("--once", action="store_true"); p.add_argument("--every", type=float, default=60)
     p.add_argument("--max-ticks", type=int); p.add_argument("--no-sync", action="store_true")
+    p.add_argument("--scan", action="store_true")
     p = sub.add_parser("ingest"); p.add_argument("file"); p.add_argument("--no-sync", action="store_true")
+    p = sub.add_parser("scan"); p.add_argument("--no-sync", action="store_true")
+    p = sub.add_parser("thesis"); p.add_argument("id"); p.add_argument("text"); p.add_argument("--invalidation", type=float)
+    p = sub.add_parser("preview-signal"); p.add_argument("id")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
      "status": cmd_status, "sync-board": cmd_sync_board,
-     "loop": cmd_loop, "ingest": cmd_ingest}[a.cmd](a, cfg)
+     "loop": cmd_loop, "ingest": cmd_ingest, "scan": cmd_scan, "thesis": cmd_thesis,
+     "preview-signal": cmd_preview_signal}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":
