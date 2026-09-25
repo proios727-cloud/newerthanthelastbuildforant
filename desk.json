@@ -401,6 +401,17 @@
         "asset": "crypto",
         "group": "Alt L1"
       }
+    },
+    "feed": {
+      "provider": "alphavantage",
+      "key_env": "ALPHAVANTAGE_API_KEY",
+      "daily_requests": 25,
+      "min_interval_sec": 1.2,
+      "cadence_sec": {
+        "crypto": 900,
+        "equity": 1800
+      },
+      "backoff_sec": 60
     }
   }
 }

@@ -6,19 +6,24 @@
   python -m fund approve PREVIEW_ID WORD
   python -m fund status
   python -m fund sync-board          # write ledger numbers into desk.json tiles/funnel, rebuild board.html
+  python -m fund loop [--once] [--every SEC] [--max-ticks N] [--no-sync]   # live Alpha Vantage marks
+  python -m fund ingest FILE|-       # mark from agent-pushed quotes JSON (no request budget)
 """
 import argparse
 import json
 import pathlib
+import os
 import subprocess
 import sys
+import time
 
-from . import clock, config, preview, risk
+from . import clock, config, feed, preview, risk
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
 DIR = ROOT / "ledger"
 STATE, PREVIEWS, EVENTS = DIR / "state.json", DIR / "previews.json", DIR / "events.jsonl"
+FEED = DIR / "feed.json"
 
 
 def log(kind, **data):
@@ -99,11 +104,16 @@ def cmd_status(a, cfg):
     snap = L.snapshot()
     snap["mode"] = cfg.mode
     snap["awaiting_approval"] = [k for k, p in load_previews().items() if p["status"] == "awaiting_approval"]
+    fs = feed.load_state(FEED)
+    snap["feed"] = {"date": fs["date"], "used": fs["used"], "last_fetch": fs["last_fetch"]}
     print(json.dumps(snap, indent=2))
 
 
 def fmt_money(x):
     return f"${x:,.0f}"
+
+
+FEED_KEEP = 20
 
 
 def cmd_sync_board(a, cfg):
@@ -133,8 +143,71 @@ def cmd_sync_board(a, cfg):
     for w in desk["watch"]:
         if w["label"] == "Risk budget used today":
             w["value"] = f"{used:.0f}%"
+        sym = w["label"].split(" (")[0]
+        m = L.marks.get(sym)
+        if m:
+            t = clock.to_et(parse_ts(m["ts"]))
+            w["label"] = f"{sym} ({t:%m-%d %H:%M} ET)"
+            w["value"] = f"{m['price']:,.2f}"
+            w["delta"] = f"bid {m['bid']:,.2f} / ask {m['ask']:,.2f}" if m.get("bid") and m.get("ask") else ""
+    if getattr(a, "note", None):
+        desk["feed"] = (desk["feed"] + [{"t": f"{clock.to_et(clock.now()):%H:%M}", "agent": "quant", "msg": a.note}])[-FEED_KEEP:]
     path.write_text(json.dumps(desk, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     subprocess.run([sys.executable, str(ROOT / "scripts/build_board.py"), str(path), "--out", str(ROOT / "board.html")], check=True)
+
+
+def _feed_note(rep):
+    parts = [f"{m['symbol']} {m['price']:,.2f}" for m in rep["marked"]]
+    if rep["errors"]:
+        parts.append(f"{len(rep['errors'])} error(s)" + (" · rate-limited, backing off" if rep["rate_limited"] else ""))
+    return f"Live marks: {', '.join(parts)} (requests {rep['used']}/{rep['daily']} today)"
+
+
+def run_tick(cfg, source, now, sync=True, sleep=time.sleep):
+    L, st = load_ledger(), feed.load_state(FEED)
+    fcfg = feed.feed_config(json.loads((ROOT / "desk.json").read_text(encoding="utf-8"))["fund"])
+    rep = feed.tick(L, st, source, cfg.universe, fcfg, now, sleep=sleep)
+    L.save(STATE)
+    feed.save_state(st, FEED)
+    if rep["planned"]:
+        log("feed_tick", **{k: rep[k] for k in ("planned", "marked", "skipped", "errors", "used")})
+    if sync and (rep["marked"] or rep["errors"]):
+        cmd_sync_board(argparse.Namespace(note=_feed_note(rep)), cfg)
+    return rep
+
+
+def cmd_loop(a, cfg):
+    load_ledger()
+    fcfg = feed.feed_config(json.loads((ROOT / "desk.json").read_text(encoding="utf-8"))["fund"])
+    try:
+        source = feed.AlphaVantage(os.environ.get(fcfg["key_env"]))
+    except feed.FeedError as e:
+        sys.exit(f"{e} ({fcfg['key_env']})")
+    n = 0
+    while True:
+        rep = run_tick(cfg, source, clock.now(), sync=not a.no_sync)
+        print(json.dumps(rep), flush=True)
+        n += 1
+        if a.once or (a.max_ticks and n >= a.max_ticks):
+            break
+        time.sleep(a.every)
+
+
+def cmd_ingest(a, cfg):
+    L = load_ledger()
+    raw = sys.stdin.read() if a.file == "-" else pathlib.Path(a.file).read_text(encoding="utf-8")
+    try:
+        quotes = feed.load_quotes(json.loads(raw), clock.now())
+    except (feed.FeedError, KeyError, ValueError) as e:
+        sys.exit(f"bad quotes: {e}")
+    marked, skipped = feed.apply(L, quotes, cfg.universe)
+    L.save(STATE)
+    log("ingest", marked=marked, skipped=skipped)
+    rep = {"ts": clock.now().isoformat(), "marked": marked, "skipped": skipped, "errors": [],
+           "rate_limited": False, "used": "-", "daily": "-"}
+    print(json.dumps({"marked": marked, "skipped": skipped}, indent=2))
+    if marked and not a.no_sync:
+        cmd_sync_board(argparse.Namespace(note=_feed_note(rep).replace(" (requests -/- today)", " (pushed)")), cfg)
 
 
 def main(argv=None):
@@ -152,10 +225,15 @@ def main(argv=None):
     p = sub.add_parser("approve"); p.add_argument("id"); p.add_argument("word")
     sub.add_parser("status")
     sub.add_parser("sync-board")
+    p = sub.add_parser("loop")
+    p.add_argument("--once", action="store_true"); p.add_argument("--every", type=float, default=60)
+    p.add_argument("--max-ticks", type=int); p.add_argument("--no-sync", action="store_true")
+    p = sub.add_parser("ingest"); p.add_argument("file"); p.add_argument("--no-sync", action="store_true")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
-     "status": cmd_status, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
+     "status": cmd_status, "sync-board": cmd_sync_board,
+     "loop": cmd_loop, "ingest": cmd_ingest}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":
