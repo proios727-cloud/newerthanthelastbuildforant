@@ -17,6 +17,9 @@ A regime label with 3 cited data points, plus a list of events in the next 24h.
 ## Outputs
 - `regime_label` to Portfolio Manager (timeout 30m). If it fails: PM carries the last regime forward, marked stale, and cuts new-entry size by 50%.
 
+## Open queue items
+- Macro seat: publish the event calendar feed so risk can apply the blackout
+
 ## Never
 - Emit a regime label without citing the data points behind it.
 - Treat headlines as confirmed facts. Tag the source and time of every item.

@@ -14,11 +14,31 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `scripts/build_board.py` | Validates `desk.json` and renders `board.html`. It refuses a broken or dishonest config (for example LIVE mode while blockers are open). |
 | `scripts/gen_charters.py` | Regenerates the charters from `desk.json`. |
 | `assets/desk-board.html` | The board template. |
+| `fund/ledger.py` | Paper ledger: cash, long/short positions, average cost, realized P&L, NAV, peak and drawdown, and a fund-day roll at 00:00 ET. |
+| `fund/risk.py` | The Risk Officer's rules as pure functions. PASS comes with a max size; VETO names the rule. |
+| `fund/preview.py` | Order preview → `EXECUTE` gate → paper fill. There is no live execution path. |
+| `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
+| `tests/` | 32 unit tests: `python3 -m unittest -v` |
 
 ```bash
 python3 scripts/build_board.py desk.json --out board.html
 python3 scripts/gen_charters.py desk.json --out charters
 ```
+
+## Running the paper fund
+
+```bash
+python3 -m fund init                                   # start at desk.json fund.starting_nav ($100k)
+python3 -m fund mark BTC/USD 84266.90 --bid 84263.99 --ask 84267.30
+python3 -m fund preview BTC/USD buy 1 --price 84266.90 --bid 84263.99 --ask 84267.30 --stop 80000 --target 92000
+python3 -m fund approve <preview-id> EXECUTE          # must be exact and within 5 min; risk is re-checked
+python3 -m fund status
+python3 -m fund sync-board                             # ledger numbers → desk.json tiles/funnel → board.html
+```
+
+The limits, universe and fees all live in the `fund` block of `desk.json`. The placeholder universe is SPY, QQQ, IWM, NVDA, AMD, AAPL, MSFT, TSLA, BTC/USD, ETH/USD and SOL/USD. Edit that block to change them.
+
+**Rules the code enforces:** orders only for symbols in the universe; quotes must be ≤ 120 s old; equities trade only 09:30–16:00 ET on weekdays (holidays are not modeled); spread ≤ 10 bps for equities and 20 bps for crypto; halts at a −3% day or a −10% drawdown; a 15-minute macro-event blackout; caps of 5% per position, 150% gross, 20% per group and 1% of ADV. Orders that reduce a position skip the halts and caps, so the fund can always get smaller.
 
 ## Seats
 
@@ -60,9 +80,9 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 
 ## Go-live gates
 
-1. Risk limits and the drawdown halt are written as rules and unit-tested (**open**)
+1. Risk limits and the drawdown halt are written as rules and unit-tested (**passed**: `fund/risk.py`, tests)
 2. The market-data feed supports the scan cadence (**blocked**: the free Alpha Vantage key allows 25 requests/day and 1/sec)
-3. The paper ledger marks NAV correctly across equity sessions and the crypto day roll (**open**)
+3. The paper ledger marks NAV correctly across equity sessions and the crypto day roll (**passed**: `fund/ledger.py`, tests)
 4. 30 days of PAPER receipts with no risk-rule breach (**open**)
 5. A broker or exchange preview tool returns a real quote (**blocked**: no execution connector)
 6. The human replies `EXECUTE` to the first fresh live preview (**open**)
@@ -72,13 +92,11 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 - `GLOBAL_QUOTE SPY` returned 767.18, prev close 767.81, −0.0821%, last trading day 2026-09-24
 - `CURRENCY_EXCHANGE_RATE BTC→USD` hit `rate_limit` on the first call. The retry returned 84,266.90 (bid 84,263.99 / ask 84,267.30)
 
-## First task to run
+## Next up
 
-Clear the open work in gates 1 and 3. Next build steps:
-
-1. **Paper ledger:** positions, fills and NAV marks, with a starting NAV you choose.
-2. **Risk rules module:** the limits above as pure functions, with unit tests.
-3. **Pinned universe:** a short equity/ETF list and a few crypto pairs, sized to the feed quota.
-4. **Scheduler:** a Claude Code Routine or a cron job that runs each seat on its trigger.
+1. **Scheduler:** a Claude Code Routine or cron job that runs each seat on its trigger: mark, scan, preview, then `sync-board`.
+2. **Event calendar:** the Macro seat supplies upcoming releases so Risk can apply the blackout (`risk.check(..., events=[...])`).
+3. **Start the 30-day PAPER clock** (gate 4) with `python3 -m fund init`, and commit `ledger/` so the receipts persist.
+4. **Feed upgrade** (gate 2) and **broker connector** (gate 5) remain blocked on your side.
 
 This desk supports decisions. It is not investment advice, and nothing in it executes trades.

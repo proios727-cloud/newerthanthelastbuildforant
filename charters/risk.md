@@ -20,9 +20,6 @@ Every idea carries PASS with a max size, or VETO with the rule it broke.
 ## Funnel stages owned
 - Risk-passed
 
-## Open queue items
-- Encode the risk limits as testable rules
-
 ## Never
 - Loosen a limit mid-session. Limit changes are made by the human, in desk.json, between sessions.
 - PASS an idea while the drawdown halt is active.

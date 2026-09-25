@@ -17,6 +17,9 @@ One report per session, with every number taken from the ledger.
 ## Outputs
 - `session_receipt` to Portfolio Manager (timeout 30m). If it fails: PM posts a minimal receipt: funnel counts and NAV only.
 
+## Open queue items
+- Start the 30-day PAPER receipt clock (python -m fund init)
+
 ## Never
 - Report a number that isn't in the ledger or a quoted feed. Use '—' instead.
 - Omit vetoes, losses, or blockers from the receipt.

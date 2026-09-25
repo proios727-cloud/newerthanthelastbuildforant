@@ -22,7 +22,7 @@ Every live idea has an owner and a next step; the approval queue has no stale pr
 - Approved
 
 ## Open queue items
-- Set starting paper NAV and the ledger schema (positions, fills, NAV marks)
+- Wire a scheduler (Routine/cron) that runs each seat on its trigger
 
 ## Never
 - Place, modify, or cancel an order. The PM routes work and holds the queue. The human executes.

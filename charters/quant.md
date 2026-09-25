@@ -22,7 +22,6 @@ A ranked list of signals, each with its symbol, signal type, the level that trig
 
 ## Open queue items
 - Blocker: Alpha Vantage free key capped at 25 requests/day and 1/sec (rate_limit hit on probe). A 24/7 scan cadence needs a premium key or a second feed.
-- Pin the trading universe (equity/ETF list + crypto pairs)
 
 ## Never
 - Emit a signal without the data timestamp and source it was computed from.
