@@ -1,0 +1,84 @@
+# 24/7 Agent Hedge Fund
+
+An 8-seat agent desk that researches, sizes, and risk-checks trades around the clock across **US equities/ETFs** (regular hours) and **crypto** (24/7). The agents plan the trades and the human approves them. **No order is sent until you reply `EXECUTE` to a preview that is less than 5 minutes old.**
+
+**Mode: `PAPER`.** Market data is live (Alpha Vantage). No broker or exchange is wired, so every fill is a paper fill.
+
+## Files
+
+| Path | What it is |
+|---|---|
+| `desk.json` | The single config: seats, funnel, limits, handoffs and gates. Edit this file; everything else is generated from it. |
+| `board.html` | Control-room board built from `desk.json`. Open it in a browser. **Load config** lets you paste a different config for a quick look. |
+| `charters/<seat>.md` | One charter per seat: mission, trigger, inputs, outputs, done-when, and what it must never do. |
+| `scripts/build_board.py` | Validates `desk.json` and renders `board.html`. It refuses a broken or dishonest config (for example LIVE mode while blockers are open). |
+| `scripts/gen_charters.py` | Regenerates the charters from `desk.json`. |
+| `assets/desk-board.html` | The board template. |
+
+```bash
+python3 scripts/build_board.py desk.json --out board.html
+python3 scripts/gen_charters.py desk.json --out charters
+```
+
+## Seats
+
+| Seat | Role | Job |
+|---|---|---|
+| Portfolio Manager `pm` | router | Routes work, sets the daily risk budget, holds the approval queue |
+| Macro & News `macro` | intel | Labels the regime (risk-on/off/neutral) and flags event risk in the next 24h |
+| Quant Scanner `quant` | scanner | Momentum, mean-reversion and breakout signals, ranked |
+| Fundamental Analyst `analyst` | custom | Writes a thesis, catalyst and invalidation level for each signal |
+| Risk Officer `risk` | risk | **Veto seat.** PASS with a max size, or VETO naming the broken rule |
+| Execution Trader `trader` | entry | Builds order previews only. In PAPER mode, writes fills to the ledger |
+| Book Manager `book` | exit | Stops, targets, trims, rebalances. Exits are previews too |
+| Fund Reporter `reporter` | reporter | Session receipts, with every number taken from the ledger |
+
+## Data flow
+
+```
+macro ──regime_label──▶ pm
+quant ──signal_list──▶ analyst ──thesis──▶ risk ──risk_verdict──▶ trader ──order_preview──▶ HUMAN (EXECUTE)
+                                                                  book ──exit_preview──▶ HUMAN (EXECUTE)
+reporter ──session_receipt──▶ pm
+```
+
+Every hop has a timeout and a rule for what happens on failure (see `handoffs` in `desk.json`). If a hop fails, the idea is held or dropped. It is never pushed forward.
+
+## Schedule (ET)
+
+- **Crypto:** scans every 15 min, around the clock. The crypto day rolls at 00:00.
+- **Equities:** scans every 30 min, 09:30–16:00. Equity orders are placed only in regular hours.
+- **Overnight (20:00–08:00):** research, theses and exit plans.
+- **Receipts:** 08:30 pre-market, 16:15 close, 00:00 crypto roll.
+
+## Risk limits (Risk Officer enforces)
+
+- ≤ 5% of NAV per position · ≤ 150% gross exposure · ≤ 20% per sector or coin
+- New entries halt at a −3% day or a −10% drawdown from peak
+- Liquidity: spread and ADV checks. Event risk: no new entries in the 15 min before a macro release
+- Limits change only between sessions, only in `desk.json`, and only by the human
+
+## Go-live gates
+
+1. Risk limits and the drawdown halt are written as rules and unit-tested (**open**)
+2. The market-data feed supports the scan cadence (**blocked**: the free Alpha Vantage key allows 25 requests/day and 1/sec)
+3. The paper ledger marks NAV correctly across equity sessions and the crypto day roll (**open**)
+4. 30 days of PAPER receipts with no risk-rule breach (**open**)
+5. A broker or exchange preview tool returns a real quote (**blocked**: no execution connector)
+6. The human replies `EXECUTE` to the first fresh live preview (**open**)
+
+## Probe receipts (2026-09-25)
+
+- `GLOBAL_QUOTE SPY` returned 767.18, prev close 767.81, −0.0821%, last trading day 2026-09-24
+- `CURRENCY_EXCHANGE_RATE BTC→USD` hit `rate_limit` on the first call. The retry returned 84,266.90 (bid 84,263.99 / ask 84,267.30)
+
+## First task to run
+
+Clear the open work in gates 1 and 3. Next build steps:
+
+1. **Paper ledger:** positions, fills and NAV marks, with a starting NAV you choose.
+2. **Risk rules module:** the limits above as pure functions, with unit tests.
+3. **Pinned universe:** a short equity/ETF list and a few crypto pairs, sized to the feed quota.
+4. **Scheduler:** a Claude Code Routine or a cron job that runs each seat on its trigger.
+
+This desk supports decisions. It is not investment advice, and nothing in it executes trades.
