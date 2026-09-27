@@ -1,0 +1,18 @@
+{
+  "symbol": "SPY",
+  "snapshot_date": "2026-08-03",
+  "captured_at": "2026-08-03T13:43:00Z",
+  "spot": 751.23,
+  "source": "Robinhood live option quotes, 2026-08-03 09:42-09:43 ET (intraday, not EOD)",
+  "notes": "0DTE chain (expiry same day). Every field is broker-reported: bid/ask/sizes, IV, Greeks, OI and volume are as quoted, not derived. Intraday capture - marks are live, not settled closes.",
+  "contracts": [
+    {"strike": 746, "expiration": "2026-08-03", "option_type": "call", "bid": 5.45, "ask": 5.48, "mark": 5.465, "bid_size": 39, "ask_size": 46, "iv": 0.236109, "delta": 0.855860, "gamma": 0.046872, "theta": -0.380000, "vega": 0.046573, "open_interest": 10472, "volume": 746},
+    {"strike": 747, "expiration": "2026-08-03", "option_type": "call", "bid": 4.55, "ask": 4.59, "mark": 4.570, "bid_size": 149, "ask_size": 100, "iv": 0.223294, "delta": 0.816699, "gamma": 0.057924, "theta": -0.480000, "vega": 0.054449, "open_interest": 5762, "volume": 1736},
+    {"strike": 750, "expiration": "2026-08-03", "option_type": "call", "bid": 2.17, "ask": 2.19, "mark": 2.180, "bid_size": 201, "ask_size": 117, "iv": 0.190958, "delta": 0.612704, "gamma": 0.097757, "theta": -1.090000, "vega": 0.078557, "open_interest": 11334, "volume": 23609},
+    {"strike": 751, "expiration": "2026-08-03", "option_type": "call", "bid": 1.53, "ask": 1.54, "mark": 1.535, "bid_size": 216, "ask_size": 134, "iv": 0.181273, "delta": 0.512883, "gamma": 0.107205, "theta": -1.450000, "vega": 0.081804, "open_interest": 5594, "volume": 48821},
+    {"strike": 752, "expiration": "2026-08-03", "option_type": "call", "bid": 0.99, "ask": 1.00, "mark": 0.995, "bid_size": 192, "ask_size": 114, "iv": 0.170991, "delta": 0.400925, "gamma": 0.110176, "theta": -1.000000, "vega": 0.079309, "open_interest": 9089, "volume": 58226},
+    {"strike": 755, "expiration": "2026-08-03", "option_type": "call", "bid": 0.15, "ask": 0.16, "mark": 0.155, "bid_size": 1149, "ask_size": 489, "iv": 0.151917, "delta": 0.107026, "gamma": 0.059150, "theta": -0.160000, "vega": 0.037823, "open_interest": 10628, "volume": 24770},
+    {"strike": 756, "expiration": "2026-08-03", "option_type": "call", "bid": 0.07, "ask": 0.08, "mark": 0.075, "bid_size": 1577, "ask_size": 3008, "iv": 0.152215, "delta": 0.059567, "gamma": 0.037935, "theta": -0.080000, "vega": 0.024301, "open_interest": 7296, "volume": 18736},
+    {"strike": 751, "expiration": "2026-08-03", "option_type": "put", "bid": 1.45, "ask": 1.46, "mark": 1.455, "bid_size": 129, "ask_size": 1, "iv": 0.185147, "delta": -0.487495, "gamma": 0.105140, "theta": -1.460000, "vega": 0.081764, "open_interest": 688, "volume": 21914}
+  ]
+}
