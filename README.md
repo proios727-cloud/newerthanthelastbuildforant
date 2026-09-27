@@ -100,3 +100,15 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 4. **Feed upgrade** (gate 2) and **broker connector** (gate 5) remain blocked on your side.
 
 This desk supports decisions. It is not investment advice, and nothing in it executes trades.
+
+## Desks in this repo
+
+Three desks share one TypeSafe judgment layer. Everything runs in paper or shadow mode; nothing places a bet or an order.
+
+| Path | Desk | TypeSafe judgment | Policy in code |
+|---|---|---|---|
+| `fund/` | Trading (equities + crypto) | `fund/catalyst.py`: material headline risk (Noul) and direction (Choice) | A live answer with p ≥ 0.80 blocks opening size; exits are never blocked |
+| `kalshi/` | Kalshi 15-min BTC/ETH maker | `kalshi/settlement.py`: the rules settle on CF Benchmarks for the stated window (Noul) | Quote a market only after a live yes with p ≥ 0.90; LIVE mode is refused |
+| `sportsbook/` | Sportsbook line tracker (ported from 456CASH) | `sportsbook/cause.py`: why the line moved (Choice) | A move counts as sharp only when no news explains it |
+
+`judge/` holds the questions and clients. Without credentials, `judge.from_env()` returns a stub whose answers never count as confident, so every desk behaves as it did before. To go live, set `TYPESAFE_API_KEY`, `TYPESAFE_API_URL` and `TYPESAFE_LIVE=1`, and allow the API host in the network policy. Before that, check `judge.HttpClient` against the [TypeSafe API docs](https://docs.typesafe.ai/api.md); its request format has not been verified.
