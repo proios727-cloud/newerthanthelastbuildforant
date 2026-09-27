@@ -6,6 +6,7 @@ import uuid
 from dataclasses import asdict
 
 from . import clock, risk
+from .catalyst import veto as catalyst_veto
 from .ledger import parse_ts
 
 
@@ -19,10 +20,14 @@ def fee(cfg, symbol, qty, price):
     return round(qty * cfg.fees["equity_per_share"], 2)
 
 
-def build(order, ledger, cfg, now, events=(), stop=None, target=None):
+def build(order, ledger, cfg, now, events=(), stop=None, target=None, catalyst=None):
+    """`catalyst` is the answers from fund.catalyst.assess (optional); it can only block opening size."""
     v = risk.check(order, ledger, cfg, now, events)
     if not v.passed:
         raise GateError(f"VETO {v.rules[0][0]}: {v.rules[0][1]}")
+    blocked = None if v.reducing else catalyst_veto(catalyst)
+    if blocked:
+        raise GateError(f"VETO {blocked[0]}: {blocked[1]}")
     limit = (order.ask if order.side == "buy" else order.bid) or order.price
     return {
         "id": uuid.uuid4().hex[:8],
