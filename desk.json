@@ -19,22 +19,22 @@
   "tiles": [
     {
       "label": "Paper NAV",
-      "value": "—",
+      "value": "$100,000",
       "trend": "flat"
     },
     {
       "label": "Day P&L",
-      "value": "—",
+      "value": "+0 (+0.00%)",
       "trend": "flat"
     },
     {
       "label": "Gross exposure",
-      "value": "—",
+      "value": "0.0%",
       "trend": "flat"
     },
     {
       "label": "Drawdown from peak",
-      "value": "—",
+      "value": "0.00%",
       "trend": "flat"
     },
     {
@@ -61,17 +61,17 @@
     },
     {
       "stage": "Previewed",
-      "count": null,
+      "count": 0,
       "seat": "trader"
     },
     {
       "stage": "Approved",
-      "count": null,
+      "count": 0,
       "seat": "pm"
     },
     {
       "stage": "Filled (paper)",
-      "count": null,
+      "count": 0,
       "seat": "trader"
     },
     {
@@ -217,7 +217,7 @@
     },
     {
       "label": "Risk budget used today",
-      "value": "—",
+      "value": "0%",
       "delta": ""
     }
   ],

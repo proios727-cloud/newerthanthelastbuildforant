@@ -1,0 +1,44 @@
+{
+  "fund_day": "2026-09-28",
+  "label": "close",
+  "ts": "2026-09-28T20:39:56.068667+00:00",
+  "mode": "PAPER",
+  "snapshot": {
+    "nav": 100000.0,
+    "cash": 100000.0,
+    "gross": 0,
+    "gross_pct": 0.0,
+    "day_pnl": 0.0,
+    "day_pnl_pct": 0.0,
+    "drawdown_pct": 0.0,
+    "peak_nav": 100000.0,
+    "day": {
+      "date": "2026-09-28",
+      "start_nav": 100000.0
+    },
+    "positions": {}
+  },
+  "marks": {
+    "BTC/USD": {
+      "price": 83502.59,
+      "ts": "2026-09-28T20:39:26+00:00"
+    },
+    "ETH/USD": {
+      "price": 2679.41,
+      "ts": "2026-09-28T20:39:24+00:00"
+    },
+    "SPY": {
+      "price": 765.55,
+      "ts": "2026-09-28T20:00:00+00:00"
+    }
+  },
+  "counts": {
+    "mark": 3,
+    "preview": 0,
+    "veto": 0,
+    "fill": 0,
+    "approve_refused": 0
+  },
+  "breaches": [],
+  "clean": true
+}

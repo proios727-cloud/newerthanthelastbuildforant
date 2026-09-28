@@ -5,6 +5,7 @@
   python -m fund preview SYMBOL buy|sell QTY --price P [--bid B --ask A] [--adv N] [--stop S --target T] [--ts ISO]
   python -m fund approve PREVIEW_ID WORD
   python -m fund status
+  python -m fund receipt [--label L]  # write ledger/receipts/<fund-day>-<label>.json with a breach check
   python -m fund sync-board          # write ledger numbers into desk.json tiles/funnel, rebuild board.html
 """
 import argparse
@@ -13,12 +14,13 @@ import pathlib
 import subprocess
 import sys
 
-from . import clock, config, preview, risk
+from . import clock, config, preview, receipt, risk
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
 DIR = ROOT / "ledger"
 STATE, PREVIEWS, EVENTS = DIR / "state.json", DIR / "previews.json", DIR / "events.jsonl"
+RECEIPTS = DIR / "receipts"
 
 
 def log(kind, **data):
@@ -90,7 +92,7 @@ def cmd_approve(a, cfg):
         sys.exit(str(e))
     L.save(STATE)
     save_previews(ps)
-    log("fill", **rec)
+    log("fill", reducing=p["reducing"], **rec)
     print(json.dumps(rec, indent=2))
 
 
@@ -100,6 +102,19 @@ def cmd_status(a, cfg):
     snap["mode"] = cfg.mode
     snap["awaiting_approval"] = [k for k, p in load_previews().items() if p["status"] == "awaiting_approval"]
     print(json.dumps(snap, indent=2))
+
+
+def cmd_receipt(a, cfg):
+    L = load_ledger()
+    events = [json.loads(x) for x in EVENTS.read_text(encoding="utf-8").splitlines() if x] if EVENTS.exists() else []
+    r = receipt.build(L, cfg, events, clock.now(), a.label)
+    RECEIPTS.mkdir(parents=True, exist_ok=True)
+    out = RECEIPTS / f"{r['fund_day']}-{a.label}.json"
+    out.write_text(json.dumps(r, indent=2) + "\n", encoding="utf-8")
+    log("receipt", path=str(out.relative_to(ROOT)), clean=r["clean"], breaches=r["breaches"])
+    print(json.dumps(r, indent=2))
+    if not r["clean"]:
+        sys.exit(f"BREACH: {r['breaches']}")
 
 
 def fmt_money(x):
@@ -151,11 +166,12 @@ def main(argv=None):
     p.add_argument("--stop", type=float); p.add_argument("--target", type=float); p.add_argument("--ts")
     p = sub.add_parser("approve"); p.add_argument("id"); p.add_argument("word")
     sub.add_parser("status")
+    p = sub.add_parser("receipt"); p.add_argument("--label", default="session")
     sub.add_parser("sync-board")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
-     "status": cmd_status, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
+     "status": cmd_status, "receipt": cmd_receipt, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":

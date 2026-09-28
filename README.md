@@ -18,7 +18,9 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `fund/risk.py` | The Risk Officer's rules as pure functions. PASS comes with a max size; VETO names the rule. |
 | `fund/preview.py` | Order preview → `EXECUTE` gate → paper fill. There is no live execution path. |
 | `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
-| `tests/` | 32 unit tests: `python3 -m unittest -v` |
+| `fund/receipt.py` | Session receipts for gate 4: ledger snapshot, the day's event counts, and a breach check (gross cap, position cap + 1-point drift, opening fill on a halted day). A VETO is not a breach. |
+| `ledger/` | Live paper-run state and `receipts/`, committed so the 30-day record persists. |
+| `tests/` | Unit tests: `python3 -m unittest -v` |
 
 ```bash
 python3 scripts/build_board.py desk.json --out board.html
@@ -33,6 +35,7 @@ python3 -m fund mark BTC/USD 84266.90 --bid 84263.99 --ask 84267.30
 python3 -m fund preview BTC/USD buy 1 --price 84266.90 --bid 84263.99 --ask 84267.30 --stop 80000 --target 92000
 python3 -m fund approve <preview-id> EXECUTE          # must be exact and within 5 min; risk is re-checked
 python3 -m fund status
+python3 -m fund receipt --label close                  # ledger/receipts/<fund-day>-close.json with a breach check
 python3 -m fund sync-board                             # ledger numbers → desk.json tiles/funnel → board.html
 ```
 
@@ -83,7 +86,7 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 1. Risk limits and the drawdown halt are written as rules and unit-tested (**passed**: `fund/risk.py`, tests)
 2. The market-data feed supports the scan cadence (**blocked**: the free Alpha Vantage key allows 25 requests/day and 1/sec)
 3. The paper ledger marks NAV correctly across equity sessions and the crypto day roll (**passed**: `fund/ledger.py`, tests)
-4. 30 days of PAPER receipts with no risk-rule breach (**open**)
+4. 30 days of PAPER receipts with no risk-rule breach (**running**: day 1 was 2026-09-28; see below)
 5. A broker or exchange preview tool returns a real quote (**blocked**: no execution connector)
 6. The human replies `EXECUTE` to the first fresh live preview (**open**)
 
@@ -91,6 +94,12 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 
 - `GLOBAL_QUOTE SPY` returned 767.18, prev close 767.81, −0.0821%, last trading day 2026-09-24
 - `CURRENCY_EXCHANGE_RATE BTC→USD` hit `rate_limit` on the first call. The retry returned 84,266.90 (bid 84,263.99 / ask 84,267.30)
+
+## Paper run (gate 4)
+
+Started **2026-09-28** at $100,000. A scheduled Claude Code Routine runs each weekday after the equity close (16:10 ET) and marks the universe with Alpha Vantage. The free key allows 25 calls a day at 1 per second, so it marks every symbol once and skips any it can't get. It then writes `ledger/receipts/<fund-day>-close.json`, runs `sync-board`, and commits to the run branch. A receipt with `"clean": false` stops the clock, and the routine reports it.
+
+The routine never types `EXECUTE`. Paper fills need a human approval within 5 minutes of a preview, so the book stays in cash unless you approve previews yourself. Thirty clean receipts on a flat book satisfy the gate's wording but test only the marking and receipt path, not live risk decisions.
 
 ## Next up
 

@@ -1,0 +1,5 @@
+{"ts": "2026-09-28T20:39:55.775299+00:00", "kind": "init", "starting_nav": 100000.0}
+{"ts": "2026-09-28T20:39:55.856232+00:00", "kind": "mark", "symbol": "SPY", "price": 765.55, "bid": null, "ask": null}
+{"ts": "2026-09-28T20:39:55.920863+00:00", "kind": "mark", "symbol": "BTC/USD", "price": 83502.59, "bid": 83500.185, "ask": 83505.408}
+{"ts": "2026-09-28T20:39:55.994482+00:00", "kind": "mark", "symbol": "ETH/USD", "price": 2679.41, "bid": 2679.304, "ask": 2679.528}
+{"ts": "2026-09-28T20:39:56.069049+00:00", "kind": "receipt", "path": "ledger/receipts/2026-09-28-close.json", "clean": true, "breaches": []}
