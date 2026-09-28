@@ -101,6 +101,10 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 
 This desk supports decisions. It is not investment advice, and nothing in it executes trades.
 
+## Dashboard
+
+`python scripts/build_dashboard.py` writes `dashboard.html`: one page showing all four desks (fund limits, SPY gamma map, Kalshi quotes and fill scenarios, sportsbook signals), computed by the desks' own code. CI builds it on every push.
+
 ## Desks in this repo
 
 Four desks share one TypeSafe judgment layer. Strategy notes and the Heatseeker signal ledger from 456CASH are in `docs/`. Everything runs in paper or shadow mode; nothing places a bet or an order.
