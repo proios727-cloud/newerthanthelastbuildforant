@@ -1,0 +1,112 @@
+<title>Desk Control Room</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0B0D10; --surface: #13171C; --raised: #1A1F26; --border: #232931;
+    --ink: #E7EAEE; --muted: #8C95A3; --dim: #5B6472;
+    --green: #5EE39A; --amber: #F0B44C; --red: #F26D5B; --blue: #6AA8FF;
+    --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 13px/1.45 var(--sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding-inline: 20px; padding-block: 20px 40px; display: grid; gap: 16px; }
+  .mono, .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .eyebrow { font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+  h1 { margin: 0; font-size: 20px; font-weight: 600; text-wrap: balance; }
+  h2 { margin: 0; font-size: 14px; font-weight: 600; }
+  .sub { color: var(--muted); }
+  .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .strip > div { background: var(--surface); padding: 12px 14px; display: grid; gap: 4px; }
+  .strip b { font-size: 15px; font-weight: 500; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr)); gap: 16px; }
+  section { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+  .head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+  .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+  .pill.green { color: var(--green); } .pill.amber { color: var(--amber); } .pill.red { color: var(--red); } .pill.blue { color: var(--blue); } .pill.dim { color: var(--muted); }
+  .kvs { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 6px 20px; }
+  .kv { display: flex; justify-content: space-between; gap: 12px; padding-block: 5px; border-bottom: 1px solid var(--border); }
+  .kv span { color: var(--muted); } .kv b { font-weight: 500; }
+  .tbl { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-weight: 500; color: var(--dim); font-size: 11px; padding: 6px 8px 6px 0; border-bottom: 1px solid var(--border); }
+  td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--border); }
+  th.num, td.num { text-align: right; }
+  .levels { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+  .level { background: var(--raised); border-radius: 4px; padding: 8px 10px; display: grid; gap: 2px; }
+  .level b { font-family: var(--mono); font-size: 16px; font-weight: 500; }
+  .chart { overflow-x: auto; }
+  svg.gex { width: 100%; min-width: 440px; height: auto; display: block; }
+  .grid { stroke: var(--border); } .zero { stroke: var(--muted); }
+  .spot { stroke: var(--blue); stroke-dasharray: 3 3; }
+  .call { fill: var(--green); } .put { fill: var(--red); }
+  .ax { fill: var(--dim); font: 10px var(--mono); } .ax.strong { fill: var(--ink); font-weight: 500; } .spotlbl { fill: var(--blue); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; color: var(--muted); font-size: 12px; }
+  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .note { color: var(--muted); font-size: 12px; max-width: 70ch; }
+  .signals { display: grid; gap: 8px; }
+  .sig { display: grid; grid-template-columns: 110px 1fr auto; gap: 12px; align-items: center; padding: 8px 10px; background: var(--raised); border-radius: 4px; }
+  .sig span:first-child { color: var(--muted); }
+  @media (max-width: 480px) { .sig { grid-template-columns: 1fr auto; } .sig span:first-child { grid-column: 1 / -1; } }
+</style>
+<div class="wrap">
+  <header>
+    <div><div class="eyebrow">newerthanthelastbuildforant</div><h1>Desk Control Room</h1></div>
+    <div class="sub mono">Built 2026-09-28 00:21 UTC</div>
+  </header>
+
+  <div class="strip">
+    <div><span class="eyebrow">Fund mode</span><b><span class="pill amber">PAPER</span></b></div>
+    <div><span class="eyebrow">Paper NAV</span><b class="mono">$100,000</b></div>
+    <div><span class="eyebrow">SPY dealer regime</span><b><span class="pill green">Positive gamma · dampening</span></b></div>
+    <div><span class="eyebrow">Kalshi mode</span><b><span class="pill amber">SHADOW · live refused</span></b></div>
+    <div><span class="eyebrow">TypeSafe judgments</span><b><span class="pill dim">Stub · never blocks</span></b></div>
+  </div>
+
+  <div class="grid2">
+    <section>
+      <div class="head"><h2>Fund · equities + crypto</h2><span class="pill blue">11 symbols</span></div>
+      <div class="kvs"><div class="kv"><span>Max position</span><b class="mono">5% NAV</b></div><div class="kv"><span>Gross cap</span><b class="mono">150% NAV</b></div><div class="kv"><span>Group cap</span><b class="mono">20% NAV</b></div><div class="kv"><span>Day-loss halt</span><b class="mono">−3%</b></div><div class="kv"><span>Drawdown halt</span><b class="mono">−10%</b></div><div class="kv"><span>Event blackout</span><b class="mono">15 min</b></div><div class="kv"><span>Quote max age</span><b class="mono">120s</b></div><div class="kv"><span>Preview expires</span><b class="mono">300s</b></div></div>
+      <p class="note">Every order goes preview → risk re-check → you type <b class="mono">EXECUTE</b> within the preview window. Exits skip halts and caps so the desk can always get smaller. A confident TypeSafe news-catalyst answer blocks new size only.</p>
+    </section>
+
+    <section>
+      <div class="head"><h2>Options · SPY gamma map</h2><span class="pill green">Positive gamma · dampening</span></div>
+      <div class="levels">
+        <div class="level"><span class="eyebrow">Spot</span><b>754.88</b></div>
+        <div class="level"><span class="eyebrow">King node</span><b>755</b></div>
+        <div class="level"><span class="eyebrow">Call wall</span><b>755</b></div>
+        <div class="level"><span class="eyebrow">Put wall</span><b>748</b></div>
+        <div class="level"><span class="eyebrow">Flip</span><b>750</b></div>
+        <div class="level"><span class="eyebrow">Net / 1%</span><b>$2.36B</b></div>
+      </div>
+      <div class="chart"><svg viewBox="0 0 640 240" role="img" aria-label="Gamma exposure by strike" class="gex"><line x1="56" x2="624" y1="16.0" y2="16.0" class="grid"/><text x="50" y="20.0" class="ax" text-anchor="end">$1.17B</text><line x1="56" x2="624" y1="110.0" y2="110.0" class="grid"/><text x="50" y="114.0" class="ax" text-anchor="end">$546.6M</text><line x1="56" x2="624" y1="204.0" y2="204.0" class="grid"/><text x="50" y="208.0" class="ax" text-anchor="end">−$73.6M</text><line x1="56" x2="624" y1="192.8" y2="192.8" class="zero"/><rect x="97.6" y="192.8" width="27.6" height="9.1" class="put"><title>746 puts −$59.8M</title></rect><text x="96.6" y="220" class="ax" text-anchor="middle">746</text><rect x="178.7" y="192.8" width="27.6" height="11.2" class="put"><title>748 puts −$73.6M</title></rect><text x="177.7" y="220" class="ax" text-anchor="middle">748</text><rect x="230.3" y="153.1" width="27.6" height="39.8" class="call"><title>750 calls $262.4M</title></rect><rect x="259.9" y="192.8" width="27.6" height="10.6" class="put"><title>750 puts −$70.1M</title></rect><text x="258.9" y="220" class="ax" text-anchor="middle">750</text><rect x="341.0" y="192.8" width="27.6" height="3.6" class="put"><title>751 puts −$23.8M</title></rect><text x="340.0" y="220" class="ax" text-anchor="middle">751</text><rect x="392.6" y="126.9" width="27.6" height="66.0" class="call"><title>752 calls $435.4M</title></rect><text x="421.1" y="220" class="ax" text-anchor="middle">752</text><rect x="473.7" y="16.0" width="27.6" height="176.8" class="call"><title>755 calls $1.17B</title></rect><text x="502.3" y="220" class="ax strong" text-anchor="middle">755</text><rect x="554.8" y="83.9" width="27.6" height="108.9" class="call"><title>756 calls $718.6M</title></rect><text x="583.4" y="220" class="ax" text-anchor="middle">756</text><line x1="499.0" x2="499.0" y1="16" y2="204" class="spot"/><text x="495.0" y="26" class="ax spotlbl" text-anchor="end">spot 754.88</text></svg></div>
+      <div class="legend"><span><i class="sw" style="background:var(--green)"></i>Call gamma</span><span><i class="sw" style="background:var(--red)"></i>Put gamma</span><span><i class="sw" style="background:var(--blue)"></i>Spot</span></div>
+      <p class="note">Sample: Robinhood live option quotes, 11:06 ET, 2026-08-03T15:06:00Z. Dollars of dealer delta per 1% move, per strike.</p>
+    </section>
+
+    <section>
+      <div class="head"><h2>Kalshi · 15-min BTC/ETH maker</h2><span class="pill dim">Sample scenarios</span></div>
+      <div class="tbl"><table>
+        <thead><tr><th>Quote pair</th><th class="num">YES bid</th><th class="num">NO bid</th><th class="num">Lock / pair</th></tr></thead>
+        <tbody><tr><td>Fair 50¢, no skew</td><td class="mono num">49¢</td><td class="mono num">49¢</td><td class="mono num">2¢</td></tr><tr><td>Fair 60¢, lean YES 1¢</td><td class="mono num">60¢</td><td class="mono num">38¢</td><td class="mono num">2¢</td></tr><tr><td>Fair 35¢, no skew</td><td class="mono num">34¢</td><td class="mono num">64¢</td><td class="mono num">2¢</td></tr></tbody></table></div>
+      <div class="tbl"><table>
+        <thead><tr><th>Fills on a 49¢ / 49¢ pair</th><th class="num">P&amp;L at risk ($)</th><th>Action</th></tr></thead>
+        <tbody><tr><td>Both sides filled ×10</td><td class="mono num">+0.20</td><td><span class="pill green">Hold</span></td></tr><tr><td>YES only ×10, fair now 42¢</td><td class="mono num">−4.90</td><td><span class="pill red">Cut</span></td></tr><tr><td>YES only ×10, fair now 48¢</td><td class="mono num">−4.90</td><td><span class="pill green">Hold</span></td></tr><tr><td>YES only ×10, 30s left</td><td class="mono num">−4.90</td><td><span class="pill red">Cut</span></td></tr></tbody></table></div>
+      <p class="note">Markets are quoted only after TypeSafe confirms their rules settle on the CF Benchmarks index for the stated window. Positive numbers are locked profit; negative are money at risk.</p>
+    </section>
+
+    <section>
+      <div class="head"><h2>Sportsbook · line tracker</h2><span class="pill dim">Sample game</span></div>
+      <div class="signals">
+        <div class="sig"><span>Steam</span><span>3 books moved toward home: BetMGM, DraftKings, FanDuel</span><span class="pill amber">Alert</span></div>
+        <div class="sig"><span>Reverse line</span><span>72% of bets on home, line moved −3.0 → −2.0 toward away</span><span class="pill amber">Sharp</span></div>
+        <div class="sig"><span>Money vs tickets</span><span>40% of tickets carry 62% of money</span><span class="pill amber">Anomaly</span></div>
+        <div class="sig"><span>Fair price</span><span class="mono">−150 / +130 → 58.0% / 42.0% no-vig</span><span class="pill dim">Home −140 EV -0.6%</span></div>
+      </div>
+      <p class="note">A move counts as sharp only when TypeSafe finds no injury, lineup or weather news that explains it. Alerts only; no bets are placed.</p>
+    </section>
+  </div>
+</div>
