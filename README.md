@@ -17,8 +17,10 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `fund/ledger.py` | Paper ledger: cash, long/short positions, average cost, realized P&L, NAV, peak and drawdown, and a fund-day roll at 00:00 ET. |
 | `fund/risk.py` | The Risk Officer's rules as pure functions. PASS comes with a max size; VETO names the rule. |
 | `fund/preview.py` | Order preview → `EXECUTE` gate → paper fill. There is no live execution path. |
+| `fund/feed.py` | Live data loop: plans which symbols are due, fetches within the request budget, marks the ledger. |
+| `fund/scan.py` | Quant Scanner seat: ranked momentum, mean-reversion and breakout signals, the signal book, and the thesis gate. |
 | `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
-| `tests/` | 32 unit tests: `python3 -m unittest -v` |
+| `tests/` | 56 unit tests: `python3 -m unittest -v` |
 
 ```bash
 python3 scripts/build_board.py desk.json --out board.html
@@ -35,6 +37,54 @@ python3 -m fund approve <preview-id> EXECUTE          # must be exact and within
 python3 -m fund status
 python3 -m fund sync-board                             # ledger numbers → desk.json tiles/funnel → board.html
 ```
+
+## Live data loop
+
+```bash
+export ALPHAVANTAGE_API_KEY=...                        # env var name set in desk.json fund.feed.key_env
+python3 -m fund loop --once                            # one pass (for cron or a Routine)
+python3 -m fund loop --every 60                        # keep running, one pass a minute
+python3 -m fund ingest quotes.json                     # mark from quotes an agent pushed in (or `-` for stdin)
+```
+
+On each pass the loop:
+
+1. **Plans.** Crypto is due every 15 minutes, around the clock. Equities are due every 30 minutes, 09:30–16:00 ET only. Held positions go first, then the stalest symbols.
+2. **Paces.** The free key allows 25 requests a day, so calls are spread evenly across the ET day. By 12:00 ET, at most 13 requests have been used. Calls are spaced 1.2 s apart. A rate-limit reply stops the pass and backs off for 60 s.
+3. **Marks** the ledger. Quotes older than the current mark, or for symbols outside the universe, are skipped.
+4. **Syncs** the board: NAV tiles, watch rows with the time and bid/ask, and one quant feed line per pass.
+
+The budget state is kept in `ledger/feed.json`, and each pass is logged to `ledger/events.jsonl`. All of these settings live in `fund.feed` in `desk.json`.
+
+`GLOBAL_QUOTE` has no bid/ask on the free tier and gives only a trading date, so equity marks are stamped with the fetch time. Crypto marks use the provider's own `Last Refreshed` time.
+
+**Agent-pushed quotes.** When the loop can't reach the HTTP API (for example, a cloud session with a locked-down network), an agent can fetch quotes through the Alpha Vantage MCP connector and pipe them into `ingest` as `{"BTC/USD": {"price": 83888.35, "bid": 83884.39, "ask": 83890.65, "ts": "2026-09-25T13:37:25+00:00"}}`. Ingest does not count against the budget.
+
+## Scan → thesis → preview
+
+The seats hand work to each other in the order `desk.json` sets out. Nothing reaches risk without a thesis.
+
+```bash
+python3 -m fund scan                                   # Quant: rank signals from the recorded marks
+python3 -m fund thesis <signal-id> "why" --invalidation 83900   # Analyst: required, within 15 min of the scan
+python3 -m fund preview-signal <signal-id>             # Trader: risk-sized preview, within 30 min of the thesis
+python3 -m fund approve <preview-id> EXECUTE           # Human
+python3 -m fund loop --every 60 --scan                 # scan after every pass that takes new marks
+```
+
+**Signals** come from every mark the desk has taken (`ledger/history.jsonl`). A symbol needs 21 marks before it can signal. Each symbol gets at most one signal: its strongest setup.
+
+| Setup | Fires when | Stop / target |
+|---|---|---|
+| Breakout | The last mark is beyond the prior 20-mark high or low | 2σ of mark-to-mark moves; target at 2R |
+| Momentum | Change over 8 marks is at least 0.5%, on the same side of the 20-mark average | Same as breakout |
+| Mean reversion | z-score is at least 2 from the 20-mark average, **with price still inside the prior range** | Target is the average; stop at 0.5R |
+
+A range break counts as a trend, never a fade. Otherwise the scanner would short every breakout. Signals for adding to an open position are skipped, and so are shorts when `allow_short` is off.
+
+**Sizing:** the preview sizes the order so that hitting the stop loses 0.5% of NAV. The stop is the analyst's invalidation price if there is one, otherwise the signal's own stop. Risk then applies its caps. The preview uses the ledger's current mark, so a mark older than 120 s is vetoed as `stale_quote`. Refresh it with `mark` or `ingest` first.
+
+**Timeouts:** a new scan replaces signals without a thesis. A signal with no thesis expires after 15 min, and a thesis expires after 30 min. The board funnel counts Scanned → Thesis written → Risk-passed → Previewed → Approved → Filled. All of these settings live in `fund.scan` in `desk.json`.
 
 The limits, universe and fees all live in the `fund` block of `desk.json`. The placeholder universe is SPY, QQQ, IWM, NVDA, AMD, AAPL, MSFT, TSLA, BTC/USD, ETH/USD and SOL/USD. Edit that block to change them.
 
@@ -94,7 +144,7 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 
 ## Next up
 
-1. **Scheduler:** a Claude Code Routine or cron job that runs each seat on its trigger: mark, scan, preview, then `sync-board`.
+1. **Scheduler:** schedule `python3 -m fund loop --once` with cron every 5 min, or run a Routine that fetches through MCP and calls `ingest`. Run it with `--scan`, and have an analyst agent write theses for the signals it posts.
 2. **Event calendar:** the Macro seat supplies upcoming releases so Risk can apply the blackout (`risk.check(..., events=[...])`).
 3. **Start the 30-day PAPER clock** (gate 4) with `python3 -m fund init`, and commit `ledger/` so the receipts persist.
 4. **Feed upgrade** (gate 2) and **broker connector** (gate 5) remain blocked on your side.
