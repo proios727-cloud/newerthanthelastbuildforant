@@ -5,6 +5,9 @@
   python -m fund preview SYMBOL buy|sell QTY --price P [--bid B --ask A] [--adv N] [--stop S --target T] [--ts ISO]
   python -m fund approve PREVIEW_ID WORD
   python -m fund status
+  python -m fund bars-append FILE    # merge connector bars {SYMBOL: [[t_unix, close], ...]} into ledger/bars.json
+  python -m fund scan                # ranked Quant Scanner signals from ledger/bars.json
+  python -m fund shadow              # run the shadow book on new bars (ledger/shadow.json)
   python -m fund receipt [--label L]  # write ledger/receipts/<fund-day>-<label>.json with a breach check
   python -m fund sync-board          # write ledger numbers into desk.json tiles/funnel, rebuild board.html
 """
@@ -14,13 +17,14 @@ import pathlib
 import subprocess
 import sys
 
-from . import clock, config, preview, receipt, risk
+from . import clock, config, preview, receipt, risk, shadow
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
 DIR = ROOT / "ledger"
 STATE, PREVIEWS, EVENTS = DIR / "state.json", DIR / "previews.json", DIR / "events.jsonl"
 RECEIPTS = DIR / "receipts"
+BARS, SHADOW = DIR / "bars.json", DIR / "shadow.json"
 
 
 def log(kind, **data):
@@ -104,10 +108,40 @@ def cmd_status(a, cfg):
     print(json.dumps(snap, indent=2))
 
 
+def load_bars():
+    if not BARS.exists():
+        sys.exit(f"no {BARS.relative_to(ROOT)} — seed it with 60+ daily closes per symbol first")
+    return json.loads(BARS.read_text(encoding="utf-8"))
+
+
+def cmd_bars_append(a, cfg):
+    bars = load_bars()
+    raw = json.loads(pathlib.Path(a.file).read_text(encoding="utf-8"))
+    added = shadow.append_bars(bars, cfg, raw, clock.now())
+    BARS.write_text(json.dumps(bars, indent=1) + "\n", encoding="utf-8")
+    log("bars", added=added)
+    print(json.dumps({"added": added, "last": {s: b["last"] for s, b in bars.items()}}, indent=2))
+
+
+def cmd_scan(a, cfg):
+    print(json.dumps(shadow.scan(load_bars()), indent=2))
+
+
+def cmd_shadow(a, cfg):
+    sh = shadow.load(SHADOW, cfg)
+    evs = sh.step(load_bars(), cfg)
+    shadow.save(sh, SHADOW)
+    for e in evs:
+        e = dict(e)
+        log(e.pop("kind"), bar_ts=e.pop("ts"), **e)
+    print(json.dumps({"events": evs, "summary": sh.summary()}, indent=2))
+
+
 def cmd_receipt(a, cfg):
     L = load_ledger()
     events = [json.loads(x) for x in EVENTS.read_text(encoding="utf-8").splitlines() if x] if EVENTS.exists() else []
-    r = receipt.build(L, cfg, events, clock.now(), a.label)
+    sh = shadow.load(SHADOW, cfg).summary() if SHADOW.exists() else None
+    r = receipt.build(L, cfg, events, clock.now(), a.label, shadow=sh)
     RECEIPTS.mkdir(parents=True, exist_ok=True)
     out = RECEIPTS / f"{r['fund_day']}-{a.label}.json"
     out.write_text(json.dumps(r, indent=2) + "\n", encoding="utf-8")
@@ -166,12 +200,15 @@ def main(argv=None):
     p.add_argument("--stop", type=float); p.add_argument("--target", type=float); p.add_argument("--ts")
     p = sub.add_parser("approve"); p.add_argument("id"); p.add_argument("word")
     sub.add_parser("status")
+    p = sub.add_parser("bars-append"); p.add_argument("file")
+    sub.add_parser("scan")
+    sub.add_parser("shadow")
     p = sub.add_parser("receipt"); p.add_argument("--label", default="session")
     sub.add_parser("sync-board")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
-     "status": cmd_status, "receipt": cmd_receipt, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
+     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":

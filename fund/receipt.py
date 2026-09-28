@@ -13,7 +13,7 @@ from . import clock
 from .ledger import parse_ts
 
 DRIFT_PCT = 1.0
-KINDS = ("mark", "preview", "veto", "fill", "approve_refused")
+KINDS = ("mark", "preview", "veto", "fill", "approve_refused", "shadow_fill", "shadow_exit", "shadow_veto")
 
 
 def breaches(ledger, cfg, day_events):
@@ -34,7 +34,7 @@ def breaches(ledger, cfg, day_events):
     return out
 
 
-def build(ledger, cfg, events, now, label="session"):
+def build(ledger, cfg, events, now, label="session", shadow=None):
     day = clock.fund_day(now)
     todays = [e for e in events if clock.fund_day(parse_ts(e["ts"])) == day]
     counts = {k: sum(1 for e in todays if e["kind"] == k) for k in KINDS}
@@ -47,6 +47,8 @@ def build(ledger, cfg, events, now, label="session"):
         "snapshot": ledger.snapshot(),
         "marks": {s: {"price": m["price"], "ts": m["ts"]} for s, m in sorted(ledger.marks.items())},
         "counts": counts,
+        "shadow": shadow,
+        "shadow_vetoes": sorted({e["rule"] for e in todays if e["kind"] == "shadow_veto"}),
         "breaches": [{"rule": r, "detail": d} for r, d in found],
         "clean": not found,
     }

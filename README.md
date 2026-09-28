@@ -18,6 +18,7 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `fund/risk.py` | The Risk Officer's rules as pure functions. PASS comes with a max size; VETO names the rule. |
 | `fund/preview.py` | Order preview → `EXECUTE` gate → paper fill. There is no live execution path. |
 | `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
+| `fund/shadow.py` | Quant Scanner signals (momentum, breakout, mean reversion) and the shadow book, which trades every risk-passed signal at the close with no approval step. Also merges connector bars into `ledger/bars.json`. |
 | `fund/receipt.py` | Session receipts for gate 4: ledger snapshot, the day's event counts, and a breach check (gross cap, position cap + 1-point drift, opening fill on a halted day). A VETO is not a breach. |
 | `ledger/` | Live paper-run state and `receipts/`, committed so the 30-day record persists. |
 | `tests/` | Unit tests: `python3 -m unittest -v` |
@@ -84,7 +85,7 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 ## Go-live gates
 
 1. Risk limits and the drawdown halt are written as rules and unit-tested (**passed**: `fund/risk.py`, tests)
-2. The market-data feed supports the scan cadence (**blocked**: the free Alpha Vantage key allows 25 requests/day and 1/sec)
+2. The market-data feed supports the scan cadence (**partial**: the TradingView connector returns all 11 symbols in one call and 60+ days of daily bars, so end-of-day scans work. Its quotes are delayed 15+ minutes and have no bid/ask, so the intraday 15/30-minute cadence and the spread check still need a real-time feed)
 3. The paper ledger marks NAV correctly across equity sessions and the crypto day roll (**passed**: `fund/ledger.py`, tests)
 4. 30 days of PAPER receipts with no risk-rule breach (**running**: day 1 was 2026-09-28; see below)
 5. A broker or exchange preview tool returns a real quote (**blocked**: no execution connector)
@@ -97,16 +98,40 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 
 ## Paper run (gate 4)
 
-Started **2026-09-28** at $100,000. A scheduled Claude Code Routine runs each weekday after the equity close (16:10 ET) and marks the universe with Alpha Vantage. The free key allows 25 calls a day at 1 per second, so it marks every symbol once and skips any it can't get. It then writes `ledger/receipts/<fund-day>-close.json`, runs `sync-board`, and commits to the run branch. A receipt with `"clean": false` stops the clock, and the routine reports it.
+Started **2026-09-28** at $100,000. A Claude Code Routine runs each weekday at 16:40 ET, after the delayed close has settled. Each run does four things:
 
-The routine never types `EXECUTE`. Paper fills need a human approval within 5 minutes of a preview, so the book stays in cash unless you approve previews yourself. Thirty clean receipts on a flat book satisfy the gate's wording but test only the marking and receipt path, not live risk decisions.
+1. Pulls the last 5 daily bars per symbol from the TradingView connector and merges the completed ones into `ledger/bars.json` with `python -m fund bars-append`. Bars still in progress are refused.
+2. Marks the real paper book at those closes.
+3. Runs `python -m fund shadow`.
+4. Writes `ledger/receipts/<fund-day>-close.json`, runs `sync-board`, and commits to the run branch.
+
+A receipt with `"clean": false` stops the clock, and the routine reports it.
+
+**Two books.** The **real paper book** (`ledger/state.json`) fills only when you approve a preview with `EXECUTE` within 5 minutes. The routine never approves one. The **shadow book** (`ledger/shadow.json`, `fund/shadow.py`) trades every Quant Scanner signal the Risk Officer passes, at the daily close, with no approval step. It shows what the desk would have done, so the 30-day run tests the signals and the risk rules, not just the marking path. Each receipt carries the shadow NAV, return, drawdown, open positions, closed trades, win rate, and the rules that vetoed entries that day.
+
+**Signals** (long only, daily closes; `python -m fund scan` lists them):
+
+| Signal | Rule |
+|---|---|
+| Momentum | Close above SMA20, SMA20 above SMA50, and a positive 20-day return |
+| Breakout | Close above the highest of the prior 20 closes |
+| Mean reversion | RSI(2) below 10 while the close is above SMA50 |
+
+**Exits:**
+- Stop at close × (1 − 2σ), where σ is the 20-day stdev of daily returns
+- Target at close × (1 + 4σ)
+- Otherwise out after 5 bars
+- No re-entry on the bar of an exit
+
+**Limitations:**
+- Shadow fills happen at the close with no spread, so shadow P&L runs about half a spread per side better than real fills would.
+- If a daily run is missed, the next run acts on the latest close only. Stops hit on the missed day are taken at the later close.
 
 ## Next up
 
-1. **Scheduler:** a Claude Code Routine or cron job that runs each seat on its trigger: mark, scan, preview, then `sync-board`.
-2. **Event calendar:** the Macro seat supplies upcoming releases so Risk can apply the blackout (`risk.check(..., events=[...])`).
-3. **Start the 30-day PAPER clock** (gate 4) with `python3 -m fund init`, and commit `ledger/` so the receipts persist.
-4. **Feed upgrade** (gate 2) and **broker connector** (gate 5) remain blocked on your side.
+1. **Event calendar:** the Macro seat supplies upcoming releases so Risk can apply the blackout to shadow entries too (`Shadow.step(..., events=[...])`).
+2. **Intraday cadence:** the 15/30-minute scans need a real-time feed with bid/ask (gate 2).
+3. **Broker connector** (gate 5) is still blocked on your side.
 
 This desk supports decisions. It is not investment advice, and nothing in it executes trades.
 

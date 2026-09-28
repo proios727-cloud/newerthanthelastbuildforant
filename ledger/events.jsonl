@@ -3,3 +3,12 @@
 {"ts": "2026-09-28T20:39:55.920863+00:00", "kind": "mark", "symbol": "BTC/USD", "price": 83502.59, "bid": 83500.185, "ask": 83505.408}
 {"ts": "2026-09-28T20:39:55.994482+00:00", "kind": "mark", "symbol": "ETH/USD", "price": 2679.41, "bid": 2679.304, "ask": 2679.528}
 {"ts": "2026-09-28T20:39:56.069049+00:00", "kind": "receipt", "path": "ledger/receipts/2026-09-28-close.json", "clean": true, "breaches": []}
+{"ts": "2026-09-28T21:42:47.062381+00:00", "kind": "shadow_fill", "bar_ts": "2026-09-27T23:59:00+00:00", "symbol": "SOL/USD", "signal": "momentum", "qty": 42.265426, "price": 118.3, "stop": 109.08284, "target": 136.734321}
+{"ts": "2026-09-28T21:42:47.062718+00:00", "kind": "shadow_fill", "bar_ts": "2026-09-27T23:59:00+00:00", "symbol": "ETH/USD", "signal": "mean_reversion", "qty": 1.865028, "price": 2680.79, "stop": 2546.595967, "target": 2949.178066}
+{"ts": "2026-09-28T21:42:47.062764+00:00", "kind": "shadow_fill", "bar_ts": "2026-09-27T23:59:00+00:00", "symbol": "BTC/USD", "signal": "momentum", "qty": 0.059928, "price": 83424.48, "stop": 79494.821136, "target": 91283.797729}
+{"ts": "2026-09-28T21:42:47.062798+00:00", "kind": "shadow_fill", "bar_ts": "2026-09-28T15:59:00-04:00", "symbol": "AMD", "signal": "momentum", "qty": 8.0, "price": 607.87, "stop": 563.983446, "target": 695.643109}
+{"ts": "2026-09-28T21:42:47.062832+00:00", "kind": "shadow_fill", "bar_ts": "2026-09-28T15:59:00-04:00", "symbol": "TSLA", "signal": "mean_reversion", "qty": 13.0, "price": 357.45, "stop": 336.723376, "target": 398.903248}
+{"ts": "2026-09-28T21:42:47.062865+00:00", "kind": "shadow_fill", "bar_ts": "2026-09-28T15:59:00-04:00", "symbol": "AAPL", "signal": "momentum", "qty": 14.0, "price": 338.4, "stop": 328.919967, "target": 357.360066}
+{"ts": "2026-09-28T21:42:47.062890+00:00", "kind": "shadow_fill", "bar_ts": "2026-09-28T15:59:00-04:00", "symbol": "NVDA", "signal": "momentum", "qty": 21.0, "price": 228.86, "stop": 220.779107, "target": 245.021786}
+{"ts": "2026-09-28T21:42:47.062928+00:00", "kind": "shadow_fill", "bar_ts": "2026-09-28T15:59:00-04:00", "symbol": "QQQ", "signal": "momentum", "qty": 6.0, "price": 736.53, "stop": 721.584192, "target": 766.421616}
+{"ts": "2026-09-28T21:42:47.143398+00:00", "kind": "receipt", "path": "ledger/receipts/2026-09-28-close.json", "clean": true, "breaches": []}

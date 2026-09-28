@@ -1,7 +1,7 @@
 {
   "fund_day": "2026-09-28",
   "label": "close",
-  "ts": "2026-09-28T20:39:56.068667+00:00",
+  "ts": "2026-09-28T21:42:47.143018+00:00",
   "mode": "PAPER",
   "snapshot": {
     "nav": 100000.0,
@@ -37,8 +37,29 @@
     "preview": 0,
     "veto": 0,
     "fill": 0,
-    "approve_refused": 0
+    "approve_refused": 0,
+    "shadow_fill": 8,
+    "shadow_exit": 0,
+    "shadow_veto": 0
   },
+  "shadow": {
+    "nav": 99985.0,
+    "return_pct": -0.015,
+    "drawdown_pct": 0.015,
+    "open": [
+      "AAPL",
+      "AMD",
+      "BTC/USD",
+      "ETH/USD",
+      "NVDA",
+      "QQQ",
+      "SOL/USD",
+      "TSLA"
+    ],
+    "closed_trades": 0,
+    "win_rate": null
+  },
+  "shadow_vetoes": [],
   "breaches": [],
   "clean": true
 }
