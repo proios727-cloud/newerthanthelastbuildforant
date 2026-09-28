@@ -85,7 +85,7 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 ## Go-live gates
 
 1. Risk limits and the drawdown halt are written as rules and unit-tested (**passed**: `fund/risk.py`, tests)
-2. The market-data feed supports the scan cadence (**partial**: the TradingView connector returns all 11 symbols in one call and 60+ days of daily bars, so end-of-day scans work. Its quotes are delayed 15+ minutes and have no bid/ask, so the intraday 15/30-minute cadence and the spread check still need a real-time feed)
+2. The market-data feed supports the scan cadence (**partial**: the TradingView connector returns all 11 symbols in one call and 300 days of daily bars, so end-of-day scans work, but its quotes are delayed 15+ minutes and have no bid/ask. The Robinhood connector returns real-time bid/ask for all 11 symbols in two calls, which covers the intraday cadence and the spread check, but it isn't wired in yet. ThetaData is on the free tier, and stock quotes need a paid plan)
 3. The paper ledger marks NAV correctly across equity sessions and the crypto day roll (**passed**: `fund/ledger.py`, tests)
 4. 30 days of PAPER receipts with no risk-rule breach (**running**: day 1 was 2026-09-28; see below)
 5. A broker or exchange preview tool returns a real quote (**blocked**: no execution connector)
@@ -126,6 +126,37 @@ A receipt with `"clean": false` stops the clock, and the routine reports it.
 **Limitations:**
 - Shadow fills happen at the close with no spread, so shadow P&L runs about half a spread per side better than real fills would.
 - If a daily run is missed, the next run acts on the latest close only. Stops hit on the missed day are taken at the later close.
+
+## Backtest (2026-09-28)
+
+`python backtest/run.py` replays the production shadow book (`Shadow.step` → `risk.check` → `Ledger`) one day at a time over 300 NYSE sessions (2025-07-21 → 2026-09-28) and 299 crypto days (2025-12-03 → 2026-09-27). Signals need 51 closes, so equities trade from 2025-09-30 and crypto from 2026-01-22. Nothing is fitted. Full output is in `backtest/results.json`.
+
+| Run | Return | Max DD | Sharpe | Trades | Win rate | Profit factor |
+|---|---|---|---|---|---|---|
+| All signals, desk fees only | **+1.75%** | 8.1% | 0.27 | 289 | 48% | 1.09 |
+| + 5 bps slippage per side | +0.17% | 8.5% | 0.06 | | | |
+| + 10 bps per side | −1.28% | 8.8% | −0.14 | | | |
+| Momentum only | +0.57% | 4.8% | | 213 | 49% | 1.04 |
+| Breakout only | +3.75% | 3.9% | | 148 | 49% | 1.34 |
+| Mean reversion only | +4.68% | 3.7% | | 149 | 52% | 1.46 |
+| First half (to 2026-03-15) | −4.27% | 6.3% | −1.56 | | | |
+| Second half | +6.35% | 3.6% | 1.43 | | | |
+| **SPY buy-and-hold** (from 2025-09-30) | **+14.93%** | | | | | |
+| Equal-weight 8 equities, buy-and-hold | +45.41% | | | | | |
+| Equal-weight 3 crypto, buy-and-hold (from 2026-01-22) | −6.47% | | | | | |
+
+**Verdict: no edge shown.**
+- The combined book trails SPY by about 13 points and is flat to negative once realistic costs are included.
+- The result flips sign between the two halves.
+- 196 of 289 exits were the 5-bar time stop, so most trades end before the 2σ stop or the 4σ target is reached.
+- Average gross exposure was 20%, and the risk rules never vetoed a trade, so this run does not test them.
+- Breakout and mean reversion look better on their own, but they were picked after seeing this data. Treat them as hypotheses for the forward shadow run to test, not as findings.
+
+**Biases to keep in mind:**
+- About 14 months of one mostly rising regime
+- A universe chosen today, which brings survivorship and hindsight bias (AMD rose 285% in the window)
+- Daily closes only
+- No spread model beyond the slippage runs
 
 ## Next up
 

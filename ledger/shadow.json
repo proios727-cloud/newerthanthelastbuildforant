@@ -1,21 +1,21 @@
 {
  "ledger": {
   "starting_nav": 100000.0,
-  "cash": 61513.13945463999,
+  "cash": 61513.119550519994,
   "positions": {
    "SOL/USD": {
-    "qty": 42.265426,
-    "avg_cost": 118.3,
+    "qty": 40.993686,
+    "avg_cost": 121.97,
     "realized": -5.0
    },
    "ETH/USD": {
-    "qty": 1.865028,
-    "avg_cost": 2680.79,
+    "qty": 1.859866,
+    "avg_cost": 2688.23,
     "realized": -5.0
    },
    "BTC/USD": {
-    "qty": 0.059928,
-    "avg_cost": 83424.48,
+    "qty": 0.059192,
+    "avg_cost": 84462.14,
     "realized": -5.0
    },
    "AMD": {
@@ -46,19 +46,19 @@
   },
   "marks": {
    "BTC/USD": {
-    "price": 83424.48,
+    "price": 84462.14,
     "bid": null,
     "ask": null,
     "ts": "2026-09-27T23:59:00+00:00"
    },
    "ETH/USD": {
-    "price": 2680.79,
+    "price": 2688.23,
     "bid": null,
     "ask": null,
     "ts": "2026-09-27T23:59:00+00:00"
    },
    "SOL/USD": {
-    "price": 118.3,
+    "price": 121.97,
     "bid": null,
     "ask": null,
     "ts": "2026-09-27T23:59:00+00:00"
@@ -117,8 +117,8 @@
     "ts": "2026-09-27T23:59:00+00:00",
     "symbol": "SOL/USD",
     "side": "buy",
-    "qty": 42.265426,
-    "price": 118.3,
+    "qty": 40.993686,
+    "price": 121.97,
     "fee": 5.0,
     "realized": 0.0,
     "ref": "shadow-momentum"
@@ -127,18 +127,18 @@
     "ts": "2026-09-27T23:59:00+00:00",
     "symbol": "ETH/USD",
     "side": "buy",
-    "qty": 1.865028,
-    "price": 2680.79,
+    "qty": 1.859866,
+    "price": 2688.23,
     "fee": 5.0,
     "realized": 0.0,
-    "ref": "shadow-mean_reversion"
+    "ref": "shadow-momentum"
    },
    {
     "ts": "2026-09-27T23:59:00+00:00",
     "symbol": "BTC/USD",
     "side": "buy",
-    "qty": 0.059928,
-    "price": 83424.48,
+    "qty": 0.059192,
+    "price": 84462.14,
     "fee": 5.0,
     "realized": 0.0,
     "ref": "shadow-momentum"
@@ -197,28 +197,28 @@
   "peak_nav": 100000.0,
   "day": {
    "date": "2026-09-28",
-   "start_nav": 99985.0
+   "start_nav": 99985.00000000001
   }
  },
  "meta": {
   "SOL/USD": {
    "signal": "momentum",
-   "stop": 109.08284,
-   "target": 136.734321,
+   "stop": 112.685606,
+   "target": 140.538788,
    "entry_bar": "2026-09-27",
    "bars_held": 0
   },
   "ETH/USD": {
-   "signal": "mean_reversion",
-   "stop": 2546.595967,
-   "target": 2949.178066,
+   "signal": "momentum",
+   "stop": 2553.730357,
+   "target": 2957.229286,
    "entry_bar": "2026-09-27",
    "bars_held": 0
   },
   "BTC/USD": {
    "signal": "momentum",
-   "stop": 79494.821136,
-   "target": 91283.797729,
+   "stop": 80504.968706,
+   "target": 92376.482589,
    "entry_bar": "2026-09-27",
    "bars_held": 0
   },
