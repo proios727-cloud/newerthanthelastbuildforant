@@ -4,8 +4,7 @@ It drives the production code (fund.shadow.Shadow.step → fund.risk.check → f
 at a time, so the backtest and the live paper run share every rule. Nothing here is fitted: the signal
 and exit parameters are the fixed ones in fund/shadow.py.
 
-Data: backtest/data/<SYM>.txt holds the older closes (TradingView daily bars); ledger/bars.json holds
-the most recent 60 (equities) / 59 (crypto). Equities: 300 NYSE sessions 2025-07-21 → 2026-09-28.
+Data: backtest/data/<SYM>.txt holds every close (TradingView daily bars, fetched 2026-09-28). Equities: 300 NYSE sessions 2025-07-21 → 2026-09-28.
 Crypto: 299 UTC days 2025-12-03 → 2026-09-27.
 
   python backtest/run.py            # writes backtest/results.json and prints a summary
@@ -24,6 +23,7 @@ from fund import config, shadow  # noqa: E402
 DATA = ROOT / "backtest" / "data"
 FILES = {"SPY": "SPY", "QQQ": "QQQ", "IWM": "IWM", "NVDA": "NVDA", "AMD": "AMD", "AAPL": "AAPL",
          "MSFT": "MSFT", "TSLA": "TSLA", "BTC/USD": "BTCUSD", "ETH/USD": "ETHUSD", "SOL/USD": "SOLUSD"}
+EQUITY_END, CRYPTO_END = "2026-09-28", "2026-09-27"
 NYSE_HOLIDAYS = {"2025-09-01", "2025-11-27", "2025-12-25", "2026-01-01", "2026-01-19", "2026-02-16",
                  "2026-04-03", "2026-05-25", "2026-06-19", "2026-07-03", "2026-09-07"}
 
@@ -38,27 +38,18 @@ def nyse_days(start, n):
 
 
 def load_series():
-    recent = json.loads((ROOT / "ledger" / "bars.json").read_text())
+    """Self-contained: the files hold every close, so the live run appending to ledger/bars.json
+    never changes the backtest."""
     series = {}
     for sym, f in FILES.items():
-        words = (DATA / f"{f}.txt").read_text().split()
-        head = [float(x) for x in (words[1:] if sym == "SPY" else words)]
-        tail = recent[sym]["closes"]
-        if sym == "SPY":  # the SPY file holds all 300 closes: its tail must equal bars.json
-            assert head[-60:] == tail, "SPY history does not match ledger/bars.json"
-            closes = head
-        else:
-            assert len(head) == 240, (sym, len(head))
-            jump = abs(tail[0] / head[-1] - 1)
-            assert jump < 0.2, f"{sym}: suspicious join ({head[-1]} → {tail[0]})"
-            closes = head + tail
+        closes = [float(x) for x in (DATA / f"{f}.txt").read_text().split()]
         if "/" in sym:
-            end = date.fromisoformat(recent[sym]["last"])
+            end = date.fromisoformat(CRYPTO_END)
             days = [(end - timedelta(days=len(closes) - 1 - i)).isoformat() for i in range(len(closes))]
-            assert days[0] == "2025-12-03", (sym, days[0])
+            assert len(closes) == 299 and days[0] == "2025-12-03", (sym, len(closes), days[0])
         else:
             days = nyse_days("2025-07-21", len(closes))
-            assert days[-1] == recent[sym]["last"] == "2026-09-28", (sym, days[-1])
+            assert len(closes) == 300 and days[-1] == EQUITY_END, (sym, len(closes), days[-1])
         series[sym] = list(zip(days, closes))
     return series
 
