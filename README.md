@@ -18,7 +18,8 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `fund/risk.py` | The Risk Officer's rules as pure functions. PASS comes with a max size; VETO names the rule. |
 | `fund/preview.py` | Order preview → `EXECUTE` gate → paper fill. There is no live execution path. |
 | `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
-| `fund/shadow.py` | Quant Scanner signals (momentum, breakout, mean reversion) and the shadow book, which trades every risk-passed signal at the close with no approval step. Also merges connector bars into `ledger/bars.json`. |
+| `fund/shadow.py` | Quant Scanner signals (momentum, breakout, mean reversion) and the shadow books: four variants that trade risk-passed signals at the close with no approval step and pay quoted spreads. Also merges connector bars into `ledger/bars.json`. |
+| `backtest/` | `run.py` replays the shadow book over 14 months of saved closes (`data/`). Results are in `results.json` and summarized below. |
 | `fund/receipt.py` | Session receipts for gate 4: ledger snapshot, the day's event counts, and a breach check (gross cap, position cap + 1-point drift, opening fill on a halted day). A VETO is not a breach. |
 | `ledger/` | Live paper-run state and `receipts/`, committed so the 30-day record persists. |
 | `tests/` | Unit tests: `python3 -m unittest -v` |
@@ -85,7 +86,7 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 ## Go-live gates
 
 1. Risk limits and the drawdown halt are written as rules and unit-tested (**passed**: `fund/risk.py`, tests)
-2. The market-data feed supports the scan cadence (**partial**: the TradingView connector returns all 11 symbols in one call and 300 days of daily bars, so end-of-day scans work, but its quotes are delayed 15+ minutes and have no bid/ask. The Robinhood connector returns real-time bid/ask for all 11 symbols in two calls, which covers the intraday cadence and the spread check, but it isn't wired in yet. ThetaData is on the free tier, and stock quotes need a paid plan)
+2. The market-data feed supports the scan cadence (**partial**: the TradingView connector returns all 11 symbols in one call and 300 days of daily bars, so end-of-day scans work, but its quotes are delayed 15+ minutes and have no bid/ask. The Robinhood connector returns real-time bid/ask for all 11 symbols in two calls. `python -m fund quotes` stores those quotes, and they now set shadow costs and the crypto spread check. An intraday scan loop is still to build. ThetaData is on the free tier, and stock quotes need a paid plan)
 3. The paper ledger marks NAV correctly across equity sessions and the crypto day roll (**passed**: `fund/ledger.py`, tests)
 4. 30 days of PAPER receipts with no risk-rule breach (**running**: day 1 was 2026-09-28; see below)
 5. A broker or exchange preview tool returns a real quote (**blocked**: no execution connector)
@@ -102,10 +103,14 @@ Started **2026-09-28** at $100,000. A Claude Code Routine runs each weekday at 1
 
 1. Pulls the last 5 daily bars per symbol from the TradingView connector and merges the completed ones into `ledger/bars.json` with `python -m fund bars-append`. Bars still in progress are refused.
 2. Marks the real paper book at those closes.
-3. Runs `python -m fund shadow`.
+3. Stores Robinhood bid/ask quotes with `python -m fund quotes` (optional; a crossed or empty book is skipped and the previous quote kept), then runs `python -m fund shadow`.
 4. Writes `ledger/receipts/<fund-day>-close.json`, runs `sync-board`, and commits to the run branch.
 
 A receipt with `"clean": false` stops the clock, and the routine reports it.
+
+**Shadow variants.** Four shadow books run side by side on the same bars: `all` (every signal, strongest first), `breakout`, `mean_reversion` and `momentum`. The backtest picked breakout and mean reversion only after seeing the data, so the 30-day forward run is where they get tested on data they haven't seen. Every receipt lists each variant's NAV, return, drawdown and win rate.
+
+**Costs.** Shadow fills pay the desk's fees plus half the latest quoted spread per side, from `ledger/quotes.json`. Equity quotes are taken after the close, when spreads are wider than at the closing auction (MSFT showed 15 bps on 2026-09-28), so they only price costs and never veto a fill. Crypto quotes are live 24/7, so they also feed the risk spread check.
 
 **Two books.** The **real paper book** (`ledger/state.json`) fills only when you approve a preview with `EXECUTE` within 5 minutes. The routine never approves one. The **shadow book** (`ledger/shadow.json`, `fund/shadow.py`) trades every Quant Scanner signal the Risk Officer passes, at the daily close, with no approval step. It shows what the desk would have done, so the 30-day run tests the signals and the risk rules, not just the marking path. Each receipt carries the shadow NAV, return, drawdown, open positions, closed trades, win rate, and the rules that vetoed entries that day.
 
@@ -124,7 +129,7 @@ A receipt with `"clean": false` stops the clock, and the routine reports it.
 - No re-entry on the bar of an exit
 
 **Limitations:**
-- Shadow fills happen at the close with no spread, so shadow P&L runs about half a spread per side better than real fills would.
+- Shadow fills happen at the close. Equity costs use after-hours spreads, which overstate the cost at the close.
 - If a daily run is missed, the next run acts on the latest close only. Stops hit on the missed day are taken at the later close.
 
 ## Backtest (2026-09-28)

@@ -7,7 +7,8 @@
   python -m fund status
   python -m fund bars-append FILE    # merge connector bars {SYMBOL: [[t_unix, close], ...]} into ledger/bars.json
   python -m fund scan                # ranked Quant Scanner signals from ledger/bars.json
-  python -m fund shadow              # run the shadow book on new bars (ledger/shadow.json)
+  python -m fund quotes FILE         # store Robinhood quotes {SYMBOL: {bid, ask, ts}} → ledger/quotes.json
+  python -m fund shadow              # run every shadow variant on new bars (ledger/shadow/<variant>.json)
   python -m fund receipt [--label L]  # write ledger/receipts/<fund-day>-<label>.json with a breach check
   python -m fund sync-board          # write ledger numbers into desk.json tiles/funnel, rebuild board.html
 """
@@ -24,7 +25,7 @@ from .ledger import Ledger, parse_ts
 DIR = ROOT / "ledger"
 STATE, PREVIEWS, EVENTS = DIR / "state.json", DIR / "previews.json", DIR / "events.jsonl"
 RECEIPTS = DIR / "receipts"
-BARS, SHADOW = DIR / "bars.json", DIR / "shadow.json"
+BARS, SHADOW_DIR, QUOTES = DIR / "bars.json", DIR / "shadow", DIR / "quotes.json"
 
 
 def log(kind, **data):
@@ -127,20 +128,51 @@ def cmd_scan(a, cfg):
     print(json.dumps(shadow.scan(load_bars()), indent=2))
 
 
+def load_quotes():
+    return json.loads(QUOTES.read_text(encoding="utf-8")) if QUOTES.exists() else {}
+
+
+def cmd_quotes(a, cfg):
+    raw = json.loads(pathlib.Path(a.file).read_text(encoding="utf-8"))
+    q, skipped = load_quotes(), {}
+    for sym, r in raw.items():
+        if sym not in cfg.universe:
+            sys.exit(f"{sym} is not in the universe")
+        bid, ask = float(r["bid"] or 0), float(r["ask"] or 0)
+        if not 0 < bid <= ask:  # empty or crossed book: keep the previous quote
+            skipped[sym] = f"bid {bid} / ask {ask}"
+            continue
+        q[sym] = {"bid": bid, "ask": ask, "mid": round((bid + ask) / 2, 6),
+                  "spread_bps": shadow.spread_bps(bid, ask), "ts": r.get("ts") or clock.now().isoformat()}
+    QUOTES.write_text(json.dumps(q, indent=1) + "\n", encoding="utf-8")
+    log("quotes", spreads={s: v["spread_bps"] for s, v in q.items()}, skipped=skipped)
+    print(json.dumps({"spread_bps": {s: v["spread_bps"] for s, v in q.items()}, "skipped": skipped}, indent=2))
+
+
+def shadow_books(cfg):
+    legacy = DIR / "shadow.json"  # single-book layout from before the variants
+    if legacy.exists() and not (SHADOW_DIR / "all.json").exists():
+        SHADOW_DIR.mkdir(parents=True, exist_ok=True)
+        legacy.rename(SHADOW_DIR / "all.json")
+    return {name: shadow.load(SHADOW_DIR / f"{name}.json", cfg, only) for name, only in shadow.VARIANTS.items()}
+
+
 def cmd_shadow(a, cfg):
-    sh = shadow.load(SHADOW, cfg)
-    evs = sh.step(load_bars(), cfg)
-    shadow.save(sh, SHADOW)
-    for e in evs:
-        e = dict(e)
-        log(e.pop("kind"), bar_ts=e.pop("ts"), **e)
-    print(json.dumps({"events": evs, "summary": sh.summary()}, indent=2))
+    bars, quotes, out = load_bars(), load_quotes(), {}
+    for name, sh in shadow_books(cfg).items():
+        evs = sh.step(bars, cfg, quotes=quotes)
+        shadow.save(sh, SHADOW_DIR / f"{name}.json")
+        for e in evs:
+            e = dict(e)
+            log(e.pop("kind"), variant=name, bar_ts=e.pop("ts"), **e)
+        out[name] = {"events": len(evs), "summary": sh.summary()}
+    print(json.dumps(out, indent=2))
 
 
 def cmd_receipt(a, cfg):
     L = load_ledger()
     events = [json.loads(x) for x in EVENTS.read_text(encoding="utf-8").splitlines() if x] if EVENTS.exists() else []
-    sh = shadow.load(SHADOW, cfg).summary() if SHADOW.exists() else None
+    sh = {n: b.summary() for n, b in shadow_books(cfg).items()} if SHADOW_DIR.exists() or (DIR / "shadow.json").exists() else None
     r = receipt.build(L, cfg, events, clock.now(), a.label, shadow=sh)
     RECEIPTS.mkdir(parents=True, exist_ok=True)
     out = RECEIPTS / f"{r['fund_day']}-{a.label}.json"
@@ -203,12 +235,13 @@ def main(argv=None):
     p = sub.add_parser("bars-append"); p.add_argument("file")
     sub.add_parser("scan")
     sub.add_parser("shadow")
+    p = sub.add_parser("quotes"); p.add_argument("file")
     p = sub.add_parser("receipt"); p.add_argument("--label", default="session")
     sub.add_parser("sync-board")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
-     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
+     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "quotes": cmd_quotes, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 """Quant Scanner signals and the shadow book.
 
 The shadow book trades every signal the Risk Officer passes, at the daily close, in a separate
-paper ledger (ledger/shadow.json). It never touches the real paper book and never needs EXECUTE:
+paper ledger (ledger/shadow/<variant>.json). It never touches the real paper book and never needs EXECUTE:
 it measures what the desk *would* have done, so the 30-day run tests the signals and the risk rules,
 not just the marking path.
 
@@ -10,8 +10,14 @@ Signals (long only, on daily closes):
   breakout        close above the highest of the prior 20 closes
   mean_reversion  RSI(2) < 10 while close > SMA50 (a dip inside an uptrend)
 Exits: stop at close·(1 − 2σ), target at close·(1 + 4σ), with σ the 20-day stdev of daily returns;
-or after MAX_HOLD bars. Fills are at the close with the desk's fees; there is no spread model, so
-shadow P&L is optimistic by roughly half the spread per side.
+or after MAX_HOLD bars.
+
+Variants run side by side on the same bars: `all` (every signal, strongest first) and one book per
+signal, so the forward run tests each signal out of sample (VARIANTS).
+
+Costs: the desk's fees plus half the quoted spread per side, from the latest Robinhood quotes in
+ledger/quotes.json when present. Equity quotes are taken after the close, when spreads are wider than
+at the closing auction, so they only price costs; crypto quotes (24/7) also feed the risk spread check.
 """
 import json
 import math
@@ -24,6 +30,7 @@ from .preview import fee
 MIN_BARS = 51
 MAX_HOLD = 5
 STOP_SIGMA, TARGET_SIGMA = 2.0, 4.0
+VARIANTS = {"all": None, "breakout": "breakout", "mean_reversion": "mean_reversion", "momentum": "momentum"}
 
 
 # ---- indicators -----------------------------------------------------------
@@ -62,11 +69,12 @@ def signals(closes):
     return sorted(out, key=lambda x: -x[1])
 
 
-def scan(bars):
-    """Ranked signal list across the universe: one row per symbol (its strongest signal)."""
+def scan(bars, only=None):
+    """Ranked signal list across the universe: one row per symbol (its strongest signal), optionally
+    restricted to one signal type."""
     rows = []
     for sym, b in bars.items():
-        sig = signals(b["closes"])
+        sig = [x for x in signals(b["closes"]) if only is None or x[0] == only]
         if not sig:
             continue
         c = b["closes"]
@@ -121,23 +129,24 @@ def append_bars(bars, cfg, raw, now):
 
 # ---- the shadow book --------------------------------------------------------
 class Shadow:
-    def __init__(self, ledger, meta=None, done=None):
+    def __init__(self, ledger, meta=None, done=None, only=None):
         self.ledger = ledger
+        self.only = only           # None = every signal; else one signal type
         self.meta = meta or {}     # symbol -> {signal, stop, target, entry_bar, bars_held}
         self.done = done or {}     # symbol -> last bar date already processed
 
     @classmethod
-    def new(cls, cfg):
-        return cls(Ledger(cfg.starting_nav))
+    def new(cls, cfg, only=None):
+        return cls(Ledger(cfg.starting_nav), only=only)
 
     def to_dict(self):
-        return {"ledger": self.ledger.to_dict(), "meta": self.meta, "done": self.done}
+        return {"only": self.only, "ledger": self.ledger.to_dict(), "meta": self.meta, "done": self.done}
 
     @classmethod
     def from_dict(cls, d):
-        return cls(Ledger.from_dict(d["ledger"]), d["meta"], d["done"])
+        return cls(Ledger.from_dict(d["ledger"]), d["meta"], d["done"], d.get("only"))
 
-    def step(self, bars, cfg, events=()):
+    def step(self, bars, cfg, events=(), quotes=None):
         """Process every symbol whose newest bar hasn't been seen. Bars are handled in time order
         (so the fund-day roll only moves forward); at each close: mark, exit, then enter.
         Returns a list of event dicts (shadow_fill / shadow_veto / shadow_exit)."""
@@ -152,17 +161,23 @@ class Shadow:
                 self.ledger.mark(s, b["closes"][-1], ts)
             exited = set()
             for s in g:
-                ev = self._exit(s, bars[s]["closes"][-1], ts, cfg)
+                ev = self._exit(s, bars[s]["closes"][-1], ts, cfg, quotes)
                 exited.update(e["symbol"] for e in ev)
                 out += ev
-            for row in scan(g):
+            for row in scan(g, self.only):
                 if row["symbol"] not in exited:  # no re-entry on the bar we just left
-                    out += self._enter(row, ts, cfg, events)
+                    out += self._enter(row, ts, cfg, events, quotes)
             for s, b in g.items():
                 self.done[s] = b["last"]
         return out
 
-    def _exit(self, s, px, ts, cfg):
+    @staticmethod
+    def _cost(cfg, s, q, px, quotes):
+        """(fee + half the quoted spread, spread_bps or None)."""
+        sp = (quotes or {}).get(s, {}).get("spread_bps")
+        return round(fee(cfg, s, q, px) + (q * px * sp / 2e4 if sp else 0.0), 2), sp
+
+    def _exit(self, s, px, ts, cfg, quotes=None):
         q, m = self.ledger.qty(s), self.meta.get(s)
         if not q or not m:
             return []
@@ -171,25 +186,32 @@ class Shadow:
                else "time" if m["bars_held"] >= MAX_HOLD else None)
         if not why:
             return []
-        rec = self.ledger.fill(s, "sell", q, px, ts, fee=fee(cfg, s, q, px), ref=f"shadow-{why}")
+        cost, sp = self._cost(cfg, s, q, px, quotes)
+        rec = self.ledger.fill(s, "sell", q, px, ts, fee=cost, ref=f"shadow-{why}")
         self.meta.pop(s)
         return [{"kind": "shadow_exit", "ts": ts.isoformat(), "symbol": s, "why": why, "qty": q,
-                 "price": px, "realized": round(rec["realized"] - rec["fee"], 2)}]
+                 "price": px, "cost": cost, "spread_bps": sp, "realized": round(rec["realized"] - rec["fee"], 2)}]
 
-    def _enter(self, row, ts, cfg, events):
+    def _enter(self, row, ts, cfg, events, quotes=None):
         L, s, px = self.ledger, row["symbol"], row["close"]
         if L.qty(s):
             return []
         want = cfg.limits.max_position_pct / 100 * L.nav() / px
-        v = risk.check(risk.Order(s, "buy", want, px, ts), L, cfg, ts, events)
+        sp = (quotes or {}).get(s, {}).get("spread_bps")
+        bid = ask = None
+        if sp is not None and cfg.asset(s) == "crypto":  # 24/7 quote: let the spread rule see it
+            bid, ask = px * (1 - sp / 2e4), px * (1 + sp / 2e4)
+        v = risk.check(risk.Order(s, "buy", want, px, ts, bid, ask), L, cfg, ts, events)
         if not v.passed:
             return [{"kind": "shadow_veto", "ts": ts.isoformat(), "symbol": s, "signal": row["signal"],
                      "rule": v.rules[0][0], "detail": v.rules[0][1]}]
-        L.fill(s, "buy", v.max_qty, px, ts, fee=fee(cfg, s, v.max_qty, px), ref=f"shadow-{row['signal']}")
+        cost, sp = self._cost(cfg, s, v.max_qty, px, quotes)
+        L.fill(s, "buy", v.max_qty, px, ts, fee=cost, ref=f"shadow-{row['signal']}")
         self.meta[s] = {"signal": row["signal"], "stop": row["stop"], "target": row["target"],
                         "entry_bar": row["bar"], "bars_held": 0}
         return [{"kind": "shadow_fill", "ts": ts.isoformat(), "symbol": s, "signal": row["signal"],
-                 "qty": v.max_qty, "price": px, "stop": row["stop"], "target": row["target"]}]
+                 "qty": v.max_qty, "price": px, "cost": cost, "spread_bps": sp,
+                 "stop": row["stop"], "target": row["target"]}]
 
     def summary(self):
         L = self.ledger
@@ -200,11 +222,17 @@ class Shadow:
                 "closed_trades": len(exits), "win_rate": round(wins / len(exits), 3) if exits else None}
 
 
-def load(path, cfg):
-    return Shadow.from_dict(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else Shadow.new(cfg)
+def load(path, cfg, only=None):
+    return Shadow.from_dict(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else Shadow.new(cfg, only)
 
 
 def save(sh, path):
+    path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
     tmp.write_text(json.dumps(sh.to_dict(), indent=1) + "\n", encoding="utf-8")
     tmp.replace(path)
+
+
+def spread_bps(bid, ask):
+    mid = (bid + ask) / 2
+    return round((ask - bid) / mid * 1e4, 3) if bid and ask and ask >= bid else None

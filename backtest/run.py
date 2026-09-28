@@ -56,20 +56,15 @@ def load_series():
 
 def run(series, cfg, slip_bps=0.0, only=None, start=None, end=None):
     """Replay the shadow book. `only` restricts to one signal type; start/end bound the entry window."""
-    orig_fee, orig_signals = shadow.fee, shadow.signals
+    orig_fee = shadow.fee
 
     def fee(c, s, q, p):
         base = c.fees["crypto_bps"] if c.asset(s) == "crypto" else 0.0
         return round(q * p * (base + slip_bps) / 1e4, 2)
 
-    def signals(closes):
-        return [x for x in orig_signals(closes) if x[0] == only]
-
     shadow.fee = fee
-    if only:
-        shadow.signals = signals
     try:
-        sh = shadow.Shadow.new(cfg)
+        sh = shadow.Shadow.new(cfg, only)
         days = sorted({d for s in series.values() for d, _ in s})
         idx = {s: 0 for s in series}
         nav, events = [], []
@@ -90,7 +85,7 @@ def run(series, cfg, slip_bps=0.0, only=None, start=None, end=None):
             nav.append((d, sh.ledger.nav(), sh.ledger.gross()))
         return sh, nav, events
     finally:
-        shadow.fee, shadow.signals = orig_fee, orig_signals
+        shadow.fee = orig_fee
 
 
 def stats(nav, events, sh):

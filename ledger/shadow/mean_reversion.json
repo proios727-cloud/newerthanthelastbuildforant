@@ -1,0 +1,143 @@
+{
+ "only": "mean_reversion",
+ "ledger": {
+  "starting_nav": 100000.0,
+  "cash": 90489.47,
+  "positions": {
+   "TSLA": {
+    "qty": 13.0,
+    "avg_cost": 357.44999999999993,
+    "realized": -0.32
+   },
+   "AMD": {
+    "qty": 8.0,
+    "avg_cost": 607.87,
+    "realized": -0.4
+   }
+  },
+  "marks": {
+   "BTC/USD": {
+    "price": 84462.14,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-27T23:59:00+00:00"
+   },
+   "ETH/USD": {
+    "price": 2688.23,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-27T23:59:00+00:00"
+   },
+   "SOL/USD": {
+    "price": 121.97,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-27T23:59:00+00:00"
+   },
+   "SPY": {
+    "price": 765.61,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-28T15:59:00-04:00"
+   },
+   "QQQ": {
+    "price": 736.53,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-28T15:59:00-04:00"
+   },
+   "IWM": {
+    "price": 280.02,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-28T15:59:00-04:00"
+   },
+   "NVDA": {
+    "price": 228.86,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-28T15:59:00-04:00"
+   },
+   "AMD": {
+    "price": 607.87,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-28T15:59:00-04:00"
+   },
+   "AAPL": {
+    "price": 338.4,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-28T15:59:00-04:00"
+   },
+   "MSFT": {
+    "price": 509.22,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-28T15:59:00-04:00"
+   },
+   "TSLA": {
+    "price": 357.45,
+    "bid": null,
+    "ask": null,
+    "ts": "2026-09-28T15:59:00-04:00"
+   }
+  },
+  "fills": [
+   {
+    "ts": "2026-09-28T15:59:00-04:00",
+    "symbol": "TSLA",
+    "side": "buy",
+    "qty": 13.0,
+    "price": 357.45,
+    "fee": 0.32,
+    "realized": 0.0,
+    "ref": "shadow-mean_reversion"
+   },
+   {
+    "ts": "2026-09-28T15:59:00-04:00",
+    "symbol": "AMD",
+    "side": "buy",
+    "qty": 8.0,
+    "price": 607.87,
+    "fee": 0.4,
+    "realized": 0.0,
+    "ref": "shadow-mean_reversion"
+   }
+  ],
+  "peak_nav": 100000.0,
+  "day": {
+   "date": "2026-09-28",
+   "start_nav": 100000.0
+  }
+ },
+ "meta": {
+  "TSLA": {
+   "signal": "mean_reversion",
+   "stop": 336.723376,
+   "target": 398.903248,
+   "entry_bar": "2026-09-28",
+   "bars_held": 0
+  },
+  "AMD": {
+   "signal": "mean_reversion",
+   "stop": 563.983446,
+   "target": 695.643109,
+   "entry_bar": "2026-09-28",
+   "bars_held": 0
+  }
+ },
+ "done": {
+  "BTC/USD": "2026-09-27",
+  "ETH/USD": "2026-09-27",
+  "SOL/USD": "2026-09-27",
+  "SPY": "2026-09-28",
+  "QQQ": "2026-09-28",
+  "IWM": "2026-09-28",
+  "NVDA": "2026-09-28",
+  "AMD": "2026-09-28",
+  "AAPL": "2026-09-28",
+  "MSFT": "2026-09-28",
+  "TSLA": "2026-09-28"
+ }
+}

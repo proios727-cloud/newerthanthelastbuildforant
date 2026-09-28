@@ -1,7 +1,7 @@
 {
   "fund_day": "2026-09-28",
   "label": "close",
-  "ts": "2026-09-28T22:18:30.383505+00:00",
+  "ts": "2026-09-28T22:28:30.299392+00:00",
   "mode": "PAPER",
   "snapshot": {
     "nav": 100000.0,
@@ -38,26 +38,63 @@
     "veto": 0,
     "fill": 0,
     "approve_refused": 0,
-    "shadow_fill": 8,
+    "shadow_fill": 17,
     "shadow_exit": 0,
     "shadow_veto": 0
   },
   "shadow": {
-    "nav": 99985.0,
-    "return_pct": -0.015,
-    "drawdown_pct": 0.015,
-    "open": [
-      "AAPL",
-      "AMD",
-      "BTC/USD",
-      "ETH/USD",
-      "NVDA",
-      "QQQ",
-      "SOL/USD",
-      "TSLA"
-    ],
-    "closed_trades": 0,
-    "win_rate": null
+    "all": {
+      "nav": 99982.5,
+      "return_pct": -0.018,
+      "drawdown_pct": 0.018,
+      "open": [
+        "AAPL",
+        "AMD",
+        "BTC/USD",
+        "ETH/USD",
+        "NVDA",
+        "QQQ",
+        "SOL/USD",
+        "TSLA"
+      ],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "breakout": {
+      "nav": 100000.0,
+      "return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "open": [],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "mean_reversion": {
+      "nav": 99999.28,
+      "return_pct": -0.001,
+      "drawdown_pct": 0.001,
+      "open": [
+        "AMD",
+        "TSLA"
+      ],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "momentum": {
+      "nav": 99982.82,
+      "return_pct": -0.017,
+      "drawdown_pct": 0.017,
+      "open": [
+        "AAPL",
+        "AMD",
+        "BTC/USD",
+        "ETH/USD",
+        "NVDA",
+        "QQQ",
+        "SOL/USD"
+      ],
+      "closed_trades": 0,
+      "win_rate": null
+    }
   },
   "shadow_vetoes": [],
   "breaches": [],

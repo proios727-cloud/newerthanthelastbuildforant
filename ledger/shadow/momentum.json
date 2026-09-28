@@ -1,15 +1,16 @@
 {
+ "only": "momentum",
  "ledger": {
   "starting_nav": 100000.0,
-  "cash": 61513.119550519994,
+  "cash": 66157.80030343999,
   "positions": {
    "SOL/USD": {
     "qty": 40.993686,
     "avg_cost": 121.97,
-    "realized": -5.0
+    "realized": -5.21
    },
    "ETH/USD": {
-    "qty": 1.859866,
+    "qty": 1.859862,
     "avg_cost": 2688.23,
     "realized": -5.0
    },
@@ -21,27 +22,22 @@
    "AMD": {
     "qty": 8.0,
     "avg_cost": 607.87,
-    "realized": 0.0
-   },
-   "TSLA": {
-    "qty": 13.0,
-    "avg_cost": 357.44999999999993,
-    "realized": 0.0
+    "realized": -0.4
    },
    "AAPL": {
     "qty": 14.0,
     "avg_cost": 338.4,
-    "realized": 0.0
+    "realized": -0.21
    },
    "NVDA": {
     "qty": 21.0,
     "avg_cost": 228.86,
-    "realized": 0.0
+    "realized": -1.15
    },
    "QQQ": {
     "qty": 6.0,
     "avg_cost": 736.5300000000001,
-    "realized": 0.0
+    "realized": -0.21
    }
   },
   "marks": {
@@ -119,7 +115,7 @@
     "side": "buy",
     "qty": 40.993686,
     "price": 121.97,
-    "fee": 5.0,
+    "fee": 5.21,
     "realized": 0.0,
     "ref": "shadow-momentum"
    },
@@ -127,7 +123,7 @@
     "ts": "2026-09-27T23:59:00+00:00",
     "symbol": "ETH/USD",
     "side": "buy",
-    "qty": 1.859866,
+    "qty": 1.859862,
     "price": 2688.23,
     "fee": 5.0,
     "realized": 0.0,
@@ -149,19 +145,9 @@
     "side": "buy",
     "qty": 8.0,
     "price": 607.87,
-    "fee": 0.0,
+    "fee": 0.4,
     "realized": 0.0,
     "ref": "shadow-momentum"
-   },
-   {
-    "ts": "2026-09-28T15:59:00-04:00",
-    "symbol": "TSLA",
-    "side": "buy",
-    "qty": 13.0,
-    "price": 357.45,
-    "fee": 0.0,
-    "realized": 0.0,
-    "ref": "shadow-mean_reversion"
    },
    {
     "ts": "2026-09-28T15:59:00-04:00",
@@ -169,7 +155,7 @@
     "side": "buy",
     "qty": 14.0,
     "price": 338.4,
-    "fee": 0.0,
+    "fee": 0.21,
     "realized": 0.0,
     "ref": "shadow-momentum"
    },
@@ -179,7 +165,7 @@
     "side": "buy",
     "qty": 21.0,
     "price": 228.86,
-    "fee": 0.0,
+    "fee": 1.15,
     "realized": 0.0,
     "ref": "shadow-momentum"
    },
@@ -189,7 +175,7 @@
     "side": "buy",
     "qty": 6.0,
     "price": 736.53,
-    "fee": 0.0,
+    "fee": 0.21,
     "realized": 0.0,
     "ref": "shadow-momentum"
    }
@@ -197,7 +183,7 @@
   "peak_nav": 100000.0,
   "day": {
    "date": "2026-09-28",
-   "start_nav": 99985.00000000001
+   "start_nav": 99984.79
   }
  },
  "meta": {
@@ -226,13 +212,6 @@
    "signal": "momentum",
    "stop": 563.983446,
    "target": 695.643109,
-   "entry_bar": "2026-09-28",
-   "bars_held": 0
-  },
-  "TSLA": {
-   "signal": "mean_reversion",
-   "stop": 336.723376,
-   "target": 398.903248,
    "entry_bar": "2026-09-28",
    "bars_held": 0
   },

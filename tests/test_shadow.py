@@ -106,3 +106,40 @@ class AppendTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class VariantAndCostTests(unittest.TestCase):
+    def setUp(self):
+        self.cfg = cfg()
+
+    def test_scan_only_filters_signal_type(self):
+        b = bars({"SPY": trend(start=700)})
+        self.assertTrue(shadow.scan(b, "momentum"))
+        self.assertEqual(shadow.scan(b, "mean_reversion"), [])
+
+    def test_variant_roundtrip_keeps_filter(self):
+        sh = shadow.Shadow.new(self.cfg, "breakout")
+        self.assertEqual(shadow.Shadow.from_dict(sh.to_dict()).only, "breakout")
+
+    def test_half_spread_is_charged(self):
+        sh = shadow.Shadow.new(self.cfg)
+        ev = sh.step(bars({"SPY": trend(start=700)}), self.cfg, quotes={"SPY": {"spread_bps": 20.0}})
+        f = ev[0]
+        self.assertAlmostEqual(f["cost"], round(f["qty"] * f["price"] * 10 / 1e4, 2))
+
+    def test_wide_crypto_quote_is_vetoed(self):
+        sh = shadow.Shadow.new(self.cfg)
+        ev = sh.step(bars({"BTC/USD": trend(start=60000, step=300)}), self.cfg,
+                     quotes={"BTC/USD": {"spread_bps": 50.0}})
+        self.assertEqual(ev[0]["kind"], "shadow_veto")
+        self.assertEqual(ev[0]["rule"], "spread")
+
+    def test_wide_equity_quote_only_costs(self):
+        # after-hours equity quotes price costs but never veto a close fill
+        sh = shadow.Shadow.new(self.cfg)
+        ev = sh.step(bars({"SPY": trend(start=700)}), self.cfg, quotes={"SPY": {"spread_bps": 50.0}})
+        self.assertEqual(ev[0]["kind"], "shadow_fill")
+
+    def test_spread_bps_rejects_crossed(self):
+        self.assertIsNone(shadow.spread_bps(101.0, 100.0))
+        self.assertAlmostEqual(shadow.spread_bps(99.95, 100.05), 10.0)
