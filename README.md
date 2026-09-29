@@ -204,7 +204,7 @@ Checked against live quotes at the 2026-09-28 close: SPY at-the-money and the 73
 **Final pass before every sale:** it runs after the contract is chosen and sized.
 - **Earnings gate:** no new put when the company reports before the planned exit (the earlier of 21 days and 7 days before expiry). An open put is bought back at the ask the session before a report.
 - **TypeSafe JEV:** the symbol's headlines go to `fund/catalyst.py`, and a live, confident "material headline risk" answer (P(yes) ≥ 0.80) blocks the sale. JEV can only refuse a trade, never authorize one, because headlines are untrusted text.
-  - **Setup:** the client calls `POST https://api.typesafe.ai/v1/systemone` with the model pinned to `jev-1.13.0`. It needs `TYPESAFE_API_KEY`, `TYPESAFE_LIVE=1`, and `api.typesafe.ai` allowed in the network policy. `TYPESAFE_API_URL` and `TYPESAFE_MODEL` are optional overrides.
+  - **Setup:** the client calls `POST https://api.typesafe.ai/v1/systemone` with model `jev-latest` (per the official API docs). It needs `TYPESAFE_API_KEY`, `TYPESAFE_LIVE=1`, and `api.typesafe.ai` allowed in the network policy. `TYPESAFE_API_URL` and `TYPESAFE_MODEL` are optional overrides.
   - **Stub:** without that setup JEV runs as a stub that never vetoes.
   - **Failure:** if a configured judge errors, the entry is skipped (`jev unavailable`).
   - `apply` reports which mode ran.

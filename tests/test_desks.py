@@ -28,7 +28,7 @@ class JudgeTests(unittest.TestCase):
         self.assertIsInstance(judge.from_env({"TYPESAFE_API_KEY": "k", "TYPESAFE_API_URL": "u"}), judge.StubClient)
         c = judge.from_env({"TYPESAFE_API_KEY": "k", "TYPESAFE_LIVE": "1"})
         self.assertIsInstance(c, judge.HttpClient)
-        self.assertEqual((c.base_url, c.model), ("https://api.typesafe.ai/v1/systemone", "jev-1.13.0"))
+        self.assertEqual((c.base_url, c.model), ("https://api.typesafe.ai/v1/systemone", "jev-latest"))
 
     def test_question_validation(self):
         with self.assertRaises(ValueError):
@@ -41,8 +41,10 @@ class JudgeTests(unittest.TestCase):
         self.assertEqual({k: q["type"] for k, q in p["questions"].items()}, {"material": "noul", "direction": "choice"})
         self.assertNotIn("criteria", p["questions"]["material"])
         self.assertIn("bullish", p["questions"]["direction"]["criteria"])
-        self.assertEqual(p["state"], '{"a": 1}')
-        self.assertEqual(p["model"], "jev-1.13.0")
+        self.assertEqual(p["state"], {"a": 1})
+        self.assertEqual(p["model"], "jev-latest")
+        s = judge.HttpClient("k").payload("x", [judge.Question("lvl", "score", "How bad?", ["low", "high"])])
+        self.assertEqual(s["questions"]["lvl"]["criteria"], ["low", "high"])
 
     def test_http_parse_documented_shape(self):
         a = judge.HttpClient.parse({"answers": {

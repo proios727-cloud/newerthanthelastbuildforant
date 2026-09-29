@@ -17,6 +17,8 @@ rules, never as the thing that authorizes an order. A wrong answer can cost a tr
 """
 import json
 import os
+import time
+import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 
@@ -72,18 +74,20 @@ class StubClient:
 
 
 class HttpClient:
-    """TypeSafe System One API, POST /v1/systemone (wire format per community docs; official docs are
-    blocked from this environment, so the parser accepts only the documented shape and fails loudly).
+    """TypeSafe System One API, POST /v1/systemone (https://docs.typesafe.ai/api, read 2026-09-29).
+    The parser accepts only the documented shapes and fails loudly on anything else.
 
-    Request:  {"model": "jev-1.13.0", "state": "<text>", "questions": {id: {"type", "instructions", ...}}}
-              choice → "criteria": {option: description}; score → "levels": [low → high]
+    Request:  {"model": "jev-latest", "state": <string | object>, "questions": {id: {"type", "instructions", "criteria"?}}}
+              choice → criteria {option: description}; score → criteria [level low → high];
+              noul → optional criteria {"true": ..., "false": ...}
     Response: {"answers": {id: {"type": "noul", "noul": p} |
                                {"type": "choice", "choice": k, "probabilities": {...}, "confidence": c} |
                                {"type": "score", "score": x, "probabilities": {...}, "confidence": c}}}
     """
     live = True
     DEFAULT_URL = "https://api.typesafe.ai/v1/systemone"
-    DEFAULT_MODEL = "jev-1.13.0"   # pinned: never a floating alias like jev-latest
+    DEFAULT_MODEL = "jev-latest"   # the documented model id; pin a version with TYPESAFE_MODEL once one is listed
+    RETRY = (429, 529)             # documented rate-limit / overload codes: one retry after a short backoff
 
     def __init__(self, api_key, base_url=None, model=None, timeout=10):
         self.api_key, self.timeout = api_key, timeout
@@ -97,12 +101,13 @@ class HttpClient:
             if q.primitive == "choice":
                 body["criteria"] = q.criteria
             elif q.primitive == "score":
-                body["levels"] = list(q.criteria)
+                body["criteria"] = list(q.criteria)
+            elif isinstance(q.criteria, dict):
+                body["criteria"] = q.criteria
             elif q.criteria:
                 body["instructions"] += " " + q.criteria
             qs[q.id] = body
-        text = state if isinstance(state, str) else json.dumps(state, ensure_ascii=False, sort_keys=True)
-        return {"model": self.model, "state": text, "questions": qs}
+        return {"model": self.model, "state": state, "questions": qs}
 
     @staticmethod
     def parse(body):
@@ -122,11 +127,17 @@ class HttpClient:
         return out
 
     def ask(self, state, questions):
-        req = urllib.request.Request(
-            self.base_url, data=json.dumps(self.payload(state, questions)).encode(),
-            headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=self.timeout) as r:
-            return self.parse(json.loads(r.read()))
+        data = json.dumps(self.payload(state, questions)).encode()
+        for attempt in (0, 1):
+            req = urllib.request.Request(self.base_url, data=data, headers={
+                "Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"})
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout) as r:
+                    return self.parse(json.loads(r.read()))
+            except urllib.error.HTTPError as e:
+                if e.code not in self.RETRY or attempt:
+                    raise
+                time.sleep(1.5)
 
 
 def from_env(env=os.environ):
