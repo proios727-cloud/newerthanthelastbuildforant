@@ -25,6 +25,11 @@ from .feed import _get
 SERIES = ("KXBTC15M", "KXETH15M")
 AT_S, B_LO, B_HI = 60, 50, 96          # must match scripts/build_kalshi48.py Rule B
 RULE = "B2"
+# Exit while the market is still open: sell at the held side's best bid when the price is up `tp`¢,
+# down `sl`¢, or `trail`¢ below its peak once the peak is at least `arm`¢ above entry. None = off.
+# Chosen from the last-minute trade-print backtest; every record also keeps the hold-to-settle P&L.
+EXIT = {"tp": None, "sl": None, "trail": None, "arm": 0}
+POLL_S = 2
 PERIOD = 900
 
 
@@ -73,16 +78,59 @@ def one_per_window(recs):
     return recs
 
 
+def best_bid(book, side):
+    bids = book.get("orderbook_fp", {}).get(side + "_dollars") or []
+    return max((_c(p) for p, _ in bids), default=None)
+
+
+def exit_hit(entry, peak, bid, ex=EXIT):
+    """True when `bid` triggers the exit rule for a position bought at `entry` whose best bid peaked at `peak`."""
+    if ex.get("tp") is not None and bid >= entry + ex["tp"]:
+        return True
+    if ex.get("sl") is not None and bid <= entry - ex["sl"]:
+        return True
+    return ex.get("trail") is not None and peak >= entry + ex.get("arm", 0) and bid <= peak - ex["trail"]
+
+
+def watch_exit(rec, close, fetch, clock, sleep, ex=EXIT):
+    """Poll the held side's best bid until close; record the exit on the rec if the rule fires."""
+    if not any(ex.get(k) is not None for k in ("tp", "sl", "trail")):
+        return rec
+    entry, peak = round(rec["book_avg"]), round(rec["book_avg"])
+    while clock() < close - POLL_S:
+        sleep(POLL_S)
+        try:
+            bid = best_bid(fetch(f"/markets/{rec['ticker']}/orderbook", {"depth": 5}), rec["side"])
+        except OSError:
+            continue
+        if bid is None:
+            continue
+        peak = max(peak, bid)
+        if exit_hit(entry, peak, bid, ex):
+            rec.update(exit_price=round(bid, 1), exit_secs_before_close=round(close - clock(), 1),
+                       exit_peak=round(peak, 1))
+            break
+    return rec
+
+
 def pnl_c(price, won, qty):
     """Fee-inclusive P&L in cents for `qty` contracts bought at `price` ¢ (rounded to a whole cent)."""
     p = round(price)
     return ((100 if won else 0) - p) * qty - taker_fee_cents(p, qty)
 
 
+def exit_pnl_c(entry, exit_price, qty):
+    """Fee-inclusive P&L in cents for buying at `entry` and selling at `exit_price` before settlement."""
+    e, x = round(entry), round(exit_price)
+    return (x - e) * qty - taker_fee_cents(e, qty) - taker_fee_cents(x, qty)
+
+
 def settle(rec, result, vwap):
     won = result == rec["side"]
-    out = {**rec, "result": result, "won": won, "vwap": vwap,
-           "pnl_book_c": pnl_c(rec["book_avg"], won, rec["qty"])}
+    hold = pnl_c(rec["book_avg"], won, rec["qty"])
+    out = {**rec, "result": result, "won": won, "vwap": vwap, "pnl_hold_c": hold,
+           "pnl_book_c": exit_pnl_c(rec["book_avg"], rec["exit_price"], rec["qty"])
+           if rec.get("exit_price") is not None else hold}
     out["pnl_vwap_c"] = pnl_c(vwap, won, rec["qty"]) if vwap is not None else None
     return out
 
@@ -118,6 +166,8 @@ def run(hours, log, qty, fetch=_get, clock=time.time, sleep=time.sleep):
             except OSError as e:
                 print(f"{s}: read failed {e}", file=sys.stderr, flush=True)
         for rec in one_per_window(window):
+            if rec["take"]:
+                watch_exit(rec, close, fetch, clock, sleep)
             if rec["take"] or rec.get("alt"):
                 pending.append(rec)
             else:

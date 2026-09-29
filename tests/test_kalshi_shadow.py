@@ -70,6 +70,35 @@ class ShadowTests(unittest.TestCase):
         self.assertNotIn("alt", recs[2])
 
 
+class ExitTests(unittest.TestCase):
+    def test_exit_rules(self):
+        ex = {"tp": 6, "sl": 20, "trail": 5, "arm": 3}
+        self.assertTrue(shadow.exit_hit(80, 86, 86, ex))       # take profit
+        self.assertTrue(shadow.exit_hit(80, 80, 60, ex))       # stop loss
+        self.assertTrue(shadow.exit_hit(80, 84, 79, ex))       # trailed 5 below an armed peak
+        self.assertFalse(shadow.exit_hit(80, 82, 78, ex))      # peak never armed (+2 < +3)
+        self.assertFalse(shadow.exit_hit(80, 90, 90, {"tp": None, "sl": None, "trail": None}))
+
+    def test_exit_pnl_pays_fees_both_ways(self):
+        # buy 80, sell 86, 10 contracts: +60¢ − ceil(.07·10·.8·.2·100)=12 − ceil(.07·10·.86·.14·100)=9
+        self.assertEqual(shadow.exit_pnl_c(80, 86, 10), 60 - 12 - 9)
+
+    def test_watch_exit_sells_on_trigger_and_settle_keeps_hold_pnl(self):
+        bids = iter([81, 83, 88, 70])
+        now = [1000.0]
+
+        def fetch(path, params):
+            return {"orderbook_fp": {"yes_dollars": [[f"{next(bids) / 100:.4f}", "50"]], "no_dollars": []}}
+
+        rec = {"ticker": "T", "side": "yes", "book_avg": 80.0, "qty": 10}
+        shadow.watch_exit(rec, 1060, fetch, lambda: now[0], lambda s: now.__setitem__(0, now[0] + s),
+                          {"tp": 6, "sl": None, "trail": None})
+        self.assertEqual((rec["exit_price"], rec["exit_secs_before_close"]), (88.0, 54.0))
+        done = shadow.settle(rec, "no", None)                  # lost at settlement, but sold first
+        self.assertEqual(done["pnl_book_c"], shadow.exit_pnl_c(80, 88, 10))
+        self.assertEqual(done["pnl_hold_c"], shadow.pnl_c(80, False, 10))
+
+
 def _iso(ts):
     from datetime import datetime, timezone
     return datetime.fromtimestamp(ts, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
