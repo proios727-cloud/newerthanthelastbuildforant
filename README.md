@@ -268,6 +268,23 @@ State is kept in `ledger/spreadbook.json`, and its summary appears in each recei
   - Covers closed trades and ghosts that had live answers.
   - Included in every receipt, along with the day's escalations.
 
+## Crypto trend book (from 2026-09-29)
+
+`fund/trendbook.py` runs the top-ranked crypto strategy from `docs/research/crypto-strategies.md`. It is paper only, and runs a $500 book and a $10k book on the same rules.
+
+- **Signal:** Coinbase BTC, ETH and SOL daily closes, completed bars only (crypto trades 24/7). It turns on when SMA20 > SMA100 on 2 closes and off when SMA20 < SMA100 on 2 closes, with a 20% trailing stop.
+- **Weight:** sleeve × min(1, 30% / RV30), with sleeves of BTC 50%, ETH 30% and SOL 20%. The rest earns the T-bill rate in cash.
+- **Execution:** it trades the spot ETFs IBIT, ETHA and BSOL at the next US close, buying at the ask and selling at the bid. ETF spreads are a few basis points, against 40–95 bp per side for crypto spot at retail tiers. It rebalances only when the target crosses zero or moves more than 20%, and rejects crossed or zero quotes and stale bars.
+- **Risk:** a book 20% below its peak sells everything and arms the desk's kill switch.
+- **JEV:** can veto buys only, on a data error, a structural crypto event or an order mistake. Sells, stops and kills never go to JEV.
+- **Commands:** `python3 -m fund trendbook bars FILE` (130 raw TradingView daily bars), `python3 -m fund trendbook apply FILE` (ETF quotes plus optional headlines and `tbill`), `python3 -m fund trendbook status`.
+- **Go / no-go:**
+  - **30 days:** zero data or execution errors, and fills within 5 bp of the model.
+  - **90 days:** a walk-forward backtest on this desk's harness with net Sharpe ≥ 0.5, a max drawdown ≤ 15%, and paper P&L within 2σ of the model.
+  - This desk's own earlier momentum backtest showed no edge, so the backtest is the real gate.
+
+**Why not carry yet:** Hyperliquid's terms exclude US persons. The US-legal carry route is Coinbase Derivatives perp-style futures hedged with IBIT or ETHA. It beats T-bills only when funding is at or above about 7% a year, and Coinbase's funding feed hasn't been verified yet, so it's the next research item rather than a book.
+
 ## Desk Head (head-agent chat)
 
 The Desk Head page ([live page](https://claude.ai/artifact/X4R41DLQS88ZX1GXDnGJwh), private to you) is the one place to talk to the desk. It is built by `scripts/build_head.py` from `assets/head-template.html`.

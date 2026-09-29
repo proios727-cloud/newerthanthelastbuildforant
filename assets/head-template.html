@@ -93,6 +93,7 @@ button:disabled { opacity: .5; cursor: default; }
       <section class="book" id="b-real"><h2>Real paper book <span class="chip info">$100k</span></h2></section>
       <section class="book" id="b-put"><h2>Put book <span class="chip info">$100k</span></h2></section>
       <section class="book" id="b-spread"><h2>Spread book <span class="chip info">$500</span></h2></section>
+      <section class="book" id="b-trend"><h2>Crypto trend <span class="chip info">IBIT · ETHA · BSOL</span></h2></section>
       <section class="book" id="b-jev"><h2>JEV veto test</h2></section>
       <section class="book" id="b-shadow"><h2>Shadow signals</h2></section>
       <section class="book" id="b-feed"><h2>Recent activity</h2><ul class="feed" id="feed"></ul></section>
@@ -180,6 +181,13 @@ function render() {
     ["Closed · win rate", (sp.closed_trades ?? 0) + " · " + (sp.win_rate == null ? "—" : Math.round(sp.win_rate * 100) + "%")],
     ["At risk", (sp.at_risk_pct ?? 0) + "% of NAV"]]));
 
+  const trend = s.trendbook || {};
+  const sig = Object.entries(trend.signal || {}).map(([k, v]) => k + (v.on ? " long" : " flat")).join(", ") || "not seeded yet";
+  $("b-trend").append(kv([
+    ["Signals", sig],
+    ["$500 book", trend.b500 ? fmt$(trend.b500.nav) + " · " + pct(trend.b500.return_pct) + " · " + trend.b500.exposure_pct + "% in" : "—"],
+    ["$10k book", trend.b10k ? fmt$(trend.b10k.nav) + " · " + pct(trend.b10k.return_pct) + " · " + trend.b10k.exposure_pct + "% in" : "—"],
+    ["Bars through", Object.values(trend.bars_through || {})[0] || "—"]]));
   const j = s.jevcheck || {};
   const jt = {keep: "good", drop: "bad", unreliable: "bad", inconclusive: "warn", insufficient: "stub"}[j.verdict] || "stub";
   const jh = $("b-jev").querySelector("h2"); const jc = document.createElement("span");

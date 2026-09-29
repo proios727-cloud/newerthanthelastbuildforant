@@ -11,6 +11,7 @@
   python -m fund shadow              # run every shadow variant on new bars (ledger/shadow/<variant>.json)
   python -m fund putbook plan|apply FILE   # paper short-put book ($100k) and put-spread book ($500) on live option quotes
   python -m fund kill status|arm REASON|disarm DISARM   # one kill switch for every book (disarm is human-only)
+  python -m fund trendbook bars FILE|apply FILE|status   # crypto trend via IBIT/ETHA/BSOL ($500 and $10k paper books)
   python -m fund calibration              # per-question Brier score and reliability of JEV's answers
   python -m fund jevcheck                  # pre-registered test: do JEV-vetoed sales (ghosts) do worse than the sales taken?
   python -m fund receipt [--label L]  # write ledger/receipts/<fund-day>-<label>.json with a breach check
@@ -25,7 +26,7 @@ import sys
 
 import judge
 
-from . import battery, calibration, catalyst, clock, config, jevcheck, killswitch, preview, putbook, receipt, risk, shadow, spreadbook
+from . import battery, calibration, catalyst, clock, config, jevcheck, killswitch, preview, putbook, receipt, risk, shadow, spreadbook, trendbook
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
@@ -36,6 +37,7 @@ BARS, SHADOW_DIR, QUOTES = DIR / "bars.json", DIR / "shadow", DIR / "quotes.json
 PUTBOOK = DIR / "putbook.json"
 SPREADBOOK = DIR / "spreadbook.json"
 KILL = DIR / "kill.json"
+TRENDBOOK = DIR / "trendbook.json"
 
 
 def log(kind, **data):
@@ -246,6 +248,45 @@ def cmd_kill(a, cfg):
     print(json.dumps({k: ks[k] for k in ("armed", "reason", "since", "by")}, indent=2))
 
 
+def cmd_trendbook(a, cfg):
+    st = trendbook.load(TRENDBOOK)
+    if a.action == "status":
+        print(json.dumps(trendbook.summary(st), indent=2))
+        return
+    if not a.file:
+        sys.exit(f"trendbook {a.action} needs FILE")
+    data = json.loads(pathlib.Path(a.file).read_text(encoding="utf-8"))
+    if a.action == "bars":
+        out = trendbook.ingest(st, data)
+        trendbook.save(st, TRENDBOOK)
+        print(json.dumps(out, indent=2))
+        return
+    client = judge.from_env()
+    live = getattr(client, "live", False)
+    spec = {"asset_to_etf": {k: v[1] for k, v in trendbook.ASSETS.items()}, "rule": "buy up to target_weight x nav"}
+    headlines = data.get("headlines", {})
+
+    def jev(asset, order):  # veto-only on buys; sells, stops and kills never reach it
+        try:
+            v = battery.trend_verdict(battery.assess_trend(client, asset, order, headlines.get(asset, []), spec))
+            return {**v, "mode": "live" if live else "stub"}
+        except Exception as e:
+            return {"veto": ("unavailable", f"{type(e).__name__}: {e}"[:200]), "answers": {}, "mode": "error"}
+
+    ks = killswitch.load(KILL)
+    today = date.fromisoformat(load_bars()["SPY"]["last"])
+    quotes = {k: v for k, v in data.items() if k != "headlines"}
+    out = trendbook.apply(st, quotes, today, judge_fn=jev, kill=ks["reason"] if ks["armed"] else None)
+    trendbook.save(st, TRENDBOOK)
+    for e in out.get("events", []):
+        log("trend_trade", **{k: v for k, v in e.items() if k != "kind"})
+    if out.get("kill") and killswitch.arm(ks, out["kill"], by="trendbook"):
+        killswitch.save(ks, KILL)
+        log("kill_armed", reason=ks["reason"], by="trendbook")
+    print(json.dumps({**out, "summary": trendbook.summary(st, quotes),
+                      "kill_switch": {k: ks[k] for k in ("armed", "reason")}}, indent=2))
+
+
 def cmd_calibration(a, cfg):
     print(json.dumps(calibration.report(putbook.load(PUTBOOK), spreadbook.load(SPREADBOOK)), indent=2))
 
@@ -268,6 +309,8 @@ def cmd_receipt(a, cfg):
               "jev_escalations": [{"book": n, "symbol": s, "questions": p["jev_escalate"]}
                                   for n, b in (("putbook", pb), ("spreadbook", sb))
                                   for s, p in b["positions"].items() if p.get("jev_escalate")]}
+    if TRENDBOOK.exists():
+        sh = {**(sh or {}), "trendbook": trendbook.summary(trendbook.load(TRENDBOOK))}
     r = receipt.build(L, cfg, events, clock.now(), a.label, shadow=sh)
     ks = killswitch.load(KILL)
     if not r["clean"] and killswitch.arm(ks, f"receipt breach {r['fund_day']}: {r['breaches']}", by="receipt"):
@@ -339,13 +382,14 @@ def main(argv=None):
     p = sub.add_parser("putbook"); p.add_argument("action", choices=["plan", "apply"]); p.add_argument("file", nargs="?")
     sub.add_parser("jevcheck")
     sub.add_parser("calibration")
+    p = sub.add_parser("trendbook"); p.add_argument("action", choices=["bars", "apply", "status"]); p.add_argument("file", nargs="?")
     p = sub.add_parser("kill"); p.add_argument("action", choices=["status", "arm", "disarm"]); p.add_argument("arg", nargs="?")
     p = sub.add_parser("receipt"); p.add_argument("--label", default="session")
     sub.add_parser("sync-board")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
-     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "quotes": cmd_quotes, "putbook": cmd_putbook, "jevcheck": cmd_jevcheck, "kill": cmd_kill, "calibration": cmd_calibration, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
+     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "quotes": cmd_quotes, "putbook": cmd_putbook, "jevcheck": cmd_jevcheck, "kill": cmd_kill, "calibration": cmd_calibration, "trendbook": cmd_trendbook, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":

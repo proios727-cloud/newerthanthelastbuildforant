@@ -93,3 +93,49 @@ def verdict(answers, live):
     escalate = [q for q, a in answers.items()
                 if live and a.live and q != "material" and a.probability is not None and a.probability < ESCALATE_BELOW]
     return {"veto": veto, "answers": probs, "escalate": escalate}
+
+
+# ---- crypto trend book (fund/trendbook.py): buys only; sells, stops and kills never go to JEV ----
+DATA_ERROR = judge.Question(
+    "data_error", "noul",
+    "Look at the signal packet in `order` (moving averages, realized volatility, last close, bar date, ETF bid "
+    "and ask). Is there a data problem: a stale bar, a zero or crossed quote, a price that does not fit the "
+    "other numbers, or a sign the ETF is halted?")
+EVENT = judge.Question(
+    "event", "choice",
+    "Using only `headlines` about `asset`, what known event risk sits in the next five trading days?",
+    {"none": "Nothing scheduled or breaking that matters for this asset.",
+     "macro_scheduled": "A scheduled macro release such as FOMC or CPI.",
+     "crypto_structural": "An exchange hack or failure, a stablecoin depeg, or regulatory action against crypto ETFs or venues.",
+     "unknown": "The headlines are not enough to tell."})
+ORDER_MISTAKE = judge.Question(
+    "order_mistake", "noul",
+    "Compare the order in `order` with the rule in `spec`. Is the order mechanically wrong: the wrong ETF for "
+    "the asset, the wrong side, or a size that does not match target weight times NAV?")
+TREND_QUESTIONS = (DATA_ERROR, EVENT, ORDER_MISTAKE)
+TREND_VETO = (("data_error", "data_error", 0.35), ("event", "crypto_structural", 0.50),
+              ("order_mistake", "order_mistake", 0.20))
+
+
+def trend_bad_p(qid, a):
+    if a is None:
+        return None
+    if qid == "event":
+        return (a.distribution or {}).get("crypto_structural")
+    return a.probability
+
+
+def assess_trend(client, asset, order, headlines=(), spec=None):
+    st = {"asset": asset, "order": order, "spec": spec or {},
+          "headlines": [h for h in (clean(x) for x in list(headlines)[:20]) if h]}
+    return judge.ask(client, st, TREND_QUESTIONS)
+
+
+def trend_verdict(answers):
+    probs = {q: (round(p, 4) if (p := trend_bad_p(q, a)) is not None else None) for q, a in (answers or {}).items()}
+    veto = None
+    for q, rule, th in TREND_VETO:
+        a, p = (answers or {}).get(q), probs.get(q)
+        if veto is None and a is not None and a.live and p is not None and p >= th:
+            veto = (rule, f"{q} bad p={p:.2f} >= {th}")
+    return {"veto": veto, "answers": probs}

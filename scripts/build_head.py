@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from fund import __main__ as cli, calibration, config, jevcheck, killswitch, putbook, spreadbook  # noqa: E402
+from fund import __main__ as cli, calibration, config, jevcheck, killswitch, putbook, spreadbook, trendbook  # noqa: E402
 
 CONFIG = {
     "repo_url": "https://github.com/proios727-cloud/newerthanthelastbuildforant",
@@ -72,6 +72,7 @@ def snapshot():
         "jev_mode": "live" if getattr(judge.from_env(), "live", False) else "stub (no TypeSafe key; never vetoes)",
         "real": real, "shadow": shadow,
         "putbook": putbook.summary(st), "spreadbook": spreadbook.summary(sp),
+        "trendbook": trendbook.summary(trendbook.load(cli.TRENDBOOK)),
         "jevcheck": jevcheck.evaluate(st, sp),
         "jev_calibration": calibration.report(st, sp),
         "kill_switch": {k: v for k, v in killswitch.load(cli.KILL).items() if k != "history"},
