@@ -163,6 +163,33 @@ A receipt with `"clean": false` stops the clock, and the routine reports it.
 - Daily closes only
 - No spread model beyond the slippage runs
 
+## O2 single-leg options lab (2026-09-29)
+
+`python backtest/options_lab.py && python backtest/options_report.py` backtests long calls, long puts and cash-secured short puts on the eight equity symbols, triggered by the shadow signals. It writes `backtest/options_results.json` and `backtest/O2_report.html`.
+
+**How it's built:**
+- **Signals are causal:** a signal at close t−1 trades at close t.
+- **Walk-forward:** parameters are chosen on a 120-day train window and traded on the next 40-day test window.
+- **Costs:** every trade pays half the bid/ask as a percentage of premium: 1% for ETFs and 2% for single names, fitted to live Robinhood quotes.
+
+**Pricing** (no free historical chains exist for this universe):
+- SPY implied vol = 0.85 × VIX.
+- Other symbols = their 20-day realized vol × the market's implied/realized ratio that day.
+- A put skew is added on top.
+
+Checked against live quotes at the 2026-09-28 close: SPY at-the-money and the 730 put match exactly, and NVDA comes out about 9% rich.
+
+| Out of sample 2026-04-24 → 09-28 | Return | Max DD | Trades | Verdict |
+|---|---|---|---|---|
+| Stock shadow book (equities) | +2.92% | 3.40% | | baseline |
+| Long calls on signals | +1.06% | 17.99% | 153 | KILL (−3.8% to +14.7% depending on the pricing assumption) |
+| + long puts on bearish signals | −6.16% | 22.33% | 149 | KILL |
+| **Short 30-delta puts on signals** | **+2.99%** | **1.06%** | 92 | MARGINAL (positive at 2× costs and at IV ±15%) |
+| Short puts + VRP gate | +2.34% | 0.84% | 73 | keep as a risk overlay |
+| SPY buy-and-hold | +7.24% | 4.49% | | |
+
+**Verdict: ITERATE.** Short puts on bullish signals are the only structure that survives, with low drawdown but no return edge over holding SPY. The out-of-sample window is five months of a mostly rising market. The next step is a short-put shadow book on live Robinhood chains, still without real orders.
+
 ## Next up
 
 1. **Event calendar:** the Macro seat supplies upcoming releases so Risk can apply the blackout to shadow entries too (`Shadow.step(..., events=[...])`).

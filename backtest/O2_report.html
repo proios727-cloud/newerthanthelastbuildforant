@@ -1,0 +1,169 @@
+<title>O2 Single-Leg Options Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: verdict first, then tiles, equity chart, ladder, robustness, calibration, then the rules and what's not modeled. */
+:root{--bg:#f7f8fa;--surface:#fff;--line:#e3e6ec;--grid:#eceef2;--fg:#12151b;--fg2:#4b5261;--muted:#7a8191;
+--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#8a8f99;
+--good:#1f7a3f;--good-bg:#e5f4ea;--warn:#8a5a00;--warn-bg:#fdf1d8;--bad:#b3261e;--bad-bg:#fbe6e4;--idle:#5a6272;--idle-bg:#eef0f4;
+--sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111318;--surface:#181b21;--line:#2a2f38;--grid:#23272f;--fg:#f2f4f7;--fg2:#b8bfcc;--muted:#8a92a1;
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#9aa0aa;--good:#6fd08f;--good-bg:#173323;--warn:#f0c060;--warn-bg:#3a2e12;--bad:#f08a82;--bad-bg:#3d1d1a;--idle:#aab2c0;--idle-bg:#232830;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111318;--surface:#181b21;--line:#2a2f38;--grid:#23272f;--fg:#f2f4f7;--fg2:#b8bfcc;--muted:#8a92a1;
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#9aa0aa;--good:#6fd08f;--good-bg:#173323;--warn:#f0c060;--warn-bg:#3a2e12;--bad:#f08a82;--bad-bg:#3d1d1a;--idle:#aab2c0;--idle-bg:#232830;color-scheme:dark}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);padding-inline:16px;padding-block:28px 56px}
+.wrap{max-width:980px;margin:0 auto;display:grid;gap:26px}h1,h2{margin:0;text-wrap:balance}h1{font-size:1.85rem}h2{font-size:1.12rem}
+.eyebrow{font:500 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+p{margin:0;max-width:70ch;color:var(--fg2)}.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+section,header{display:grid;gap:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font:500 .76rem/1.3 var(--sans);background:var(--idle-bg);color:var(--idle);white-space:nowrap}
+.chip.good{background:var(--good-bg);color:var(--good)}.chip.warn{background:var(--warn-bg);color:var(--warn)}.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.verdict{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:10px;padding:16px 18px;display:grid;gap:8px}
+.verdict ul{margin:0;padding-left:18px;color:var(--fg2);display:grid;gap:4px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:2px}
+.kpi .v{font:500 1.3rem/1.2 var(--mono)}.kpi .l{font-size:.8rem;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:12px;min-width:0}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.84rem;color:var(--fg2)}.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:3px;border-radius:2px;display:inline-block}
+.chart{position:relative}.chart svg{display:block;width:100%;height:auto}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:12px/1.5 var(--mono);box-shadow:0 4px 14px rgb(0 0 0/.12);white-space:nowrap}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:top}
+th:first-child,td:first-child{text-align:left}th{font:500 .7rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td{font-family:var(--mono);font-variant-numeric:tabular-nums}td:first-child{font-family:var(--sans)}
+.pos{color:var(--good)}.neg{color:var(--bad)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.bars{display:grid;gap:6px}.bar{display:grid;grid-template-columns:70px 1fr 70px;gap:10px;align-items:center;font-size:.84rem}
+.track{height:8px;background:var(--grid);border-radius:4px;overflow:hidden;display:block}.fill{display:block;height:100%;background:var(--s1);border-radius:0 4px 4px 0}
+.neg-fill{background:var(--bad)}.val{text-align:right}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:4px}
+.rule b{font-size:.78rem;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}summary{cursor:pointer;font-weight:600}
+ul.plain{margin:0;padding-left:18px;color:var(--fg2);display:grid;gap:4px}.foot{font-size:.8rem;color:var(--muted)}
+</style>
+<div class="wrap">
+<header>
+  <div class="eyebrow">O2 · research module · single-leg options on the desk universe</div>
+  <h1>O2 Single-Leg Options Lab</h1>
+  <p>Long calls, long puts and cash-secured short puts on SPY, QQQ, IWM, NVDA, AMD, AAPL, MSFT and TSLA, triggered by the shadow-book signals. Parameters are picked walk-forward (120-day train, 40-day test) and every trade pays modeled bid/ask costs. Out-of-sample window: 2026-04-24 → 2026-09-28.</p>
+</header>
+
+<div class="verdict">
+  <strong>Verdict: ITERATE. Selling puts on signals is the only structure that survives, and only just.</strong>
+  <ul>
+    <li><b>Short puts on bullish signals:</b> +2.99% out of sample (+7.08% a year), max drawdown 1.06%, 92 trades, 71% wins, profit factor 2.38. It stayed positive at double costs and at ±15% option prices.</li>
+    <li><b>Buying calls on the same signals:</b> +1.06% with a 17.99% drawdown. The result flips between −3.8% and +14.7% depending on how option prices are modeled, so there's no reliable edge.</li>
+    <li><b>Adding long puts on bearish signals:</b> -6.16%. It lost in every variant tested. Kill.</li>
+    <li><b>SPY buy-and-hold made +7.24% in the same window.</b> Short puts had a far smaller drawdown but didn't beat it on raw return. The test covers five months and one mostly rising market, with option prices modeled rather than recorded.</li>
+  </ul>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><span class="l">Short puts, annualized</span><span class="v">+7.08%</span><span class="l">max DD 1.06%</span></div>
+  <div class="kpi"><span class="l">Long calls, out of sample</span><span class="v">+1.06%</span><span class="l">max DD 17.99%</span></div>
+  <div class="kpi"><span class="l">Calls + puts, out of sample</span><span class="v">-6.16%</span><span class="l">worst structure</span></div>
+  <div class="kpi"><span class="l">SPY buy-and-hold</span><span class="v">+7.24%</span><span class="l">same window</span></div>
+</div>
+
+<section>
+  <div class="eyebrow">Out-of-sample equity, $100k start</div>
+  <div class="panel">
+    <div class="legend" id="lg"></div>
+    <div class="chart" id="chart"><div class="tip" id="tip" hidden></div></div>
+    <p class="foot">Each walk-forward window starts where the previous one ended, with positions closed at the boundary (costed). Hover or tap for daily values.</p>
+  </div>
+</section>
+
+<section>
+  <div><div class="eyebrow">Upgrade ladder · same out-of-sample window</div><h2>What each step adds</h2></div>
+  <div class="panel tbl"><table>
+    <thead><tr><th>Step</th><th>Return</th><th>CAGR</th><th>Max DD</th><th>MAR</th><th>Trades</th><th>Win</th><th>PF</th><th>Verdict</th></tr></thead>
+    <tbody><tr><td>L0 stock shadow (equities)</td><td class='pos'>+2.92%</td><td>+6.87%</td><td>3.40%</td><td>2.02</td><td>–</td><td>–</td><td>–</td><td><span class="chip idle">Baseline</span></td></tr><tr><td>L1 long calls on signals</td><td class='pos'>+1.06%</td><td>+2.48%</td><td>17.99%</td><td>0.14</td><td>153</td><td>35%</td><td>1.02</td><td><span class="chip bad">Kill</span></td></tr><tr><td>L2 + long puts on bearish</td><td class='neg'>-6.16%</td><td>-13.73%</td><td>22.33%</td><td>-0.61</td><td>149</td><td>33%</td><td>0.87</td><td><span class="chip bad">Kill</span></td></tr><tr><td>L3 short puts on signals</td><td class='pos'>+2.99%</td><td>+7.08%</td><td>1.06%</td><td>3.54</td><td>92</td><td>71%</td><td>2.38</td><td><span class="chip warn">Marginal</span></td></tr><tr><td>L4 short puts + VRP gate</td><td class='pos'>+2.34%</td><td>+5.54%</td><td>0.84%</td><td>2.77</td><td>73</td><td>82%</td><td>2.38</td><td><span class="chip warn">Kill as return, keep as overlay</span></td></tr></tbody>
+    <tbody><tr><td>Always-on SPY long ATM call</td><td class='neg'>-1.03%</td><td>-2.37%</td><td>2.82%</td><td>-0.84</td><td>7</td><td>29%</td><td>0.55</td><td></td></tr><tr><td>Always-on SPY short 30-delta put</td><td class='pos'>+0.21%</td><td>+0.50%</td><td>0.06%</td><td>0.25</td><td>7</td><td>86%</td><td>19.31</td><td></td></tr><tr><td>SPY buy-and-hold</td><td class='pos'>+7.24%</td><td>+17.64%</td><td>4.49%</td><td>3.92</td><td>–</td><td>–</td><td>–</td><td></td></tr></tbody>
+  </table></div>
+  <p class="foot">KEEP means CAGR is more than 0.5%/yr above the prior step without adding more than 1% drawdown. Short puts beat the stock shadow book by only 0.2%/yr but with a third of the drawdown, so they're rated Marginal. The VRP gate (sell only when implied vol is above realized) cut returns but also cut drawdown, so keep it as a risk overlay.</p>
+</section>
+
+<section class="grid2">
+  <div class="panel tbl">
+    <div class="eyebrow">Robustness · out-of-sample return</div>
+    <table><thead><tr><th>Change</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th></tr></thead><tbody><tr><td>costs x2</td><td class='neg'>-3.82%</td><td class='neg'>-10.39%</td><td class='pos'>+2.61%</td><td class='pos'>+2.07%</td></tr><tr><td>IV x0.85</td><td class='pos'>+14.66%</td><td class='neg'>-0.86%</td><td class='pos'>+1.93%</td><td class='pos'>+1.50%</td></tr><tr><td>IV x1.15</td><td class='neg'>-1.71%</td><td class='neg'>-11.52%</td><td class='pos'>+2.70%</td><td class='pos'>+4.00%</td></tr><tr><td>train 80d</td><td class='pos'>+12.70%</td><td class='neg'>-3.46%</td><td class='pos'>+3.62%</td><td class='pos'>+2.48%</td></tr></tbody></table>
+    <p class="foot">Columns in order: long calls, calls + puts, short puts, short puts with the gate.</p>
+  </div>
+  <div class="panel">
+    <div class="eyebrow">Short puts, monthly</div>
+    <div class="bars"><div class='bar'><span>2026-04</span><span class='track'><span class='fill neg-fill' style='width:19%'></span></span><span class='val num'>-0.29%</span></div><div class='bar'><span>2026-05</span><span class='track'><span class='fill ' style='width:100%'></span></span><span class='val num'>+1.51%</span></div><div class='bar'><span>2026-06</span><span class='track'><span class='fill neg-fill' style='width:11%'></span></span><span class='val num'>-0.17%</span></div><div class='bar'><span>2026-07</span><span class='track'><span class='fill neg-fill' style='width:2%'></span></span><span class='val num'>-0.03%</span></div><div class='bar'><span>2026-08</span><span class='track'><span class='fill ' style='width:57%'></span></span><span class='val num'>+0.86%</span></div><div class='bar'><span>2026-09</span><span class='track'><span class='fill ' style='width:72%'></span></span><span class='val num'>+1.08%</span></div></div>
+  </div>
+</section>
+
+<section class="grid2">
+  <div class="panel tbl">
+    <div class="eyebrow">Pricing calibration · live Robinhood, 2026-09-28 close</div>
+    <table><thead><tr><th>Contract</th><th>Model IV</th><th>Live IV</th><th>Diff</th></tr></thead><tbody><tr><td>SPY 30d at-the-money</td><td>13.7%</td><td>13.7%</td><td>-0%</td></tr><tr><td>SPY 730 put (4.6% OTM)</td><td>17.7%</td><td>17.7%</td><td>+0%</td></tr><tr><td>NVDA 30d at-the-money</td><td>34.6%</td><td>31.6%</td><td>+10%</td></tr><tr><td>NVDA 210 put (8% OTM)</td><td>37.5%</td><td>34.6%</td><td>+8%</td></tr></tbody></table>
+    <p class="foot">SPY prices match. Single names come out about 9% rich, which flatters selling premium and penalizes buying it. The IV ×0.85 row above shows the result with cheaper options.</p>
+  </div>
+  <div class="panel tbl">
+    <div class="eyebrow">Ablation · median in-sample return by ingredient</div>
+    <table><tbody><tr><td>Long calls</td><td style='text-align:left;white-space:normal'>delta 0.3: <b>+2.21%</b> · delta 0.5: <b>-0.99%</b></td></tr><tr><td>Long calls</td><td style='text-align:left;white-space:normal'>tp 0.5: <b>+0.97%</b> · tp 1.0: <b>-2.08%</b></td></tr><tr><td>Long calls</td><td style='text-align:left;white-space:normal'>hold 5: <b>+0.97%</b> · hold 10: <b>-1.91%</b></td></tr><tr><td>Long calls + puts</td><td style='text-align:left;white-space:normal'>delta 0.3: <b>-24.15%</b> · delta 0.5: <b>-15.46%</b></td></tr><tr><td>Long calls + puts</td><td style='text-align:left;white-space:normal'>tp 0.5: <b>-19.35%</b> · tp 1.0: <b>-20.99%</b></td></tr><tr><td>Long calls + puts</td><td style='text-align:left;white-space:normal'>hold 5: <b>-19.73%</b> · hold 10: <b>-20.66%</b></td></tr><tr><td>Short puts</td><td style='text-align:left;white-space:normal'>delta 0.2: <b>+1.29%</b> · delta 0.3: <b>+2.60%</b></td></tr><tr><td>Short puts</td><td style='text-align:left;white-space:normal'>stop 1.0: <b>+1.49%</b> · stop 2.0: <b>+2.39%</b></td></tr></tbody></table>
+    <p class="foot">Which choices help, across the whole grid. For short puts, 30-delta strikes and a 3× stop beat 20-delta strikes and a 2× stop.</p>
+  </div>
+</section>
+
+<section>
+  <div class="panel tbl">
+    <div class="eyebrow">Stress · worst drawdown inside each window</div>
+    <table><tbody><tr><td>Mar-2026 selloff, in-sample best params</td><td style='text-align:left;white-space:normal'>long_call: <b>-1.76%</b> · long_both: <b>-4.74%</b> · short_put: <b>-0.22%</b></td></tr><tr><td>Jun-2026 drop (VIX 22)</td><td style='text-align:left;white-space:normal'>L0 stock shadow (equities): <b>-0.95%</b> · L1 long calls on signals: <b>-5.30%</b> · L2 + long puts on bearish: <b>-7.84%</b> · L3 short puts on signals: <b>-0.72%</b> · L4 short puts + VRP gate: <b>-0.53%</b> · Always-on SPY long ATM call: <b>-0.94%</b> · Always-on SPY short 30-delta put: <b>-0.06%</b> · SPY buy-and-hold: <b>-3.42%</b></td></tr><tr><td>Jul-2026 tech slide</td><td style='text-align:left;white-space:normal'>L0 stock shadow (equities): <b>-0.74%</b> · L1 long calls on signals: <b>-5.03%</b> · L2 + long puts on bearish: <b>-4.27%</b> · L3 short puts on signals: <b>-0.79%</b> · L4 short puts + VRP gate: <b>-0.84%</b> · Always-on SPY long ATM call: <b>-0.58%</b> · Always-on SPY short 30-delta put: <b>-0.04%</b> · SPY buy-and-hold: <b>-2.52%</b></td></tr></tbody></table>
+    <p class="foot">March 2026 (VIX 31) falls before the out-of-sample window, so it's tested with each structure's best in-sample parameters.</p>
+  </div>
+</section>
+
+<section>
+  <div><div class="eyebrow">The surviving strategy</div><h2>How the short-put rule trades</h2></div>
+  <div class="rules">
+    <div class="rule"><b>Trigger</b>A bullish shadow signal (momentum, breakout or mean reversion) at yesterday's close. One position per symbol.</div>
+    <div class="rule"><b>Contract</b>Sell a 30-delta put, about 30 days to expiry, at today's close. Cash-secured.</div>
+    <div class="rule"><b>Size</b>Strike × 100 up to 5% of NAV per position. Total secured notional capped at 100% of NAV.</div>
+    <div class="rule"><b>Exit</b>Buy back at 50% of the credit, or when the put reaches 3× the credit (walk-forward picked 2–3×), or after 15 sessions or at 7 days left.</div>
+    <div class="rule"><b>Overlay</b>Optional VRP gate: sell only when SPY implied vol is above its 20-day realized vol.</div>
+    <div class="rule"><b>Status</b>Research only. The next step is a shadow book on live chains with no real orders.</div>
+  </div>
+</section>
+
+<details><summary>Walk-forward parameter picks</summary><div class="tbl"><table>
+  <thead><tr><th>Strategy</th><th>Test window</th><th>Delta</th><th>TP</th><th>Stop</th><th>Hold</th></tr></thead><tbody><tr><td>L1 long calls on signals</td><td>2026-04-24 → 2026-06-23</td><td>0.3</td><td>1.0</td><td>0.5</td><td>5</td></tr><tr><td>L1 long calls on signals</td><td>2026-06-23 → 2026-08-19</td><td>0.3</td><td>1.0</td><td>0.5</td><td>5</td></tr><tr><td>L1 long calls on signals</td><td>2026-08-19 → 2026-09-28</td><td>0.3</td><td>0.5</td><td>0.5</td><td>5</td></tr><tr><td>L2 + long puts on bearish</td><td>2026-04-24 → 2026-06-23</td><td>0.3</td><td>1.0</td><td>0.5</td><td>10</td></tr><tr><td>L2 + long puts on bearish</td><td>2026-06-23 → 2026-08-19</td><td>0.5</td><td>1.0</td><td>0.5</td><td>5</td></tr><tr><td>L2 + long puts on bearish</td><td>2026-08-19 → 2026-09-28</td><td>0.5</td><td>0.5</td><td>0.5</td><td>10</td></tr><tr><td>L3 short puts on signals</td><td>2026-04-24 → 2026-06-23</td><td>0.3</td><td>0.5</td><td>1.0</td><td>15</td></tr><tr><td>L3 short puts on signals</td><td>2026-06-23 → 2026-08-19</td><td>0.3</td><td>0.5</td><td>2.0</td><td>15</td></tr><tr><td>L3 short puts on signals</td><td>2026-08-19 → 2026-09-28</td><td>0.3</td><td>0.5</td><td>2.0</td><td>15</td></tr><tr><td>L4 short puts + VRP gate</td><td>2026-04-24 → 2026-06-23</td><td>0.2</td><td>0.5</td><td>2.0</td><td>15</td></tr><tr><td>L4 short puts + VRP gate</td><td>2026-06-23 → 2026-08-19</td><td>0.3</td><td>0.5</td><td>2.0</td><td>15</td></tr><tr><td>L4 short puts + VRP gate</td><td>2026-08-19 → 2026-09-28</td><td>0.3</td><td>0.5</td><td>2.0</td><td>15</td></tr></tbody></table></div></details>
+
+<section>
+  <div class="eyebrow">Not modeled</div>
+  <ul class="plain">
+    <li>Real historical option chains. Prices come from a volatility model, which matches live SPY quotes and runs about 9% rich on single names.</li>
+    <li>Overnight gaps inside a day, early assignment, dividends and earnings-day IV crush. Stops fill at the close.</li>
+    <li>Interest on cash and on put collateral. Idle cash earns 0 here; T-bills would add to short-put returns.</li>
+    <li>Any sample longer than 14 months. The out-of-sample window is five months of mostly rising prices with no crash; March 2026 is in-sample only.</li>
+    <li>Short calls and multi-leg spreads. These were out of scope for single-leg research.</li>
+  </ul>
+</section>
+<p class="foot">Built from backtest/options_lab.py, which reuses the desk's signals and the options/ Black-Scholes pricer. Data: TradingView daily closes and VIX, plus live Robinhood option quotes for calibration. Research only; not investment advice.</p>
+</div>
+<script>
+const D={"series":["L3 short puts on signals","L1 long calls on signals","L0 stock shadow (equities)","SPY buy-and-hold"],"curves":{"L3 short puts on signals":[["2026-04-24",100000.0],["2026-04-27",99990.09],["2026-04-28",99922.35],["2026-04-29",99718.65],["2026-04-30",99711.86],["2026-05-01",99782.98],["2026-05-04",99667.69],["2026-05-05",99813.6],["2026-05-06",99815.59],["2026-05-07",99873.19],["2026-05-08",99982.26],["2026-05-11",100023.84],["2026-05-12",99964.28],["2026-05-13",100143.74],["2026-05-14",100293.19],["2026-05-15",100004.34],["2026-05-18",100043.43],["2026-05-19",99963.35],["2026-05-20",100358.96],["2026-05-21",100479.35],["2026-05-22",100658.77],["2026-05-26",100908.91],["2026-05-27",100964.37],["2026-05-28",101177.08],["2026-05-29",101220.05],["2026-06-01",101166.48],["2026-06-02",101201.35],["2026-06-03",101107.9],["2026-06-04",101172.33],["2026-06-05",100322.04],["2026-06-08",100853.49],["2026-06-09",100538.9],["2026-06-10",100148.56],["2026-06-11",100811.12],["2026-06-12",101021.29],["2026-06-15",101447.06],["2026-06-16",101216.45],["2026-06-17",100970.27],["2026-06-18",101311.69],["2026-06-22",101226.27],["2026-06-23",100855.14],["2026-06-24",100846.04],["2026-06-25",100714.49],["2026-06-26",100730.22],["2026-06-29",100913.9],["2026-06-30",101048.68],["2026-07-01",100905.82],["2026-07-02",100816.81],["2026-07-06",101085.4],["2026-07-07",100861.51],["2026-07-08",100854.21],["2026-07-09",101115.77],["2026-07-10",101165.62],["2026-07-13",100986.28],["2026-07-14",101106.78],["2026-07-15",101072.8],["2026-07-16",100903.67],["2026-07-17",100664.23],["2026-07-20",100799.36],["2026-07-21",101232.32],["2026-07-22",101199.67],["2026-07-23",101033.23],["2026-07-24",101098.5],["2026-07-27",100995.76],["2026-07-28",100688.06],["2026-07-29",100437.35],["2026-07-30",101121.49],["2026-07-31",101019.76],["2026-08-03",101264.96],["2026-08-04",101526.7],["2026-08-05",101427.75],["2026-08-06",101555.49],["2026-08-07",101631.54],["2026-08-10",101504.87],["2026-08-11",101544.34],["2026-08-12",101632.3],["2026-08-13",101728.25],["2026-08-14",101747.56],["2026-08-17",101690.47],["2026-08-18",101599.74],["2026-08-19",101652.48],["2026-08-20",101644.05],["2026-08-21",101710.79],["2026-08-24",101672.5],["2026-08-25",101779.91],["2026-08-26",101704.86],["2026-08-27",101946.99],["2026-08-28",101857.87],["2026-08-31",101889.46],["2026-09-01",101425.76],["2026-09-02",101658.85],["2026-09-03",101993.28],["2026-09-04",101810.17],["2026-09-08",101849.59],["2026-09-09",101790.25],["2026-09-10",101718.23],["2026-09-11",102068.75],["2026-09-14",101950.94],["2026-09-15",101970.92],["2026-09-16",101973.93],["2026-09-17",102509.24],["2026-09-18",102519.53],["2026-09-21",102918.29],["2026-09-22",103042.11],["2026-09-23",102945.73],["2026-09-24",102940.27],["2026-09-25",103138.59],["2026-09-28",102987.5]],"L1 long calls on signals":[["2026-04-24",100000.0],["2026-04-27",99909.61],["2026-04-28",98091.16],["2026-04-29",100051.61],["2026-04-30",100356.96],["2026-05-01",102758.75],["2026-05-04",101558.82],["2026-05-05",103143.6],["2026-05-06",113506.1],["2026-05-07",112440.38],["2026-05-08",116050.58],["2026-05-11",117905.1],["2026-05-12",116249.86],["2026-05-13",116976.2],["2026-05-14",117564.13],["2026-05-15",114576.85],["2026-05-18",112084.22],["2026-05-19",110410.42],["2026-05-20",113447.65],["2026-05-21",112809.45],["2026-05-22",113750.71],["2026-05-26",115673.27],["2026-05-27",114685.87],["2026-05-28",116513.14],["2026-05-29",118125.72],["2026-06-01",117989.03],["2026-06-02",119259.5],["2026-06-03",116734.77],["2026-06-04",116685.71],["2026-06-05",112487.12],["2026-06-08",110983.35],["2026-06-09",109661.08],["2026-06-10",107840.77],["2026-06-11",107858.22],["2026-06-12",107946.43],["2026-06-15",109978.78],["2026-06-16",107515.83],["2026-06-17",106724.01],["2026-06-18",108339.68],["2026-06-22",108593.57],["2026-06-23",106718.96],["2026-06-24",106643.96],["2026-06-25",106812.25],["2026-06-26",106527.82],["2026-06-29",106604.1],["2026-06-30",109251.78],["2026-07-01",107220.81],["2026-07-02",106322.53],["2026-07-06",107765.22],["2026-07-07",106178.06],["2026-07-08",106002.47],["2026-07-09",107340.48],["2026-07-10",107388.85],["2026-07-13",106177.11],["2026-07-14",106219.38],["2026-07-15",107373.04],["2026-07-16",106828.1],["2026-07-17",106583.73],["2026-07-20",105069.22],["2026-07-21",105569.83],["2026-07-22",105793.72],["2026-07-23",104202.69],["2026-07-24",103695.94],["2026-07-27",103696.95],["2026-07-28",104294.6],["2026-07-29",103087.78],["2026-07-30",102506.04],["2026-07-31",101219.76],["2026-08-03",101225.34],["2026-08-04",102922.94],["2026-08-05",102338.63],["2026-08-06",102011.88],["2026-08-07",102985.46],["2026-08-10",102199.04],["2026-08-11",101741.11],["2026-08-12",102031.51],["2026-08-13",103203.73],["2026-08-14",102979.68],["2026-08-17",101888.38],["2026-08-18",99949.68],["2026-08-19",99346.04],["2026-08-20",99276.19],["2026-08-21",99177.36],["2026-08-24",97803.73],["2026-08-25",98512.24],["2026-08-26",98366.17],["2026-08-27",102073.92],["2026-08-28",102005.92],["2026-08-31",103182.96],["2026-09-01",105749.08],["2026-09-02",104879.98],["2026-09-03",105564.22],["2026-09-04",104527.02],["2026-09-08",103777.48],["2026-09-09",103437.61],["2026-09-10",104316.91],["2026-09-11",103817.09],["2026-09-14",103132.78],["2026-09-15",102093.13],["2026-09-16",102082.35],["2026-09-17",101160.64],["2026-09-18",100846.01],["2026-09-21",103336.25],["2026-09-22",102959.51],["2026-09-23",102080.12],["2026-09-24",102064.03],["2026-09-25",102865.65],["2026-09-28",101060.4]],"L0 stock shadow (equities)":[["2026-04-23",100000.0],["2026-04-24",100998.76],["2026-04-27",101165.04],["2026-04-28",100883.01],["2026-04-29",100926.43],["2026-04-30",100980.76],["2026-05-01",101071.51],["2026-05-04",100665.27],["2026-05-05",100906.86],["2026-05-06",102452.69],["2026-05-07",102521.62],["2026-05-08",103602.33],["2026-05-11",103845.33],["2026-05-12",103489.04],["2026-05-13",103835.02],["2026-05-14",104237.75],["2026-05-15",103919.99],["2026-05-18",103620.49],["2026-05-19",103413.19],["2026-05-20",104352.53],["2026-05-21",104406.2],["2026-05-22",104770.88],["2026-05-26",104942.11],["2026-05-27",104883.67],["2026-05-28",105331.77],["2026-05-29",105509.4],["2026-06-01",105136.05],["2026-06-02",105318.34],["2026-06-03",104936.24],["2026-06-04",104868.23],["2026-06-05",103402.89],["2026-06-08",103328.0],["2026-06-09",102833.25],["2026-06-10",102433.5],["2026-06-11",103026.86],["2026-06-12",103254.28],["2026-06-15",103729.84],["2026-06-16",103622.42],["2026-06-17",103480.67],["2026-06-18",103969.98],["2026-06-22",104082.46],["2026-06-23",103505.38],["2026-06-24",103506.83],["2026-06-25",103287.5],["2026-06-26",103098.04],["2026-06-29",103451.6],["2026-06-30",103951.01],["2026-07-01",103485.85],["2026-07-02",102866.53],["2026-07-06",102999.51],["2026-07-07",102482.83],["2026-07-08",102492.31],["2026-07-09",102922.16],["2026-07-10",103022.09],["2026-07-13",102799.76],["2026-07-14",102833.23],["2026-07-15",102903.86],["2026-07-16",102592.22],["2026-07-17",102311.18],["2026-07-20",102343.38],["2026-07-21",102843.19],["2026-07-22",102816.78],["2026-07-23",102450.17],["2026-07-24",102449.77],["2026-07-27",102266.08],["2026-07-28",102324.25],["2026-07-29",102295.9],["2026-07-30",102295.9],["2026-07-31",102077.92],["2026-08-03",102393.99],["2026-08-04",102532.71],["2026-08-05",102442.82],["2026-08-06",102542.23],["2026-08-07",102737.7],["2026-08-10",102624.31],["2026-08-11",102602.0],["2026-08-12",102688.1],["2026-08-13",102803.83],["2026-08-14",102795.15],["2026-08-17",102744.95],["2026-08-18",102462.69],["2026-08-19",102475.03],["2026-08-20",102353.0],["2026-08-21",102391.47],["2026-08-24",101996.74],["2026-08-25",102186.91],["2026-08-26",102093.99],["2026-08-27",102773.19],["2026-08-28",102420.88],["2026-08-31",102315.19],["2026-09-01",102058.51],["2026-09-02",102259.54],["2026-09-03",102896.15],["2026-09-04",102396.45],["2026-09-08",102390.12],["2026-09-09",102353.04],["2026-09-10",102185.59],["2026-09-11",102496.43],["2026-09-14",101992.71],["2026-09-15",101920.04],["2026-09-16",101943.55],["2026-09-17",102126.08],["2026-09-18",102305.0],["2026-09-21",103339.44],["2026-09-22",103398.84],["2026-09-23",103220.34],["2026-09-24",103238.09],["2026-09-25",103290.1],["2026-09-28",102916.21]],"SPY buy-and-hold":[["2026-04-24",100000.0],["2026-04-27",100172.28],["2026-04-28",99684.85],["2026-04-29",99669.44],["2026-04-30",100661.12],["2026-05-01",100939.85],["2026-05-04",100570.08],["2026-05-05",101376.87],["2026-05-06",102785.95],["2026-05-07",102470.8],["2026-05-08",103316.81],["2026-05-11",103552.12],["2026-05-12",103395.24],["2026-05-13",103973.72],["2026-05-14",104794.52],["2026-05-15",103533.91],["2026-05-18",103461.08],["2026-05-19",102771.94],["2026-05-20",103825.25],["2026-05-21",104031.15],["2026-05-22",104440.15],["2026-05-26",105133.48],["2026-05-27",105115.28],["2026-05-28",105695.16],["2026-05-29",105958.48],["2026-06-01",106247.02],["2026-06-02",106391.29],["2026-06-03",105644.73],["2026-06-04",106043.93],["2026-06-05",103307.0],["2026-06-08",103540.91],["2026-06-09",103236.97],["2026-06-10",101609.38],["2026-06-11",103336.41],["2026-06-12",103895.29],["2026-06-15",105727.37],["2026-06-16",105097.07],["2026-06-17",103784.63],["2026-06-18",104594.22],["2026-06-22",104265.06],["2026-06-23",102750.93],["2026-06-24",102703.31],["2026-06-25",102851.78],["2026-06-26",102108.02],["2026-06-29",103790.23],["2026-06-30",104598.43],["2026-07-01",104456.96],["2026-07-02",104319.69],["2026-07-06",105230.13],["2026-07-07",104730.09],["2026-07-08",104406.53],["2026-07-09",105290.36],["2026-07-10",105744.18],["2026-07-13",104934.59],["2026-07-14",105307.17],["2026-07-15",105724.57],["2026-07-16",105151.69],["2026-07-17",104110.99],["2026-07-20",103942.91],["2026-07-21",104809.93],["2026-07-22",104688.07],["2026-07-23",103395.24],["2026-07-24",103500.29],["2026-07-27",103522.7],["2026-07-28",103770.62],["2026-07-29",102173.85],["2026-07-30",103886.88],["2026-07-31",104634.84],["2026-08-03",106125.16],["2026-08-04",108038.49],["2026-08-05",107822.79],["2026-08-06",107650.5],["2026-08-07",108308.82],["2026-08-10",108276.61],["2026-08-11",107930.64],["2026-08-12",108200.97],["2026-08-13",108955.93],["2026-08-14",108740.23],["2026-08-17",108226.18],["2026-08-18",107495.03],["2026-08-19",107720.54],["2026-08-20",106815.7],["2026-08-21",107252.71],["2026-08-24",106937.56],["2026-08-25",107279.32],["2026-08-26",107303.13],["2026-08-27",108006.28],["2026-08-28",107761.16],["2026-08-31",107439.0],["2026-09-01",106700.84],["2026-09-02",107174.27],["2026-09-03",108296.22],["2026-09-04",107878.81],["2026-09-08",107286.33],["2026-09-09",106787.69],["2026-09-10",106147.58],["2026-09-11",107052.41],["2026-09-14",106574.78],["2026-09-15",106085.95],["2026-09-16",105618.12],["2026-09-17",106815.7],["2026-09-18",106688.24],["2026-09-21",108342.44],["2026-09-22",108325.63],["2026-09-23",107545.45],["2026-09-24",107457.21],["2026-09-25",108041.29],["2026-09-28",107237.3]]}};const cols=["var(--s1)","var(--s2)","var(--s3)","var(--s4)"];
+document.getElementById("lg").innerHTML=D.series.map((s,i)=>`<span><i class="sw" style="background:${cols[i]}"></i>${s}</span>`).join("");
+(function(){const el=document.getElementById("chart"),tip=document.getElementById("tip");
+const base=D.curves[D.series[0]].map(p=>p[0]);const idx=D.series.map(s=>Object.fromEntries(D.curves[s]));
+const W=900,H=320,m={l:64,r:16,t:14,b:30};const vals=D.series.flatMap(s=>D.curves[s].map(p=>p[1]));
+const lo=Math.floor(Math.min(...vals)/2500)*2500,hi=Math.ceil(Math.max(...vals)/2500)*2500;
+const x=i=>m.l+i*(W-m.l-m.r)/(base.length-1),y=v=>m.t+(hi-v)*(H-m.t-m.b)/(hi-lo);
+const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.setAttribute("role","img");
+svg.setAttribute("aria-label","Out-of-sample equity curves for "+D.series.join(", "));let g="";
+for(let v=lo;v<=hi;v+=2500)g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${m.l-8}" y="${y(v)+4}" text-anchor="end" font-size="11" font-family="JetBrains Mono,monospace" fill="var(--muted)">$${(v/1000).toFixed(1)}k</text>`;
+let lm="";base.forEach((d,i)=>{if(d.slice(0,7)!==lm){lm=d.slice(0,7);g+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="11" font-family="JetBrains Mono,monospace" fill="var(--muted)">${new Date(d+"T12:00:00Z").toLocaleString("en-US",{month:"short",timeZone:"UTC"})}</text>`}});
+g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(100000)}" y2="${y(100000)}" stroke="var(--muted)" stroke-dasharray="3 4"/>`;
+D.series.slice().reverse().forEach((s,ri)=>{const k=D.series.length-1-ri;let d="",last=null;base.forEach((dt,i)=>{const v=idx[k][dt]??last;if(v==null)return;last=v;d+=(d?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)});g+=`<path d="${d}" fill="none" stroke="${cols[k]}" stroke-width="2" stroke-linejoin="round"/>`});
+g+=`<line id="xh" y1="${m.t}" y2="${H-m.b}" stroke="var(--muted)" visibility="hidden"/>`;svg.innerHTML=g;el.prepend(svg);
+const xh=svg.querySelector("#xh");const show=ev=>{const r=svg.getBoundingClientRect(),sx=(ev.clientX-r.left)*W/r.width;
+const i=Math.max(0,Math.min(base.length-1,Math.round((sx-m.l)*(base.length-1)/(W-m.l-m.r))));const dt=base[i];
+xh.setAttribute("x1",x(i));xh.setAttribute("x2",x(i));xh.setAttribute("visibility","visible");
+tip.innerHTML=dt+"<br>"+D.series.map((s,k)=>{const v=idx[k][dt];return v==null?"":`<span style="color:${cols[k]}">■</span> ${s.replace(/^L\d /,"")}: $${Math.round(v).toLocaleString("en-US")}`}).filter(Boolean).join("<br>");
+tip.hidden=false;const px=x(i)*r.width/W;tip.style.left=(px>r.width*.55?px-tip.offsetWidth-12:px+12)+"px";tip.style.top="8px"};
+svg.addEventListener("pointermove",show);svg.addEventListener("pointerdown",show);svg.addEventListener("pointerleave",()=>{tip.hidden=true;xh.setAttribute("visibility","hidden")});})();
+</script>
