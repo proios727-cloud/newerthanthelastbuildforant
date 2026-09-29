@@ -201,6 +201,11 @@ Checked against live quotes at the 2026-09-28 close: SPY at-the-money and the 73
 - **Whole contracts:** each position may secure up to 40% of NAV and all positions together up to 100%. On $100k, one SPY or QQQ put (about $72k) doesn't fit, and those skips are logged. Contracts wider than 10% of mid are skipped too.
 - **Model check:** every fill logs the live implied vol against the symbol's 20-day realized vol. That's the ratio the backtest's pricing depended on.
 
+**Final pass before every sale:** it runs after the contract is chosen and sized.
+- **Earnings gate:** no new put when the company reports before the planned exit (the earlier of 21 days and 7 days before expiry). An open put is bought back at the ask the session before a report.
+- **TypeSafe JEV:** the symbol's headlines go to `fund/catalyst.py`, and a live, confident "material headline risk" answer blocks the sale. Without `TYPESAFE_API_KEY`, `TYPESAFE_API_URL` and `TYPESAFE_LIVE=1`, plus `api.typesafe.ai` allowed in the network policy, JEV runs as a stub that never vetoes. `apply` reports which mode ran.
+- **Inputs:** the routine writes `events: {SYM: {earnings_date, headlines}}` into the quotes file (Robinhood earnings, TradingView news).
+
 **Concentration:** 40% of NAV per position breaks the stock desk's 5% position rule. A $100k book can't sell single-name puts in whole contracts any other way. Treat the book as a measurement tool, not a sizing template.
 
 Day 1 (2026-09-28):

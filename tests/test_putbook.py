@@ -76,3 +76,43 @@ class PutBookTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FinalPassTests(unittest.TestCase):
+    def q(self, **events):
+        return {"chains": {"AAPL": [row(325, -0.28, 4.55, 4.9)]}, "events": {"AAPL": events}}
+
+    def test_earnings_before_planned_exit_blocks(self):
+        st = putbook.new_state()
+        putbook.apply(st, BARS, self.q(earnings_date="2026-10-15"), D)
+        self.assertEqual(st["positions"], {})
+        self.assertEqual(st["log"][-1]["reason"], "earnings before planned exit")
+
+    def test_earnings_after_planned_exit_allows(self):
+        # 2026-09-28 entry: planned exit 2026-10-19 (21 days) < 2026-10-23 (7 days before expiry)
+        st = putbook.new_state()
+        putbook.apply(st, BARS, self.q(earnings_date="2026-10-29"), D)
+        self.assertIn("AAPL", st["positions"])
+
+    def test_open_put_closed_session_before_earnings(self):
+        st = putbook.new_state()
+        putbook.apply(st, BARS, {"chains": {"AAPL": [row(325, -0.28, 4.55, 4.9, iid="x")]}}, D)
+        putbook.apply(st, BARS, {"marks": {"x": {"bid": 4.0, "ask": 4.2}},
+                                 "events": {"AAPL": {"earnings_date": "2026-10-02"}}}, date(2026, 10, 1))
+        self.assertEqual(st["closed"][0]["why"], "earnings")
+
+    def test_jev_veto_blocks(self):
+        st = putbook.new_state()
+        putbook.apply(st, BARS, self.q(headlines=["AAPL halted"]), D,
+                      judge_fn=lambda s, h: ("news_catalyst", "material p=0.93"))
+        self.assertEqual(st["positions"], {})
+        self.assertEqual(st["log"][-1]["reason"], "jev news_catalyst")
+
+    def test_stub_jev_never_vetoes(self):
+        import judge
+        from fund import catalyst
+        client = judge.StubClient()
+        st = putbook.new_state()
+        putbook.apply(st, BARS, self.q(headlines=["AAPL beats estimates"]), D,
+                      judge_fn=lambda s, h: catalyst.veto(catalyst.assess(client, s, h)))
+        self.assertIn("AAPL", st["positions"])

@@ -10,6 +10,13 @@ What makes it more honest than the backtest:
   - every fill logs the live implied vol against the symbol's 20-day realized vol: the lab priced
     single names off RV20 x (VIX / SPY RV20), so this ratio is what tells whether that held
 
+Final pass before any entry (after the contract is chosen and sized):
+  1. earnings gate (code): no new put when the company reports before the planned exit (the earlier of
+     15 sessions ≈ 21 days and 7 days before expiry); an open put is bought back the session before a report
+  2. JEV gate (TypeSafe): `judge_fn(symbol, headlines)` -> (rule, detail) or None. The CLI wires it to
+     fund/catalyst.py; a live, confident "material headline risk" answer blocks the sale. Without a
+     TypeSafe key the stub answers never count as confident, so the gate is logged but never vetoes.
+
 Paper only. Nothing here can place an order; it reads quotes that the routine fetched.
 
 Daily flow (after the close, once bars.json has today's bar):
@@ -86,9 +93,10 @@ def _close(st, sym, today, px, why, S=None):
     st["log"].append({"date": today.isoformat(), "kind": "put_exit", **rec})
 
 
-def apply(st, bars, quotes, today):
+def apply(st, bars, quotes, today, judge_fn=None):
     """quotes = {"marks": {instrument_id: {bid, ask}},
-                 "chains": {SYM: [{instrument_id, strike, expiration, bid, ask, delta, iv}]}}."""
+                 "chains": {SYM: [{instrument_id, strike, expiration, bid, ask, delta, iv}]},
+                 "events": {SYM: {"earnings_date": "YYYY-MM-DD" | None, "headlines": [str, ...]}}}."""
     t = today.isoformat()
     if st["last_apply"] == t:
         return {"skipped": "already applied today"}
@@ -104,6 +112,11 @@ def apply(st, bars, quotes, today):
             continue
         p["sessions"] += 1
         q = marks.get(p["instrument_id"])
+        er = quotes.get("events", {}).get(s, {}).get("earnings_date")
+        if er and q and q["ask"] > 0 and 0 <= (date.fromisoformat(er) - today).days <= 1:
+            p["last_mid"] = round(mid(q), 4)
+            _close(st, s, today, q["ask"], "earnings")
+            continue
         if not q or q["ask"] <= 0:
             events.append({"symbol": s, "kind": "no_quote"})
             continue
@@ -134,6 +147,19 @@ def apply(st, bars, quotes, today):
             st["log"].append({"date": t, "kind": "put_skip", "symbol": s, "reason": "size",
                               "one_contract_secures": c["strike"] * 100, "room": round(room, 2)})
             continue
+        ev = quotes.get("events", {}).get(s, {})
+        er = ev.get("earnings_date")
+        planned_exit = min(date.fromisoformat(c["expiration"]) - timedelta(days=MIN_DTE), today + timedelta(days=21))
+        if er and t < er <= planned_exit.isoformat():
+            st["log"].append({"date": t, "kind": "put_skip", "symbol": s, "reason": "earnings before planned exit",
+                              "earnings_date": er, "planned_exit": planned_exit.isoformat()})
+            continue
+        if judge_fn:
+            veto = judge_fn(s, ev.get("headlines", []))
+            if veto:
+                st["log"].append({"date": t, "kind": "put_skip", "symbol": s, "reason": f"jev {veto[0]}",
+                                  "detail": veto[1]})
+                continue
         credit = n * (100 * c["bid"] - FEE)
         st["cash"] += credit
         st["positions"][s] = {"instrument_id": c["instrument_id"], "strike": c["strike"], "expiration": c["expiration"],

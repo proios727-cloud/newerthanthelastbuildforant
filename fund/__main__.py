@@ -20,7 +20,9 @@ import pathlib
 import subprocess
 import sys
 
-from . import clock, config, preview, putbook, receipt, risk, shadow
+import judge
+
+from . import catalyst, clock, config, preview, putbook, receipt, risk, shadow
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
@@ -181,7 +183,13 @@ def cmd_putbook(a, cfg):
     if not a.file:
         sys.exit("putbook apply needs FILE")
     quotes = json.loads(pathlib.Path(a.file).read_text(encoding="utf-8"))
-    out = putbook.apply(st, bars, quotes, today)
+    client = judge.from_env()
+
+    def jev(sym, headlines):  # final pass: TypeSafe JEV on the symbol's headlines (stub never vetoes)
+        return catalyst.veto(catalyst.assess(client, sym, headlines))
+
+    out = putbook.apply(st, bars, quotes, today, judge_fn=jev)
+    out["jev"] = "live" if getattr(client, "live", False) else "stub (no TypeSafe key; never vetoes)"
     putbook.save(st, PUTBOOK)
     for e in out.get("events", []):
         log(e.get("kind", "put_event"), **{k: v for k, v in e.items() if k != "kind"})
