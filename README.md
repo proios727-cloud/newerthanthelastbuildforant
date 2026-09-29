@@ -208,6 +208,17 @@ Checked against live quotes at the 2026-09-28 close: SPY at-the-money and the 73
   - **Stub:** without that setup JEV runs as a stub that never vetoes.
   - **Failure:** if a configured judge errors, the entry is skipped (`jev unavailable`).
   - `apply` reports which mode ran.
+- **JEV shadow test** (`fund/jevcheck.py`, `python3 -m fund jevcheck`):
+  - Every sale that reaches JEV records its verdict (P(material), live/stub/error).
+  - A sale JEV vetoes becomes a **ghost**: the same contract tracked through the same exits, with no cash or risk. The routine fetches ghost quotes along with open positions.
+  - The test compares P&L per dollar of credit for vetoed sales against the sales taken. Both books are pooled.
+  - The pass/fail bar was fixed on 2026-09-29, before any live verdict existed:
+    - at least 20 live-judged trades and at least 8 closed ghosts;
+    - judge errors at most 10% of decisions;
+    - **keep** the veto only if vetoed sales did at least 0.25 worse per $ credit;
+    - **drop** it if they did as well or better, or were still inconclusive after 16 ghosts.
+  - Each receipt carries the current verdict.
+- **Headline hygiene:** headlines are cut to printable ASCII, whitespace-collapsed and capped at 200 characters before JEV sees them. This drops zero-width and look-alike characters that can hide text.
 - **Inputs:** the routine writes `events: {SYM: {earnings_date, headlines}}` into the quotes file (Robinhood earnings, TradingView news).
 
 **Concentration:** 40% of NAV per position breaks the stock desk's 5% position rule. A $100k book can't sell single-name puts in whole contracts any other way. Treat the book as a measurement tool, not a sizing template.
@@ -228,7 +239,7 @@ python3 -m fund putbook apply quotes.json    # marks → exits → entries; ledg
 `fund/spreadbook.py` is the defined-risk version of the put book, sized for a $500 account. It uses the same signal, the same earnings gate and the same JEV pass. `putbook apply` runs both books from one quotes file.
 
 - **Structure:** sell the ~30-delta put ~30 days out and buy a lower put in the same expiry, at most $2 wide, with one spread open at a time. The routine fetches the long legs from `spread_strikes` in the plan.
-- **Choice:** among spreads that collect at least 20% of the width and fit the risk room, it takes the best credit per dollar of max loss.
+- **Choice:** short legs are tried nearest to 30 delta first, within a 16–35 delta band. The first short with a valid long leg wins; among its long legs, the book takes the best credit per dollar of max loss. A spread must collect at least 20% of its width and fit the risk room.
 - **Risk:** max loss is width × 100 − credit, capped at 20% of NAV (about $100). The max loss stays reserved in cash, so the book can never owe more than it holds.
 - **Research:** `docs/research/500-growth.md` covers baselines, Cboe index evidence, live quotes and the go/no-go metrics.
   - At $500, T-bills (4.2%) or paying off card debt (about 22% APR) beat every active stream in dollars.

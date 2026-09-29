@@ -22,6 +22,21 @@ class SpreadBookTests(unittest.TestCase):
         self.assertAlmostEqual(p["credit"], 20 - 0.06, places=2)
         self.assertLessEqual(p["max_loss"], 0.2 * 500)
 
+    def test_falls_back_to_next_short_when_nearest_has_no_partner(self):
+        st = spreadbook.new_state()
+        # 0.30-delta 330 has no long within $2; 0.26-delta 324 pairs with 323
+        q = {"chains": {"AAPL": [row(330, -0.30, 6.0, 6.2, iid="s330"), row(324, -0.26, 4.20, 4.35, iid="s324"),
+                                 row(323, -0.24, 3.80, 3.95, iid="l323"), row(310, -0.10, 1.0, 1.05)]}}
+        spreadbook.apply(st, BARS, q, D)
+        p = st["positions"]["AAPL"]
+        self.assertEqual((p["short_strike"], p["long_strike"]), (324, 323))
+
+    def test_short_outside_delta_band_is_never_sold(self):
+        st = spreadbook.new_state()
+        q = {"chains": {"AAPL": [row(340, -0.45, 9.0, 9.2), row(339, -0.43, 8.5, 8.7)]}}
+        spreadbook.apply(st, BARS, q, D)
+        self.assertEqual(st["positions"], {})
+
     def test_one_spread_at_a_time(self):
         st = spreadbook.new_state()
         spreadbook.apply(st, BARS, {"chains": {"AAPL": chain(), "TSLA": chain()}}, D)
@@ -66,7 +81,20 @@ class SpreadBookTests(unittest.TestCase):
         self.assertEqual(st["log"][-1]["reason"], "earnings before planned exit")
         st = spreadbook.new_state()
         spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D, judge_fn=lambda s, h: ("news_catalyst", "p=0.9"))
-        self.assertEqual(st["log"][-1]["reason"], "jev news_catalyst")
+        self.assertEqual(next(x for x in st["log"] if x["kind"] == "spread_skip")["reason"], "jev news_catalyst")
+        self.assertEqual(st["positions"], {})
+
+    def test_vetoed_spread_is_a_ghost_with_no_cash_or_risk(self):
+        st = spreadbook.new_state()
+        veto = {"veto": ("news_catalyst", "p=0.9"), "p": 0.9, "mode": "live"}
+        spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D, judge_fn=lambda s, h: veto)
+        self.assertEqual((st["cash"], spreadbook.reserved(st)), (500.0, 0))
+        self.assertEqual({x["instrument_id"] for x in spreadbook.open_legs(st)}, {"s325", "l324"})
+        marks = {"s325": {"bid": 2.0, "ask": 2.1}, "l324": {"bid": 2.0, "ask": 2.05}}
+        spreadbook.apply(st, BARS, {"marks": marks}, date(2026, 9, 29))
+        g = st["ghost_closed"][0]
+        self.assertEqual((g["why"], g["jev_p"]), ("target", 0.9))
+        self.assertEqual(st["closed"], [])
 
     def test_idempotent_and_legs_listed(self):
         st = spreadbook.new_state()

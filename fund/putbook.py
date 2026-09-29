@@ -58,10 +58,11 @@ def nav(st, marks):
 
 def plan(st, bars, today):
     """Quotes the routine should fetch: open contracts and candidate strikes for new entries."""
-    need = [{"symbol": s, "instrument_id": p["instrument_id"]} for s, p in st["positions"].items()]
+    need = [{"symbol": s, "instrument_id": p["instrument_id"]}
+            for book in (st["positions"], st.get("ghosts", {})) for s, p in book.items()]
     cands = []
     for s in EQUITIES:
-        if s in st["positions"] or s not in bars:
+        if s in st["positions"] or s in st.get("ghosts", {}) or s not in bars:
             continue
         c = bars[s]["closes"]
         if not shadow.signals(c[:-1]):  # causal: yesterday's close decides, today's close trades
@@ -82,32 +83,47 @@ def plan(st, bars, today):
     return {"today": today.isoformat(), "open": need, "candidates": cands}
 
 
-def _close(st, sym, today, px, why, S=None):
-    p = st["positions"].pop(sym)
+def _close(st, sym, today, px, why, S=None, ghost=False):
+    """Close a position, or a ghost: a sale JEV vetoed, tracked with no cash so its outcome can be scored."""
+    p = (st["ghosts"] if ghost else st["positions"]).pop(sym)
     cost = p["contracts"] * (100 * px + (FEE if why != "expiry" else 0.0))
-    st["cash"] -= cost
+    if not ghost:
+        st["cash"] -= cost
     pnl = round(p["credit"] - cost, 2)
     rec = {"symbol": sym, "strike": p["strike"], "expiration": p["expiration"], "entry": p["entry"],
            "exit": today.isoformat(), "why": why, "contracts": p["contracts"], "credit": p["credit"],
-           "buyback": round(cost, 2), "pnl": pnl}
+           "buyback": round(cost, 2), "pnl": pnl, "jev_p": p.get("jev_p"), "jev_mode": p.get("jev_mode")}
     if S is not None:
         rec["underlying_at_expiry"] = S
-    st["closed"].append(rec)
-    st["log"].append({"date": today.isoformat(), "kind": "put_exit", **rec})
+    st.setdefault("ghost_closed" if ghost else "closed", []).append(rec)
+    st["log"].append({"date": today.isoformat(), "kind": "put_ghost_exit" if ghost else "put_exit", **rec})
 
 
 def final_pass(quotes, sym, today, expiration, judge_fn=None):
-    """Earnings gate, then JEV. A skip record ({"reason": ..., ...}) or None. Shared with the spread book."""
+    """Earnings gate, then JEV. Returns (skip, verdict), shared with the spread book.
+
+    skip is a record ({"reason": ..., ...}) or None. verdict is {"p", "mode"} from the judge (None when it
+    was not asked). judge_fn(sym, headlines) returns a veto (rule, detail), None, or
+    {"veto": (rule, detail) | None, "p": P(material), "mode": "live" | "stub" | "error"}."""
     ev = quotes.get("events", {}).get(sym, {})
     er = ev.get("earnings_date")
     planned_exit = min(date.fromisoformat(expiration) - timedelta(days=MIN_DTE), today + timedelta(days=21))
     if er and today.isoformat() < er <= planned_exit.isoformat():
-        return {"reason": "earnings before planned exit", "earnings_date": er, "planned_exit": planned_exit.isoformat()}
-    if judge_fn:
-        veto = judge_fn(sym, ev.get("headlines", []))
-        if veto:
-            return {"reason": f"jev {veto[0]}", "detail": veto[1]}
-    return None
+        return {"reason": "earnings before planned exit", "earnings_date": er,
+                "planned_exit": planned_exit.isoformat()}, None
+    if not judge_fn:
+        return None, None
+    r = judge_fn(sym, ev.get("headlines", []))
+    veto, verdict = (r.get("veto"), {"p": r.get("p"), "mode": r.get("mode")}) if isinstance(r, dict) \
+        else (r, {"p": None, "mode": None})
+    if veto:
+        return {"reason": f"jev {veto[0]}", "detail": veto[1], "jev_p": verdict["p"], "jev_mode": verdict["mode"]}, verdict
+    return None, verdict
+
+
+def ghosted(skip):
+    """A JEV judgment (not an outage) blocked the sale: track it as a ghost so the veto can be scored."""
+    return bool(skip) and skip["reason"].startswith("jev ") and skip.get("jev_mode") != "error"
 
 
 def earnings_tomorrow(quotes, sym, today):
@@ -124,33 +140,35 @@ def apply(st, bars, quotes, today, judge_fn=None):
         return {"skipped": "already applied today"}
     marks, events = quotes.get("marks", {}), []
 
-    # 1. exits
-    for s in list(st["positions"]):
-        p = st["positions"][s]
-        exp = date.fromisoformat(p["expiration"])
-        if exp < today or (exp == today and bars.get(s, {}).get("last") == t):
-            S = bars[s]["closes"][-1]
-            _close(st, s, today, max(p["strike"] - S, 0.0), "expiry", S)
-            continue
-        p["sessions"] += 1
-        q = marks.get(p["instrument_id"])
-        if q and q["ask"] > 0 and earnings_tomorrow(quotes, s, today):
+    # 1. exits: real positions, then ghosts (vetoed sales) under the identical rules
+    for ghost in (False, True):
+        book = st.get("ghosts", {}) if ghost else st["positions"]
+        for s in list(book):
+            p = book[s]
+            exp = date.fromisoformat(p["expiration"])
+            if exp < today or (exp == today and bars.get(s, {}).get("last") == t):
+                S = bars[s]["closes"][-1]
+                _close(st, s, today, max(p["strike"] - S, 0.0), "expiry", S, ghost)
+                continue
+            p["sessions"] += 1
+            q = marks.get(p["instrument_id"])
+            if q and q["ask"] > 0 and earnings_tomorrow(quotes, s, today):
+                p["last_mid"] = round(mid(q), 4)
+                _close(st, s, today, q["ask"], "earnings", ghost=ghost)
+                continue
+            if not q or q["ask"] <= 0:
+                events.append({"symbol": s, "kind": "no_quote", "ghost": ghost})
+                continue
             p["last_mid"] = round(mid(q), 4)
-            _close(st, s, today, q["ask"], "earnings")
-            continue
-        if not q or q["ask"] <= 0:
-            events.append({"symbol": s, "kind": "no_quote"})
-            continue
-        p["last_mid"] = round(mid(q), 4)
-        ask, credit_px = q["ask"], p["credit_px"]
-        why = ("target" if ask <= TP * credit_px else "stop" if ask >= STOP_X * credit_px
-               else "time" if p["sessions"] >= HOLD or (exp - today).days <= MIN_DTE else None)
-        if why:
-            _close(st, s, today, ask, why)
+            ask, credit_px = q["ask"], p["credit_px"]
+            why = ("target" if ask <= TP * credit_px else "stop" if ask >= STOP_X * credit_px
+                   else "time" if p["sessions"] >= HOLD or (exp - today).days <= MIN_DTE else None)
+            if why:
+                _close(st, s, today, ask, why, ghost=ghost)
 
     # 2. entries
     for s, chain in quotes.get("chains", {}).items():
-        if s in st["positions"] or s not in EQUITIES:
+        if s in st["positions"] or s in st.get("ghosts", {}) or s not in EQUITIES:
             continue
         ok = [c for c in chain
               if c["bid"] > 0.05 and c["ask"] >= c["bid"] and (c["ask"] - c["bid"]) <= MAX_SPREAD * mid(c)
@@ -168,15 +186,21 @@ def apply(st, bars, quotes, today, judge_fn=None):
             st["log"].append({"date": t, "kind": "put_skip", "symbol": s, "reason": "size",
                               "one_contract_secures": c["strike"] * 100, "room": round(room, 2)})
             continue
-        skip = final_pass(quotes, s, today, c["expiration"], judge_fn)
+        skip, verdict = final_pass(quotes, s, today, c["expiration"], judge_fn)
+        credit = n * (100 * c["bid"] - FEE)
+        pos = {"instrument_id": c["instrument_id"], "strike": c["strike"], "expiration": c["expiration"],
+               "contracts": n, "credit_px": c["bid"], "credit": round(credit, 2), "entry": t,
+               "sessions": 0, "last_mid": round(mid(c), 4), "delta": c["delta"],
+               "jev_p": (verdict or {}).get("p"), "jev_mode": (verdict or {}).get("mode")}
         if skip:
             st["log"].append({"date": t, "kind": "put_skip", "symbol": s, **skip})
+            if ghosted(skip):
+                st.setdefault("ghosts", {})[s] = pos
+                st["log"].append({"date": t, "kind": "put_ghost_entry", "symbol": s, "strike": c["strike"],
+                                  "expiration": c["expiration"], "credit": round(credit, 2), "jev_p": pos["jev_p"]})
             continue
-        credit = n * (100 * c["bid"] - FEE)
         st["cash"] += credit
-        st["positions"][s] = {"instrument_id": c["instrument_id"], "strike": c["strike"], "expiration": c["expiration"],
-                              "contracts": n, "credit_px": c["bid"], "credit": round(credit, 2), "entry": t,
-                              "sessions": 0, "last_mid": round(mid(c), 4), "delta": c["delta"]}
+        st["positions"][s] = pos
         rec = {"date": t, "kind": "put_entry", "symbol": s, "strike": c["strike"], "expiration": c["expiration"],
                "contracts": n, "bid": c["bid"], "ask": c["ask"], "delta": c["delta"], "credit": round(credit, 2)}
         if c.get("iv"):
@@ -196,7 +220,8 @@ def summary(st, marks=None):
             "closed_trades": len(st["closed"]), "win_rate": round(len(wins) / len(st["closed"]), 3) if st["closed"] else None,
             "secured_pct": round(100 * sum(p["strike"] * 100 * p["contracts"] for p in st["positions"].values())
                                  / max(nav(st, marks or {}), 1), 1),
-            "avg_iv_over_rv": round(sum(x["iv_over_rv"] for x in fills) / len(fills), 2) if fills else None}
+            "avg_iv_over_rv": round(sum(x["iv_over_rv"] for x in fills) / len(fills), 2) if fills else None,
+            "jev_ghosts_open": len(st.get("ghosts", {})), "jev_ghosts_closed": len(st.get("ghost_closed", []))}
 
 
 def load(path):

@@ -106,7 +106,33 @@ class FinalPassTests(unittest.TestCase):
         putbook.apply(st, BARS, self.q(headlines=["AAPL halted"]), D,
                       judge_fn=lambda s, h: ("news_catalyst", "material p=0.93"))
         self.assertEqual(st["positions"], {})
-        self.assertEqual(st["log"][-1]["reason"], "jev news_catalyst")
+        skip = next(x for x in st["log"] if x["kind"] == "put_skip")
+        self.assertEqual(skip["reason"], "jev news_catalyst")
+        self.assertAlmostEqual(st["cash"], putbook.START_NAV)          # the vetoed sale moved no cash
+
+    def test_vetoed_sale_is_tracked_as_ghost_through_the_same_exits(self):
+        st = putbook.new_state()
+        veto = {"veto": ("news_catalyst", "p=0.93"), "p": 0.93, "mode": "live"}
+        putbook.apply(st, BARS, self.q(headlines=["AAPL halted"]), D, judge_fn=lambda s, h: veto)
+        self.assertIn("AAPL", st["ghosts"])
+        plan = putbook.plan(st, BARS, date(2026, 9, 29))
+        self.assertIn(st["ghosts"]["AAPL"]["instrument_id"], [x["instrument_id"] for x in plan["open"]])
+        iid = st["ghosts"]["AAPL"]["instrument_id"]
+        putbook.apply(st, BARS, {"marks": {iid: {"bid": 13.0, "ask": 14.0}}}, date(2026, 9, 29))
+        g = st["ghost_closed"][0]
+        self.assertEqual((g["why"], g["jev_p"], g["jev_mode"]), ("stop", 0.93, "live"))
+        self.assertLess(g["pnl"], 0)
+        self.assertAlmostEqual(st["cash"], putbook.START_NAV)          # ghosts never touch cash
+        self.assertEqual(st["closed"], [])
+
+    def test_outage_veto_is_not_a_ghost_and_taken_trades_keep_the_verdict(self):
+        st = putbook.new_state()
+        putbook.apply(st, BARS, self.q(), D,
+                      judge_fn=lambda s, h: {"veto": ("unavailable", "timeout"), "p": None, "mode": "error"})
+        self.assertEqual(st.get("ghosts", {}), {})
+        st = putbook.new_state()
+        putbook.apply(st, BARS, self.q(), D, judge_fn=lambda s, h: {"veto": None, "p": 0.12, "mode": "live"})
+        self.assertEqual((st["positions"]["AAPL"]["jev_p"], st["positions"]["AAPL"]["jev_mode"]), (0.12, "live"))
 
     def test_stub_jev_never_vetoes(self):
         import judge

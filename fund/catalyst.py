@@ -29,10 +29,18 @@ QUESTIONS = (
 )
 
 
+def clean(headline, limit=200):
+    """Headlines are untrusted: keep printable ASCII only (drops zero-width and look-alike characters that
+    can hide text from a reader), collapse whitespace and cap the length before the judge sees them."""
+    text = "".join(ch if 32 <= ord(ch) < 127 else " " for ch in str(headline))
+    return " ".join(text.split())[:limit]
+
+
 def assess(client, symbol, headlines):
-    if not headlines:
+    items = [h for h in (clean(x) for x in list(headlines)[:20]) if h]
+    if not items:
         return None
-    state = {"symbol": symbol, "headlines": list(headlines)[:20]}
+    state = {"symbol": symbol, "headlines": items}
     return judge.ask(client, state, QUESTIONS)
 
 

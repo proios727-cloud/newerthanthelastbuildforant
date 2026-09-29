@@ -10,6 +10,7 @@
   python -m fund quotes FILE         # store Robinhood quotes {SYMBOL: {bid, ask, ts}} → ledger/quotes.json
   python -m fund shadow              # run every shadow variant on new bars (ledger/shadow/<variant>.json)
   python -m fund putbook plan|apply FILE   # paper short-put book ($100k) and put-spread book ($500) on live option quotes
+  python -m fund jevcheck                  # pre-registered test: do JEV-vetoed sales (ghosts) do worse than the sales taken?
   python -m fund receipt [--label L]  # write ledger/receipts/<fund-day>-<label>.json with a breach check
   python -m fund sync-board          # write ledger numbers into desk.json tiles/funnel, rebuild board.html
 """
@@ -22,7 +23,7 @@ import sys
 
 import judge
 
-from . import catalyst, clock, config, preview, putbook, receipt, risk, shadow, spreadbook
+from . import catalyst, clock, config, jevcheck, preview, putbook, receipt, risk, shadow, spreadbook
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
@@ -190,9 +191,11 @@ def cmd_putbook(a, cfg):
 
     def jev(sym, headlines):  # final pass: TypeSafe JEV on the symbol's headlines (stub never vetoes)
         try:
-            return catalyst.veto(catalyst.assess(client, sym, headlines))
+            ans = catalyst.assess(client, sym, headlines)
+            return {"veto": catalyst.veto(ans), "p": ans["material"].probability if ans else None,
+                    "mode": "live" if getattr(client, "live", False) else "stub"}
         except Exception as e:  # a configured judge that fails blocks the entry: a missed trade is the cheap error
-            return ("unavailable", f"{type(e).__name__}: {e}"[:200])
+            return {"veto": ("unavailable", f"{type(e).__name__}: {e}"[:200]), "p": None, "mode": "error"}
 
     out = putbook.apply(st, bars, quotes, today, judge_fn=jev)
     sout = spreadbook.apply(sp, bars, quotes, today, judge_fn=jev)
@@ -205,6 +208,10 @@ def cmd_putbook(a, cfg):
                       "spreadbook": {**sout, "summary": spreadbook.summary(sp, quotes.get("marks"))}}, indent=2))
 
 
+def cmd_jevcheck(a, cfg):
+    print(json.dumps(jevcheck.evaluate(putbook.load(PUTBOOK), spreadbook.load(SPREADBOOK)), indent=2))
+
+
 def cmd_receipt(a, cfg):
     L = load_ledger()
     events = [json.loads(x) for x in EVENTS.read_text(encoding="utf-8").splitlines() if x] if EVENTS.exists() else []
@@ -213,6 +220,8 @@ def cmd_receipt(a, cfg):
         sh = {**(sh or {}), "putbook": putbook.summary(putbook.load(PUTBOOK))}
     if SPREADBOOK.exists():
         sh = {**(sh or {}), "spreadbook": spreadbook.summary(spreadbook.load(SPREADBOOK))}
+    if PUTBOOK.exists() or SPREADBOOK.exists():
+        sh = {**(sh or {}), "jevcheck": jevcheck.evaluate(putbook.load(PUTBOOK), spreadbook.load(SPREADBOOK))}
     r = receipt.build(L, cfg, events, clock.now(), a.label, shadow=sh)
     RECEIPTS.mkdir(parents=True, exist_ok=True)
     out = RECEIPTS / f"{r['fund_day']}-{a.label}.json"
@@ -277,12 +286,13 @@ def main(argv=None):
     sub.add_parser("shadow")
     p = sub.add_parser("quotes"); p.add_argument("file")
     p = sub.add_parser("putbook"); p.add_argument("action", choices=["plan", "apply"]); p.add_argument("file", nargs="?")
+    sub.add_parser("jevcheck")
     p = sub.add_parser("receipt"); p.add_argument("--label", default="session")
     sub.add_parser("sync-board")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
-     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "quotes": cmd_quotes, "putbook": cmd_putbook, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
+     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "quotes": cmd_quotes, "putbook": cmd_putbook, "jevcheck": cmd_jevcheck, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":
