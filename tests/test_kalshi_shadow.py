@@ -57,7 +57,17 @@ class ShadowTests(unittest.TestCase):
                 rows = [json.loads(line) for line in f]
             self.assertEqual({r["ticker"] for r in rows}, {"KXBTC15M-T", "KXETH15M-T"})
             self.assertTrue(all(r["won"] and r["secs_before_close"] == 60 for r in rows))
-            self.assertIn("2 settled trades", shadow.report(log))
+            # Same book on both → one trade kept, the other settled as a logged alternate.
+            self.assertEqual(sorted((r["take"], bool(r.get("alt"))) for r in rows), [(False, True), (True, False)])
+            self.assertIn("1 settled trades", shadow.report(log))
+
+    def test_one_per_window_keeps_the_higher_priced_favourite(self):
+        recs = [{"ticker": "BTC", "take": True, "ask": 84.0}, {"ticker": "ETH", "take": True, "ask": 91.0},
+                {"ticker": "X", "take": False, "ask": 99.0}]
+        shadow.one_per_window(recs)
+        self.assertEqual([r["take"] for r in recs], [False, True, False])
+        self.assertTrue(recs[0]["alt"] and "kept ETH" in recs[0]["why"])
+        self.assertNotIn("alt", recs[2])
 
 
 def _iso(ts):

@@ -1,4 +1,4 @@
-"""Live SHADOW runner for Rule B (read-only, public endpoints, never places orders).
+"""Live SHADOW runner for Rule B2 (read-only, public endpoints, never places orders).
 
     python -m kalshi.shadow --hours 6 --log shadow_b.jsonl   # run, logging one row per decision
     python -m kalshi.shadow --report shadow_b.jsonl          # summarise a log
@@ -8,6 +8,10 @@ buy the favourite if its best ask is in [B_LO, B_HI). It records what `--qty` co
 have cost by walking the book, how late the read landed, then (after close) the taker-print VWAP
 the backtest assumed, and finally the settlement and fee-inclusive P&L for both prices. The point
 is to check the backtest's fills against what a live bot actually sees before any DEMO/LIVE step.
+
+Rule B2 (from 2026-09-29) adds one trade per 15-minute window: when BTC and ETH both qualify, take
+only the higher-priced favourite. The two move together, so a second trade doubles the bet rather
+than spreading it. The skipped one is still settled and logged (take=False, alt=True) for comparison.
 """
 import argparse
 import json
@@ -20,6 +24,7 @@ from .feed import _get
 
 SERIES = ("KXBTC15M", "KXETH15M")
 AT_S, B_LO, B_HI = 60, 50, 96          # must match scripts/build_kalshi48.py Rule B
+RULE = "B2"
 PERIOD = 900
 
 
@@ -60,6 +65,14 @@ def decide(book, qty):
     return {**d, "take": True}
 
 
+def one_per_window(recs):
+    """Keep the highest-priced taken record; demote the rest to settled-but-not-taken alternates."""
+    taken = sorted((r for r in recs if r.get("take")), key=lambda r: r["ask"], reverse=True)
+    for r in taken[1:]:
+        r.update(take=False, alt=True, why=f"second trade in window (kept {taken[0]['ticker']})")
+    return recs
+
+
 def pnl_c(price, won, qty):
     """Fee-inclusive P&L in cents for `qty` contracts bought at `price` ¢ (rounded to a whole cent)."""
     p = round(price)
@@ -90,6 +103,7 @@ def run(hours, log, qty, fetch=_get, clock=time.time, sleep=time.sleep):
     while clock() < end:
         close = next_close(clock() + AT_S)            # next close we can still reach at T-60s
         sleep(max(0, close - AT_S - clock()))
+        window = []
         for s in SERIES:
             try:
                 m = market_closing(s, close, fetch)
@@ -98,16 +112,18 @@ def run(hours, log, qty, fetch=_get, clock=time.time, sleep=time.sleep):
                 book = fetch(f"/markets/{m['ticker']}/orderbook", {"depth": 50})
                 read_at = clock()
                 d = decide(book, qty)
-                rec = {"ts": datetime.now(timezone.utc).isoformat(), "ticker": m["ticker"], "close_ts": close,
-                       "secs_before_close": round(close - read_at, 2), "qty": qty, **d}
-                if d["take"]:
-                    pending.append(rec)
-                else:
-                    _write(log, rec)
-                print(f"{rec['ticker']:<30} {rec.get('side','-'):>3} ask {rec.get('ask','-')} "
-                      f"{'TAKE' if d['take'] else 'skip: ' + d.get('why', '')}", flush=True)
+                window.append({"ts": datetime.now(timezone.utc).isoformat(), "ticker": m["ticker"],
+                               "close_ts": close, "secs_before_close": round(close - read_at, 2), "qty": qty,
+                               "rule": RULE, **d})
             except OSError as e:
                 print(f"{s}: read failed {e}", file=sys.stderr, flush=True)
+        for rec in one_per_window(window):
+            if rec["take"] or rec.get("alt"):
+                pending.append(rec)
+            else:
+                _write(log, rec)
+            print(f"{rec['ticker']:<30} {rec.get('side','-'):>3} ask {rec.get('ask','-')} "
+                  f"{'TAKE' if rec['take'] else 'skip: ' + rec.get('why', '')}", flush=True)
         pending = _settle_ready(pending, log, fetch, clock)
     while pending and clock() < end + 1800:          # let the last trades settle
         sleep(30)
@@ -169,7 +185,7 @@ def main(argv=None):
     if a.report:
         print(report(a.report))
         return 0
-    print(f"SHADOW Rule B: {', '.join(SERIES)}, T-{AT_S}s, ask {B_LO}–{B_HI}¢, qty {a.qty}. No orders are sent.",
+    print(f"SHADOW Rule {RULE}: {', '.join(SERIES)}, T-{AT_S}s, ask {B_LO}–{B_HI}¢, qty {a.qty}. No orders are sent.",
           flush=True)
     run(a.hours, a.log, a.qty)
     return 0
