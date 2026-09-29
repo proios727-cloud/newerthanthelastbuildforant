@@ -1,0 +1,584 @@
+{
+ "registered": "2026-09-29",
+ "rules": "Rebuild leaderboard strategy families with honest fills and KEEP/KILL them against the incumbent.",
+ "costs_per_side": {
+  "gross": 0.0,
+  "2bp": 0.0002,
+  "realistic": 0.00055
+ },
+ "data": {
+  "BTCUSDT": {
+   "symbol": "BINANCE:BTCUSDT",
+   "source": "TradingView mcp-tv-get-ohlcv",
+   "fetched": "2026-09-29",
+   "bars": 1499
+  },
+  "ETHUSDT": {
+   "symbol": "BINANCE:ETHUSDT",
+   "source": "TradingView mcp-tv-get-ohlcv",
+   "fetched": "2026-09-29",
+   "bars": 1499
+  },
+  "SOLUSDT": {
+   "symbol": "BINANCE:SOLUSDT",
+   "source": "TradingView mcp-tv-get-ohlcv",
+   "fetched": "2026-09-29",
+   "bars": 1499
+  }
+ },
+ "families": {
+  "incumbent_trend_etf_v1": {
+   "params": {
+    "fast": 20,
+    "slow": 100,
+    "trail": 0.8
+   },
+   "runs": {
+    "gross": {
+     "cagr": 0.2487,
+     "max_dd": -0.266,
+     "sharpe": 0.98,
+     "trades": 51,
+     "win_rate": 0.471,
+     "profit_factor": 2.7,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.4359,
+      "2024": 0.4556,
+      "2025": 0.0721,
+      "2026": -0.0012
+     },
+     "years": 3.82
+    },
+    "2bp": {
+     "cagr": 0.2476,
+     "max_dd": -0.2665,
+     "sharpe": 0.97,
+     "trades": 51,
+     "win_rate": 0.471,
+     "profit_factor": 2.69,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.4347,
+      "2024": 0.4541,
+      "2025": 0.0712,
+      "2026": -0.0019
+     },
+     "years": 3.82
+    },
+    "realistic": {
+     "cagr": 0.2457,
+     "max_dd": -0.2674,
+     "sharpe": 0.97,
+     "trades": 51,
+     "win_rate": 0.471,
+     "profit_factor": 2.67,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.4326,
+      "2024": 0.4516,
+      "2025": 0.0695,
+      "2026": -0.0029
+     },
+     "years": 3.82
+    },
+    "raw_gross": {
+     "cagr": 0.2621,
+     "max_dd": -0.3876,
+     "sharpe": 0.82,
+     "trades": 51,
+     "win_rate": 0.471,
+     "profit_factor": 1.88,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.5308,
+      "2024": 0.4389,
+      "2025": 0.0731,
+      "2026": -0.0324
+     },
+     "years": 3.82
+    }
+   },
+   "sensitivity": {
+    "x0.8": {
+     "params": {
+      "fast": 16,
+      "slow": 80,
+      "trail": 0.84
+     },
+     "cagr": 0.2559,
+     "max_dd": -0.3306,
+     "sharpe": 1.01,
+     "trades": 64,
+     "win_rate": 0.391,
+     "profit_factor": 2.06,
+     "years": 3.82
+    },
+    "x1.2": {
+     "params": {
+      "fast": 24,
+      "slow": 120,
+      "trail": 0.76
+     },
+     "cagr": 0.1987,
+     "max_dd": -0.2458,
+     "sharpe": 0.86,
+     "trades": 36,
+     "win_rate": 0.556,
+     "profit_factor": 2.53,
+     "years": 3.82
+    }
+   },
+   "verdict": "INCUMBENT"
+  },
+  "donchian_breakout": {
+   "params": {
+    "entry": 20,
+    "exit": 10
+   },
+   "runs": {
+    "gross": {
+     "cagr": 0.1388,
+     "max_dd": -0.2855,
+     "sharpe": 0.73,
+     "trades": 75,
+     "win_rate": 0.387,
+     "profit_factor": 1.41,
+     "per_year": {
+      "2022": -0.051,
+      "2023": 0.5159,
+      "2024": 0.2067,
+      "2025": -0.1043,
+      "2026": 0.013
+     },
+     "years": 3.82
+    },
+    "2bp": {
+     "cagr": 0.1371,
+     "max_dd": -0.2868,
+     "sharpe": 0.72,
+     "trades": 75,
+     "win_rate": 0.387,
+     "profit_factor": 1.4,
+     "per_year": {
+      "2022": -0.0513,
+      "2023": 0.5137,
+      "2024": 0.205,
+      "2025": -0.1056,
+      "2026": 0.0117
+     },
+     "years": 3.82
+    },
+    "realistic": {
+     "cagr": 0.134,
+     "max_dd": -0.289,
+     "sharpe": 0.71,
+     "trades": 75,
+     "win_rate": 0.387,
+     "profit_factor": 1.39,
+     "per_year": {
+      "2022": -0.0517,
+      "2023": 0.5097,
+      "2024": 0.202,
+      "2025": -0.1078,
+      "2026": 0.0094
+     },
+     "years": 3.82
+    },
+    "raw_gross": {
+     "cagr": 0.2036,
+     "max_dd": -0.3698,
+     "sharpe": 0.74,
+     "trades": 75,
+     "win_rate": 0.387,
+     "profit_factor": 1.39,
+     "per_year": {
+      "2022": -0.0713,
+      "2023": 0.8814,
+      "2024": 0.2383,
+      "2025": -0.0893,
+      "2026": -0.0276
+     },
+     "years": 3.82
+    }
+   },
+   "sensitivity": {
+    "x0.8": {
+     "params": {
+      "entry": 16,
+      "exit": 8
+     },
+     "cagr": 0.2099,
+     "max_dd": -0.2179,
+     "sharpe": 1.02,
+     "trades": 81,
+     "win_rate": 0.395,
+     "profit_factor": 1.69,
+     "years": 3.82
+    },
+    "x1.2": {
+     "params": {
+      "entry": 24,
+      "exit": 12
+     },
+     "cagr": 0.1901,
+     "max_dd": -0.3196,
+     "sharpe": 0.87,
+     "trades": 62,
+     "win_rate": 0.403,
+     "profit_factor": 1.74,
+     "years": 3.82
+    }
+   },
+   "vs_incumbent": {
+    "cagr_edge": -0.1117,
+    "extra_dd": 0.0216,
+    "best_year": 2023,
+    "edge_without_best_year": false,
+    "robust_pm20": false
+   },
+   "verdict": "KILL",
+   "why": "realistic CAGR edge -11.17% <= +0.50%; extra drawdown 2.16% > 1.00%; edge depends on 2023; fails at params +/-20%",
+   "gross_pf": 1.41
+  },
+  "supertrend": {
+   "params": {
+    "atr": 10,
+    "mult": 3.0
+   },
+   "runs": {
+    "gross": {
+     "cagr": 0.244,
+     "max_dd": -0.2728,
+     "sharpe": 1.02,
+     "trades": 57,
+     "win_rate": 0.439,
+     "profit_factor": 1.99,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.9895,
+      "2024": 0.1041,
+      "2025": -0.0753,
+      "2026": 0.0803
+     },
+     "years": 3.82
+    },
+    "2bp": {
+     "cagr": 0.2427,
+     "max_dd": -0.2742,
+     "sharpe": 1.02,
+     "trades": 57,
+     "win_rate": 0.439,
+     "profit_factor": 1.98,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.9877,
+      "2024": 0.1028,
+      "2025": -0.0762,
+      "2026": 0.0794
+     },
+     "years": 3.82
+    },
+    "realistic": {
+     "cagr": 0.2404,
+     "max_dd": -0.2767,
+     "sharpe": 1.01,
+     "trades": 57,
+     "win_rate": 0.439,
+     "profit_factor": 1.96,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.9845,
+      "2024": 0.1004,
+      "2025": -0.0778,
+      "2026": 0.0776
+     },
+     "years": 3.82
+    },
+    "raw_gross": {
+     "cagr": 0.3633,
+     "max_dd": -0.4158,
+     "sharpe": 0.99,
+     "trades": 57,
+     "win_rate": 0.439,
+     "profit_factor": 1.82,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 1.5521,
+      "2024": 0.2303,
+      "2025": -0.0785,
+      "2026": 0.068
+     },
+     "years": 3.82
+    }
+   },
+   "sensitivity": {
+    "x0.8": {
+     "params": {
+      "atr": 8,
+      "mult": 2.4
+     },
+     "cagr": 0.2503,
+     "max_dd": -0.2553,
+     "sharpe": 1.06,
+     "trades": 78,
+     "win_rate": 0.385,
+     "profit_factor": 1.83,
+     "years": 3.82
+    },
+    "x1.2": {
+     "params": {
+      "atr": 12,
+      "mult": 3.6
+     },
+     "cagr": 0.2512,
+     "max_dd": -0.2902,
+     "sharpe": 1.02,
+     "trades": 45,
+     "win_rate": 0.422,
+     "profit_factor": 2.11,
+     "years": 3.82
+    }
+   },
+   "vs_incumbent": {
+    "cagr_edge": -0.0053,
+    "extra_dd": 0.0093,
+    "best_year": 2023,
+    "edge_without_best_year": false,
+    "robust_pm20": true
+   },
+   "verdict": "KILL",
+   "why": "realistic CAGR edge -0.53% <= +0.50%; edge depends on 2023",
+   "gross_pf": 1.99
+  },
+  "ema_cross_atr_trail": {
+   "params": {
+    "fast": 20,
+    "slow": 50,
+    "atr": 14,
+    "mult": 3.0
+   },
+   "runs": {
+    "gross": {
+     "cagr": 0.1312,
+     "max_dd": -0.1805,
+     "sharpe": 0.91,
+     "trades": 43,
+     "win_rate": 0.349,
+     "profit_factor": 2.11,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.5619,
+      "2024": -0.0594,
+      "2025": -0.0111,
+      "2026": 0.0806
+     },
+     "years": 3.82
+    },
+    "2bp": {
+     "cagr": 0.1302,
+     "max_dd": -0.1823,
+     "sharpe": 0.9,
+     "trades": 43,
+     "win_rate": 0.349,
+     "profit_factor": 2.09,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.5606,
+      "2024": -0.0602,
+      "2025": -0.0117,
+      "2026": 0.0797
+     },
+     "years": 3.82
+    },
+    "realistic": {
+     "cagr": 0.1286,
+     "max_dd": -0.1854,
+     "sharpe": 0.89,
+     "trades": 43,
+     "win_rate": 0.349,
+     "profit_factor": 2.06,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.5582,
+      "2024": -0.0615,
+      "2025": -0.0129,
+      "2026": 0.0781
+     },
+     "years": 3.82
+    },
+    "raw_gross": {
+     "cagr": 0.1532,
+     "max_dd": -0.28,
+     "sharpe": 0.74,
+     "trades": 43,
+     "win_rate": 0.349,
+     "profit_factor": 1.66,
+     "per_year": {
+      "2022": 0.0,
+      "2023": 0.7452,
+      "2024": -0.1015,
+      "2025": -0.0378,
+      "2026": 0.1091
+     },
+     "years": 3.82
+    }
+   },
+   "sensitivity": {
+    "x0.8": {
+     "params": {
+      "fast": 16,
+      "slow": 40,
+      "atr": 11,
+      "mult": 2.4
+     },
+     "cagr": 0.2544,
+     "max_dd": -0.1287,
+     "sharpe": 1.52,
+     "trades": 50,
+     "win_rate": 0.46,
+     "profit_factor": 3.87,
+     "years": 3.82
+    },
+    "x1.2": {
+     "params": {
+      "fast": 24,
+      "slow": 60,
+      "atr": 17,
+      "mult": 3.6
+     },
+     "cagr": 0.1492,
+     "max_dd": -0.1929,
+     "sharpe": 0.88,
+     "trades": 37,
+     "win_rate": 0.378,
+     "profit_factor": 2.44,
+     "years": 3.82
+    }
+   },
+   "vs_incumbent": {
+    "cagr_edge": -0.1171,
+    "extra_dd": -0.082,
+    "best_year": 2023,
+    "edge_without_best_year": false,
+    "robust_pm20": false
+   },
+   "verdict": "KILL",
+   "why": "realistic CAGR edge -11.71% <= +0.50%; edge depends on 2023; fails at params +/-20%",
+   "gross_pf": 2.11
+  }
+ },
+ "screen": {
+  "pulled": 1000,
+  "unique_backtests": 612,
+  "survivors": 12,
+  "survival_rate": 0.0196,
+  "fail_reasons": {
+   "sharpe outside 0.8-4.5": 556,
+   "pf outside 1.2-4": 520,
+   "span<3y": 365,
+   "dd>30%": 156,
+   "trades<150": 91
+  },
+  "red_flags": {
+   "pf>4 or sharpe>5": {
+    "n": 298,
+    "share": 0.487
+   },
+   "cagr>60% with dd<20%": {
+    "n": 289,
+    "share": 0.472
+   },
+   "name says in-sample/verify/only": {
+    "n": 30,
+    "share": 0.049
+   },
+   "dd>100% (engine quirk)": {
+    "n": 4,
+    "share": 0.007
+   }
+  },
+  "families": {
+   "vanta_atr_trail_1h": {
+    "n": 7,
+    "symbols": [
+     "BTCUSDT"
+    ],
+    "timeframes_min": [
+     60
+    ],
+    "published_cagr_range": [
+     1.196,
+     1.207
+    ],
+    "realistic_cost_drag_yr": [
+     0.6296,
+     0.6328
+    ]
+   },
+   "ema9_vwap_trend_1h": {
+    "n": 4,
+    "symbols": [
+     "LTCUSDT",
+     "UNIUSDT"
+    ],
+    "timeframes_min": [
+     60
+    ],
+    "published_cagr_range": [
+     1.47,
+     2.915
+    ],
+    "realistic_cost_drag_yr": [
+     0.3984,
+     0.481
+    ]
+   },
+   "other": {
+    "n": 1,
+    "symbols": [
+     "SOLUSDT"
+    ],
+    "timeframes_min": [
+     120
+    ],
+    "published_cagr_range": [
+     2.589,
+     2.589
+    ],
+    "realistic_cost_drag_yr": [
+     0.4045,
+     0.4045
+    ]
+   }
+  },
+  "controls_surviving": [
+   {
+    "name": "CTRL-3b zero-info 0.10 ETH2h",
+    "sharpe": 4.18023089,
+    "cagr": 2.589
+   }
+  ],
+  "bar": {
+   "min_trades": 150,
+   "min_years": 3.0,
+   "max_dd_pct": 30.0,
+   "pf": [
+    1.2,
+    4.0
+   ],
+   "sharpe": [
+    0.8,
+    4.5
+   ]
+  },
+  "leaderboard": {
+   "fetched": "2026-09-29",
+   "source": "https://mcp-api.trader.dev/strategies/stats",
+   "response": {
+    "totalStrategies": 189107,
+    "totalBacktests": 903280
+   }
+  }
+ }
+}

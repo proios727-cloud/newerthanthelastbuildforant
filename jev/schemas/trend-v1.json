@@ -1,0 +1,50 @@
+{
+ "questions": {
+  "data_error": {
+   "instructions": "Look at the signal packet in `order` (moving averages, realized volatility, last close, bar date, ETF bid and ask). Is there a data problem: a stale bar, a zero or crossed quote, a price that does not fit the other numbers, or a sign the ETF is halted?",
+   "type": "noul"
+  },
+  "event": {
+   "criteria": {
+    "crypto_structural": "An exchange hack or failure, a stablecoin depeg, or regulatory action against crypto ETFs or venues.",
+    "macro_scheduled": "A scheduled macro release such as FOMC or CPI.",
+    "none": "Nothing scheduled or breaking that matters for this asset.",
+    "unknown": "The headlines are not enough to tell."
+   },
+   "instructions": "Using only `headlines` about `asset`, what known event risk sits in the next five trading days?",
+   "type": "choice"
+  },
+  "order_mistake": {
+   "instructions": "Compare the order in `order` with the rule in `spec`. Is the order mechanically wrong: the wrong ETF for the asset, the wrong side, or a size that does not match target weight times NAV?",
+   "type": "noul"
+  }
+ },
+ "role": "veto-only; sells, stops and kills never go to JEV",
+ "state_inputs": [
+  "asset",
+  "order",
+  "spec",
+  "headlines (cleaned, <=20)"
+ ],
+ "used_by": [
+  "trend-etf-v1 (buys only)"
+ ],
+ "version": "trend-v1",
+ "veto": [
+  {
+   "bad_p_at_least": 0.35,
+   "question": "data_error",
+   "rule": "data_error"
+  },
+  {
+   "bad_p_at_least": 0.5,
+   "question": "event",
+   "rule": "crypto_structural"
+  },
+  {
+   "bad_p_at_least": 0.2,
+   "question": "order_mistake",
+   "rule": "order_mistake"
+  }
+ ]
+}

@@ -106,7 +106,8 @@ def _trade(book, name, a, etf, qty, px, q, today, why, verdict=None):
     rec = {"date": today.isoformat(), "book": name, "asset": a, "etf": etf, "side": side, "qty": round(abs(qty), 6),
            "fill_px": px, "expected_px": round(mid(q), 4), "slip": round(abs(px - mid(q)), 4), "why": why,
            "strategy_id": STRATEGY_ID, "decision_id": f"{STRATEGY_ID}:{name}:{today.isoformat()}:{etf}",
-           "jev_mode": (verdict or {}).get("mode"), "jev_answers": (verdict or {}).get("answers")}
+           "jev_mode": (verdict or {}).get("mode"), "jev_answers": (verdict or {}).get("answers"),
+           "jev_schema_version": (verdict or {}).get("schema")}
     book["trades"].append(rec)
     book["log"].append({**rec, "kind": "trend_trade"})
     return rec

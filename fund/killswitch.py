@@ -10,7 +10,9 @@ book's preview gate refuses opening orders while it is armed.
 import json
 from datetime import datetime, timezone
 
-AUTO_FLOORS = {"putbook": 0.90, "spreadbook": 0.70}   # share of starting NAV; $90k and $350
+from . import limits
+
+AUTO_FLOORS = limits.load()["floors"]   # share of starting NAV (risk/limits.yaml): putbook $90k, spreadbook $350
 
 
 def load(path):

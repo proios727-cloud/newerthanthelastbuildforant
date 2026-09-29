@@ -48,6 +48,9 @@ QUESTIONS = (MATERIAL, REGIME, SETUP, LIQUIDITY)
 VETO = (("material", "news_catalyst", 0.80), ("regime", "regime_crisis", 0.70),
         ("setup", "setup_poor", 0.70), ("liquidity", "illiquid", 0.70))
 ESCALATE_BELOW = 0.60
+# Versioned battery definitions, exported to jev/schemas/ by scripts/export_jev_schemas.py. Bump on any change
+# to a question's wording, criteria or threshold; every fill records the version it was judged under.
+SCHEMA = "options-v1"
 
 
 def bad_p(qid, a):
@@ -83,7 +86,7 @@ def assess(client, symbol, headlines, context):
 def verdict(answers, live):
     """{"veto": (rule, detail) | None, "answers": {qid: bad_p}, "escalate": [qid, ...]}."""
     if not answers:
-        return {"veto": None, "answers": {}, "escalate": []}
+        return {"veto": None, "answers": {}, "escalate": [], "schema": SCHEMA}
     probs = {q: (round(p, 4) if (p := bad_p(q, a)) is not None else None) for q, a in answers.items()}
     veto = None
     for q, rule, th in VETO:
@@ -92,7 +95,7 @@ def verdict(answers, live):
             veto = (rule, f"{q} bad p={p:.2f} >= {th}")
     escalate = [q for q, a in answers.items()
                 if live and a.live and q != "material" and a.probability is not None and a.probability < ESCALATE_BELOW]
-    return {"veto": veto, "answers": probs, "escalate": escalate}
+    return {"veto": veto, "answers": probs, "escalate": escalate, "schema": SCHEMA}
 
 
 # ---- crypto trend book (fund/trendbook.py): buys only; sells, stops and kills never go to JEV ----
@@ -113,6 +116,7 @@ ORDER_MISTAKE = judge.Question(
     "Compare the order in `order` with the rule in `spec`. Is the order mechanically wrong: the wrong ETF for "
     "the asset, the wrong side, or a size that does not match target weight times NAV?")
 TREND_QUESTIONS = (DATA_ERROR, EVENT, ORDER_MISTAKE)
+TREND_SCHEMA = "trend-v1"
 TREND_VETO = (("data_error", "data_error", 0.35), ("event", "crypto_structural", 0.50),
               ("order_mistake", "order_mistake", 0.20))
 
@@ -138,4 +142,4 @@ def trend_verdict(answers):
         a, p = (answers or {}).get(q), probs.get(q)
         if veto is None and a is not None and a.live and p is not None and p >= th:
             veto = (rule, f"{q} bad p={p:.2f} >= {th}")
-    return {"veto": veto, "answers": probs}
+    return {"veto": veto, "answers": probs, "schema": TREND_SCHEMA}

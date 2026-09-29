@@ -26,7 +26,7 @@ import sys
 
 import judge
 
-from . import battery, calibration, catalyst, clock, config, jevcheck, killswitch, preview, putbook, receipt, risk, shadow, spreadbook, trendbook
+from . import battery, calibration, catalyst, clock, config, jevcheck, killswitch, limits, preview, putbook, receipt, risk, shadow, spreadbook, trendbook
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
@@ -222,7 +222,15 @@ def cmd_putbook(a, cfg):
     psum, ssum = putbook.summary(st, marks), spreadbook.summary(sp, marks)
     floors = killswitch.floor_breaches({"putbook": psum["nav"], "spreadbook": ssum["nav"]},
                                        {"putbook": putbook.START_NAV, "spreadbook": spreadbook.START_NAV})
-    if floors and killswitch.arm(ks, "; ".join(f"{b} NAV {n} <= floor {f}" for b, n, f in floors), by="putbook apply"):
+    tsum = trendbook.summary(trendbook.load(TRENDBOOK))
+    navs = {"putbook": psum["nav"], "spreadbook": ssum["nav"],
+            **{f"trend_{n}": tsum[n]["nav"] for n in trendbook.BOOKS if n in tsum}}
+    starts = {"putbook": putbook.START_NAV, "spreadbook": spreadbook.START_NAV,
+              **{f"trend_{n}": v for n, v in trendbook.BOOKS.items() if n in tsum}}
+    fund_dd = limits.fund_drawdown(ks, navs, starts)
+    killswitch.save(ks, KILL)
+    reasons = [f"{b} NAV {n} <= floor {f}" for b, n, f in floors] + ([fund_dd] if fund_dd else [])
+    if reasons and killswitch.arm(ks, "; ".join(reasons), by="putbook apply"):
         killswitch.save(ks, KILL)
         log("kill_armed", reason=ks["reason"], by=ks["by"])
     print(json.dumps({"jev": "live" if live else "stub (no TypeSafe key; never vetoes)",

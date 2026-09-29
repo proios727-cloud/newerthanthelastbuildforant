@@ -163,7 +163,7 @@ def apply(st, bars, quotes, today, judge_fn=None, kill=None):
                "model_version": v.get("model"), "expected_px": exp_px, "fill_px": credit_px,
                "entry_slip": round(exp_px - credit_px, 4),
                "jev_p": v.get("p"), "jev_mode": v.get("mode"), "jev_answers": v.get("answers"),
-               "jev_escalate": v.get("escalate") or []}
+               "jev_escalate": v.get("escalate") or [], "jev_schema_version": v.get("schema")}
         if skip:
             st["log"].append({"date": t, "kind": "spread_skip", "symbol": s, **skip})
             if putbook.ghosted(skip):

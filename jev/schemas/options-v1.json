@@ -1,0 +1,73 @@
+{
+ "escalate_below": 0.6,
+ "questions": {
+  "liquidity": {
+   "criteria": [
+    "illiquid: spread so wide or size so small that fills near mid are unlikely",
+    "thin: fills possible but expect to give up a meaningful part of the spread",
+    "adequate: normal spread for this underlying, modest slippage",
+    "deep: tight spread and ample size"
+   ],
+   "instructions": "Using the bid-ask spread and size fields in `trade`, how easily can this contract be sold now and bought back later near the middle of the spread?",
+   "type": "score"
+  },
+  "material": {
+   "instructions": "Do any of the headlines in `headlines` describe an event about `symbol` that is likely to move its price sharply within the next trading day \u2014 for example earnings or guidance, regulatory decisions, mergers, trading halts, exchange hacks or stablecoin depegs? Commentary, price recaps and unrelated tickers do not count.",
+   "type": "noul"
+  },
+  "regime": {
+   "criteria": {
+    "calm_trend": "Orderly move in one direction with volatility near or below its usual level.",
+    "choppy": "Range-bound or directionless trading with ordinary volatility.",
+    "crisis": "Disorderly selling, gaps, halts or a systemic shock: selling downside protection is dangerous.",
+    "high_vol": "Volatility clearly above normal, large daily swings, but markets functioning."
+   },
+   "instructions": "Given `market` for `symbol` (recent returns, realized and implied volatility, the signal that fired) and the headlines in `headlines`, which regime is `symbol` trading in right now?",
+   "type": "choice"
+  },
+  "setup": {
+   "criteria": [
+    "poor: the premium does not pay for the risk or the setup contradicts the signal",
+    "weak: marginal; small premium for the risk or mixed evidence",
+    "acceptable: premium roughly fair for the risk, signal intact",
+    "strong: implied volatility clearly exceeds realized, strike well protected, signal intact"
+   ],
+   "instructions": "Judge the trade in `trade` against `market` and `headlines`: how good is selling this put now, considering whether implied volatility pays for realized risk, the distance to the strike, time to expiry and the signal? Do not judge liquidity here.",
+   "type": "score"
+  }
+ },
+ "role": "veto-only; never sizes or places orders",
+ "state_inputs": [
+  "symbol",
+  "headlines (cleaned, <=20)",
+  "market",
+  "trade"
+ ],
+ "used_by": [
+  "put30d-v1",
+  "pcs12-v1"
+ ],
+ "version": "options-v1",
+ "veto": [
+  {
+   "bad_p_at_least": 0.8,
+   "question": "material",
+   "rule": "news_catalyst"
+  },
+  {
+   "bad_p_at_least": 0.7,
+   "question": "regime",
+   "rule": "regime_crisis"
+  },
+  {
+   "bad_p_at_least": 0.7,
+   "question": "setup",
+   "rule": "setup_poor"
+  },
+  {
+   "bad_p_at_least": 0.7,
+   "question": "liquidity",
+   "rule": "illiquid"
+  }
+ ]
+}

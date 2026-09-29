@@ -119,7 +119,7 @@ def final_pass(quotes, sym, today, expiration, judge_fn=None, context=None):
     if not judge_fn:
         return None, None
     r = judge_fn(sym, ev.get("headlines", []), context)
-    keys = ("p", "mode", "answers", "escalate", "model")
+    keys = ("p", "mode", "answers", "escalate", "model", "schema")
     veto, verdict = (r.get("veto"), {k: r.get(k) for k in keys}) if isinstance(r, dict) else (r, dict.fromkeys(keys))
     if veto:
         return {"reason": f"jev {veto[0]}", "detail": veto[1], "jev_p": verdict["p"], "jev_mode": verdict["mode"],
@@ -234,7 +234,7 @@ def apply(st, bars, quotes, today, judge_fn=None, kill=None):
                "model_version": v.get("model"), "expected_px": round(mid(c), 4), "fill_px": c["bid"],
                "entry_slip": round(mid(c) - c["bid"], 4),
                "jev_p": v.get("p"), "jev_mode": v.get("mode"), "jev_answers": v.get("answers"),
-               "jev_escalate": v.get("escalate") or []}
+               "jev_escalate": v.get("escalate") or [], "jev_schema_version": v.get("schema")}
         if skip:
             st["log"].append({"date": t, "kind": "put_skip", "symbol": s, **skip})
             if ghosted(skip):
