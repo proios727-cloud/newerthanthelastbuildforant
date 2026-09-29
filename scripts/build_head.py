@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from fund import __main__ as cli, config, jevcheck, putbook, spreadbook  # noqa: E402
+from fund import __main__ as cli, calibration, config, jevcheck, killswitch, putbook, spreadbook  # noqa: E402
 
 CONFIG = {
     "repo_url": "https://github.com/proios727-cloud/newerthanthelastbuildforant",
@@ -23,6 +23,7 @@ CONFIG = {
         "Paper only. Never call any preview, review, place, cancel or exercise tool on a brokerage connector.",
         "Never run `python3 -m fund approve` or type EXECUTE; approval is human-only.",
         "Don't hand-edit ledger/ files, desk.json limits, or jevcheck's registered bar.",
+        "Never run `python3 -m fund kill disarm`; only the human disarms the kill switch.",
         "Work on a new branch off claude/adoring-allen-240cm9 and open a draft pull request into it; never push to that branch directly.",
         "Run `python3 -m unittest` before pushing and report what changed and what the tests showed.",
     ],
@@ -72,6 +73,8 @@ def snapshot():
         "real": real, "shadow": shadow,
         "putbook": putbook.summary(st), "spreadbook": spreadbook.summary(sp),
         "jevcheck": jevcheck.evaluate(st, sp),
+        "jev_calibration": calibration.report(st, sp),
+        "kill_switch": {k: v for k, v in killswitch.load(cli.KILL).items() if k != "history"},
         "open_detail": {"putbook": st["positions"], "spreadbook": sp["positions"],
                         "ghosts": {**st.get("ghosts", {}), **sp.get("ghosts", {})}},
         "activity": activity,

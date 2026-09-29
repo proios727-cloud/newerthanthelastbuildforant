@@ -84,6 +84,7 @@ button:disabled { opacity: .5; cursor: default; }
     <h1>Desk Head</h1>
     <span class="chip info" id="mode">PAPER</span>
     <span class="chip" id="clean">—</span>
+    <span class="chip" id="kill" hidden>Kill switch armed</span>
     <span class="sub" id="asof">Snapshot —</span>
   </header>
 
@@ -156,6 +157,8 @@ function render() {
   const c = $("clean");
   c.textContent = s.clean === false ? "Breach" : s.clean ? "Clean" : "No receipt";
   c.className = "chip " + (s.clean === false ? "bad" : s.clean ? "good" : "warn");
+  const ks = s.kill_switch || {};
+  if (ks.armed) { const k = $("kill"); k.hidden = false; k.className = "chip bad"; k.title = ks.reason || ""; }
 
   const r = s.real || {};
   $("b-real").append(big(fmt$(r.nav)), kv([
@@ -185,7 +188,9 @@ function render() {
     ["JEV mode", s.jev_mode], ["Taken (live) / needed", (j.taken_live ?? 0) + " / " + (j.bar?.min_taken ?? 20)],
     ["Vetoed, closed / needed", (j.ghosts_closed ?? 0) + " / " + (j.bar?.min_ghosts ?? 8)],
     ["Edge per $ credit", j.edge == null ? "—" : j.edge.toFixed(2) + " (need " + (j.bar?.min_edge_per_credit ?? 0.25) + ")"],
-    ["Judge errors", (j.judge_errors ?? 0) + " (" + Math.round((j.error_rate || 0) * 100) + "%)"]]));
+    ["Judge errors", (j.judge_errors ?? 0) + " (" + Math.round((j.error_rate || 0) * 100) + "%)"],
+    ["Calibrated trades", String(s.jev_calibration?.trades_scored ?? 0)],
+    ...Object.entries(s.jev_calibration?.questions || {}).map(([q, v]) => [q + " Brier", v.brier + " vs " + v.brier_if_base_rate + " base"])]));
 
   const sh = s.shadow || {};
   const t = document.createElement("table"); t.className = "t";

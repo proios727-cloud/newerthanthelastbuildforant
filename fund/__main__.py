@@ -10,6 +10,8 @@
   python -m fund quotes FILE         # store Robinhood quotes {SYMBOL: {bid, ask, ts}} → ledger/quotes.json
   python -m fund shadow              # run every shadow variant on new bars (ledger/shadow/<variant>.json)
   python -m fund putbook plan|apply FILE   # paper short-put book ($100k) and put-spread book ($500) on live option quotes
+  python -m fund kill status|arm REASON|disarm DISARM   # one kill switch for every book (disarm is human-only)
+  python -m fund calibration              # per-question Brier score and reliability of JEV's answers
   python -m fund jevcheck                  # pre-registered test: do JEV-vetoed sales (ghosts) do worse than the sales taken?
   python -m fund receipt [--label L]  # write ledger/receipts/<fund-day>-<label>.json with a breach check
   python -m fund sync-board          # write ledger numbers into desk.json tiles/funnel, rebuild board.html
@@ -23,7 +25,7 @@ import sys
 
 import judge
 
-from . import catalyst, clock, config, jevcheck, preview, putbook, receipt, risk, shadow, spreadbook
+from . import battery, calibration, catalyst, clock, config, jevcheck, killswitch, preview, putbook, receipt, risk, shadow, spreadbook
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
@@ -33,6 +35,7 @@ RECEIPTS = DIR / "receipts"
 BARS, SHADOW_DIR, QUOTES = DIR / "bars.json", DIR / "shadow", DIR / "quotes.json"
 PUTBOOK = DIR / "putbook.json"
 SPREADBOOK = DIR / "spreadbook.json"
+KILL = DIR / "kill.json"
 
 
 def log(kind, **data):
@@ -85,6 +88,10 @@ def cmd_preview(a, cfg):
     except preview.GateError as e:
         log("veto", symbol=a.symbol, side=a.side, qty=a.qty, reason=str(e))
         sys.exit(str(e))
+    ks = killswitch.load(KILL)
+    if ks["armed"] and not p["reducing"]:
+        log("veto", symbol=a.symbol, side=a.side, qty=a.qty, reason=f"kill_switch: {ks['reason']}")
+        sys.exit(f"VETO kill_switch: armed since {ks['since']} ({ks['reason']}); only reducing orders pass")
     ps = load_previews()
     ps[p["id"]] = p
     save_previews(ps)
@@ -189,23 +196,58 @@ def cmd_putbook(a, cfg):
     quotes = json.loads(pathlib.Path(a.file).read_text(encoding="utf-8"))
     client = judge.from_env()
 
-    def jev(sym, headlines):  # final pass: TypeSafe JEV on the symbol's headlines (stub never vetoes)
-        try:
-            ans = catalyst.assess(client, sym, headlines)
-            return {"veto": catalyst.veto(ans), "p": ans["material"].probability if ans else None,
-                    "mode": "live" if getattr(client, "live", False) else "stub"}
-        except Exception as e:  # a configured judge that fails blocks the entry: a missed trade is the cheap error
-            return {"veto": ("unavailable", f"{type(e).__name__}: {e}"[:200]), "p": None, "mode": "error"}
+    live = getattr(client, "live", False)
+    model = f"{getattr(client, 'model', 'stub')}" if live else "stub"
 
-    out = putbook.apply(st, bars, quotes, today, judge_fn=jev)
-    sout = spreadbook.apply(sp, bars, quotes, today, judge_fn=jev)
+    def jev(sym, headlines, context=None):  # final pass: the TypeSafe JEV battery (stub never vetoes)
+        try:
+            ans = battery.assess(client, sym, headlines, context)
+            v = battery.verdict(ans, live)
+            return {**v, "p": v["answers"].get("material"), "mode": "live" if live else "stub", "model": model}
+        except Exception as e:  # a configured judge that fails blocks the entry: a missed trade is the cheap error
+            return {"veto": ("unavailable", f"{type(e).__name__}: {e}"[:200]), "p": None, "mode": "error",
+                    "answers": {}, "escalate": [], "model": model}
+
+    ks = killswitch.load(KILL)
+    kill = ks["reason"] if ks["armed"] else None
+    out = putbook.apply(st, bars, quotes, today, judge_fn=jev, kill=kill)
+    sout = spreadbook.apply(sp, bars, quotes, today, judge_fn=jev, kill=kill)
     putbook.save(st, PUTBOOK)
     spreadbook.save(sp, SPREADBOOK)
     for e in out.get("events", []) + sout.get("events", []):
         log(e.get("kind", "put_event"), **{k: v for k, v in e.items() if k != "kind"})
-    print(json.dumps({"jev": "live" if getattr(client, "live", False) else "stub (no TypeSafe key; never vetoes)",
-                      "putbook": {**out, "summary": putbook.summary(st, quotes.get("marks"))},
-                      "spreadbook": {**sout, "summary": spreadbook.summary(sp, quotes.get("marks"))}}, indent=2))
+    marks = quotes.get("marks")
+    psum, ssum = putbook.summary(st, marks), spreadbook.summary(sp, marks)
+    floors = killswitch.floor_breaches({"putbook": psum["nav"], "spreadbook": ssum["nav"]},
+                                       {"putbook": putbook.START_NAV, "spreadbook": spreadbook.START_NAV})
+    if floors and killswitch.arm(ks, "; ".join(f"{b} NAV {n} <= floor {f}" for b, n, f in floors), by="putbook apply"):
+        killswitch.save(ks, KILL)
+        log("kill_armed", reason=ks["reason"], by=ks["by"])
+    print(json.dumps({"jev": "live" if live else "stub (no TypeSafe key; never vetoes)",
+                      "kill_switch": {k: ks[k] for k in ("armed", "reason", "since")},
+                      "putbook": {**out, "summary": psum}, "spreadbook": {**sout, "summary": ssum}}, indent=2))
+
+
+def cmd_kill(a, cfg):
+    ks = killswitch.load(KILL)
+    if a.action == "arm":
+        if not a.arg:
+            sys.exit("kill arm needs a reason")
+        if killswitch.arm(ks, a.arg, by="cli"):
+            killswitch.save(ks, KILL)
+            log("kill_armed", reason=a.arg, by="cli")
+    elif a.action == "disarm":
+        try:
+            if killswitch.disarm(ks, a.arg):
+                killswitch.save(ks, KILL)
+                log("kill_disarmed", by="human")
+        except ValueError as e:
+            sys.exit(str(e))
+    print(json.dumps({k: ks[k] for k in ("armed", "reason", "since", "by")}, indent=2))
+
+
+def cmd_calibration(a, cfg):
+    print(json.dumps(calibration.report(putbook.load(PUTBOOK), spreadbook.load(SPREADBOOK)), indent=2))
 
 
 def cmd_jevcheck(a, cfg):
@@ -221,8 +263,17 @@ def cmd_receipt(a, cfg):
     if SPREADBOOK.exists():
         sh = {**(sh or {}), "spreadbook": spreadbook.summary(spreadbook.load(SPREADBOOK))}
     if PUTBOOK.exists() or SPREADBOOK.exists():
-        sh = {**(sh or {}), "jevcheck": jevcheck.evaluate(putbook.load(PUTBOOK), spreadbook.load(SPREADBOOK))}
+        pb, sb = putbook.load(PUTBOOK), spreadbook.load(SPREADBOOK)
+        sh = {**(sh or {}), "jevcheck": jevcheck.evaluate(pb, sb), "jev_calibration": calibration.report(pb, sb),
+              "jev_escalations": [{"book": n, "symbol": s, "questions": p["jev_escalate"]}
+                                  for n, b in (("putbook", pb), ("spreadbook", sb))
+                                  for s, p in b["positions"].items() if p.get("jev_escalate")]}
     r = receipt.build(L, cfg, events, clock.now(), a.label, shadow=sh)
+    ks = killswitch.load(KILL)
+    if not r["clean"] and killswitch.arm(ks, f"receipt breach {r['fund_day']}: {r['breaches']}", by="receipt"):
+        killswitch.save(ks, KILL)
+        log("kill_armed", reason=ks["reason"], by="receipt")
+    r["kill_switch"] = {k: ks[k] for k in ("armed", "reason", "since", "by")}
     RECEIPTS.mkdir(parents=True, exist_ok=True)
     out = RECEIPTS / f"{r['fund_day']}-{a.label}.json"
     out.write_text(json.dumps(r, indent=2) + "\n", encoding="utf-8")
@@ -287,12 +338,14 @@ def main(argv=None):
     p = sub.add_parser("quotes"); p.add_argument("file")
     p = sub.add_parser("putbook"); p.add_argument("action", choices=["plan", "apply"]); p.add_argument("file", nargs="?")
     sub.add_parser("jevcheck")
+    sub.add_parser("calibration")
+    p = sub.add_parser("kill"); p.add_argument("action", choices=["status", "arm", "disarm"]); p.add_argument("arg", nargs="?")
     p = sub.add_parser("receipt"); p.add_argument("--label", default="session")
     sub.add_parser("sync-board")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
-     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "quotes": cmd_quotes, "putbook": cmd_putbook, "jevcheck": cmd_jevcheck, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
+     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "quotes": cmd_quotes, "putbook": cmd_putbook, "jevcheck": cmd_jevcheck, "kill": cmd_kill, "calibration": cmd_calibration, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":

@@ -80,14 +80,14 @@ class SpreadBookTests(unittest.TestCase):
         spreadbook.apply(st, BARS, q, D)
         self.assertEqual(st["log"][-1]["reason"], "earnings before planned exit")
         st = spreadbook.new_state()
-        spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D, judge_fn=lambda s, h: ("news_catalyst", "p=0.9"))
+        spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D, judge_fn=lambda s, h, c=None: ("news_catalyst", "p=0.9"))
         self.assertEqual(next(x for x in st["log"] if x["kind"] == "spread_skip")["reason"], "jev news_catalyst")
         self.assertEqual(st["positions"], {})
 
     def test_vetoed_spread_is_a_ghost_with_no_cash_or_risk(self):
         st = spreadbook.new_state()
         veto = {"veto": ("news_catalyst", "p=0.9"), "p": 0.9, "mode": "live"}
-        spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D, judge_fn=lambda s, h: veto)
+        spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D, judge_fn=lambda s, h, c=None: veto)
         self.assertEqual((st["cash"], spreadbook.reserved(st)), (500.0, 0))
         self.assertEqual({x["instrument_id"] for x in spreadbook.open_legs(st)}, {"s325", "l324"})
         marks = {"s325": {"bid": 2.0, "ask": 2.1}, "l324": {"bid": 2.0, "ask": 2.05}}

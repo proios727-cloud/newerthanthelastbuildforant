@@ -250,6 +250,24 @@ python3 -m fund putbook apply quotes.json    # marks → exits → entries; ledg
 
 State is kept in `ledger/spreadbook.json`, and its summary appears in each receipt.
 
+## Desk controls: JEV battery, kill switch, trade IDs, calibration
+
+- **JEV battery** (`fund/battery.py`):
+  - Every option sale is judged on four separate questions in one request: headline risk (yes/no), regime (calm trend, choppy, high vol, crisis), setup quality (poor to strong) and liquidity (illiquid to deep).
+  - JEV reads a structured state computed in code: returns, realized and implied volatility, the trade's strikes, days to expiry, bid-ask spreads and cleaned headlines.
+  - The veto thresholds live in code: headline risk ≥0.80, crisis ≥0.70, poor setup ≥0.70, illiquid ≥0.70.
+  - Answers with confidence below 0.60 are flagged for the head agent to review instead of acted on.
+  - JEV can only refuse; the stub never refuses.
+- **Kill switch** (`fund/killswitch.py`, `python3 -m fund kill status|arm REASON|disarm DISARM`):
+  - One switch covers every book. While it's armed, no book opens anything, but exits still run, and the real book's preview refuses opening orders.
+  - It arms itself on a receipt breach, or when a book falls through its floor: put book $90k, spread book $350.
+  - Only a human disarms it; the routine and agents never do.
+- **Trade records:** every entry carries a strategy ID (`put30d-v1`, `pcs12-v1`), a decision ID, the model version, the expected (mid) price, the fill price and entry slippage. Exits add exit slippage, and summaries report round-trip slippage as a % of credit.
+- **Calibration** (`fund/calibration.py`, `python3 -m fund calibration`):
+  - For each JEV question: a Brier score against whether the trade lost, compared with the base-rate score, plus a five-bin reliability table.
+  - Covers closed trades and ghosts that had live answers.
+  - Included in every receipt, along with the day's escalations.
+
 ## Desk Head (head-agent chat)
 
 The Desk Head page ([live page](https://claude.ai/artifact/X4R41DLQS88ZX1GXDnGJwh), private to you) is the one place to talk to the desk. It is built by `scripts/build_head.py` from `assets/head-template.html`.

@@ -23,6 +23,7 @@ MAX_OPEN = 1                           # one spread at a time (docs/research/500
 SHORT_DELTA = (0.16, 0.35)             # short-leg delta band; nearest to TARGET_DELTA (0.30) tried first
 MAX_WIDTH = 2.0                        # 1- to 2-wide only: 5-wide risks ~81% of a $500 account
 MIN_CREDIT_FRAC = 0.20                 # collect at least 20% of the width
+STRATEGY_ID = "pcs12-v1"               # 1-2 wide put credit spread; bump when the rules change
 MAX_LEG_SPREAD = 0.10                  # each leg's bid-ask <= max(10% of mid, $0.05)
 
 
@@ -55,7 +56,7 @@ def open_legs(st):
             for s, p in book.items() for i in (p["short_id"], p["long_id"])]
 
 
-def _close(st, sym, today, px, why, S=None, ghost=False):
+def _close(st, sym, today, px, why, S=None, ghost=False, expected=None):
     p = (st["ghosts"] if ghost else st["positions"]).pop(sym)
     cost = p["contracts"] * (100 * px + (2 * FEE if why != "expiry" else 0.0))
     if not ghost:
@@ -63,7 +64,9 @@ def _close(st, sym, today, px, why, S=None, ghost=False):
     rec = {"symbol": sym, "short": p["short_strike"], "long": p["long_strike"], "expiration": p["expiration"],
            "entry": p["entry"], "exit": today.isoformat(), "why": why, "contracts": p["contracts"],
            "credit": p["credit"], "buyback": round(cost, 2), "pnl": round(p["credit"] - cost, 2), "max_loss": p["max_loss"],
-           "jev_p": p.get("jev_p"), "jev_mode": p.get("jev_mode")}
+           "jev_p": p.get("jev_p"), "jev_mode": p.get("jev_mode"), "jev_answers": p.get("jev_answers"),
+           "strategy_id": p.get("strategy_id"), "decision_id": p.get("decision_id"),
+           "entry_slip": p.get("entry_slip"), "exit_slip": round(px - expected, 4) if expected is not None else None}
     if S is not None:
         rec["underlying_at_expiry"] = S
     st.setdefault("ghost_closed" if ghost else "closed", []).append(rec)
@@ -100,7 +103,7 @@ def best_spread(chain, today, room):
     return None
 
 
-def apply(st, bars, quotes, today, judge_fn=None):
+def apply(st, bars, quotes, today, judge_fn=None, kill=None):
     t = today.isoformat()
     if st["last_apply"] == t:
         return {"skipped": "already applied today"}
@@ -127,9 +130,11 @@ def apply(st, bars, quotes, today, judge_fn=None):
                    else "stop" if debit >= STOP_X * p["credit_px"]
                    else "time" if p["sessions"] >= HOLD or (exp - today).days <= MIN_DTE else None)
             if why:
-                _close(st, s, today, debit, why, ghost=ghost)
+                _close(st, s, today, debit, why, ghost=ghost, expected=mid(qs) - mid(ql))
 
-    for s, chain in quotes.get("chains", {}).items():
+    if kill:
+        st["log"].append({"date": t, "kind": "spread_skip", "symbol": "*", "reason": f"kill switch: {kill}"})
+    for s, chain in ({} if kill else quotes.get("chains", {})).items():
         if s in st["positions"] or s in st.get("ghosts", {}) or s not in EQUITIES:
             continue
         if len(st["positions"]) >= MAX_OPEN:
@@ -142,15 +147,23 @@ def apply(st, bars, quotes, today, judge_fn=None):
                               "reason": "no liquid spread with >=20% credit inside the risk room", "room": round(room, 2)})
             continue
         short, lg, width, credit_px, max_loss = pick
-        skip, verdict = putbook.final_pass(quotes, s, today, short["expiration"], judge_fn)
+        skip, verdict = putbook.final_pass(quotes, s, today, short["expiration"], judge_fn,
+                                           putbook.context(bars, s, [short, lg], today,
+                                                           f"sell 1 put credit spread, {width:g} wide"))
         n = max(1, int(room // max_loss))
         credit = round(n * (100 * credit_px - 2 * FEE), 2)
+        v = verdict or {}
+        exp_px = round(mid(short) - mid(lg), 4)
         pos = {"short_id": short["instrument_id"], "long_id": lg["instrument_id"],
                "short_strike": short["strike"], "long_strike": lg["strike"], "width": width,
                "expiration": short["expiration"], "contracts": n, "credit_px": credit_px,
                "credit": credit, "max_loss": round(n * max_loss, 2), "entry": t, "sessions": 0,
-               "last_debit": round(mid(short) - mid(lg), 4), "delta": short["delta"],
-               "jev_p": (verdict or {}).get("p"), "jev_mode": (verdict or {}).get("mode")}
+               "last_debit": exp_px, "delta": short["delta"],
+               "strategy_id": STRATEGY_ID, "decision_id": putbook.decision_id(STRATEGY_ID, today, s),
+               "model_version": v.get("model"), "expected_px": exp_px, "fill_px": credit_px,
+               "entry_slip": round(exp_px - credit_px, 4),
+               "jev_p": v.get("p"), "jev_mode": v.get("mode"), "jev_answers": v.get("answers"),
+               "jev_escalate": v.get("escalate") or []}
         if skip:
             st["log"].append({"date": t, "kind": "spread_skip", "symbol": s, **skip})
             if putbook.ghosted(skip):
@@ -162,7 +175,8 @@ def apply(st, bars, quotes, today, judge_fn=None):
         st["positions"][s] = pos
         rec = {"date": t, "kind": "spread_entry", "symbol": s, "short": short["strike"], "long": lg["strike"],
                "expiration": short["expiration"], "contracts": n, "credit": credit, "max_loss": round(n * max_loss, 2),
-               "delta": short["delta"]}
+               "delta": short["delta"], "decision_id": pos["decision_id"], "expected_px": exp_px,
+               "entry_slip": pos["entry_slip"], "jev_escalate": pos["jev_escalate"]}
         st["log"].append(rec)
         events.append(rec)
     st["last_apply"] = t
@@ -179,7 +193,8 @@ def summary(st, marks=None):
             "closed_trades": len(st["closed"]),
             "win_rate": round(len(wins) / len(st["closed"]), 3) if st["closed"] else None,
             "at_risk_pct": round(100 * reserved(st) / max(v, 1), 1),
-            "jev_ghosts_open": len(st.get("ghosts", {})), "jev_ghosts_closed": len(st.get("ghost_closed", []))}
+            "jev_ghosts_open": len(st.get("ghosts", {})), "jev_ghosts_closed": len(st.get("ghost_closed", [])),
+            "slippage_pct_of_credit": putbook.slippage_pct(st["closed"])}
 
 
 def load(path):

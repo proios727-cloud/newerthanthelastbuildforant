@@ -104,7 +104,7 @@ class FinalPassTests(unittest.TestCase):
     def test_jev_veto_blocks(self):
         st = putbook.new_state()
         putbook.apply(st, BARS, self.q(headlines=["AAPL halted"]), D,
-                      judge_fn=lambda s, h: ("news_catalyst", "material p=0.93"))
+                      judge_fn=lambda s, h, c=None: ("news_catalyst", "material p=0.93"))
         self.assertEqual(st["positions"], {})
         skip = next(x for x in st["log"] if x["kind"] == "put_skip")
         self.assertEqual(skip["reason"], "jev news_catalyst")
@@ -113,7 +113,7 @@ class FinalPassTests(unittest.TestCase):
     def test_vetoed_sale_is_tracked_as_ghost_through_the_same_exits(self):
         st = putbook.new_state()
         veto = {"veto": ("news_catalyst", "p=0.93"), "p": 0.93, "mode": "live"}
-        putbook.apply(st, BARS, self.q(headlines=["AAPL halted"]), D, judge_fn=lambda s, h: veto)
+        putbook.apply(st, BARS, self.q(headlines=["AAPL halted"]), D, judge_fn=lambda s, h, c=None: veto)
         self.assertIn("AAPL", st["ghosts"])
         plan = putbook.plan(st, BARS, date(2026, 9, 29))
         self.assertIn(st["ghosts"]["AAPL"]["instrument_id"], [x["instrument_id"] for x in plan["open"]])
@@ -128,10 +128,10 @@ class FinalPassTests(unittest.TestCase):
     def test_outage_veto_is_not_a_ghost_and_taken_trades_keep_the_verdict(self):
         st = putbook.new_state()
         putbook.apply(st, BARS, self.q(), D,
-                      judge_fn=lambda s, h: {"veto": ("unavailable", "timeout"), "p": None, "mode": "error"})
+                      judge_fn=lambda s, h, c=None: {"veto": ("unavailable", "timeout"), "p": None, "mode": "error"})
         self.assertEqual(st.get("ghosts", {}), {})
         st = putbook.new_state()
-        putbook.apply(st, BARS, self.q(), D, judge_fn=lambda s, h: {"veto": None, "p": 0.12, "mode": "live"})
+        putbook.apply(st, BARS, self.q(), D, judge_fn=lambda s, h, c=None: {"veto": None, "p": 0.12, "mode": "live"})
         self.assertEqual((st["positions"]["AAPL"]["jev_p"], st["positions"]["AAPL"]["jev_mode"]), (0.12, "live"))
 
     def test_stub_jev_never_vetoes(self):
@@ -140,5 +140,5 @@ class FinalPassTests(unittest.TestCase):
         client = judge.StubClient()
         st = putbook.new_state()
         putbook.apply(st, BARS, self.q(headlines=["AAPL beats estimates"]), D,
-                      judge_fn=lambda s, h: catalyst.veto(catalyst.assess(client, s, h)))
+                      judge_fn=lambda s, h, c=None: catalyst.veto(catalyst.assess(client, s, h)))
         self.assertIn("AAPL", st["positions"])
