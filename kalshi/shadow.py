@@ -34,7 +34,7 @@ PERIOD = 900
 
 
 def _c(p):
-    return float(p) * 100
+    return round(float(p) * 100, 2)          # "0.29" → 29.0, not 28.999999999999996
 
 
 def book_side(book, side, qty):
@@ -96,16 +96,16 @@ def watch_exit(rec, close, fetch, clock, sleep, ex=EXIT):
     """Poll the held side's best bid until close; record the exit on the rec if the rule fires."""
     if not any(ex.get(k) is not None for k in ("tp", "sl", "trail")):
         return rec
-    entry, peak = round(rec["book_avg"]), round(rec["book_avg"])
+    entry, peak = round(rec["book_avg"]), None     # peak tracks bids only, so the spread can't trip the trail
     while clock() < close - POLL_S:
         sleep(POLL_S)
         try:
             bid = best_bid(fetch(f"/markets/{rec['ticker']}/orderbook", {"depth": 5}), rec["side"])
-        except OSError:
+        except Exception:                          # noqa: BLE001 — a bad read must never end the shift
             continue
-        if bid is None:
+        if bid is None or clock() >= close:
             continue
-        peak = max(peak, bid)
+        peak = bid if peak is None else max(peak, bid)
         if exit_hit(entry, peak, bid, ex):
             rec.update(exit_price=round(bid, 1), exit_secs_before_close=round(close - clock(), 1),
                        exit_peak=round(peak, 1))
@@ -114,9 +114,8 @@ def watch_exit(rec, close, fetch, clock, sleep, ex=EXIT):
 
 
 def pnl_c(price, won, qty):
-    """Fee-inclusive P&L in cents for `qty` contracts bought at `price` ¢ (rounded to a whole cent)."""
-    p = round(price)
-    return ((100 if won else 0) - p) * qty - taker_fee_cents(p, qty)
+    """Fee-inclusive P&L in cents for `qty` contracts bought at an average of `price` ¢ (cost kept exact)."""
+    return round(((100 if won else 0) - price) * qty - taker_fee_cents(round(price), qty))
 
 
 def exit_pnl_c(entry, exit_price, qty):
@@ -146,25 +145,39 @@ def market_closing(series, close_ts, fetch):
     return None
 
 
+def _read(s, close, qty, fetch, clock):
+    m = market_closing(s, close, fetch)
+    if not m:
+        return None
+    book = fetch(f"/markets/{m['ticker']}/orderbook", {"depth": 50})
+    read_at = clock()
+    return {"ts": datetime.now(timezone.utc).isoformat(), "ticker": m["ticker"], "close_ts": close,
+            "secs_before_close": round(close - read_at, 2), "qty": qty, "rule": RULE, **decide(book, qty)}
+
+
 def run(hours, log, qty, fetch=_get, clock=time.time, sleep=time.sleep):
-    end, pending = clock() + hours * 3600, []
+    end, pending, last_close = clock() + hours * 3600, [], 0
     while clock() < end:
-        close = next_close(clock() + AT_S)            # next close we can still reach at T-60s
+        close = max(next_close(clock() + AT_S), last_close + PERIOD)   # never the same window twice
+        if close > end:                               # don't start a window the shift can't settle
+            break
+        last_close = close
         sleep(max(0, close - AT_S - clock()))
         window = []
         for s in SERIES:
-            try:
-                m = market_closing(s, close, fetch)
-                if not m:
-                    continue
-                book = fetch(f"/markets/{m['ticker']}/orderbook", {"depth": 50})
-                read_at = clock()
-                d = decide(book, qty)
-                window.append({"ts": datetime.now(timezone.utc).isoformat(), "ticker": m["ticker"],
-                               "close_ts": close, "secs_before_close": round(close - read_at, 2), "qty": qty,
-                               "rule": RULE, **d})
-            except OSError as e:
-                print(f"{s}: read failed {e}", file=sys.stderr, flush=True)
+            for attempt in (1, 2):                    # one fast retry: a backoff would miss T-60
+                try:
+                    rec = _read(s, close, qty, fetch, clock)
+                    if rec:
+                        window.append(rec)
+                    break
+                except Exception as e:                # noqa: BLE001 — a bad read must never end the shift
+                    if attempt == 2:
+                        print(f"{s}: read failed {e!r}", file=sys.stderr, flush=True)
+                        _write(log, {"ts": datetime.now(timezone.utc).isoformat(), "series": s, "close_ts": close,
+                                     "rule": RULE, "take": False, "why": f"read failed: {type(e).__name__}"})
+                    else:
+                        sleep(0.5)
         for rec in one_per_window(window):
             if rec["take"]:
                 watch_exit(rec, close, fetch, clock, sleep)
@@ -178,6 +191,8 @@ def run(hours, log, qty, fetch=_get, clock=time.time, sleep=time.sleep):
     while pending and clock() < end + 1800:          # let the last trades settle
         sleep(30)
         pending = _settle_ready(pending, log, fetch, clock)
+    for rec in pending:                               # never drop a decision: log it unsettled
+        _write(log, {**rec, "result": None, "why": rec.get("why", "unsettled at end of shift")})
 
 
 def _settle_ready(pending, log, fetch, clock):
@@ -196,7 +211,7 @@ def _settle_ready(pending, log, fetch, clock):
             _write(log, done)
             print(f"{rec['ticker']:<30} settled {result}: book {done['pnl_book_c']:+}¢ vwap {done['pnl_vwap_c']}¢",
                   flush=True)
-        except OSError:
+        except Exception:                             # noqa: BLE001 — retry next pass
             left.append(rec)
     return left
 

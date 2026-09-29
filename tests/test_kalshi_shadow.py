@@ -26,7 +26,7 @@ class ShadowTests(unittest.TestCase):
     def test_settle_uses_fees_on_both_prices(self):
         rec = {"ticker": "X", "side": "no", "qty": 10, "book_avg": 70.6}
         s = shadow.settle(rec, "no", 70)
-        self.assertEqual(s["pnl_book_c"], 29 * 10 - 15)   # 71¢ fill, fee ceil(.07·10·.71·.29·100)=15
+        self.assertEqual(s["pnl_book_c"], 1000 - 706 - 15)  # exact cost 4@70+6@71=706¢, fee on 71¢ = 15
         self.assertEqual(s["pnl_vwap_c"], 30 * 10 - 15)
         self.assertEqual(shadow.settle(rec, "yes", None)["pnl_vwap_c"], None)
 
@@ -52,7 +52,7 @@ class ShadowTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as d:
             log = os.path.join(d, "s.jsonl")
-            shadow.run(0.02, log, 10, fetch=fetch, clock=lambda: now[0], sleep=sleep)
+            shadow.run(0.05, log, 10, fetch=fetch, clock=lambda: now[0], sleep=sleep)
             with open(log) as f:
                 rows = [json.loads(line) for line in f]
             self.assertEqual({r["ticker"] for r in rows}, {"KXBTC15M-T", "KXETH15M-T"})
@@ -68,6 +68,32 @@ class ShadowTests(unittest.TestCase):
         self.assertEqual([r["take"] for r in recs], [False, True, False])
         self.assertTrue(recs[0]["alt"] and "kept ETH" in recs[0]["why"])
         self.assertNotIn("alt", recs[2])
+
+
+class RobustnessTests(unittest.TestCase):
+    def test_cents_parse_without_float_noise(self):
+        self.assertEqual([shadow._c(p) for p in ("0.2900", "0.0700", "0.5700", "0.9990")], [29.0, 7.0, 57.0, 99.9])
+        self.assertTrue(shadow.exit_hit(23, 29, shadow._c("0.2900"), {"tp": 6, "sl": None, "trail": None}))
+
+    def test_bad_read_is_retried_then_logged_and_never_ends_the_shift(self):
+        close = 1_790_000_100 - 1_790_000_100 % 900 + 900
+        now = [close - 120.0]
+        calls = {"n": 0}
+
+        def fetch(path, params):
+            if path == "/markets":
+                calls["n"] += 1
+                raise json.JSONDecodeError("bad", "", 0)   # e.g. an HTML error page with status 200
+            return {}
+
+        with tempfile.TemporaryDirectory() as d:
+            log = os.path.join(d, "s.jsonl")
+            shadow.run(0.05, log, 10, fetch=fetch, clock=lambda: now[0],
+                       sleep=lambda s: now.__setitem__(0, now[0] + max(s, 1)))
+            with open(log) as f:
+                rows = [json.loads(line) for line in f]
+        self.assertEqual(calls["n"], 4)                        # 2 series × (try + one retry)
+        self.assertEqual([r["why"] for r in rows], ["read failed: JSONDecodeError"] * 2)
 
 
 class ExitTests(unittest.TestCase):
