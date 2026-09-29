@@ -287,6 +287,8 @@ State is kept in `ledger/spreadbook.json`, and its summary appears in each recei
 
 ## Desk Head (head-agent chat)
 
+The [Desk Blueprint](https://claude.ai/artifact/R3xmKsrSFBK1kquZVYVNyh) (`docs/blueprint.html`) covers the layers, departments, JEV question sets, build plan, crypto strategies and risks.
+
 The Desk Head page ([live page](https://claude.ai/artifact/X4R41DLQS88ZX1GXDnGJwh), private to you) is the one place to talk to the desk. It is built by `scripts/build_head.py` from `assets/head-template.html`.
 
 - **Snapshot:** every book, the JEV test, recent entries, exits and skips, and the rules and research, computed with the desk's own code and embedded in the page.
