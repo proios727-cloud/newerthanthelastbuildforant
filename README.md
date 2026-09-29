@@ -203,7 +203,11 @@ Checked against live quotes at the 2026-09-28 close: SPY at-the-money and the 73
 
 **Final pass before every sale:** it runs after the contract is chosen and sized.
 - **Earnings gate:** no new put when the company reports before the planned exit (the earlier of 21 days and 7 days before expiry). An open put is bought back at the ask the session before a report.
-- **TypeSafe JEV:** the symbol's headlines go to `fund/catalyst.py`, and a live, confident "material headline risk" answer blocks the sale. Without `TYPESAFE_API_KEY`, `TYPESAFE_API_URL` and `TYPESAFE_LIVE=1`, plus `api.typesafe.ai` allowed in the network policy, JEV runs as a stub that never vetoes. `apply` reports which mode ran.
+- **TypeSafe JEV:** the symbol's headlines go to `fund/catalyst.py`, and a live, confident "material headline risk" answer (P(yes) ≥ 0.80) blocks the sale. JEV can only refuse a trade, never authorize one, because headlines are untrusted text.
+  - **Setup:** the client calls `POST https://api.typesafe.ai/v1/systemone` with the model pinned to `jev-1.13.0`. It needs `TYPESAFE_API_KEY`, `TYPESAFE_LIVE=1`, and `api.typesafe.ai` allowed in the network policy. `TYPESAFE_API_URL` and `TYPESAFE_MODEL` are optional overrides.
+  - **Stub:** without that setup JEV runs as a stub that never vetoes.
+  - **Failure:** if a configured judge errors, the entry is skipped (`jev unavailable`).
+  - `apply` reports which mode ran.
 - **Inputs:** the routine writes `events: {SYM: {earnings_date, headlines}}` into the quotes file (Robinhood earnings, TradingView news).
 
 **Concentration:** 40% of NAV per position breaks the stock desk's 5% position rule. A $100k book can't sell single-name puts in whole contracts any other way. Treat the book as a measurement tool, not a sizing template.
@@ -218,6 +222,19 @@ Day 1 (2026-09-28):
 python3 -m fund putbook plan                 # which quotes to fetch
 python3 -m fund putbook apply quotes.json    # marks → exits → entries; ledger/putbook.json
 ```
+
+## Paper put-spread book ($500, from 2026-09-29)
+
+`fund/spreadbook.py` is the defined-risk version of the put book, sized for a $500 account. It uses the same signal, the same earnings gate and the same JEV pass. `putbook apply` runs both books from one quotes file.
+
+- **Structure:** sell the ~30-delta put ~30 days out and buy a lower put in the same expiry, $1, $2.5 or $5 wide. The routine fetches the long legs from `spread_strikes` in the plan.
+- **Choice:** among spreads that collect at least 20% of the width and fit the risk room, it takes the best credit per dollar of max loss.
+- **Risk:** max loss is width × 100 − credit. Each spread may risk up to 50% of NAV and all spreads together up to 100%. The max loss stays reserved in cash, so the book can never owe more than it holds.
+- **Fills:** opens at the natural price (short bid − long ask) and closes at short ask − long bid.
+- **Exits:** at 50% of the credit, at 2× the credit, after 15 sessions, with 7 days left, or the session before earnings. Expiry settles at intrinsic.
+- **Live use:** a real account needs options level 3 for spreads. Nothing here places orders.
+
+State is kept in `ledger/spreadbook.json`, and its summary appears in each receipt.
 
 ## Next up
 

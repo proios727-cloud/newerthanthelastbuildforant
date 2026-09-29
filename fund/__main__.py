@@ -9,7 +9,7 @@
   python -m fund scan                # ranked Quant Scanner signals from ledger/bars.json
   python -m fund quotes FILE         # store Robinhood quotes {SYMBOL: {bid, ask, ts}} → ledger/quotes.json
   python -m fund shadow              # run every shadow variant on new bars (ledger/shadow/<variant>.json)
-  python -m fund putbook plan|apply FILE   # paper short-put book on live option quotes (ledger/putbook.json)
+  python -m fund putbook plan|apply FILE   # paper short-put book ($100k) and put-spread book ($500) on live option quotes
   python -m fund receipt [--label L]  # write ledger/receipts/<fund-day>-<label>.json with a breach check
   python -m fund sync-board          # write ledger numbers into desk.json tiles/funnel, rebuild board.html
 """
@@ -22,7 +22,7 @@ import sys
 
 import judge
 
-from . import catalyst, clock, config, preview, putbook, receipt, risk, shadow
+from . import catalyst, clock, config, preview, putbook, receipt, risk, shadow, spreadbook
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
@@ -31,6 +31,7 @@ STATE, PREVIEWS, EVENTS = DIR / "state.json", DIR / "previews.json", DIR / "even
 RECEIPTS = DIR / "receipts"
 BARS, SHADOW_DIR, QUOTES = DIR / "bars.json", DIR / "shadow", DIR / "quotes.json"
 PUTBOOK = DIR / "putbook.json"
+SPREADBOOK = DIR / "spreadbook.json"
 
 
 def log(kind, **data):
@@ -175,10 +176,12 @@ def cmd_shadow(a, cfg):
 
 
 def cmd_putbook(a, cfg):
-    st, bars = putbook.load(PUTBOOK), load_bars()
+    st, sp, bars = putbook.load(PUTBOOK), spreadbook.load(SPREADBOOK), load_bars()
     today = date.fromisoformat(bars["SPY"]["last"])  # the equity session the bars describe
     if a.action == "plan":
-        print(json.dumps(putbook.plan(st, bars, today), indent=2))
+        plan = putbook.plan(st, bars, today)
+        plan["open"] += spreadbook.open_legs(sp)
+        print(json.dumps(plan, indent=2))
         return
     if not a.file:
         sys.exit("putbook apply needs FILE")
@@ -186,14 +189,20 @@ def cmd_putbook(a, cfg):
     client = judge.from_env()
 
     def jev(sym, headlines):  # final pass: TypeSafe JEV on the symbol's headlines (stub never vetoes)
-        return catalyst.veto(catalyst.assess(client, sym, headlines))
+        try:
+            return catalyst.veto(catalyst.assess(client, sym, headlines))
+        except Exception as e:  # a configured judge that fails blocks the entry: a missed trade is the cheap error
+            return ("unavailable", f"{type(e).__name__}: {e}"[:200])
 
     out = putbook.apply(st, bars, quotes, today, judge_fn=jev)
-    out["jev"] = "live" if getattr(client, "live", False) else "stub (no TypeSafe key; never vetoes)"
+    sout = spreadbook.apply(sp, bars, quotes, today, judge_fn=jev)
     putbook.save(st, PUTBOOK)
-    for e in out.get("events", []):
+    spreadbook.save(sp, SPREADBOOK)
+    for e in out.get("events", []) + sout.get("events", []):
         log(e.get("kind", "put_event"), **{k: v for k, v in e.items() if k != "kind"})
-    print(json.dumps({**out, "summary": putbook.summary(st, quotes.get("marks"))}, indent=2))
+    print(json.dumps({"jev": "live" if getattr(client, "live", False) else "stub (no TypeSafe key; never vetoes)",
+                      "putbook": {**out, "summary": putbook.summary(st, quotes.get("marks"))},
+                      "spreadbook": {**sout, "summary": spreadbook.summary(sp, quotes.get("marks"))}}, indent=2))
 
 
 def cmd_receipt(a, cfg):
@@ -202,6 +211,8 @@ def cmd_receipt(a, cfg):
     sh = {n: b.summary() for n, b in shadow_books(cfg).items()} if SHADOW_DIR.exists() or (DIR / "shadow.json").exists() else None
     if PUTBOOK.exists():
         sh = {**(sh or {}), "putbook": putbook.summary(putbook.load(PUTBOOK))}
+    if SPREADBOOK.exists():
+        sh = {**(sh or {}), "spreadbook": spreadbook.summary(spreadbook.load(SPREADBOOK))}
     r = receipt.build(L, cfg, events, clock.now(), a.label, shadow=sh)
     RECEIPTS.mkdir(parents=True, exist_ok=True)
     out = RECEIPTS / f"{r['fund_day']}-{a.label}.json"

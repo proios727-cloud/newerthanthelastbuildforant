@@ -24,10 +24,11 @@ class JudgeTests(unittest.TestCase):
         a = judge.ask(c, {}, catalyst.QUESTIONS)
         self.assertFalse(a["material"].confident(0.0))
 
-    def test_live_needs_key_url_and_opt_in(self):
+    def test_live_needs_key_and_opt_in(self):
         self.assertIsInstance(judge.from_env({"TYPESAFE_API_KEY": "k", "TYPESAFE_API_URL": "u"}), judge.StubClient)
-        env = {"TYPESAFE_API_KEY": "k", "TYPESAFE_API_URL": "https://x", "TYPESAFE_LIVE": "1"}
-        self.assertIsInstance(judge.from_env(env), judge.HttpClient)
+        c = judge.from_env({"TYPESAFE_API_KEY": "k", "TYPESAFE_LIVE": "1"})
+        self.assertIsInstance(c, judge.HttpClient)
+        self.assertEqual((c.base_url, c.model), ("https://api.typesafe.ai/v1/systemone", "jev-1.13.0"))
 
     def test_question_validation(self):
         with self.assertRaises(ValueError):
@@ -37,8 +38,22 @@ class JudgeTests(unittest.TestCase):
 
     def test_http_payload_shape(self):
         p = judge.HttpClient("k", "https://x").payload({"a": 1}, catalyst.QUESTIONS)
-        self.assertEqual([q["type"] for q in p["questions"]], ["noul", "choice"])
-        self.assertNotIn("criteria", p["questions"][0])
+        self.assertEqual({k: q["type"] for k, q in p["questions"].items()}, {"material": "noul", "direction": "choice"})
+        self.assertNotIn("criteria", p["questions"]["material"])
+        self.assertIn("bullish", p["questions"]["direction"]["criteria"])
+        self.assertEqual(p["state"], '{"a": 1}')
+        self.assertEqual(p["model"], "jev-1.13.0")
+
+    def test_http_parse_documented_shape(self):
+        a = judge.HttpClient.parse({"answers": {
+            "material": {"type": "noul", "noul": 0.91},
+            "direction": {"type": "choice", "choice": "bearish", "confidence": 0.7,
+                          "probabilities": {"bearish": 0.8, "bullish": 0.2}}}})
+        self.assertTrue(a["material"].value and a["material"].confident(0.8))
+        self.assertEqual((a["direction"].value, a["direction"].probability), ("bearish", 0.8))
+        self.assertEqual(catalyst.veto(a)[0], "news_catalyst")
+        with self.assertRaises(RuntimeError):
+            judge.HttpClient.parse({"answers": {"x": {"type": "essay"}}})
 
 
 class CatalystTests(unittest.TestCase):

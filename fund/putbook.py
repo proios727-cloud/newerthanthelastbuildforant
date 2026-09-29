@@ -75,7 +75,10 @@ def plan(st, bars, today):
                       "expiry_window": [(today + timedelta(days=DTE_MIN)).isoformat(),
                                         (today + timedelta(days=DTE_MAX)).isoformat()],
                       "expiry_target": (today + timedelta(days=DTE_TARGET)).isoformat(),
-                      "try_strikes": [base + k * step for k in range(-4, 3)]})
+                      "try_strikes": [base + k * step for k in range(-4, 3)],
+                      # long legs for the $500 spread book: 1, 2.5 and 5 below the three central strikes
+                      "spread_strikes": sorted({round(base + k * step - w, 2) for k in (-1, 0, 1) for w in (1, 2.5, 5)}
+                                               - {base + k * step for k in range(-4, 3)})})
     return {"today": today.isoformat(), "open": need, "candidates": cands}
 
 
@@ -91,6 +94,25 @@ def _close(st, sym, today, px, why, S=None):
         rec["underlying_at_expiry"] = S
     st["closed"].append(rec)
     st["log"].append({"date": today.isoformat(), "kind": "put_exit", **rec})
+
+
+def final_pass(quotes, sym, today, expiration, judge_fn=None):
+    """Earnings gate, then JEV. A skip record ({"reason": ..., ...}) or None. Shared with the spread book."""
+    ev = quotes.get("events", {}).get(sym, {})
+    er = ev.get("earnings_date")
+    planned_exit = min(date.fromisoformat(expiration) - timedelta(days=MIN_DTE), today + timedelta(days=21))
+    if er and today.isoformat() < er <= planned_exit.isoformat():
+        return {"reason": "earnings before planned exit", "earnings_date": er, "planned_exit": planned_exit.isoformat()}
+    if judge_fn:
+        veto = judge_fn(sym, ev.get("headlines", []))
+        if veto:
+            return {"reason": f"jev {veto[0]}", "detail": veto[1]}
+    return None
+
+
+def earnings_tomorrow(quotes, sym, today):
+    er = quotes.get("events", {}).get(sym, {}).get("earnings_date")
+    return bool(er) and 0 <= (date.fromisoformat(er) - today).days <= 1
 
 
 def apply(st, bars, quotes, today, judge_fn=None):
@@ -112,8 +134,7 @@ def apply(st, bars, quotes, today, judge_fn=None):
             continue
         p["sessions"] += 1
         q = marks.get(p["instrument_id"])
-        er = quotes.get("events", {}).get(s, {}).get("earnings_date")
-        if er and q and q["ask"] > 0 and 0 <= (date.fromisoformat(er) - today).days <= 1:
+        if q and q["ask"] > 0 and earnings_tomorrow(quotes, s, today):
             p["last_mid"] = round(mid(q), 4)
             _close(st, s, today, q["ask"], "earnings")
             continue
@@ -147,19 +168,10 @@ def apply(st, bars, quotes, today, judge_fn=None):
             st["log"].append({"date": t, "kind": "put_skip", "symbol": s, "reason": "size",
                               "one_contract_secures": c["strike"] * 100, "room": round(room, 2)})
             continue
-        ev = quotes.get("events", {}).get(s, {})
-        er = ev.get("earnings_date")
-        planned_exit = min(date.fromisoformat(c["expiration"]) - timedelta(days=MIN_DTE), today + timedelta(days=21))
-        if er and t < er <= planned_exit.isoformat():
-            st["log"].append({"date": t, "kind": "put_skip", "symbol": s, "reason": "earnings before planned exit",
-                              "earnings_date": er, "planned_exit": planned_exit.isoformat()})
+        skip = final_pass(quotes, s, today, c["expiration"], judge_fn)
+        if skip:
+            st["log"].append({"date": t, "kind": "put_skip", "symbol": s, **skip})
             continue
-        if judge_fn:
-            veto = judge_fn(s, ev.get("headlines", []))
-            if veto:
-                st["log"].append({"date": t, "kind": "put_skip", "symbol": s, "reason": f"jev {veto[0]}",
-                                  "detail": veto[1]})
-                continue
         credit = n * (100 * c["bid"] - FEE)
         st["cash"] += credit
         st["positions"][s] = {"instrument_id": c["instrument_id"], "strike": c["strike"], "expiration": c["expiration"],
