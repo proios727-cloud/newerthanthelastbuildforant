@@ -1,0 +1,46 @@
+name: kalshi-shadow
+# SHADOW only: reads Kalshi's public API and logs Rule B decisions. Never places orders.
+# Runs in ~5.5h shifts every 6h; each shift appends its log to the `shadow-data` branch.
+on:
+  schedule:
+    - cron: "3 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "Shift length in hours"
+        default: "5.5"
+concurrency:
+  group: kalshi-shadow
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run shadow shift
+        run: python -m kalshi.shadow --hours "${{ inputs.hours || '5.5' }}" --log shadow_b.jsonl
+      - name: Append log to shadow-data branch
+        if: always()
+        run: |
+          [ -s shadow_b.jsonl ] || { echo "no decisions this shift"; exit 0; }
+          git config user.name "kalshi-shadow"
+          git config user.email "kalshi-shadow@users.noreply.github.com"
+          if git fetch origin shadow-data; then
+            git worktree add --detach /tmp/data FETCH_HEAD
+          else
+            git worktree add --detach /tmp/data
+            git -C /tmp/data checkout -q --orphan shadow-data
+            git -C /tmp/data rm -rfq .
+          fi
+          cat shadow_b.jsonl >> /tmp/data/shadow_b.jsonl
+          python -m kalshi.shadow --report /tmp/data/shadow_b.jsonl > /tmp/data/REPORT.txt
+          cd /tmp/data
+          git add shadow_b.jsonl REPORT.txt
+          git commit -m "shadow shift $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push origin HEAD:shadow-data
