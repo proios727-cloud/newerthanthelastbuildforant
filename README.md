@@ -250,6 +250,20 @@ python3 -m fund putbook apply quotes.json    # marks → exits → entries; ledg
 
 State is kept in `ledger/spreadbook.json`, and its summary appears in each receipt.
 
+## Desk Head (head-agent chat)
+
+The Desk Head page ([live page](https://claude.ai/artifact/X4R41DLQS88ZX1GXDnGJwh), private to you) is the one place to talk to the desk. It is built by `scripts/build_head.py` from `assets/head-template.html`.
+
+- **Snapshot:** every book, the JEV test, recent entries, exits and skips, and the rules and research, computed with the desk's own code and embedded in the page.
+- **Ask:** questions go to Claude on the complex tier, which answers only from that snapshot and cannot trade. When you ask for work, it drafts a task you can send with one click.
+- **Send work to an agent:** starts a Claude Code session on this repo through the Claude Code Remote connector, after a confirm step on the page. Every task carries fixed rules:
+  - paper only, and no brokerage order tools;
+  - no approving trades;
+  - no ledger edits;
+  - work on a new branch and open a draft PR;
+  - run the tests.
+- **Refresh:** run `python3 scripts/build_head.py` and republish `head.html` to the same URL. The snapshot is as of the build time shown in the header.
+
 ## Next up
 
 1. **Event calendar:** the Macro seat supplies upcoming releases so Risk can apply the blackout to shadow entries too (`Shadow.step(..., events=[...])`).
