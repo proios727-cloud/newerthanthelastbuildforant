@@ -190,6 +190,30 @@ Checked against live quotes at the 2026-09-28 close: SPY at-the-money and the 73
 
 **Verdict: ITERATE.** Short puts on bullish signals are the only structure that survives, with low drawdown but no return edge over holding SPY. The out-of-sample window is five months of a mostly rising market. The next step is a short-put shadow book on live Robinhood chains, still without real orders.
 
+## Paper put book (live option quotes, from 2026-09-28)
+
+`fund/putbook.py` forward-tests the O2 survivor on real Robinhood option quotes. It is paper only: it reads quotes the routine fetched and can't place an order.
+
+**Rule:** a bullish signal on yesterday's close means sell a put with delta near 0.30, 21–45 days out (closest to 30 days), at today's close. It exits at 50% of the credit, at 3× the credit, after 15 sessions, or with 7 days left. Expiry settles at intrinsic value.
+
+**What's more realistic than the backtest:**
+- **Fills:** it sells at the bid and buys back at the ask, so it pays the real spread.
+- **Whole contracts:** each position may secure up to 40% of NAV and all positions together up to 100%. On $100k, one SPY or QQQ put (about $72k) doesn't fit, and those skips are logged. Contracts wider than 10% of mid are skipped too.
+- **Model check:** every fill logs the live implied vol against the symbol's 20-day realized vol. That's the ratio the backtest's pricing depended on.
+
+**Concentration:** 40% of NAV per position breaks the stock desk's 5% position rule. A $100k book can't sell single-name puts in whole contracts any other way. Treat the book as a measurement tool, not a sizing template.
+
+Day 1 (2026-09-28):
+- **Sold:** AAPL 325P and TSLA 335P, Oct 30 expiry, 1 contract each, $1,344.94 credit in total, 66% of NAV secured.
+- **Skipped for size:** SPY and QQQ.
+- **Skipped for spread:** AMD and MSFT, at 10.4% and 10.6% of mid.
+- **Implied/realized vol:** 1.20 for AAPL and 0.98 for TSLA.
+
+```bash
+python3 -m fund putbook plan                 # which quotes to fetch
+python3 -m fund putbook apply quotes.json    # marks → exits → entries; ledger/putbook.json
+```
+
 ## Next up
 
 1. **Event calendar:** the Macro seat supplies upcoming releases so Risk can apply the blackout to shadow entries too (`Shadow.step(..., events=[...])`).

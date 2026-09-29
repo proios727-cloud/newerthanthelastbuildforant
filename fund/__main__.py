@@ -9,16 +9,18 @@
   python -m fund scan                # ranked Quant Scanner signals from ledger/bars.json
   python -m fund quotes FILE         # store Robinhood quotes {SYMBOL: {bid, ask, ts}} → ledger/quotes.json
   python -m fund shadow              # run every shadow variant on new bars (ledger/shadow/<variant>.json)
+  python -m fund putbook plan|apply FILE   # paper short-put book on live option quotes (ledger/putbook.json)
   python -m fund receipt [--label L]  # write ledger/receipts/<fund-day>-<label>.json with a breach check
   python -m fund sync-board          # write ledger numbers into desk.json tiles/funnel, rebuild board.html
 """
 import argparse
+from datetime import date
 import json
 import pathlib
 import subprocess
 import sys
 
-from . import clock, config, preview, receipt, risk, shadow
+from . import clock, config, preview, putbook, receipt, risk, shadow
 from .config import ROOT
 from .ledger import Ledger, parse_ts
 
@@ -26,6 +28,7 @@ DIR = ROOT / "ledger"
 STATE, PREVIEWS, EVENTS = DIR / "state.json", DIR / "previews.json", DIR / "events.jsonl"
 RECEIPTS = DIR / "receipts"
 BARS, SHADOW_DIR, QUOTES = DIR / "bars.json", DIR / "shadow", DIR / "quotes.json"
+PUTBOOK = DIR / "putbook.json"
 
 
 def log(kind, **data):
@@ -169,10 +172,28 @@ def cmd_shadow(a, cfg):
     print(json.dumps(out, indent=2))
 
 
+def cmd_putbook(a, cfg):
+    st, bars = putbook.load(PUTBOOK), load_bars()
+    today = date.fromisoformat(bars["SPY"]["last"])  # the equity session the bars describe
+    if a.action == "plan":
+        print(json.dumps(putbook.plan(st, bars, today), indent=2))
+        return
+    if not a.file:
+        sys.exit("putbook apply needs FILE")
+    quotes = json.loads(pathlib.Path(a.file).read_text(encoding="utf-8"))
+    out = putbook.apply(st, bars, quotes, today)
+    putbook.save(st, PUTBOOK)
+    for e in out.get("events", []):
+        log(e.get("kind", "put_event"), **{k: v for k, v in e.items() if k != "kind"})
+    print(json.dumps({**out, "summary": putbook.summary(st, quotes.get("marks"))}, indent=2))
+
+
 def cmd_receipt(a, cfg):
     L = load_ledger()
     events = [json.loads(x) for x in EVENTS.read_text(encoding="utf-8").splitlines() if x] if EVENTS.exists() else []
     sh = {n: b.summary() for n, b in shadow_books(cfg).items()} if SHADOW_DIR.exists() or (DIR / "shadow.json").exists() else None
+    if PUTBOOK.exists():
+        sh = {**(sh or {}), "putbook": putbook.summary(putbook.load(PUTBOOK))}
     r = receipt.build(L, cfg, events, clock.now(), a.label, shadow=sh)
     RECEIPTS.mkdir(parents=True, exist_ok=True)
     out = RECEIPTS / f"{r['fund_day']}-{a.label}.json"
@@ -236,12 +257,13 @@ def main(argv=None):
     sub.add_parser("scan")
     sub.add_parser("shadow")
     p = sub.add_parser("quotes"); p.add_argument("file")
+    p = sub.add_parser("putbook"); p.add_argument("action", choices=["plan", "apply"]); p.add_argument("file", nargs="?")
     p = sub.add_parser("receipt"); p.add_argument("--label", default="session")
     sub.add_parser("sync-board")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
-     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "quotes": cmd_quotes, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
+     "status": cmd_status, "receipt": cmd_receipt, "bars-append": cmd_bars_append, "scan": cmd_scan, "shadow": cmd_shadow, "quotes": cmd_quotes, "putbook": cmd_putbook, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":

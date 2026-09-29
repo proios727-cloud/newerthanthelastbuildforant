@@ -1,7 +1,7 @@
 {
   "fund_day": "2026-09-28",
   "label": "close",
-  "ts": "2026-09-28T22:28:30.299392+00:00",
+  "ts": "2026-09-29T02:05:44.550309+00:00",
   "mode": "PAPER",
   "snapshot": {
     "nav": 100000.0,
@@ -94,6 +94,18 @@
       ],
       "closed_trades": 0,
       "win_rate": null
+    },
+    "putbook": {
+      "nav": 99974.94,
+      "return_pct": -0.025,
+      "open": {
+        "AAPL": "1x 325P 2026-10-30",
+        "TSLA": "1x 335P 2026-10-30"
+      },
+      "closed_trades": 0,
+      "win_rate": null,
+      "secured_pct": 66.0,
+      "avg_iv_over_rv": 1.09
     }
   },
   "shadow_vetoes": [],

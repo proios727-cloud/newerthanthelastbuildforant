@@ -1,0 +1,91 @@
+{
+ "cash": 101344.94,
+ "positions": {
+  "AAPL": {
+   "instrument_id": "8cb24509-28a3-44a7-a232-b5f31d78136c",
+   "strike": 325,
+   "expiration": "2026-10-30",
+   "contracts": 1,
+   "credit_px": 4.55,
+   "credit": 454.97,
+   "entry": "2026-09-28",
+   "sessions": 0,
+   "last_mid": 4.725,
+   "delta": -0.276764
+  },
+  "TSLA": {
+   "instrument_id": "feeac441-7129-4e0f-9d19-3d2c098c297d",
+   "strike": 335,
+   "expiration": "2026-10-30",
+   "contracts": 1,
+   "credit_px": 8.9,
+   "credit": 889.97,
+   "entry": "2026-09-28",
+   "sessions": 0,
+   "last_mid": 8.975,
+   "delta": -0.282485
+  }
+ },
+ "closed": [],
+ "log": [
+  {
+   "date": "2026-09-28",
+   "kind": "put_entry",
+   "symbol": "AAPL",
+   "strike": 325,
+   "expiration": "2026-10-30",
+   "contracts": 1,
+   "bid": 4.55,
+   "ask": 4.9,
+   "delta": -0.276764,
+   "credit": 454.97,
+   "iv": 0.267103,
+   "rv20": 0.2224,
+   "iv_over_rv": 1.2
+  },
+  {
+   "date": "2026-09-28",
+   "kind": "put_entry",
+   "symbol": "TSLA",
+   "strike": 335,
+   "expiration": "2026-10-30",
+   "contracts": 1,
+   "bid": 8.9,
+   "ask": 9.05,
+   "delta": -0.282485,
+   "credit": 889.97,
+   "iv": 0.452921,
+   "rv20": 0.4602,
+   "iv_over_rv": 0.98
+  },
+  {
+   "date": "2026-09-28",
+   "kind": "put_skip",
+   "symbol": "QQQ",
+   "reason": "size",
+   "one_contract_secures": 71500,
+   "room": 33974.94
+  },
+  {
+   "date": "2026-09-28",
+   "kind": "put_skip",
+   "symbol": "AMD",
+   "reason": "no liquid contract in range"
+  },
+  {
+   "date": "2026-09-28",
+   "kind": "put_skip",
+   "symbol": "MSFT",
+   "reason": "no liquid contract in range"
+  },
+  {
+   "date": "2026-09-28",
+   "kind": "put_skip",
+   "symbol": "SPY",
+   "reason": "size",
+   "one_contract_secures": 73000,
+   "room": 33974.94
+  }
+ ],
+ "last_apply": "2026-09-28"
+}
