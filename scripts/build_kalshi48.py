@@ -134,7 +134,8 @@ def rule_b_section(rows):
 Entry = the favourite ask at T-{B_MIN}min (the price available when deciding), {B_LO}¢ ≤ ask &lt; {B_HI}¢, fee included, 1 contract.</div>
 <table><tr><th>sample</th><th>trades</th><th>win rate</th><th>EV/trade</th><th>net</th><th>max DD</th></tr>
 {row("out-of-sample (the test)", so)}{row("in-sample (the 48h it came from)", si)}</table>
-<p><b>Verdict:</b> {verdict}.</p></div>"""
+<p><b>Verdict:</b> {verdict}.</p>
+<p class=warn>This window (Sep 22-29) was the strategy's best week. On the 14 days before it (Sep 8-21, 2,664 markets) the same rule lost 3.39c per contract, and over all 21 days it is about break-even: no edge after fees.</p></div>"""
 
 
 def page(rows, hours):
