@@ -18,11 +18,15 @@ from datetime import datetime, timezone
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from kalshi import calibration, taker_fee_cents  # noqa: E402
+from kalshi import calibration, fills, taker_fee_cents  # noqa: E402
 
 SERIES = ("KXBTC15M", "KXETH15M")
 MINUTES = (14, 10, 5, 3, 2, 1)
 ENTRY_MIN, LO, HI = 2, 90, 96
+# Rule B, fixed 2026-09-29 from the first 48h replay, judged only on older (out-of-sample) markets:
+# at T-1min buy the favourite at the real taker prints of the next 10s if they average 50–95¢.
+B_MIN, B_LO, B_HI = 1, 50, 96
+IN_SAMPLE = (calibration._ts("2026-09-26T22:30:00Z"), calibration._ts("2026-09-28T22:30:00Z"))  # closes the rule was found on
 E = html.escape
 
 
@@ -43,7 +47,33 @@ def collect(hours, cache):
                 if cache:
                     with open(cache, "a", encoding="utf-8") as f:
                         f.write(json.dumps(r) + "\n")
-    return [r for r in rows.values() if r["close_ts"] >= since]
+    out = [r for r in rows.values() if r["close_ts"] >= since]
+    for r in out:
+        if r["minutes_left"] == B_MIN and "fill" not in r:
+            r.update(fills.price_entry(r, fills.window_trades(r["ticker"], r["close_ts"], fetch=fetch)))
+            if cache:
+                with open(cache, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(r) + "\n")
+    return out
+
+
+def rule_b(rows):
+    """Rule B trades split into out-of-sample (outside IN_SAMPLE) and in-sample."""
+    ins = lambda r: IN_SAMPLE[0] <= r["close_ts"] <= IN_SAMPLE[1]
+    t = sorted((r for r in rows if r["minutes_left"] == B_MIN and r.get("fill") is not None
+                and B_LO <= r["fill"] < B_HI), key=lambda r: r["close_ts"])
+    return [r for r in t if not ins(r)], [r for r in t if ins(r)]
+
+
+def stats(trades):
+    eq = peak = dd = 0
+    for r in trades:
+        eq += r["pnl_c"]
+        peak, dd = max(peak, eq), max(dd, max(peak, eq) - eq)
+    n = len(trades)
+    return {"n": n, "hit": f"{100 * sum(r['won'] for r in trades) / n:.1f}%" if n else "—",
+            "pnl": eq, "ev": f"{eq / n:+.2f}¢" if n else "—", "dd": dd,
+            "curve": [(r["close_ts"], sum(x["pnl_c"] for x in trades[:i + 1]), r["pnl_c"], "") for i, r in enumerate(trades)]}
 
 
 def simulate(rows):
@@ -88,6 +118,21 @@ def svg_curve(curve, w=860, h=220):
             f'<text x="4" y="{py(lo)+4:.1f}" class=tx>{lo:+d}¢</text></svg>')
 
 
+def rule_b_section(rows):
+    oos, ins = rule_b(rows)
+    so, si = stats(oos), stats(ins)
+    row = lambda k, x: (f"<tr><td>{k}</td><td>{x['n']}</td><td>{x['hit']}</td><td>{x['ev']}</td>"
+                        f"<td>{x['pnl']:+d}¢</td><td>{x['dd']}¢</td></tr>")
+    verdict = ("holds out of sample — next gate is live shadow fills" if so["n"] >= 30 and so["pnl"] > 0
+               else "does not hold out of sample yet" if so["n"] >= 30 else "not enough out-of-sample trades to judge")
+    return f"""<h2>Rule B: T-{B_MIN}min favourite at real taker prints</h2>
+<div class=card>{svg_curve(so["curve"])}<div class=mut>Out-of-sample equity (markets outside the 48h window the rule was found in, Sep 26 22:30 – Sep 28 22:30 UTC).
+Entry = VWAP takers actually paid for the favourite in the 10s after T-{B_MIN}min, {B_LO}¢ ≤ fill &lt; {B_HI}¢, fee included, 1 contract.</div>
+<table><tr><th>sample</th><th>trades</th><th>win rate</th><th>EV/trade</th><th>net</th><th>max DD</th></tr>
+{row("out-of-sample (the test)", so)}{row("in-sample (the 48h it came from)", si)}</table>
+<p><b>Verdict:</b> {verdict}.</p></div>"""
+
+
 def page(rows, hours):
     sim = simulate(rows)
     hit = f"{100 * sim['wins'] / sim['n']:.1f}%" if sim["n"] else "—"
@@ -104,7 +149,7 @@ def page(rows, hours):
     tile = lambda k, v, cls="": f'<div class="tile {cls}"><b>{v}</b><span>{k}</span></div>'
     good = "pos" if sim["pnl"] > 0 else "neg"
     return f"""<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
-<title>Kalshi 48h Replay</title><style>
+<title>Kalshi Replay Desk</title><style>
 :root{{--bg:#0b0f14;--pn:#121923;--tx:#e6edf3;--mu:#8b98a8;--ln:#3fb6ff;--pos:#3ddc97;--neg:#ff6b6b;--bd:#223042}}
 @media(prefers-color-scheme:light){{:root{{--bg:#f5f7fa;--pn:#fff;--tx:#14202b;--mu:#5b6b7b;--ln:#0a6fd6;--pos:#0c9a5e;--neg:#d23b3b;--bd:#d7dee6}}}}
 *{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,sans-serif;padding:16px;max-width:960px;margin:auto}}
@@ -118,7 +163,8 @@ svg{{width:100%;height:auto}}.ln{{stroke:var(--ln);stroke-width:2}}.ax{{stroke:v
 <h1>Kalshi desk — {hours}h replay</h1>
 <div class=mut>KXBTC15M + KXETH15M · as of {now} · {markets} settled markets · REPLAY from Kalshi history, SHADOW only, no orders</div>
 <div class=tiles>{tile("late-window trades", sim["n"])}{tile("win rate", hit)}{tile("net P&amp;L (¢/contract)", f'{sim["pnl"]:+d}¢', good)}{tile("return on capital at risk", roi, good)}{tile("max drawdown", f'{sim["max_dd"]}¢', "neg")}</div>
-<h2>Late-window rule equity curve</h2>
+{rule_b_section(rows)}
+<h2>Rule A (T-2min, 90–95¢, candle ask) equity curve</h2>
 <div class=card>{svg_curve(sim["curve"])}<div class=mut>Rule fixed in advance: buy the favourite at the ask at T-{ENTRY_MIN}min if {LO}¢ ≤ ask &lt; {HI}¢, hold to settlement, taker fee included, 1 contract per market.</div></div>
 <h2>Favourite calibration at T-{ENTRY_MIN}min (all markets)</h2>
 <div class=card><table><tr><th>ask ¢</th><th>n</th><th>hit rate</th><th>avg ask</th><th>net EV ¢</th><th>worst ¢</th></tr>{buckets}</table></div>
@@ -138,8 +184,10 @@ def main(argv=None):
     rows = collect(a.hours, a.cache)
     pathlib.Path(a.out).write_text(page(rows, a.hours), encoding="utf-8")
     sim = simulate(rows)
-    print(f"wrote {a.out}: {len({r['ticker'] for r in rows})} markets, {sim['n']} trades, "
-          f"pnl {sim['pnl']:+d}¢, maxDD {sim['max_dd']}¢")
+    oos, ins = (stats(x) for x in rule_b(rows))
+    print(f"wrote {a.out}: {len({r['ticker'] for r in rows})} markets; rule A {sim['n']} trades "
+          f"pnl {sim['pnl']:+d}¢ maxDD {sim['max_dd']}¢; rule B out-of-sample {oos['n']} trades "
+          f"hit {oos['hit']} pnl {oos['pnl']:+d}¢ maxDD {oos['dd']}¢ | in-sample {ins['n']} pnl {ins['pnl']:+d}¢")
     return 0
 
 
