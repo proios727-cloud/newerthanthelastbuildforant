@@ -1,7 +1,7 @@
 """Paper put-credit-spread book sized for a $500 account (the defined-risk version of the put book).
 
 Same signal and final pass as fund/putbook.py; the difference is the structure and the sizing:
-  - sell the ~30-delta put ~30 days out and buy a lower put in the same expiry (1, 2.5 or 5 wide)
+  - sell the ~30-delta put ~30 days out and buy a lower put in the same expiry, at most $2 wide, one spread open at a time
   - max loss = width x 100 - credit, and that amount is reserved from cash, so the book can never owe more
   - pick the width with the best credit / max loss that still collects >= 20% of the width and fits the room
   - exits: buy back at 50% of the credit, at 2x the credit, after 15 sessions or with 7 days left, or the
@@ -18,7 +18,9 @@ from .putbook import DTE_MAX, DTE_MIN, DTE_TARGET, EQUITIES, FEE, HOLD, MIN_DTE,
 
 START_NAV = 500.0
 TP, STOP_X = 0.5, 2.0
-POS_RISK, TOTAL_RISK = 0.50, 1.00      # max loss per spread / all spreads, as a share of NAV
+POS_RISK = 0.20                        # max loss per spread as a share of NAV (~$100 on $500)
+MAX_OPEN = 1                           # one spread at a time (docs/research/500-growth.md)
+MAX_WIDTH = 2.0                        # 1- to 2-wide only: 5-wide risks ~81% of a $500 account
 MIN_CREDIT_FRAC = 0.20                 # collect at least 20% of the width
 MAX_LEG_SPREAD = 0.10                  # each leg's bid-ask <= max(10% of mid, $0.05)
 
@@ -77,7 +79,7 @@ def best_spread(chain, today, room):
             continue
         width = round(short["strike"] - lg["strike"], 2)
         credit = round(short["bid"] - lg["ask"], 2)
-        if width > 5 or credit < MIN_CREDIT_FRAC * width:
+        if width > MAX_WIDTH or credit < MIN_CREDIT_FRAC * width:
             continue
         max_loss = round(width * 100 - credit * 100 + 2 * FEE, 2)
         if max_loss > room:
@@ -118,8 +120,10 @@ def apply(st, bars, quotes, today, judge_fn=None):
     for s, chain in quotes.get("chains", {}).items():
         if s in st["positions"] or s not in EQUITIES:
             continue
+        if len(st["positions"]) >= MAX_OPEN:
+            break
         v = nav(st, marks)
-        room = min(POS_RISK * v, TOTAL_RISK * v - reserved(st))
+        room = min(POS_RISK * v, v - reserved(st))
         pick = best_spread(chain, today, room)
         if not pick:
             st["log"].append({"date": t, "kind": "spread_skip", "symbol": s,

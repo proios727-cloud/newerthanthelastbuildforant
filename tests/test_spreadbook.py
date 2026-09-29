@@ -17,11 +17,15 @@ class SpreadBookTests(unittest.TestCase):
         st = spreadbook.new_state()
         spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D)
         p = st["positions"]["AAPL"]
-        # 325/320 would risk ~$370 > $250 room; 325/322.5 (credit .70, risk ~$180) beats 325/324 (credit .20 = 20%, risk ~$80)
-        self.assertEqual((p["short_strike"], p["long_strike"], p["contracts"]), (325, 322.5, 1))
-        self.assertAlmostEqual(p["credit"], 70 - 0.06, places=2)
-        self.assertLessEqual(p["max_loss"], 0.5 * 500)
-        self.assertAlmostEqual(st["cash"], 500 + 69.94, places=2)
+        # 2.5- and 5-wide are over MAX_WIDTH; 325/324 (credit .20 = 20% of width, risk ~$80) fits the $100 room
+        self.assertEqual((p["short_strike"], p["long_strike"], p["contracts"]), (325, 324, 1))
+        self.assertAlmostEqual(p["credit"], 20 - 0.06, places=2)
+        self.assertLessEqual(p["max_loss"], 0.2 * 500)
+
+    def test_one_spread_at_a_time(self):
+        st = spreadbook.new_state()
+        spreadbook.apply(st, BARS, {"chains": {"AAPL": chain(), "TSLA": chain()}}, D)
+        self.assertEqual(len(st["positions"]), 1)
 
     def test_no_spread_when_credit_too_thin(self):
         st = spreadbook.new_state()
@@ -33,15 +37,15 @@ class SpreadBookTests(unittest.TestCase):
     def test_target_exit_and_earnings_exit(self):
         st = spreadbook.new_state()
         spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D)
-        spreadbook.apply(st, BARS, {"marks": {"s325": {"bid": 2.0, "ask": 2.1}, "l322": {"bid": 1.8, "ask": 1.9}}},
+        spreadbook.apply(st, BARS, {"marks": {"s325": {"bid": 2.0, "ask": 2.1}, "l324": {"bid": 2.0, "ask": 2.05}}},
                          date(2026, 9, 29))
         c = st["closed"][0]
-        self.assertEqual(c["why"], "target")          # debit .30 <= 50% of .70
-        self.assertAlmostEqual(c["pnl"], 69.94 - 30.06, places=2)
+        self.assertEqual(c["why"], "target")          # debit .10 <= 50% of .20
+        self.assertAlmostEqual(c["pnl"], 19.94 - 10.06, places=2)
 
         st = spreadbook.new_state()
         spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D)
-        marks = {"s325": {"bid": 4.5, "ask": 4.7}, "l322": {"bid": 3.6, "ask": 3.8}}
+        marks = {"s325": {"bid": 4.5, "ask": 4.6}, "l324": {"bid": 4.2, "ask": 4.3}}
         spreadbook.apply(st, BARS, {"marks": marks, "events": {"AAPL": {"earnings_date": "2026-10-01"}}}, date(2026, 9, 30))
         self.assertEqual(st["closed"][0]["why"], "earnings")
 
@@ -53,7 +57,7 @@ class SpreadBookTests(unittest.TestCase):
         spreadbook.apply(st, bars, {}, date(2026, 10, 30))
         c = st["closed"][0]
         self.assertEqual(c["why"], "expiry")
-        self.assertAlmostEqual(c["buyback"], 400 - 150, places=2)   # 325-321 short, 322.5-321 long
+        self.assertAlmostEqual(c["buyback"], 400 - 300, places=2)   # 325-321 short, 324-321 long
 
     def test_final_pass_blocks_and_jev_veto(self):
         st = spreadbook.new_state()
@@ -68,7 +72,7 @@ class SpreadBookTests(unittest.TestCase):
         st = spreadbook.new_state()
         spreadbook.apply(st, BARS, {"chains": {"AAPL": chain()}}, D)
         self.assertEqual(spreadbook.apply(st, BARS, {}, D), {"skipped": "already applied today"})
-        self.assertEqual({x["instrument_id"] for x in spreadbook.open_legs(st)}, {"s325", "l322"})
+        self.assertEqual({x["instrument_id"] for x in spreadbook.open_legs(st)}, {"s325", "l324"})
 
 
 if __name__ == "__main__":

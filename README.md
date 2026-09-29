@@ -227,9 +227,12 @@ python3 -m fund putbook apply quotes.json    # marks → exits → entries; ledg
 
 `fund/spreadbook.py` is the defined-risk version of the put book, sized for a $500 account. It uses the same signal, the same earnings gate and the same JEV pass. `putbook apply` runs both books from one quotes file.
 
-- **Structure:** sell the ~30-delta put ~30 days out and buy a lower put in the same expiry, $1, $2.5 or $5 wide. The routine fetches the long legs from `spread_strikes` in the plan.
+- **Structure:** sell the ~30-delta put ~30 days out and buy a lower put in the same expiry, at most $2 wide, with one spread open at a time. The routine fetches the long legs from `spread_strikes` in the plan.
 - **Choice:** among spreads that collect at least 20% of the width and fit the risk room, it takes the best credit per dollar of max loss.
-- **Risk:** max loss is width × 100 − credit. Each spread may risk up to 50% of NAV and all spreads together up to 100%. The max loss stays reserved in cash, so the book can never owe more than it holds.
+- **Risk:** max loss is width × 100 − credit, capped at 20% of NAV (about $100). The max loss stays reserved in cash, so the book can never owe more than it holds.
+- **Research:** `docs/research/500-growth.md` covers baselines, Cboe index evidence, live quotes and the go/no-go metrics.
+  - At $500, T-bills (4.2%) or paying off card debt (about 22% APR) beat every active stream in dollars.
+  - Cboe's iron-condor index returned about 1.6% a year from 2005 to 2026, so spreads have to prove themselves on paper first.
 - **Fills:** opens at the natural price (short bid − long ask) and closes at short ask − long bid.
 - **Exits:** at 50% of the credit, at 2× the credit, after 15 sessions, with 7 days left, or the session before earnings. Expiry settles at intrinsic.
 - **Live use:** a real account needs options level 3 for spreads. Nothing here places orders.
