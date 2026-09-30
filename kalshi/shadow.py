@@ -49,8 +49,10 @@ def decide(book, qty):
     """Favourite = side with the higher best ask. Returns a decision dict (take=False if Rule B skips)."""
     ya, ydepth, yavg = book_side(book, "yes", qty)
     na, ndepth, navg = book_side(book, "no", qty)
-    if ya is None or na is None:
+    if ya is None and na is None:
         return {"take": False, "why": "empty book"}
+    if ya is None or na is None:  # nobody sells the favourite: market already decided, ask effectively 100¢
+        return {"take": False, "why": f"{'yes' if ya is None else 'no'} has no asks (decided)"}
     side, ask, depth, avg = ("yes", ya, ydepth, yavg) if ya >= na else ("no", na, ndepth, navg)
     d = {"side": side, "ask": ask, "depth_at_ask": round(depth, 2), "book_avg": avg}
     if not B_LO <= ask < B_HI:
@@ -156,6 +158,11 @@ def report(path):
                   f"P&L at print VWAP {sum(vw):+}¢ total, {sum(vw) / max(1, len(vw)) / q:+.2f}¢/contract (backtest basis)",
                   f"book minus VWAP  {sum(slip) / max(1, len(slip)):+.2f}¢ avg (positive = live costs more)",
                   f"read landed {lag[len(lag) // 2]:.1f}s before close (median; target {AT_S}s)"]
+        for s in SERIES:
+            st = [r for r in t if r["ticker"].startswith(s)]
+            if st:
+                lines.append(f"  {s:<9} {len(st):>3} trades, {sum(r['won'] for r in st)} won, "
+                             f"{sum(r['pnl_book_c'] for r in st):+}¢ at book")
     return "\n".join(lines)
 
 
