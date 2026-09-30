@@ -60,8 +60,12 @@ def collect(hours, cache):
 def rule_b(rows):
     """Rule B trades split into out-of-sample (outside IN_SAMPLE) and in-sample."""
     ins = lambda r: IN_SAMPLE[0] <= r["close_ts"] <= IN_SAMPLE[1]
-    t = sorted((r for r in rows if r["minutes_left"] == B_MIN and r.get("fill") is not None
-                and B_LO <= r["fill"] < B_HI), key=lambda r: r["close_ts"])
+    # Select and price on the T-60 ask only. An earlier version filtered and priced on `fill` (the taker
+    # VWAP in the 10s *after* T-60), which looked ahead: it dropped favourites that collapsed right after
+    # the decision and inflated EV from about +4c to +8c per contract on the Sep 22-29 week.
+    t = sorted(({**r, "pnl_c": (100 if r["won"] else 0) - r["ask"] - taker_fee_cents(r["ask"], 1)}
+                for r in rows if r["minutes_left"] == B_MIN and B_LO <= r["ask"] < B_HI),
+               key=lambda r: r["close_ts"])
     return [r for r in t if not ins(r)], [r for r in t if ins(r)]
 
 
@@ -127,10 +131,11 @@ def rule_b_section(rows):
                else "does not hold out of sample yet" if so["n"] >= 30 else "not enough out-of-sample trades to judge")
     return f"""<h2>Rule B: T-{B_MIN}min favourite at real taker prints</h2>
 <div class=card>{svg_curve(so["curve"])}<div class=mut>Out-of-sample equity (markets outside the 48h window the rule was found in, Sep 26 22:30 – Sep 28 22:30 UTC).
-Entry = VWAP takers actually paid for the favourite in the 10s after T-{B_MIN}min, {B_LO}¢ ≤ fill &lt; {B_HI}¢, fee included, 1 contract.</div>
+Entry = the favourite ask at T-{B_MIN}min (the price available when deciding), {B_LO}¢ ≤ ask &lt; {B_HI}¢, fee included, 1 contract.</div>
 <table><tr><th>sample</th><th>trades</th><th>win rate</th><th>EV/trade</th><th>net</th><th>max DD</th></tr>
 {row("out-of-sample (the test)", so)}{row("in-sample (the 48h it came from)", si)}</table>
-<p><b>Verdict:</b> {verdict}.</p></div>"""
+<p><b>Verdict:</b> {verdict}.</p>
+<p class=warn>This window (Sep 22-29) was the strategy's best week. On the 14 days before it (Sep 8-21, 2,664 markets) the same rule lost 3.39c per contract, and over all 21 days it is about break-even: no edge after fees.</p></div>"""
 
 
 def page(rows, hours):
