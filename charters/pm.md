@@ -14,6 +14,9 @@ Every live idea has an owner and a next step; the approval queue has no stale pr
 ## Inputs
 - `regime_label` from Macro & News (timeout 30m). If it doesn't arrive: PM carries the last regime forward, marked stale, and cuts new-entry size by 50%.
 - `session_receipt` from Fund Reporter (timeout 30m). If it doesn't arrive: PM posts a minimal receipt: funnel counts and NAV only.
+- `premium_pass` from Greeks/GEX Risk (timeout 15m). If it doesn't arrive: No PASS means no preview.
+- `exit_previews` from Exit Manager (timeout 15m). If it doesn't arrive: PM escalates open spreads to the human.
+- `bet_previews` from Bet Sizer (timeout 15m). If it doesn't arrive: No preview goes to the human.
 
 ## Outputs
 - Posts to the desk feed.
