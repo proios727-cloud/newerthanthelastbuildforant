@@ -1,0 +1,32 @@
+{
+ "fetched_at": "2026-09-30T01:39:17+00:00",
+ "source": "Kalshi public API /markets (GET only)",
+ "markets": [
+  {
+   "ticker": "KXBTC15M-26SEP292145-45",
+   "close_time": "2026-09-30T01:45:00Z",
+   "yes_bid": 9,
+   "no_bid": 91,
+   "book_lock_c": 0,
+   "proposal": null,
+   "settlement_ok": false,
+   "floor_strike": 83420.05,
+   "open_time": "2026-09-30T01:30:00Z",
+   "last_price_c": 9,
+   "rules": "If the simple average of the sixty seconds of CF Benchmarks' BRTI before 9:45 PM EDT on Sep 29, 2026 is at least the simple average of the sixty seconds of CF Benchmarks' BRTI before 9:30 PM EDT on September 29, 2026, then the market resolves to Yes."
+  },
+  {
+   "ticker": "KXETH15M-26SEP292145-45",
+   "close_time": "2026-09-30T01:45:00Z",
+   "yes_bid": 7,
+   "no_bid": 93,
+   "book_lock_c": 0,
+   "proposal": null,
+   "settlement_ok": false,
+   "floor_strike": 2672.49,
+   "open_time": "2026-09-30T01:30:00Z",
+   "last_price_c": 7,
+   "rules": "If the simple average of the sixty seconds of CF Benchmarks' ETHUSDRTI before 9:45 PM EDT on Sep 29, 2026 is at least the simple average of the sixty seconds of CF Benchmarks' ETHUSDRTI before 9:30 PM EDT on September 29, 2026, then the market resolves to Yes."
+  }
+ ]
+}

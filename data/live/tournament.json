@@ -463,12 +463,12 @@
    },
    "curve": [
     [
-     "AMD 2026-02-25",
-     494.67,
+     "TSLA 2026-02-25",
+     498.21,
      0.0
     ],
     [
-     "TSLA 2026-02-25",
+     "AMD 2026-02-25",
      492.9,
      0.0
     ],
@@ -669,5 +669,80 @@
    "sma100": 292.01,
    "signal": "none"
   }
- ]
+ ],
+ "all_triggers": {
+  "meanrev_rsi2": [
+   {
+    "symbol": "SPY",
+    "close": 765.61,
+    "rsi2": 42.1,
+    "sma100": 753.2,
+    "signal": "none"
+   },
+   {
+    "symbol": "QQQ",
+    "close": 736.53,
+    "rsi2": 29.9,
+    "sma100": 716.24,
+    "signal": "none"
+   },
+   {
+    "symbol": "IWM",
+    "close": 280.02,
+    "rsi2": 13.7,
+    "sma100": 292.01,
+    "signal": "none"
+   }
+  ],
+  "trend_donchian": [
+   {
+    "symbol": "SPY",
+    "close": 765.61,
+    "breakout_level": 775.3,
+    "signal": "none"
+   },
+   {
+    "symbol": "QQQ",
+    "close": 736.53,
+    "breakout_level": 748.35,
+    "signal": "none"
+   },
+   {
+    "symbol": "IWM",
+    "close": 280.02,
+    "breakout_level": 300.39,
+    "signal": "none"
+   },
+   {
+    "symbol": "NVDA",
+    "close": 228.86,
+    "breakout_level": 234.76,
+    "signal": "none"
+   },
+   {
+    "symbol": "AMD",
+    "close": 607.87,
+    "breakout_level": 639.0,
+    "signal": "none"
+   },
+   {
+    "symbol": "AAPL",
+    "close": 338.4,
+    "breakout_level": 345.34,
+    "signal": "none"
+   },
+   {
+    "symbol": "MSFT",
+    "close": 509.22,
+    "breakout_level": 519.4,
+    "signal": "none"
+   },
+   {
+    "symbol": "TSLA",
+    "close": 357.45,
+    "breakout_level": 386.83,
+    "signal": "none"
+   }
+  ]
+ }
 }

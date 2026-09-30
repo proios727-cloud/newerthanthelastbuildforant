@@ -95,6 +95,7 @@ def main(argv=None):
     ap.add_argument("--series", nargs="+", default=["KXBTC15M", "KXETH15M"])
     ap.add_argument("--edge", type=int, default=2)
     ap.add_argument("--log")
+    ap.add_argument("--json", help="write a dashboard snapshot (markets + scan rows) to this path")
     a = ap.parse_args(argv)
     import judge
     from . import settlement
@@ -105,12 +106,30 @@ def main(argv=None):
         rules = " ".join(filter(None, (m.get("rules_primary"), m.get("rules_secondary"))))
         return settlement.verify(client, {"ticker": m["ticker"], "asset": asset, "window_min": 15, "rules": rules}, cache)
 
+    raw = []
+
+    def fetch(path, params=None):
+        body = _get(path, params)
+        raw.extend(body.get("markets", []))
+        return body
+
     try:
-        rows = scan(a.series, verify=verify, edge_c=a.edge)
+        rows = scan(a.series, fetch=fetch, verify=verify, edge_c=a.edge)
     except OSError as e:
         print(f"Kalshi unreachable: {e}. Allow api.elections.kalshi.com in the network policy.", file=sys.stderr)
         return 2
     print(render(rows))
+    if a.json:
+        by = {m["ticker"]: m for m in raw}
+        snap = {"fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "source": "Kalshi public API /markets (GET only)",
+                "markets": [{**asdict(r), "proposal": asdict(r.proposal) if r.proposal else None,
+                             "floor_strike": by.get(r.ticker, {}).get("floor_strike"),
+                             "open_time": by.get(r.ticker, {}).get("open_time"),
+                             "last_price_c": _cents(by.get(r.ticker, {}), "last_price"),
+                             "rules": by.get(r.ticker, {}).get("rules_primary", "")} for r in rows]}
+        with open(a.json, "w", encoding="utf-8") as f:
+            json.dump(snap, f, indent=1)
     if a.log:
         ts = datetime.now(timezone.utc).isoformat()
         with open(a.log, "a", encoding="utf-8") as f:

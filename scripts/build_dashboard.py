@@ -89,12 +89,19 @@ def sportsbook_state():
 MODELED = ' <span class="sub">(modeled)</span>'
 
 
+def kalshi_action(m):
+    p = m["proposal"]
+    return pill(f'{p["yes_bid"]}/{p["no_bid"]}', "green") if p else pill("Unverified · no quote", "dim")
+
+
 def snowball_state():
     t = json.loads((LIVE / "tournament.json").read_text())
     q = json.loads((LIVE / "equity_quotes.json").read_text())
     c = json.loads((LIVE / "crypto_quotes.json").read_text())
     w = next((b for b in t["leaderboard"] if b["name"] == t["winner"]), None)
-    return {"t": t, "winner": w, "quotes": q, "crypto": c}
+    km = LIVE / "kalshi_markets.json"
+    return {"t": t, "winner": w, "quotes": q, "crypto": c,
+            "kalshi": json.loads(km.read_text()) if km.exists() else None}
 
 
 def curve_svg(curves, start):
@@ -188,6 +195,16 @@ def render():
     qrows = "".join(f'<tr><td>{E(k2)}</td><td class="num mono">{v["close"]:,.2f}</td><td class="num mono">{v["bid"]:,.2f} / {v["ask"]:,.2f}</td></tr>' for k2, v in lq.items())
     qrows += "".join(f'<tr><td>{E(k2)}</td><td class="num mono">{v["prev_close"]:,.2f}</td><td class="num mono">{v["bid"]:,.2f} / {v["ask"]:,.2f}</td></tr>' for k2, v in sb["crypto"]["quotes"].items())
     ws = w["snowball"] if w else None
+    kl = sb["kalshi"]
+    krows = "".join(
+        f'<tr><td class="mono">{E(m["ticker"])}</td><td class="num mono">{m["floor_strike"]:,.2f}</td>'
+        f'<td class="num mono">{m["yes_bid"]}¢</td><td class="num mono">{m["no_bid"]}¢</td><td class="num mono">{m["book_lock_c"]}¢</td>'
+        f'<td>{kalshi_action(m)}</td></tr>'
+        for m in (kl["markets"] if kl else []))
+    trend_trig = "".join(
+        f'<div class="sig"><span>{E(x["symbol"])}</span><span class="mono">close {x["close"]:g} · breakout {x["breakout_level"]:g}</span>'
+        f'{pill(x["signal"], "green" if x["signal"] != "none" else "dim")}</div>'
+        for x in t.get("all_triggers", {}).get("trend_donchian", []))
     live = judge.from_env().live
     m, ch = o["map"], o["chain"]
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -291,7 +308,7 @@ def render():
       <thead><tr><th>Strategy (out-of-sample from {E(w["split_date"])})</th><th class="num">Trades</th><th class="num">Avg / trade</th><th class="num">Win</th><th class="num">Max DD @25%</th><th class="num">$500 →</th><th>Gate</th></tr></thead>
       <tbody>{board}</tbody></table></div>
     <div class="grid2">
-      <div class="signals"><span class="eyebrow">Today's triggers · {E(t["winner"] or "")} on {E(t["data"]["last"])} close</span>{trig}</div>
+      <div class="signals"><span class="eyebrow">Today's triggers · {E(t["winner"] or "")} (promoted) on {E(t["data"]["last"])} close</span>{trig}<span class="eyebrow">Watchlist · trend_donchian (not promoted)</span>{trend_trig}</div>
       <div class="tbl"><span class="eyebrow">Live quotes</span><table><thead><tr><th>Symbol</th><th class="num">Prev close</th><th class="num">Bid / ask</th></tr></thead><tbody>{qrows}</tbody></table></div>
     </div>
     <p class="note">Every curve replays only out-of-sample trades ({E(t["data"]["first"])} → {E(t["data"]["last"])} daily bars; parameters chosen on the first 70%). Gates: expectancy &gt; 0 after costs, ≥ {t["rules"]["min_trades"]} trades, drawdown ≤ {t["rules"]["kill_dd"]:.0%}. Banking moves 20% of each new high out of risk; the kill switch halts on 15% drawdown or a non-positive last-20 average. Jev can veto or halve a code-generated entry, never create one. Paper only; past results do not guarantee future profit.</p>
@@ -320,14 +337,14 @@ def render():
     </section>
 
     <section>
-      <div class="head"><h2>Kalshi · 15-min BTC/ETH maker</h2>{pill("Sample · live feed blocked here", "dim")}</div>
+      <div class="head"><h2>Kalshi · 15-min BTC/ETH maker</h2>{pill("Live · " + (kl["fetched_at"][11:16] + " UTC" if kl else "no data"), "green" if kl else "dim")}</div>
       <div class="tbl"><table>
-        <thead><tr><th>Quote pair</th><th class="num">YES bid</th><th class="num">NO bid</th><th class="num">Lock / pair</th></tr></thead>
-        <tbody>{quotes}</tbody></table></div>
+        <thead><tr><th>Open market</th><th class="num">Strike</th><th class="num">YES bid</th><th class="num">NO bid</th><th class="num">Book lock</th><th>Desk quote</th></tr></thead>
+        <tbody>{krows}</tbody></table></div>
       <div class="tbl"><table>
-        <thead><tr><th>Fills on a 49¢ / 49¢ pair</th><th class="num">P&amp;L at risk ($)</th><th>Action</th></tr></thead>
+        <thead><tr><th>Fill scenarios on a 49¢ / 49¢ pair</th><th class="num">P&amp;L at risk ($)</th><th>Action</th></tr></thead>
         <tbody>{scen}</tbody></table></div>
-      <p class="note">Markets are quoted only after TypeSafe confirms their rules settle on the CF Benchmarks index for the stated window. Positive numbers are locked profit; negative are money at risk.</p>
+      <p class="note">Live from Kalshi's public API (read-only). Each market settles on the 60-second average of the CF Benchmarks index at the end of its 15-minute window vs. its start. The desk quotes nothing until TypeSafe verifies those rules; with the stub, every market shows as unverified. The scenario rows illustrate the cut rules.</p>
     </section>
 
     <section>

@@ -75,6 +75,8 @@ def run():
         "leaderboard": board,
         "winner": winner["name"] if winner else None,
         "triggers": triggers(bars, winner["name"], winner["params"]) if winner else [],
+        "all_triggers": {b["name"]: triggers(bars, b["name"], b["params"]) for b in board
+                         if b["name"] in (meanrev.NAME, trend.NAME)},
     }
     (research.LIVE / "tournament.json").write_text(json.dumps(result, indent=1))
     return result
