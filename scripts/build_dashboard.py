@@ -22,7 +22,7 @@ import options  # noqa: E402
 import sportsbook  # noqa: E402
 from fund import config  # noqa: E402
 
-CHAIN = "SPY-2026-09-29T2054.json"
+CHAIN = "SPY-2026-09-30T1623.json"
 LIVE = ROOT / "data" / "live"
 E = html.escape
 
