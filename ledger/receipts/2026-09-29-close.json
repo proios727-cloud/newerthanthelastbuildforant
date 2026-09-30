@@ -1,0 +1,246 @@
+{
+  "fund_day": "2026-09-29",
+  "label": "close",
+  "ts": "2026-09-30T00:55:04.743237+00:00",
+  "mode": "PAPER",
+  "snapshot": {
+    "nav": 100000.0,
+    "cash": 100000.0,
+    "gross": 0,
+    "gross_pct": 0.0,
+    "day_pnl": 0.0,
+    "day_pnl_pct": 0.0,
+    "drawdown_pct": 0.0,
+    "peak_nav": 100000.0,
+    "day": {
+      "date": "2026-09-28",
+      "start_nav": 100000.0
+    },
+    "positions": {}
+  },
+  "marks": {
+    "AAPL": {
+      "price": 329.4,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "AMD": {
+      "price": 607.57,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "BTC/USD": {
+      "price": 83456.74,
+      "ts": "2026-09-28T23:59:00+00:00"
+    },
+    "ETH/USD": {
+      "price": 2687.41,
+      "ts": "2026-09-28T23:59:00+00:00"
+    },
+    "IWM": {
+      "price": 279.01,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "MSFT": {
+      "price": 508.96,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "NVDA": {
+      "price": 227.21,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "QQQ": {
+      "price": 737.93,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "SOL/USD": {
+      "price": 118.81,
+      "ts": "2026-09-28T23:59:00+00:00"
+    },
+    "SPY": {
+      "price": 764.2,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "TSLA": {
+      "price": 352.84,
+      "ts": "2026-09-29T20:00:00+00:00"
+    }
+  },
+  "counts": {
+    "mark": 11,
+    "preview": 0,
+    "veto": 0,
+    "fill": 0,
+    "approve_refused": 0,
+    "shadow_fill": 8,
+    "shadow_exit": 0,
+    "shadow_veto": 0
+  },
+  "shadow": {
+    "all": {
+      "nav": 99573.25,
+      "return_pct": -0.427,
+      "drawdown_pct": 0.427,
+      "open": [
+        "AAPL",
+        "AMD",
+        "BTC/USD",
+        "ETH/USD",
+        "MSFT",
+        "NVDA",
+        "QQQ",
+        "SOL/USD",
+        "SPY",
+        "TSLA"
+      ],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "breakout": {
+      "nav": 100000.0,
+      "return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "open": [],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "mean_reversion": {
+      "nav": 99922.79,
+      "return_pct": -0.077,
+      "drawdown_pct": 0.077,
+      "open": [
+        "AAPL",
+        "AMD",
+        "BTC/USD",
+        "ETH/USD",
+        "MSFT",
+        "SPY",
+        "TSLA"
+      ],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "momentum": {
+      "nav": 99633.77,
+      "return_pct": -0.366,
+      "drawdown_pct": 0.366,
+      "open": [
+        "AAPL",
+        "AMD",
+        "BTC/USD",
+        "ETH/USD",
+        "MSFT",
+        "NVDA",
+        "QQQ",
+        "SOL/USD"
+      ],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "putbook": {
+      "nav": 99974.94,
+      "return_pct": -0.025,
+      "open": {
+        "AAPL": "1x 325P 2026-10-30",
+        "TSLA": "1x 335P 2026-10-30"
+      },
+      "closed_trades": 0,
+      "win_rate": null,
+      "secured_pct": 66.0,
+      "avg_iv_over_rv": 1.09,
+      "jev_ghosts_open": 0,
+      "jev_ghosts_closed": 0,
+      "slippage_pct_of_credit": null
+    },
+    "jevcheck": {
+      "verdict": "insufficient",
+      "registered": "2026-09-29",
+      "bar": {
+        "min_taken": 20,
+        "min_ghosts": 8,
+        "min_edge_per_credit": 0.25,
+        "max_error_rate": 0.1
+      },
+      "taken_live": 0,
+      "ghosts_closed": 0,
+      "ghosts_open": 0,
+      "taken_pnl_per_credit": null,
+      "vetoed_pnl_per_credit": null,
+      "edge": null,
+      "judge_errors": 0,
+      "error_rate": 0.0,
+      "modes_seen": [],
+      "mean_p_losers": null,
+      "mean_p_winners": null
+    },
+    "jev_calibration": {
+      "questions": {},
+      "trades_scored": 0,
+      "note": "outcome = the trade lost money; ghosts are vetoed sales tracked with no cash"
+    },
+    "jev_escalations": [],
+    "trendbook": {
+      "signal": {
+        "BTC": {
+          "on": true,
+          "sma20": 80679.935,
+          "sma100": 69893.7656,
+          "rv30": 0.4173,
+          "close": 83456.74
+        },
+        "ETH": {
+          "on": true,
+          "sma20": 2587.299,
+          "sma100": 2102.6478,
+          "rv30": 0.4483,
+          "close": 2687.41
+        },
+        "SOL": {
+          "on": true,
+          "sma20": 109.584,
+          "sma100": 87.3936,
+          "rv30": 0.6519,
+          "close": 118.81
+        }
+      },
+      "bars_through": {
+        "BTC": "2026-09-28",
+        "ETH": "2026-09-28",
+        "SOL": "2026-09-28"
+      },
+      "b500": {
+        "nav": 499.61,
+        "return_pct": -0.078,
+        "exposure_pct": 65.2,
+        "holdings": {
+          "IBIT": 3.7986,
+          "ETHA": 4.9654,
+          "BSOL": 2.7862
+        },
+        "trades": 3,
+        "drawdown_pct": 0.08,
+        "killed": null
+      },
+      "b10k": {
+        "nav": 9992.18,
+        "return_pct": -0.078,
+        "exposure_pct": 65.2,
+        "holdings": {
+          "IBIT": 75.9721,
+          "ETHA": 99.3076,
+          "BSOL": 55.7238
+        },
+        "trades": 3,
+        "drawdown_pct": 0.08,
+        "killed": null
+      }
+    }
+  },
+  "shadow_vetoes": [],
+  "breaches": [],
+  "clean": true,
+  "kill_switch": {
+    "armed": false,
+    "reason": null,
+    "since": null,
+    "by": null
+  }
+}

@@ -2,7 +2,7 @@
  "only": "momentum",
  "ledger": {
   "starting_nav": 100000.0,
-  "cash": 66157.80030343999,
+  "cash": 61573.34030343999,
   "positions": {
    "SOL/USD": {
     "qty": 40.993686,
@@ -38,74 +38,79 @@
     "qty": 6.0,
     "avg_cost": 736.5300000000001,
     "realized": -0.21
+   },
+   "MSFT": {
+    "qty": 9.0,
+    "avg_cost": 508.9599999999999,
+    "realized": -3.82
    }
   },
   "marks": {
    "BTC/USD": {
-    "price": 84462.14,
+    "price": 83456.74,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-27T23:59:00+00:00"
+    "ts": "2026-09-28T23:59:00+00:00"
    },
    "ETH/USD": {
-    "price": 2688.23,
+    "price": 2687.41,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-27T23:59:00+00:00"
+    "ts": "2026-09-28T23:59:00+00:00"
    },
    "SOL/USD": {
-    "price": 121.97,
+    "price": 118.81,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-27T23:59:00+00:00"
+    "ts": "2026-09-28T23:59:00+00:00"
    },
    "SPY": {
-    "price": 765.61,
+    "price": 764.2,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-28T15:59:00-04:00"
+    "ts": "2026-09-29T15:59:00-04:00"
    },
    "QQQ": {
-    "price": 736.53,
+    "price": 737.93,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-28T15:59:00-04:00"
+    "ts": "2026-09-29T15:59:00-04:00"
    },
    "IWM": {
-    "price": 280.02,
+    "price": 279.01,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-28T15:59:00-04:00"
+    "ts": "2026-09-29T15:59:00-04:00"
    },
    "NVDA": {
-    "price": 228.86,
+    "price": 227.21,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-28T15:59:00-04:00"
+    "ts": "2026-09-29T15:59:00-04:00"
    },
    "AMD": {
-    "price": 607.87,
+    "price": 607.57,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-28T15:59:00-04:00"
+    "ts": "2026-09-29T15:59:00-04:00"
    },
    "AAPL": {
-    "price": 338.4,
+    "price": 329.4,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-28T15:59:00-04:00"
+    "ts": "2026-09-29T15:59:00-04:00"
    },
    "MSFT": {
-    "price": 509.22,
+    "price": 508.96,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-28T15:59:00-04:00"
+    "ts": "2026-09-29T15:59:00-04:00"
    },
    "TSLA": {
-    "price": 357.45,
+    "price": 352.84,
     "bid": null,
     "ask": null,
-    "ts": "2026-09-28T15:59:00-04:00"
+    "ts": "2026-09-29T15:59:00-04:00"
    }
   },
   "fills": [
@@ -178,12 +183,22 @@
     "fee": 0.21,
     "realized": 0.0,
     "ref": "shadow-momentum"
+   },
+   {
+    "ts": "2026-09-29T15:59:00-04:00",
+    "symbol": "MSFT",
+    "side": "buy",
+    "qty": 9.0,
+    "price": 508.96,
+    "fee": 3.82,
+    "realized": 0.0,
+    "ref": "shadow-momentum"
    }
   ],
   "peak_nav": 100000.0,
   "day": {
-   "date": "2026-09-28",
-   "start_nav": 99984.79
+   "date": "2026-09-29",
+   "start_nav": 99792.24322859998
   }
  },
  "meta": {
@@ -192,62 +207,69 @@
    "stop": 112.685606,
    "target": 140.538788,
    "entry_bar": "2026-09-27",
-   "bars_held": 0
+   "bars_held": 1
   },
   "ETH/USD": {
    "signal": "momentum",
    "stop": 2553.730357,
    "target": 2957.229286,
    "entry_bar": "2026-09-27",
-   "bars_held": 0
+   "bars_held": 1
   },
   "BTC/USD": {
    "signal": "momentum",
    "stop": 80504.968706,
    "target": 92376.482589,
    "entry_bar": "2026-09-27",
-   "bars_held": 0
+   "bars_held": 1
   },
   "AMD": {
    "signal": "momentum",
    "stop": 563.983446,
    "target": 695.643109,
    "entry_bar": "2026-09-28",
-   "bars_held": 0
+   "bars_held": 1
   },
   "AAPL": {
    "signal": "momentum",
    "stop": 328.919967,
    "target": 357.360066,
    "entry_bar": "2026-09-28",
-   "bars_held": 0
+   "bars_held": 1
   },
   "NVDA": {
    "signal": "momentum",
    "stop": 220.779107,
    "target": 245.021786,
    "entry_bar": "2026-09-28",
-   "bars_held": 0
+   "bars_held": 1
   },
   "QQQ": {
    "signal": "momentum",
    "stop": 721.584192,
    "target": 766.421616,
    "entry_bar": "2026-09-28",
+   "bars_held": 1
+  },
+  "MSFT": {
+   "signal": "momentum",
+   "stop": 493.1609,
+   "target": 540.558199,
+   "entry_bar": "2026-09-29",
    "bars_held": 0
   }
  },
  "done": {
-  "BTC/USD": "2026-09-27",
-  "ETH/USD": "2026-09-27",
-  "SOL/USD": "2026-09-27",
-  "SPY": "2026-09-28",
-  "QQQ": "2026-09-28",
-  "IWM": "2026-09-28",
-  "NVDA": "2026-09-28",
-  "AMD": "2026-09-28",
-  "AAPL": "2026-09-28",
-  "MSFT": "2026-09-28",
-  "TSLA": "2026-09-28"
+  "BTC/USD": "2026-09-28",
+  "ETH/USD": "2026-09-28",
+  "SOL/USD": "2026-09-28",
+  "SPY": "2026-09-29",
+  "QQQ": "2026-09-29",
+  "IWM": "2026-09-29",
+  "NVDA": "2026-09-29",
+  "AMD": "2026-09-29",
+  "AAPL": "2026-09-29",
+  "MSFT": "2026-09-29",
+  "TSLA": "2026-09-29"
  }
 }
