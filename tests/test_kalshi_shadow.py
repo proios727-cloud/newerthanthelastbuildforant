@@ -22,6 +22,8 @@ class ShadowTests(unittest.TestCase):
         heavy = {"orderbook_fp": {"yes_dollars": [["0.0200", "9"]], "no_dollars": [["0.0300", "9"]]}}
         self.assertFalse(shadow.decide(heavy, 1)["take"])                        # 98¢ favourite: outside range
         self.assertFalse(shadow.decide({"orderbook_fp": {}}, 1)["take"])
+        decided = shadow.decide({"orderbook_fp": {"yes_dollars": [["0.9990", "500"]], "no_dollars": []}}, 1)
+        self.assertEqual((decided["take"], decided["why"]), (False, "yes has no asks (decided)"))
 
     def test_settle_uses_fees_on_both_prices(self):
         rec = {"ticker": "X", "side": "no", "qty": 10, "book_avg": 70.6}
