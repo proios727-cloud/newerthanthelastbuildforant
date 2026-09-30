@@ -101,6 +101,14 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 
 This desk supports decisions. It is not investment advice, and nothing in it executes trades.
 
+## $500 snowball tournament (real data)
+
+- `data/live/`: Robinhood snapshots: 2 years of daily bars for 8 equities, live equity and crypto quotes, and a live SPY option chain in `options/data/chains/`.
+- `research/strategies/`: four candidates (RSI-2 mean reversion, Donchian trend, cross-sectional rotation, modeled SPY put credit spreads), each walk-forward tested with parameters chosen on the first 70% only.
+- `python -m research.tournament` ranks them out-of-sample, replays each through a $500 `fund.snowball.Snowball` (quarter-Kelly sizing, 20% of each new high banked, halt on 15% drawdown or a non-positive last-20 average), and prints today's triggers for the winner.
+- A strategy is promoted only with expectancy > 0 after costs, ≥ 30 trades and drawdown ≤ 15%. Current winner: `meanrev_rsi2`, with a small but positive edge. The higher-returning candidates had too few trades to trust.
+- `python -m handoff.jev` writes `handoff/jev_spec.json`: Jev answers three judgments (news-driven dip, regime, setup quality) that can veto or halve a code-generated entry, never create one.
+
 ## Dashboard
 
 `python scripts/build_dashboard.py` writes `dashboard.html`: one page showing all four desks (fund limits, SPY gamma map, Kalshi quotes and fill scenarios, sportsbook signals), computed by the desks' own code. CI builds it on every push.

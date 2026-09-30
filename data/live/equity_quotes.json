@@ -1,0 +1,46 @@
+{
+ "source": "Robinhood get_equity_quotes",
+ "fetched_at": "2026-09-30T00:54:54Z",
+ "quotes": {
+  "SPY": {
+   "close": 764.2,
+   "bid": 765.4,
+   "ask": 765.47
+  },
+  "QQQ": {
+   "close": 737.93,
+   "bid": 738.73,
+   "ask": 738.78
+  },
+  "IWM": {
+   "close": 279.01,
+   "bid": 279.62,
+   "ask": 279.65
+  },
+  "NVDA": {
+   "close": 227.21,
+   "bid": 228.07,
+   "ask": 228.13
+  },
+  "AMD": {
+   "close": 607.57,
+   "bid": 607.9,
+   "ask": 608.38
+  },
+  "AAPL": {
+   "close": 329.4,
+   "bid": 330.02,
+   "ask": 330.06
+  },
+  "MSFT": {
+   "close": 508.96,
+   "bid": 509.85,
+   "ask": 510.0
+  },
+  "TSLA": {
+   "close": 352.84,
+   "bid": 353.85,
+   "ask": 353.99
+  }
+ }
+}
