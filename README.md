@@ -285,6 +285,30 @@ State is kept in `ledger/spreadbook.json`, and its summary appears in each recei
 
 **Why not carry yet:** Hyperliquid's terms exclude US persons. The US-legal carry route is Coinbase Derivatives perp-style futures hedged with IBIT or ETHA. It beats T-bills only when funding is at or above about 7% a year, and Coinbase's funding feed hasn't been verified yet, so it's the next research item rather than a book.
 
+## Strategy combination test (2026-09-30, ai-fund-desk method)
+
+`python3 -m verify.screen`, `python3 -m verify.replicate`, `python3 -m backtest.portfolio` → `verify/replication.json`, `backtest/portfolio_results.json`.
+
+**Verifier (TraderDev leaderboard).**
+- 1,000 rows pulled; 612 are unique backtests.
+- 12 pass the bar (≥150 trades, ≥3 years, DD ≤30%, PF 1.2–4, Sharpe 0.8–4.5). They collapse to two 1h families that run 40–63%/yr in realistic costs.
+- A "zero-info control" scores Sharpe 4.18, so the leaderboard's engine inflates results.
+- Rebuilt on BINANCE daily 2022–2026 with next-bar-open fills and 5.5 bp/side, every family is **KILLED** vs `trend-etf-v1` (24.6%/yr, DD −26.7%): Supertrend is −0.5%/yr and relies on 2023; Donchian and EMA/ATR are −11%/yr.
+
+**Combination (monthly, out of sample, 36-month lookback, costs in).**
+
+| Set (window) | Best mix | Sharpe | CAGR | Max DD | Best single |
+|---|---|---|---|---|---|
+| SPY + crypto trend (2018-06..2026-08) | risk parity (≈67/33) | 0.86 | 17.4% | −20.7% | trend 0.71 / 19.4% / −20.6% |
+| All five (SPY, PUT, BXM, CNDR, trend) | equal weight | 0.66 | 9.7% | −16.7% | trend 0.71 |
+| Options only (2007-02..2026-08) | equal weight | 0.39 | 5.1% | −32.4% | SPY 0.53 / 8.9% / −52.2% |
+
+- No mix clears the pre-registered bar: the 5th percentile of the paired bootstrap Sharpe difference vs the best single sleeve is not > 0. SPY + trend is the closest (p05 −0.12, median +0.17).
+- PUT and BXM are 0.88–0.98 correlated with SPY: the same bet at lower return, not diversification. CNDR (the spread-book proxy) returns about T-bills minus costs.
+- The 10% vol-target / 10% DD-kill overlay cuts drawdown but lowers Sharpe in every set.
+- Plan: core SPY plus the crypto trend sleeve at about ⅓ risk. Keep option selling as a paper test only until its own go/no-go passes.
+- Caveats: SPY is price-only (dividends excluded), option indices are charged 1%/yr, and trend is a weekly-bar proxy before the ETFs existed.
+
 ## Desk Head (head-agent chat)
 
 The [Desk Blueprint](https://claude.ai/artifact/R3xmKsrSFBK1kquZVYVNyh) (`docs/blueprint.html`) covers the layers, departments, JEV question sets, build plan, crypto strategies and risks.

@@ -90,6 +90,9 @@ def snapshot():
             "evidence": "Cboe PUT ~7.6%/yr, BXM ~6.4%/yr, CNDR (spread proxy) ~1.6%/yr 2005-2026",
             "go_no_go": "spreads: >=8 closed, >+2% per $ risked after slippage, win rate >=5pt over delta-implied; "
                         "Kalshi: >=300 windows, >=60% both-fill; sportsbook CLV: >=200 picks, mean >=+2%",
+            "combination": "2026-09-30 test: no mix beats the best single sleeve with significance; closest is SPY + crypto trend "
+                           "risk parity (Sharpe 0.86 vs 0.71, DD -20.7%, 2018-2026). Option-selling indices are 0.88-0.98 correlated "
+                           "with SPY; every leaderboard family KILLED vs trend-etf-v1 (verify/replication.json)",
             "plan": "pay debt >8% first; $300-350 fractional SPY/VTI; $150-200 SPY 1-2 wide spreads only after a passing paper run",
         },
     }
