@@ -1,0 +1,83 @@
+{
+ "strategy": "meanrev_rsi2",
+ "params": {
+  "rsi_th": 20,
+  "trend": 100,
+  "max_hold": 10
+ },
+ "out_of_sample": {
+  "trades": 48,
+  "expectancy": 0.00249,
+  "win_rate": 0.625,
+  "total": 0.0301,
+  "max_dd": 0.0084,
+  "score": 3.014
+ },
+ "snowball_replay": {
+  "start": 500.0,
+  "equity": 505.88,
+  "banked": 1.21,
+  "risked": 504.67,
+  "return_pct": 1.18,
+  "trades": 48,
+  "win_rate": 0.625,
+  "max_drawdown_pct": 0.41,
+  "halted": null
+ },
+ "division_of_labour": {
+  "code": [
+   "RSI(2) and SMA signals",
+   "entry/exit timing",
+   "quarter-Kelly sizing",
+   "profit banking",
+   "kill switch (15% DD or last-20 expectancy ≤ 0)"
+  ],
+  "jev": [
+   "news_driven_dip",
+   "regime",
+   "setup_quality"
+  ]
+ },
+ "questions": [
+  {
+   "id": "news_driven_dip",
+   "primitive": "noul",
+   "instructions": "`symbol` fell over the last two sessions (see `move`). Do the items in `headlines` show that the drop was caused by new information likely to keep pushing the price lower for days — for example a recession signal, a policy shock, a credit event or a large index constituent's guidance cut — rather than ordinary noise, positioning or profit-taking?",
+   "criteria": null
+  },
+  {
+   "id": "regime",
+   "primitive": "choice",
+   "instructions": "Given `headlines` and `move`, which market regime best describes the current session for `symbol`?",
+   "criteria": {
+    "orderly_uptrend": "Prices are rising in steps and pullbacks are being bought.",
+    "choppy_range": "Prices are moving sideways with no follow-through either way.",
+    "risk_off_breakdown": "Broad selling tied to macro or credit stress is under way.",
+    "event_pending": "A scheduled event (Fed decision, CPI, jobs report) dominates within 24 hours."
+   }
+  },
+  {
+   "id": "setup_quality",
+   "primitive": "score",
+   "instructions": "How closely does this pullback in `symbol` match a short-lived, liquidity-driven dip inside an intact uptrend, using `move` and `headlines`?",
+   "criteria": [
+    "Clear breakdown: the dip reflects a change in the trend.",
+    "Mostly news-driven with little sign of exhaustion.",
+    "Mixed: some news, some routine selling.",
+    "Mostly routine selling into an intact uptrend.",
+    "Textbook short-lived dip with no material news."
+   ]
+  }
+ ],
+ "policy": {
+  "veto_min_p": 0.75,
+  "shrink_min_p": 0.65,
+  "actions": [
+   "take",
+   "half_size",
+   "skip"
+  ],
+  "jev_can_create_trades": false
+ },
+ "go_live": "Set TYPESAFE_API_KEY, TYPESAFE_API_URL and TYPESAFE_LIVE=1; until then answers are stubbed and every BUY is taken."
+}

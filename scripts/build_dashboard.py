@@ -22,7 +22,8 @@ import options  # noqa: E402
 import sportsbook  # noqa: E402
 from fund import config  # noqa: E402
 
-CHAIN = "SPY-2026-08-03T1506.json"
+CHAIN = "SPY-2026-09-30T1623.json"
+LIVE = ROOT / "data" / "live"
 E = html.escape
 
 
@@ -85,6 +86,55 @@ def sportsbook_state():
     }
 
 
+MODELED = ' <span class="sub">(modeled)</span>'
+
+
+def kalshi_action(m):
+    p = m["proposal"]
+    return pill(f'{p["yes_bid"]}/{p["no_bid"]}', "green") if p else pill("Unverified · no quote", "dim")
+
+
+def snowball_state():
+    t = json.loads((LIVE / "tournament.json").read_text())
+    q = json.loads((LIVE / "equity_quotes.json").read_text())
+    c = json.loads((LIVE / "crypto_quotes.json").read_text())
+    w = next((b for b in t["leaderboard"] if b["name"] == t["winner"]), None)
+    km = LIVE / "kalshi_markets.json"
+    return {"t": t, "winner": w, "quotes": q, "crypto": c,
+            "kalshi": json.loads(km.read_text()) if km.exists() else None}
+
+
+def curve_svg(curves, start):
+    W, H, padL, padR, padT, padB = 640, 200, 56, 90, 12, 24
+    iw, ih = W - padL - padR, H - padT - padB
+    allv = [start] + [e for _, pts, _ in curves for _, e, _ in pts]
+    lo, hi = min(allv), max(allv)
+    lo, hi = lo - (hi - lo) * 0.05 - 1, hi + (hi - lo) * 0.05 + 1
+    n = max((len(pts) for _, pts, _ in curves), default=1)
+    x = lambda i: padL + iw * i / max(n, 1)
+    y = lambda v: padT + (hi - v) / (hi - lo) * ih
+    out = [f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="$500 snowball equity by trade" class="gex">']
+    for v in (lo + (hi - lo) * f for f in (0.1, 0.5, 0.9)):
+        out.append(f'<line x1="{padL}" x2="{W - padR}" y1="{y(v):.1f}" y2="{y(v):.1f}" class="grid"/>'
+                   f'<text x="{padL - 6}" y="{y(v) + 4:.1f}" class="ax" text-anchor="end">${v:,.0f}</text>')
+    out.append(f'<line x1="{padL}" x2="{W - padR}" y1="{y(start):.1f}" y2="{y(start):.1f}" class="zero"/>')
+    labels = []
+    for name, pts, cls in curves:
+        path = " ".join(f"{x(i + 1):.1f},{y(e):.1f}" for i, (_, e, _) in enumerate(pts))
+        out.append(f'<polyline points="{x(0):.1f},{y(start):.1f} {path}" class="ln {cls}"/>')
+        if pts:
+            ex, ey = x(len(pts)), y(pts[-1][1])
+            out.append(f'<circle cx="{ex:.1f}" cy="{ey:.1f}" r="3" class="dot {cls}"/>')
+            labels.append([ey + 4, ex + 6, f'{E(name)} ${pts[-1][1]:,.0f}', cls])
+    labels.sort()
+    for i in range(1, len(labels)):
+        labels[i][0] = max(labels[i][0], labels[i - 1][0] + 12)
+    for ly, lx, txt, cls in labels:
+        out.append(f'<text x="{lx:.1f}" y="{ly:.1f}" class="ax {cls}t">{txt}</text>')
+    out.append(f'<text x="{padL}" y="{H - 6}" class="ax">trade 1</text><text x="{W - padR}" y="{H - 6}" class="ax" text-anchor="end">trade {n}</text></svg>')
+    return "".join(out)
+
+
 def gex_svg(bars, spot, m):
     W, H, padL, padR, padT, padB = 640, 240, 56, 16, 16, 36
     iw, ih = W - padL - padR, H - padT - padB
@@ -126,6 +176,35 @@ def pill(text, tone):
 
 def render():
     f, o, k, s = fund_state(), options_state(), kalshi_state(), sportsbook_state()
+    sb = snowball_state()
+    t, w = sb["t"], sb["winner"]
+    tones = {"meanrev_rsi2": "green", "trend_donchian": "blue", "xs_rotation": "amber", "spy_put_credit_spread_modeled": "red"}
+    curves = [(b["name"].split("_")[0], b["curve"], tones.get(b["name"], "blue")) for b in t["leaderboard"]]
+    board = "".join(
+        f'<tr><td>{E(b["name"])}{MODELED if b["modeled"] else ""}</td>'
+        f'<td class="num mono">{b["out_of_sample"]["trades"]}</td><td class="num mono">{b["out_of_sample"]["expectancy"] * 100:+.2f}%</td>'
+        f'<td class="num mono">{b["out_of_sample"]["win_rate"]:.0%}</td><td class="num mono">{b["out_of_sample"]["max_dd"]:.1%}</td>'
+        f'<td class="num mono">${b["snowball"]["equity"]:,.2f}</td>'
+        f'<td>{pill("Promoted", "green") if b["promoted"] else pill("; ".join(b["rejected_because"]), "dim")}</td></tr>'
+        for b in t["leaderboard"])
+    trig = "".join(
+        f'<div class="sig"><span>{E(x["symbol"])}</span><span class="mono">close {x["close"]:g} · RSI2 {x["rsi2"]} · '
+        f'SMA {list(x.values())[3]:g}</span>{pill(x["signal"], "green" if x["signal"] != "none" else "dim")}</div>'
+        for x in t["triggers"])
+    lq = sb["quotes"]["quotes"]
+    qrows = "".join(f'<tr><td>{E(k2)}</td><td class="num mono">{v["close"]:,.2f}</td><td class="num mono">{v["bid"]:,.2f} / {v["ask"]:,.2f}</td></tr>' for k2, v in lq.items())
+    qrows += "".join(f'<tr><td>{E(k2)}</td><td class="num mono">{v["prev_close"]:,.2f}</td><td class="num mono">{v["bid"]:,.2f} / {v["ask"]:,.2f}</td></tr>' for k2, v in sb["crypto"]["quotes"].items())
+    ws = w["snowball"] if w else None
+    kl = sb["kalshi"]
+    krows = "".join(
+        f'<tr><td class="mono">{E(m["ticker"])}</td><td class="num mono">{m["floor_strike"]:,.2f}</td>'
+        f'<td class="num mono">{m["yes_bid"]}¢</td><td class="num mono">{m["no_bid"]}¢</td><td class="num mono">{m["book_lock_c"]}¢</td>'
+        f'<td>{kalshi_action(m)}</td></tr>'
+        for m in (kl["markets"] if kl else []))
+    trend_trig = "".join(
+        f'<div class="sig"><span>{E(x["symbol"])}</span><span class="mono">close {x["close"]:g} · breakout {x["breakout_level"]:g}</span>'
+        f'{pill(x["signal"], "green" if x["signal"] != "none" else "dim")}</div>'
+        for x in t.get("all_triggers", {}).get("trend_donchian", []))
     live = judge.from_env().live
     m, ch = o["map"], o["chain"]
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -187,11 +266,14 @@ def render():
   .grid {{ stroke: var(--border); }} .zero {{ stroke: var(--muted); }}
   .spot {{ stroke: var(--blue); stroke-dasharray: 3 3; }}
   .call {{ fill: var(--green); }} .put {{ fill: var(--red); }}
+  .ln {{ fill: none; stroke-width: 1.6; }} .ln.green {{ stroke: var(--green); stroke-width: 2.4; }} .ln.blue {{ stroke: var(--blue); }} .ln.amber {{ stroke: var(--amber); }} .ln.red {{ stroke: var(--red); }}
+  .dot.green {{ fill: var(--green); }} .dot.blue {{ fill: var(--blue); }} .dot.amber {{ fill: var(--amber); }} .dot.red {{ fill: var(--red); }}
+  .greent {{ fill: var(--green); }} .bluet {{ fill: var(--blue); }} .ambert {{ fill: var(--amber); }} .redt {{ fill: var(--red); }}
   .ax {{ fill: var(--dim); font: 10px var(--mono); }} .ax.strong {{ fill: var(--ink); font-weight: 500; }} .spotlbl {{ fill: var(--blue); }}
   .legend {{ display: flex; flex-wrap: wrap; gap: 14px; color: var(--muted); font-size: 12px; }}
   .sw {{ display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }}
   .note {{ color: var(--muted); font-size: 12px; max-width: 70ch; }}
-  .signals {{ display: grid; gap: 8px; }}
+  .signals {{ display: grid; gap: 8px; align-content: start; }}
   .sig {{ display: grid; grid-template-columns: 110px 1fr auto; gap: 12px; align-items: center; padding: 8px 10px; background: var(--raised); border-radius: 4px; }}
   .sig span:first-child {{ color: var(--muted); }}
   @media (max-width: 480px) {{ .sig {{ grid-template-columns: 1fr auto; }} .sig span:first-child {{ grid-column: 1 / -1; }} }}
@@ -204,11 +286,33 @@ def render():
 
   <div class="strip">
     <div><span class="eyebrow">Fund mode</span><b>{pill(f["mode"], "amber")}</b></div>
-    <div><span class="eyebrow">Paper NAV</span><b class="mono">${f["nav"]:,.0f}</b></div>
+    <div><span class="eyebrow">$500 snowball · winner replay</span><b class="mono">${ws["equity"]:,.2f} <span class="sub">({ws["return_pct"]:+.2f}%)</span></b></div>
+    <div><span class="eyebrow">Live data</span><b class="mono">{E(sb["quotes"]["fetched_at"][:16].replace("T", " "))} UTC</b></div>
     <div><span class="eyebrow">SPY dealer regime</span><b>{pill(regime_txt, regime_tone)}</b></div>
     <div><span class="eyebrow">Kalshi mode</span><b>{pill("SHADOW · live refused", "amber")}</b></div>
     <div><span class="eyebrow">TypeSafe judgments</span><b>{pill("Live", "green") if live else pill("Stub · never blocks", "dim")}</b></div>
   </div>
+
+  <section>
+    <div class="head"><h2>$500 snowball · strategy tournament on real Robinhood data</h2>{pill("Winner: " + (t["winner"] or "none qualified"), "green" if t["winner"] else "red")}</div>
+    <div class="levels">
+      <div class="level"><span class="eyebrow">Start</span><b>$500.00</b></div>
+      <div class="level"><span class="eyebrow">Equity</span><b>${ws["equity"]:,.2f}</b></div>
+      <div class="level"><span class="eyebrow">Banked (never risked)</span><b>${ws["banked"]:,.2f}</b></div>
+      <div class="level"><span class="eyebrow">Trades · win rate</span><b>{ws["trades"]} · {ws["win_rate"]:.0%}</b></div>
+      <div class="level"><span class="eyebrow">Max drawdown</span><b>{ws["max_drawdown_pct"]:.2f}%</b></div>
+      <div class="level"><span class="eyebrow">Kill switch</span><b>{E(ws["halted"] or "armed")}</b></div>
+    </div>
+    <div class="chart">{curve_svg(curves, 500.0)}</div>
+    <div class="tbl"><table>
+      <thead><tr><th>Strategy (out-of-sample from {E(w["split_date"])})</th><th class="num">Trades</th><th class="num">Avg / trade</th><th class="num">Win</th><th class="num">Max DD @25%</th><th class="num">$500 →</th><th>Gate</th></tr></thead>
+      <tbody>{board}</tbody></table></div>
+    <div class="grid2">
+      <div class="signals"><span class="eyebrow">Today's triggers · {E(t["winner"] or "")} (promoted) on {E(t["data"]["last"])} close</span>{trig}<span class="eyebrow">Watchlist · trend_donchian (not promoted)</span>{trend_trig}</div>
+      <div class="tbl"><span class="eyebrow">Live quotes</span><table><thead><tr><th>Symbol</th><th class="num">Prev close</th><th class="num">Bid / ask</th></tr></thead><tbody>{qrows}</tbody></table></div>
+    </div>
+    <p class="note">Every curve replays only out-of-sample trades ({E(t["data"]["first"])} → {E(t["data"]["last"])} daily bars; parameters chosen on the first 70%). Gates: expectancy &gt; 0 after costs, ≥ {t["rules"]["min_trades"]} trades, drawdown ≤ {t["rules"]["kill_dd"]:.0%}. Banking moves 20% of each new high out of risk; the kill switch halts on 15% drawdown or a non-positive last-20 average. Jev can veto or halve a code-generated entry, never create one. Paper only; past results do not guarantee future profit.</p>
+  </section>
 
   <div class="grid2">
     <section>
@@ -229,22 +333,22 @@ def render():
       </div>
       <div class="chart">{gex_svg(o["bars"], ch["spot"], m)}</div>
       <div class="legend"><span><i class="sw" style="background:var(--green)"></i>Call gamma</span><span><i class="sw" style="background:var(--red)"></i>Put gamma</span><span><i class="sw" style="background:var(--blue)"></i>Spot</span></div>
-      <p class="note">Sample: {E(ch["source"])}, {E(ch["captured_at"])}. Dollars of dealer delta per 1% move, per strike.</p>
+      <p class="note">Live: {E(ch["source"])}, {E(ch["captured_at"])}. Dollars of dealer delta per 1% move, per strike.</p>
     </section>
 
     <section>
-      <div class="head"><h2>Kalshi · 15-min BTC/ETH maker</h2>{pill("Sample scenarios", "dim")}</div>
+      <div class="head"><h2>Kalshi · 15-min BTC/ETH maker</h2>{pill("Live · " + (kl["fetched_at"][11:16] + " UTC" if kl else "no data"), "green" if kl else "dim")}</div>
       <div class="tbl"><table>
-        <thead><tr><th>Quote pair</th><th class="num">YES bid</th><th class="num">NO bid</th><th class="num">Lock / pair</th></tr></thead>
-        <tbody>{quotes}</tbody></table></div>
+        <thead><tr><th>Open market</th><th class="num">Strike</th><th class="num">YES bid</th><th class="num">NO bid</th><th class="num">Book lock</th><th>Desk quote</th></tr></thead>
+        <tbody>{krows}</tbody></table></div>
       <div class="tbl"><table>
-        <thead><tr><th>Fills on a 49¢ / 49¢ pair</th><th class="num">P&amp;L at risk ($)</th><th>Action</th></tr></thead>
+        <thead><tr><th>Fill scenarios on a 49¢ / 49¢ pair</th><th class="num">P&amp;L at risk ($)</th><th>Action</th></tr></thead>
         <tbody>{scen}</tbody></table></div>
-      <p class="note">Markets are quoted only after TypeSafe confirms their rules settle on the CF Benchmarks index for the stated window. Positive numbers are locked profit; negative are money at risk.</p>
+      <p class="note">Live from Kalshi's public API (read-only). Each market settles on the 60-second average of the CF Benchmarks index at the end of its 15-minute window vs. its start. The desk quotes nothing until TypeSafe verifies those rules; with the stub, every market shows as unverified. The scenario rows illustrate the cut rules.</p>
     </section>
 
     <section>
-      <div class="head"><h2>Sportsbook · line tracker</h2>{pill("Sample game", "dim")}</div>
+      <div class="head"><h2>Sportsbook · line tracker</h2>{pill("Sample · needs odds key", "dim")}</div>
       <div class="signals">
         <div class="sig"><span>Steam</span><span>{E(f"{len(steam[1])} books moved toward {steam[0]}: " + ", ".join(steam[1])) if steam else "No steam"}</span>{pill("Alert", "amber") if steam else pill("Quiet", "dim")}</div>
         <div class="sig"><span>Reverse line</span><span>72% of bets on home, line moved −3.0 → −2.0 toward {E(s["reverse"] or "none")}</span>{pill("Sharp", "amber") if s["reverse"] else pill("Quiet", "dim")}</div>

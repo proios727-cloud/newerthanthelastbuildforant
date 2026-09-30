@@ -101,6 +101,14 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 
 This desk supports decisions. It is not investment advice, and nothing in it executes trades.
 
+## $500 snowball tournament (real data)
+
+- `data/live/`: Robinhood snapshots: 2 years of daily bars for 8 equities, live equity and crypto quotes, and a live SPY option chain in `options/data/chains/`.
+- `research/strategies/`: four candidates (RSI-2 mean reversion, Donchian trend, cross-sectional rotation, modeled SPY put credit spreads), each walk-forward tested with parameters chosen on the first 70% only.
+- `python -m research.tournament` ranks them out-of-sample, replays each through a $500 `fund.snowball.Snowball` (quarter-Kelly sizing, 20% of each new high banked, halt on 15% drawdown or a non-positive last-20 average), and prints today's triggers for the winner.
+- A strategy is promoted only with expectancy > 0 after costs, ≥ 30 trades and drawdown ≤ 15%. Current winner: `meanrev_rsi2`, with a small but positive edge. The higher-returning candidates had too few trades to trust.
+- `python -m handoff.jev` writes `handoff/jev_spec.json`: Jev answers three judgments (news-driven dip, regime, setup quality) that can veto or halve a code-generated entry, never create one.
+
 ## Dashboard
 
 `python scripts/build_dashboard.py` writes `dashboard.html`: one page showing all four desks (fund limits, SPY gamma map, Kalshi quotes and fill scenarios, sportsbook signals), computed by the desks' own code. CI builds it on every push.
@@ -121,3 +129,8 @@ Four desks share one TypeSafe judgment layer. Strategy notes and the Heatseeker 
 | `sportsbook/` | Sportsbook line tracker (ported from 456CASH) | `sportsbook/cause.py`: why the line moved (Choice) | A move counts as sharp only when no news explains it |
 
 `judge/` holds the questions and clients. Without credentials, `judge.from_env()` returns a stub whose answers never count as confident, so every desk behaves as it did before. To go live, set `TYPESAFE_API_KEY`, `TYPESAFE_API_URL` and `TYPESAFE_LIVE=1`, and allow the API host in the network policy. Before that, check `judge.HttpClient` against the [TypeSafe API docs](https://docs.typesafe.ai/api.md); its request format has not been verified.
+
+## Replay and desk seats
+
+- `python -m research.replay` writes `data/live/replay.json`: the tournament's out-of-sample trades replayed bar by bar through the $500 snowball, with no lookahead. Bars are Robinhood daily data, matched to TradingView (`RH_TV_HFT get-ohlcv`) to the cent. The Desk Tabs **Replay** tab plays it with Play/Step and 1×/4×/16× speed.
+- `desk.json` now has seats for every desk: Options (Premium Scout, Greeks/GEX Risk, Exit Manager), Kalshi (Quoter, Settlement Verifier, Fill Auditor) and Sportsbook (Line Watcher, News-Cause Judge, Bet Sizer). Charters are generated with `python scripts/gen_charters.py desk.json --out charters`.
