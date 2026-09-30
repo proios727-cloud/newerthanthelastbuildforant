@@ -1,9 +1,12 @@
 name: kalshi-shadow
 # SHADOW only: reads Kalshi's public API and logs Rule B decisions. Never places orders.
-# Runs in ~5.5h shifts every 6h; each shift appends its log to the `shadow-data` branch.
+# Runs back-to-back ~5.5h shifts; each shift appends its log to the `shadow-data` branch.
+# The cron fires hourly, but the concurrency group allows one running shift plus one queued:
+# the queued run starts the moment the current shift ends. GitHub's cron can lag by hours,
+# so a 6-hourly schedule left 1-4h gaps; this keeps coverage near 24/7. Public repo: no minute cost.
 on:
   schedule:
-    - cron: "3 */6 * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       hours:
