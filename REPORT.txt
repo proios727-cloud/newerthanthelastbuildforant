@@ -1,6 +1,6 @@
-212 decisions, 41 settled trades
-win rate 82.9%
-P&L at live book  +1363¢ total, +3.32¢/contract
-P&L at print VWAP +2398¢ total, +5.85¢/contract (backtest basis)
-book minus VWAP  +2.45¢ avg (positive = live costs more)
+258 decisions, 50 settled trades
+win rate 82.0%
+P&L at live book  +329¢ total, +0.66¢/contract
+P&L at print VWAP +2423¢ total, +4.85¢/contract (backtest basis)
+book minus VWAP  +4.14¢ avg (positive = live costs more)
 read landed 59.7s before close (median; target 60s)
