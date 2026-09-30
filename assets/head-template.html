@@ -1,0 +1,326 @@
+<title>Desk Head</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a desk ledger rail (status of every book) beside one conversation with the head agent and a
+   delegate slip underneath it; on a phone the conversation comes first and the rail follows. */
+:root {
+  --ground: #f3f5f4; --sheet: #ffffff; --ink: #18222b; --muted: #5d6b76; --rule: #d9e0e3;
+  --accent: #1c5d86; --accent-ink: #ffffff; --accent-soft: #e3eef5;
+  --good: #1f7a4d; --warn: #9a6400; --bad: #b3261e; --stub: #6b6f9a;
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #11171c; --sheet: #182129; --ink: #e4eaee; --muted: #93a2ad; --rule: #2a3640;
+  --accent: #6fb3dc; --accent-ink: #0d1a22; --accent-soft: #1b3445;
+  --good: #5cc38c; --warn: #e0a83a; --bad: #f08a80; --stub: #a3a7d6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --ground: #11171c; --sheet: #182129; --ink: #e4eaee; --muted: #93a2ad; --rule: #2a3640;
+  --accent: #6fb3dc; --accent-ink: #0d1a22; --accent-soft: #1b3445;
+  --good: #5cc38c; --warn: #e0a83a; --bad: #f08a80; --stub: #a3a7d6; color-scheme: dark }
+
+html, body { height: 100%; }
+body { background: var(--ground); color: var(--ink); font: 15px/1.5 var(--f-body); padding-inline: 16px; padding-block: 0 24px; }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 16px; }
+header.top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; padding-block: 18px 4px; border-bottom: 1px solid var(--rule); }
+header.top h1 { font: 600 1.6rem/1.1 var(--f-display); letter-spacing: .01em; margin: 0; }
+.sub { color: var(--muted); font-size: .88rem; }
+.chip { font: 500 .72rem/1 var(--f-data); letter-spacing: .06em; text-transform: uppercase; padding: 5px 8px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap; }
+.chip.good { color: var(--good); } .chip.warn { color: var(--warn); } .chip.bad { color: var(--bad); } .chip.stub { color: var(--stub); } .chip.info { color: var(--accent); }
+.grid { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } .rail { order: 2; } }
+
+.rail { display: grid; gap: 12px; }
+.book { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); padding: 12px 14px; display: grid; gap: 6px; min-width: 0; }
+.book h2 { font: 600 .78rem/1.2 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.big { font: 500 1.35rem/1.1 var(--f-data); font-variant-numeric: tabular-nums; }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; font-size: .86rem; }
+.kv dt { color: var(--muted); white-space: nowrap; } .kv dd { margin: 0; overflow-wrap: anywhere; font-family: var(--f-data); font-variant-numeric: tabular-nums; text-align: right; }
+.up { color: var(--good); } .down { color: var(--bad); }
+table.t { width: 100%; border-collapse: collapse; font-size: .84rem; font-variant-numeric: tabular-nums; }
+table.t th { text-align: left; font: 500 .7rem/1.2 var(--f-display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding-bottom: 4px; }
+table.t td { padding: 3px 0; border-top: 1px solid var(--rule); font-family: var(--f-data); }
+table.t td:first-child { font-family: var(--f-body); }
+table.t td.n, table.t th.n { text-align: right; }
+.feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: .8rem; max-height: 260px; overflow-y: auto; }
+.feed li { display: grid; grid-template-columns: 76px 1fr; gap: 8px; border-top: 1px solid var(--rule); padding-top: 4px; min-width: 0; }
+.feed .d { font-family: var(--f-data); color: var(--muted); }
+.feed .x { min-width: 0; overflow-wrap: anywhere; }
+
+.main { display: grid; gap: 16px; min-width: 0; }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); display: grid; min-width: 0; }
+.panel > header { padding: 12px 14px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; justify-content: space-between; }
+.panel > header h2 { font: 600 1.05rem/1.2 var(--f-display); margin: 0; }
+.log { padding: 14px; display: grid; gap: 12px; min-height: 140px; max-height: 58vh; overflow-y: auto; align-content: start; }
+.msg { max-width: 70ch; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
+.msg.me { justify-self: end; background: var(--accent-soft); padding: 8px 12px; border-radius: var(--r); }
+.msg.head { border-left: 2px solid var(--accent); padding-left: 12px; }
+.msg.note { color: var(--muted); font-size: .88rem; }
+.msg .who { display: block; font: 500 .68rem/1.4 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.suggest { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 10px; }
+.ask { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--rule); align-items: end; }
+textarea { width: 100%; box-sizing: border-box; resize: vertical; min-height: 44px; font: 15px/1.45 var(--f-body); color: var(--ink); background: var(--ground); border: 1px solid var(--rule); border-radius: var(--r); padding: 9px 11px; }
+textarea:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button { font: 500 .88rem/1 var(--f-body); border-radius: var(--r); padding: 10px 14px; cursor: pointer; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); }
+button.ghost { background: transparent; color: var(--accent); }
+button.chipbtn { text-align: left; line-height: 1.3; background: transparent; color: var(--ink); border-color: var(--rule); padding: 6px 10px; font-size: .82rem; border-radius: 99px; }
+button:disabled { opacity: .5; cursor: default; }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.slip { padding: 12px 14px; display: grid; gap: 10px; }
+.slip p { margin: 0; color: var(--muted); font-size: .86rem; max-width: 72ch; }
+.confirm { border: 1px solid var(--warn); border-radius: var(--r); padding: 10px 12px; display: grid; gap: 8px; }
+.status { font-size: .86rem; overflow-wrap: anywhere; }
+.status a { color: var(--accent); }
+.rules { font-size: .8rem; color: var(--muted); margin: 0; padding-left: 18px; display: grid; gap: 2px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Desk Head</h1>
+    <span class="chip info" id="mode">PAPER</span>
+    <span class="chip" id="clean">—</span>
+    <span class="chip" id="kill" hidden>Kill switch armed</span>
+    <span class="sub" id="asof">Snapshot —</span>
+  </header>
+
+  <div class="grid">
+    <aside class="rail" aria-label="Desk status">
+      <section class="book" id="b-real"><h2>Real paper book <span class="chip info">$100k</span></h2></section>
+      <section class="book" id="b-put"><h2>Put book <span class="chip info">$100k</span></h2></section>
+      <section class="book" id="b-spread"><h2>Spread book <span class="chip info">$500</span></h2></section>
+      <section class="book" id="b-trend"><h2>Crypto trend <span class="chip info">IBIT · ETHA · BSOL</span></h2></section>
+      <section class="book" id="b-jev"><h2>JEV veto test</h2></section>
+      <section class="book" id="b-shadow"><h2>Shadow signals</h2></section>
+      <section class="book" id="b-feed"><h2>Recent activity</h2><ul class="feed" id="feed"></ul></section>
+    </aside>
+
+    <div class="main">
+      <section class="panel" aria-label="Head agent">
+        <header><h2>Ask the head agent</h2><span class="sub" id="chatstate">Answers from the snapshot on the left.</span></header>
+        <div class="log" id="log" aria-live="polite">
+          <div class="msg note">Ask about the books, a skipped trade, the JEV test, or what to build next. The head agent reads the same snapshot you see and cannot trade.</div>
+        </div>
+        <div class="suggest" id="suggest"></div>
+        <form class="ask" id="askform">
+          <label for="q" class="sub" hidden>Question</label>
+          <textarea id="q" rows="2" placeholder="How did the books do today, and why were any trades skipped?"></textarea>
+          <div class="btns"><button type="submit" id="send">Ask</button><button type="button" class="ghost" id="stop" hidden>Stop</button></div>
+        </form>
+      </section>
+
+      <section class="panel" aria-label="Delegate">
+        <header><h2>Send work to an agent</h2><span class="sub">Starts a Claude Code session on the desk repo</span></header>
+        <div class="slip">
+          <p>Write a task, or use one the head agent drafts. The agent works on its own branch and opens a draft pull request for you to review. The rules below are added to every task.</p>
+          <ul class="rules" id="guard"></ul>
+          <label for="task" class="sub">Task</label>
+          <textarea id="task" rows="4" placeholder="Backtest the $500 spread book on SPY 1-wide puts from 2019 to 2026 and add the result to the README."></textarea>
+          <div class="btns"><button type="button" id="delegate">Start agent session</button></div>
+          <div class="confirm" id="confirm" hidden>
+            <div class="status">This starts a cloud session on your Claude account and uses your usage. Start it?</div>
+            <div class="btns"><button type="button" id="go">Start session</button><button type="button" class="ghost" id="cancel">Cancel</button></div>
+          </div>
+          <div class="status" id="dstatus"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+const SNAPSHOT = /*SNAPSHOT*/null;
+const CFG = /*CONFIG*/null;
+const $ = (id) => document.getElementById(id);
+const fmt$ = (x) => x == null ? "—" : "$" + Number(x).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const pct = (x) => x == null ? "—" : (x > 0 ? "+" : "") + Number(x).toFixed(2) + "%";
+const tone = (x) => x > 0 ? "up" : x < 0 ? "down" : "";
+
+function kv(rows) {
+  const dl = document.createElement("dl"); dl.className = "kv";
+  for (const [k, v, cls] of rows) {
+    const dt = document.createElement("dt"); dt.textContent = k;
+    const dd = document.createElement("dd"); dd.textContent = v; if (cls) dd.className = cls;
+    dl.append(dt, dd);
+  }
+  return dl;
+}
+function big(text, cls) { const d = document.createElement("div"); d.className = "big " + (cls || ""); d.textContent = text; return d; }
+
+function render() {
+  const s = SNAPSHOT;
+  if (!s) return;
+  $("asof").textContent = "Snapshot " + s.generated_at.replace("T", " ").slice(0, 16) + " UTC · fund day " + (s.fund_day || "—");
+  const c = $("clean");
+  c.textContent = s.clean === false ? "Breach" : s.clean ? "Clean" : "No receipt";
+  c.className = "chip " + (s.clean === false ? "bad" : s.clean ? "good" : "warn");
+  const ks = s.kill_switch || {};
+  if (ks.armed) { const k = $("kill"); k.hidden = false; k.className = "chip bad"; k.title = ks.reason || ""; }
+
+  const r = s.real || {};
+  $("b-real").append(big(fmt$(r.nav)), kv([
+    ["Day P&L", pct(r.day_pnl_pct), tone(r.day_pnl_pct)], ["Drawdown", pct(-(r.drawdown_pct || 0))],
+    ["Gross", pct(r.gross_pct)], ["Positions", String(Object.keys(r.positions || {}).length)],
+    ["Awaiting EXECUTE", String((r.awaiting_approval || []).length)]]));
+
+  const p = s.putbook || {};
+  $("b-put").append(big(fmt$(p.nav), tone(p.return_pct)), kv([
+    ["Return", pct(p.return_pct), tone(p.return_pct)],
+    ["Open", Object.entries(p.open || {}).map(([k, v]) => k + " " + v.replace(/ \d{4}-/, " ")).join(", ") || "none"],
+    ["Closed · win rate", (p.closed_trades ?? 0) + " · " + (p.win_rate == null ? "—" : Math.round(p.win_rate * 100) + "%")],
+    ["Secured", (p.secured_pct ?? 0) + "% of NAV"], ["IV / RV20", p.avg_iv_over_rv ?? "—"]]));
+
+  const sp = s.spreadbook || {};
+  $("b-spread").append(big(fmt$(sp.nav), tone(sp.return_pct)), kv([
+    ["Return", pct(sp.return_pct), tone(sp.return_pct)],
+    ["Open", Object.entries(sp.open || {}).map(([k, v]) => k + " " + v).join(", ") || "none"],
+    ["Closed · win rate", (sp.closed_trades ?? 0) + " · " + (sp.win_rate == null ? "—" : Math.round(sp.win_rate * 100) + "%")],
+    ["At risk", (sp.at_risk_pct ?? 0) + "% of NAV"]]));
+
+  const trend = s.trendbook || {};
+  const sig = Object.entries(trend.signal || {}).map(([k, v]) => k + (v.on ? " long" : " flat")).join(", ") || "not seeded yet";
+  $("b-trend").append(kv([
+    ["Signals", sig],
+    ["$500 book", trend.b500 ? fmt$(trend.b500.nav) + " · " + pct(trend.b500.return_pct) + " · " + trend.b500.exposure_pct + "% in" : "—"],
+    ["$10k book", trend.b10k ? fmt$(trend.b10k.nav) + " · " + pct(trend.b10k.return_pct) + " · " + trend.b10k.exposure_pct + "% in" : "—"],
+    ["Bars through", Object.values(trend.bars_through || {})[0] || "—"]]));
+  const j = s.jevcheck || {};
+  const jt = {keep: "good", drop: "bad", unreliable: "bad", inconclusive: "warn", insufficient: "stub"}[j.verdict] || "stub";
+  const jh = $("b-jev").querySelector("h2"); const jc = document.createElement("span");
+  jc.className = "chip " + jt; jc.textContent = j.verdict || "—"; jh.append(jc);
+  $("b-jev").append(kv([
+    ["JEV mode", s.jev_mode], ["Taken (live) / needed", (j.taken_live ?? 0) + " / " + (j.bar?.min_taken ?? 20)],
+    ["Vetoed, closed / needed", (j.ghosts_closed ?? 0) + " / " + (j.bar?.min_ghosts ?? 8)],
+    ["Edge per $ credit", j.edge == null ? "—" : j.edge.toFixed(2) + " (need " + (j.bar?.min_edge_per_credit ?? 0.25) + ")"],
+    ["Judge errors", (j.judge_errors ?? 0) + " (" + Math.round((j.error_rate || 0) * 100) + "%)"],
+    ["Calibrated trades", String(s.jev_calibration?.trades_scored ?? 0)],
+    ...Object.entries(s.jev_calibration?.questions || {}).map(([q, v]) => [q + " Brier", v.brier + " vs " + v.brier_if_base_rate + " base"])]));
+
+  const sh = s.shadow || {};
+  const t = document.createElement("table"); t.className = "t";
+  t.innerHTML = "<thead><tr><th>Variant</th><th class='n'>Return</th><th class='n'>Open</th></tr></thead>";
+  const tb = document.createElement("tbody");
+  for (const [name, v] of Object.entries(sh)) {
+    const tr = document.createElement("tr");
+    const a = document.createElement("td"); a.textContent = name.replace("_", " ");
+    const b = document.createElement("td"); b.className = "n " + tone(v.return_pct); b.textContent = pct(v.return_pct);
+    const cc = document.createElement("td"); cc.className = "n"; cc.textContent = v.open ?? "—";
+    tr.append(a, b, cc); tb.append(tr);
+  }
+  t.append(tb); $("b-shadow").append(t);
+
+  for (const e of (s.activity || []).slice().reverse()) {
+    const li = document.createElement("li");
+    const d = document.createElement("span"); d.className = "d"; d.textContent = (e.date || "").slice(5);
+    const x = document.createElement("span"); x.className = "x"; x.textContent = e.text;
+    li.append(d, x); $("feed").append(li);
+  }
+  for (const g of CFG.guard) { const li = document.createElement("li"); li.textContent = g; $("guard").append(li); }
+}
+render();
+
+// ---------- Head agent chat (sample) ----------
+const SUGGEST = ["How did every book do, in one line each?", "Why were trades skipped today?",
+  "Where does the JEV test stand, and what would change its verdict?", "What should the desk build or test next?"];
+for (const q of SUGGEST) {
+  const b = document.createElement("button"); b.type = "button"; b.className = "chipbtn"; b.textContent = q;
+  b.onclick = () => { $("q").value = q; $("q").focus(); }; $("suggest").append(b);
+}
+
+const RULES = [
+  "You are the head of a paper-trading agent desk: the lead agent a person talks to about their books.",
+  "Answer only from the DESK SNAPSHOT below. If something is not in it, say so and name what would answer it.",
+  "Everything here is paper. Never tell the person to place, preview or approve a real order; approval is human-only (they type EXECUTE in the desk's own tool).",
+  "Be concise and concrete: lead with the answer, use numbers from the snapshot, plain words, short lines. No markdown tables.",
+  "When the person wants work done (code, a backtest, research, a fix), end with one self-contained task an engineer agent could run in the desk repo, inside a fenced block that starts with ```task and ends with ```. Keep the task to one paragraph and name files where you can.",
+  "", "DESK SNAPSHOT (JSON):", JSON.stringify(SNAPSHOT).slice(0, 120000)].join("\n");
+
+let sample = null, turns = [], ctl = null;
+function addMsg(cls, who, text) {
+  const d = document.createElement("div"); d.className = "msg " + cls;
+  if (who) { const w = document.createElement("span"); w.className = "who"; w.textContent = who; d.append(w); }
+  const body = document.createElement("span"); body.textContent = text; d.append(body);
+  $("log").append(d); $("log").scrollTop = $("log").scrollHeight; return {box: d, body};
+}
+function taskFrom(text) { const m = text.match(/```task\s*([\s\S]*?)```/); return m ? m[1].trim() : null; }
+function offerTask(box, text) {
+  const t = taskFrom(text); if (!t) return;
+  const b = document.createElement("button"); b.type = "button"; b.className = "ghost"; b.textContent = "Use this as the agent task";
+  b.onclick = () => { $("task").value = t; $("task").scrollIntoView({block: "center"}); $("task").focus(); };
+  const row = document.createElement("div"); row.className = "btns"; row.style.marginTop = "8px"; row.append(b); box.append(row);
+}
+const SAMPLE_COPY = {not_granted: "Chat is off because Claude access was declined for this page.", sampling_disabled: "Claude is not available for this account.",
+  rate_limited: "Too many questions at once. Wait a minute and ask again.", session_expired: "Sign in to Claude again, then ask again.",
+  refused: "Claude declined that question. Try rephrasing it.", prompt_too_large: "The snapshot is too large to send. Rebuild it with less activity.",
+  empty_completion: "No answer came back. Ask a narrower question.", upstream_error: "The answer was interrupted. Ask again."};
+
+(async () => {
+  sample = window.claude ? await window.claude.use("sample") : null;
+  if (!sample) { $("chatstate").textContent = "Chat works when this page is open in Claude."; $("send").disabled = true; }
+})();
+
+$("askform").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const q = $("q").value.trim(); if (!q || !sample) return;
+  $("q").value = ""; addMsg("me", "", q); turns.push({role: "user", content: q});
+  const {box, body} = addMsg("head", "Head agent", "Thinking…");
+  ctl = new AbortController(); $("send").disabled = true; $("stop").hidden = false;
+  try {
+    const {text, truncated} = await sample([{role: "user", content: RULES}, ...turns.slice(-12)],
+      {modelTier: "complex", cache: false, signal: ctl.signal, onText: ({text}) => { body.textContent = text; $("log").scrollTop = $("log").scrollHeight; }});
+    body.textContent = text + (truncated ? "\n\n(Cut short. Ask for less at a time.)" : "");
+    turns.push({role: "assistant", content: text}); offerTask(box, text);
+  } catch (e) {
+    turns.pop();
+    if (e.code === "cancelled") body.textContent = (e.text || "") + (e.text ? "\n\n(Stopped.)" : "Stopped.");
+    else { body.textContent = e.text || ""; addMsg("note", "", SAMPLE_COPY[e.code] || SAMPLE_COPY.upstream_error); }
+    if (["not_granted", "sampling_disabled", "not_declared", "capability_disabled"].includes(e.code)) $("send").disabled = true;
+  } finally {
+    $("stop").hidden = true; if (sample) $("send").disabled = false; ctl = null;
+  }
+});
+$("stop").onclick = () => ctl?.abort();
+$("q").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("askform").requestSubmit(); } });
+
+// ---------- Delegate (Claude Code Remote connector) ----------
+const SERVER = "Claude Code Remote";
+const MCP_COPY = {needs_reauth: "Reconnect Claude Code Remote in claude.ai Settings → Connectors, then try again.",
+  server_not_connected: "Claude Code Remote isn't available to this page. Open it in Claude and allow the connector.",
+  not_in_manifest: "Starting agent sessions was declined for this page.", blocked_by_policy: "Your organization blocks starting sessions from pages.",
+  approval_required: "Your organization requires approval for this action, which pages can't request yet.",
+  server_unavailable: "The session service didn't answer. It may or may not have started: check your Claude Code sessions before trying again.",
+  upstream_error: "Something went wrong starting the session. Check your Claude Code sessions before trying again."};
+let mcp = null;
+(async () => {
+  mcp = window.claude ? await window.claude.use("mcp") : null;
+  if (!mcp) { $("delegate").disabled = true; $("dstatus").textContent = "Starting sessions works when this page is open in Claude."; }
+})();
+$("delegate").onclick = () => {
+  if (!$("task").value.trim()) { $("dstatus").textContent = "Write a task first."; $("task").focus(); return; }
+  $("confirm").hidden = false; $("delegate").disabled = true; $("dstatus").textContent = "";
+};
+$("cancel").onclick = () => { $("confirm").hidden = true; $("delegate").disabled = !mcp; };
+$("go").onclick = async () => {
+  const task = $("task").value.trim();
+  $("go").disabled = true; $("dstatus").textContent = "Starting session…";
+  const prompt = "Task from the Desk Head page:\n\n" + task + "\n\nRules (non-negotiable):\n- " + CFG.guard.join("\n- ");
+  try {
+    const res = await mcp.callTool(SERVER, "create_session", {
+      prompt, title: "Desk: " + task.slice(0, 60), source_url: CFG.repo_url, source_revision: CFG.branch, environment_id: CFG.environment_id});
+    const raw = JSON.stringify(res.payload ?? res);
+    const id = (raw.match(/session_[A-Za-z0-9]+/) || [])[0];
+    $("dstatus").textContent = "";
+    if (id) {
+      const a = document.createElement("a"); a.href = "https://claude.ai/code/" + id; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Open the agent session";
+      $("dstatus").append("Session started. ", a, " to follow it.");
+    } else $("dstatus").textContent = "Session started. Find it in your Claude Code sessions.";
+    $("task").value = "";
+  } catch (e) {
+    $("dstatus").textContent = MCP_COPY[e.code] || (e.code === "tool_error" ? "The session service refused the task: " + e.message : MCP_COPY.upstream_error);
+  } finally { $("confirm").hidden = true; $("go").disabled = false; $("delegate").disabled = !mcp; }
+};
+</script>

@@ -1,0 +1,5 @@
+{
+  "fetched": "2026-09-29",
+  "source": "https://mcp-api.trader.dev/strategies/stats",
+  "response": {"totalStrategies":189107,"totalBacktests":903280}
+}

@@ -9,12 +9,16 @@ one state together and returns {question_id: Answer}.
 
 Clients:
   StubClient  — offline, deterministic, no network. Default in tests and whenever no key is set.
-  HttpClient  — TypeSafe HTTP API. Needs TYPESAFE_API_KEY and network access to the API host.
-                The request/response mapping must be checked against https://docs.typesafe.ai/api.md
-                before first live use; until then `from_env()` returns the stub.
+  HttpClient  — TypeSafe HTTP API. Needs TYPESAFE_API_KEY, TYPESAFE_LIVE=1 and network access to
+                api.typesafe.ai; otherwise `from_env()` returns the stub.
+
+Where JEV may sit (it reads untrusted text such as headlines): as an extra refusal on top of code
+rules, never as the thing that authorizes an order. A wrong answer can cost a trade, never place one.
 """
 import json
 import os
+import time
+import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 
@@ -70,38 +74,78 @@ class StubClient:
 
 
 class HttpClient:
-    live = True
+    """TypeSafe System One API, POST /v1/systemone (https://docs.typesafe.ai/api, read 2026-09-29).
+    The parser accepts only the documented shapes and fails loudly on anything else.
 
-    def __init__(self, api_key, base_url, model="jev", timeout=10):
-        self.api_key, self.base_url, self.model, self.timeout = api_key, base_url.rstrip("/"), model, timeout
+    Request:  {"model": "jev-latest", "state": <string | object>, "questions": {id: {"type", "instructions", "criteria"?}}}
+              choice → criteria {option: description}; score → criteria [level low → high];
+              noul → optional criteria {"true": ..., "false": ...}
+    Response: {"answers": {id: {"type": "noul", "noul": p} |
+                               {"type": "choice", "choice": k, "probabilities": {...}, "confidence": c} |
+                               {"type": "score", "score": x, "probabilities": {...}, "confidence": c}}}
+    """
+    live = True
+    DEFAULT_URL = "https://api.typesafe.ai/v1/systemone"
+    DEFAULT_MODEL = "jev-latest"   # the documented model id; pin a version with TYPESAFE_MODEL once one is listed
+    RETRY = (429, 529)             # documented rate-limit / overload codes: one retry after a short backoff
+
+    def __init__(self, api_key, base_url=None, model=None, timeout=10):
+        self.api_key, self.timeout = api_key, timeout
+        self.base_url = (base_url or self.DEFAULT_URL).rstrip("/")
+        self.model = model or self.DEFAULT_MODEL
 
     def payload(self, state, questions):
-        return {
-            "model": self.model,
-            "state": state,
-            "questions": [
-                {"id": q.id, "type": q.primitive, "instructions": q.instructions,
-                 **({"criteria": q.criteria} if q.criteria is not None else {})}
-                for q in questions
-            ],
-        }
+        qs = {}
+        for q in questions:
+            body = {"type": q.primitive, "instructions": q.instructions}
+            if q.primitive == "choice":
+                body["criteria"] = q.criteria
+            elif q.primitive == "score":
+                body["criteria"] = list(q.criteria)
+            elif isinstance(q.criteria, dict):
+                body["criteria"] = q.criteria
+            elif q.criteria:
+                body["instructions"] += " " + q.criteria
+            qs[q.id] = body
+        return {"model": self.model, "state": state, "questions": qs}
+
+    @staticmethod
+    def parse(body):
+        out = {}
+        for qid, a in (body.get("answers") or {}).items():
+            t = a.get("type")
+            if t == "noul":
+                p = float(a["noul"])
+                out[qid] = Answer(p >= 0.5, p, {"yes": p, "no": 1 - p}, live=True)
+            elif t == "choice":
+                probs = a.get("probabilities", {})
+                out[qid] = Answer(a["choice"], float(probs.get(a["choice"], a.get("confidence", 0.0))), probs, live=True)
+            elif t == "score":
+                out[qid] = Answer(float(a["score"]), float(a.get("confidence", 0.0)), a.get("probabilities", {}), live=True)
+            else:
+                raise RuntimeError(f"judge: unknown answer type {t!r} for {qid}")
+        return out
 
     def ask(self, state, questions):
-        req = urllib.request.Request(
-            self.base_url, data=json.dumps(self.payload(state, questions)).encode(),
-            headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=self.timeout) as r:
-            body = json.loads(r.read())
-        return {a["id"]: Answer(a.get("value"), float(a.get("probability", 0.0)),
-                                a.get("distribution", {}), live=True)
-                for a in body.get("answers", [])}
+        data = json.dumps(self.payload(state, questions)).encode()
+        for attempt in (0, 1):
+            req = urllib.request.Request(self.base_url, data=data, headers={
+                "Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"})
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout) as r:
+                    return self.parse(json.loads(r.read()))
+            except urllib.error.HTTPError as e:
+                if e.code not in self.RETRY or attempt:
+                    raise
+                time.sleep(1.5)
 
 
 def from_env(env=os.environ):
-    """Live client only when a key, an endpoint and an explicit opt-in are all present."""
-    key, url = env.get("TYPESAFE_API_KEY"), env.get("TYPESAFE_API_URL")
-    if key and url and env.get("TYPESAFE_LIVE") == "1":
-        return HttpClient(key, url)
+    """Live client only when a key and an explicit opt-in are present. URL and model default to the
+    documented endpoint and a pinned model; TYPESAFE_API_URL / TYPESAFE_MODEL override them."""
+    key = env.get("TYPESAFE_API_KEY")
+    if key and env.get("TYPESAFE_LIVE") == "1":
+        return HttpClient(key, env.get("TYPESAFE_API_URL"), env.get("TYPESAFE_MODEL"))
     return StubClient()
 
 

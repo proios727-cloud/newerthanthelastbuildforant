@@ -19,22 +19,22 @@
   "tiles": [
     {
       "label": "Paper NAV",
-      "value": "—",
+      "value": "$100,000",
       "trend": "flat"
     },
     {
       "label": "Day P&L",
-      "value": "—",
+      "value": "+0 (+0.00%)",
       "trend": "flat"
     },
     {
       "label": "Gross exposure",
-      "value": "—",
+      "value": "0.0%",
       "trend": "flat"
     },
     {
       "label": "Drawdown from peak",
-      "value": "—",
+      "value": "0.00%",
       "trend": "flat"
     },
     {
@@ -61,17 +61,17 @@
     },
     {
       "stage": "Previewed",
-      "count": null,
+      "count": 0,
       "seat": "trader"
     },
     {
       "stage": "Approved",
-      "count": null,
+      "count": 0,
       "seat": "pm"
     },
     {
       "stage": "Filled (paper)",
-      "count": null,
+      "count": 0,
       "seat": "trader"
     },
     {
@@ -112,6 +112,16 @@
       "trigger": "Crypto every 15 min · equities every 30 min in session"
     },
     {
+      "id": "verifier",
+      "name": "Verifier",
+      "role": "custom",
+      "color": "violet",
+      "status": "idle",
+      "task": "Screen outside strategy ideas (TraderDev leaderboard) with the desk's bar, rebuild the survivors with honest fills and three cost runs, and KEEP only what beats the incumbent after costs (verify/).",
+      "done": "verify/replication.json lists every family with KEEP or KILL and the reason; nothing reaches paper without a KEEP.",
+      "trigger": "A new idea source or leaderboard pull · weekly re-screen · before any strategy is promoted"
+    },
+    {
       "id": "analyst",
       "name": "Fundamental Analyst",
       "role": "custom",
@@ -120,6 +130,16 @@
       "task": "Write a one-paragraph thesis for each ranked signal, drawing on earnings, estimates, insider and institutional flow, and on-chain or ETF flow for crypto. Include what would prove it wrong.",
       "done": "Each idea has a thesis, a catalyst, an invalidation level and a time horizon, or is marked 'no thesis, dropped'.",
       "trigger": "Quant posts a ranked list"
+    },
+    {
+      "id": "jev",
+      "name": "JEV Judge",
+      "role": "custom",
+      "color": "red",
+      "status": "idle",
+      "task": "Answer the versioned TypeSafe batteries (jev/schemas/) on every new entry. Veto-only: never sizes or places an order; sells, stops and kills bypass it.",
+      "done": "Every fill records jev_schema_version and its answers; calibration and jevcheck score them against outcomes.",
+      "trigger": "A book is about to open a position"
     },
     {
       "id": "risk",
@@ -192,6 +212,24 @@
       "title": "Start the 30-day PAPER receipt clock (python -m fund init)",
       "owner": "reporter",
       "pct": 0
+    },
+    {
+      "id": "q9",
+      "title": "Blocker: TypeSafe JEV key and network not configured, so JEV runs as a stub that never vetoes. Set TYPESAFE_API_KEY + TYPESAFE_LIVE=1 in the environment.",
+      "owner": "jev",
+      "pct": 0
+    },
+    {
+      "id": "q10",
+      "title": "Blocker: TraderDev connector not authenticated. The Verifier reads the public API only; rotate the exposed key and reconnect in claude.ai connectors.",
+      "owner": "verifier",
+      "pct": 0
+    },
+    {
+      "id": "q11",
+      "title": "Proposal: JEV confidence below 0.60 means exits only for that entry (today it escalates). Needs the human's OK.",
+      "owner": "risk",
+      "pct": 0
     }
   ],
   "watch": [
@@ -217,7 +255,7 @@
     },
     {
       "label": "Risk budget used today",
-      "value": "—",
+      "value": "0%",
       "delta": ""
     }
   ],

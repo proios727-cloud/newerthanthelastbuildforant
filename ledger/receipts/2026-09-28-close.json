@@ -1,0 +1,114 @@
+{
+  "fund_day": "2026-09-28",
+  "label": "close",
+  "ts": "2026-09-29T02:05:44.550309+00:00",
+  "mode": "PAPER",
+  "snapshot": {
+    "nav": 100000.0,
+    "cash": 100000.0,
+    "gross": 0,
+    "gross_pct": 0.0,
+    "day_pnl": 0.0,
+    "day_pnl_pct": 0.0,
+    "drawdown_pct": 0.0,
+    "peak_nav": 100000.0,
+    "day": {
+      "date": "2026-09-28",
+      "start_nav": 100000.0
+    },
+    "positions": {}
+  },
+  "marks": {
+    "BTC/USD": {
+      "price": 83502.59,
+      "ts": "2026-09-28T20:39:26+00:00"
+    },
+    "ETH/USD": {
+      "price": 2679.41,
+      "ts": "2026-09-28T20:39:24+00:00"
+    },
+    "SPY": {
+      "price": 765.55,
+      "ts": "2026-09-28T20:00:00+00:00"
+    }
+  },
+  "counts": {
+    "mark": 3,
+    "preview": 0,
+    "veto": 0,
+    "fill": 0,
+    "approve_refused": 0,
+    "shadow_fill": 17,
+    "shadow_exit": 0,
+    "shadow_veto": 0
+  },
+  "shadow": {
+    "all": {
+      "nav": 99982.5,
+      "return_pct": -0.018,
+      "drawdown_pct": 0.018,
+      "open": [
+        "AAPL",
+        "AMD",
+        "BTC/USD",
+        "ETH/USD",
+        "NVDA",
+        "QQQ",
+        "SOL/USD",
+        "TSLA"
+      ],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "breakout": {
+      "nav": 100000.0,
+      "return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "open": [],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "mean_reversion": {
+      "nav": 99999.28,
+      "return_pct": -0.001,
+      "drawdown_pct": 0.001,
+      "open": [
+        "AMD",
+        "TSLA"
+      ],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "momentum": {
+      "nav": 99982.82,
+      "return_pct": -0.017,
+      "drawdown_pct": 0.017,
+      "open": [
+        "AAPL",
+        "AMD",
+        "BTC/USD",
+        "ETH/USD",
+        "NVDA",
+        "QQQ",
+        "SOL/USD"
+      ],
+      "closed_trades": 0,
+      "win_rate": null
+    },
+    "putbook": {
+      "nav": 99974.94,
+      "return_pct": -0.025,
+      "open": {
+        "AAPL": "1x 325P 2026-10-30",
+        "TSLA": "1x 335P 2026-10-30"
+      },
+      "closed_trades": 0,
+      "win_rate": null,
+      "secured_pct": 66.0,
+      "avg_iv_over_rv": 1.09
+    }
+  },
+  "shadow_vetoes": [],
+  "breaches": [],
+  "clean": true
+}

@@ -1,0 +1,294 @@
+<title>Desk Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: one reading column (about 70ch) for the argument, with wide tables and the strategy cards
+   breaking out to a wider measure; section numbers mirror the build plan's phases where they apply. */
+:root {
+  --ground: #f4f6f5; --sheet: #ffffff; --ink: #17212a; --muted: #5a6873; --rule: #d7dee2;
+  --accent: #1c5d86; --accent-soft: #e2edf4; --good: #1f7a4d; --warn: #9a6400; --bad: #b3261e; --plan: #6b6f9a;
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #10161b; --sheet: #172028; --ink: #e3e9ed; --muted: #95a3ae; --rule: #2a3640;
+  --accent: #72b5de; --accent-soft: #1b3445; --good: #5cc38c; --warn: #e0a83a; --bad: #f08a80; --plan: #a3a7d6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --ground: #10161b; --sheet: #172028; --ink: #e3e9ed; --muted: #95a3ae; --rule: #2a3640;
+  --accent: #72b5de; --accent-soft: #1b3445; --good: #5cc38c; --warn: #e0a83a; --bad: #f08a80; --plan: #a3a7d6; color-scheme: dark }
+
+body { background: var(--ground); color: var(--ink); font: 16px/1.6 var(--f-body); padding-inline: 16px; padding-block: 0 48px; }
+main { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+main > * { min-width: 0; }
+.read { max-width: 70ch; }
+header.cover { padding-block: 40px 8px; border-bottom: 1px solid var(--rule); display: grid; gap: 12px; }
+.eyebrow { font: 500 .74rem/1.2 var(--f-data); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 600 clamp(2rem, 5vw, 3rem)/1.05 var(--f-display); margin: 0; letter-spacing: -.01em; text-wrap: balance; overflow-wrap: anywhere; }
+h2 { font: 600 1.55rem/1.2 var(--f-display); margin: 0 0 12px; text-wrap: balance; display: flex; gap: 12px; align-items: baseline; }
+h2 .n { font: 500 .85rem/1 var(--f-data); color: var(--accent); }
+h3 { font: 600 1.1rem/1.3 var(--f-display); margin: 0; }
+p { margin: 0 0 12px; }
+.lede { font-size: 1.1rem; color: var(--ink); max-width: 64ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 .7rem/1 var(--f-data); letter-spacing: .06em; text-transform: uppercase; padding: 5px 8px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap; }
+.chip.done { color: var(--good); } .chip.now { color: var(--accent); } .chip.next { color: var(--warn); } .chip.plan { color: var(--plan); } .chip.no { color: var(--bad); }
+.wrap-x { overflow-x: auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; min-width: 640px; }
+th { text-align: left; font: 600 .72rem/1.3 var(--f-display); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: bottom; }
+td { padding: 9px 12px; border-top: 1px solid var(--rule); vertical-align: top; }
+tr:first-child td { border-top: 0; }
+td code, p code, li code { font: .84em var(--f-data); background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.num { font-family: var(--f-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+ul, ol { margin: 0 0 12px; padding-left: 22px; display: grid; gap: 4px; }
+.layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.layer { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.layer .who { font: 500 .72rem/1.2 var(--f-data); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.layer p { font-size: .9rem; margin: 0; }
+.layer .never { color: var(--bad); font-size: .85rem; }
+pre.mermaid { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; overflow-x: auto; margin: 0; }
+.cards { display: grid; gap: 14px; }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; display: grid; gap: 10px; min-width: 0; }
+.card header { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; justify-content: space-between; }
+.card .id { font: 500 .78rem/1 var(--f-data); color: var(--muted); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px 24px; }
+.grid2 dl { margin: 0; display: grid; gap: 2px; }
+dt { font: 600 .72rem/1.3 var(--f-display); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+dd { margin: 0 0 8px; font-size: .92rem; }
+.timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+.timeline li { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; padding: 10px 0; border-top: 1px solid var(--rule); }
+.timeline .t { font: 500 .85rem/1.4 var(--f-data); color: var(--accent); }
+.wrong { background: var(--sheet); border: 1px solid var(--rule); border-left: 3px solid var(--bad); border-radius: 6px; padding: 18px 20px; }
+.wrong h2 { color: var(--bad); }
+.foot { font-size: .82rem; color: var(--muted); }
+.foot a, a { color: var(--accent); }
+.tag { font: 500 .7rem/1 var(--f-data); color: var(--muted); }
+@media (max-width: 560px) { .timeline li { grid-template-columns: 1fr; gap: 2px; } }
+</style>
+
+<main>
+<header class="cover">
+  <div class="eyebrow">Blueprint · as of 29 September 2026 · paper only</div>
+  <h1>Desk Blueprint</h1>
+  <p class="lede">How the one-person agent desk is organized, what each layer is allowed to do, which strategies are at which stage, and what would prove the plan wrong. Every trade on this desk is paper; a person types EXECUTE before anything real.</p>
+  <div class="chips"><span class="chip done">6 books running</span><span class="chip now">crypto trend live on paper from today</span><span class="chip next">JEV stub until key + network</span><span class="chip plan">carry: data first</span></div>
+</header>
+
+<section>
+  <h2><span class="n">01</span>The rule of the house</h2>
+  <div class="read"><p>Four layers, and the boundary between them is the design. Models judge and explain; code decides and limits; a person approves. A wrong model answer can cost a trade. It can never place one.</p></div>
+  <div class="layers">
+    <div class="layer"><span class="who">Layer 1 · Claude Opus 5.5</span><h3>Head agent</h3><p>Research, strategy specs, code, reviews, the daily brief. Talks to you on the Desk Head page and hands bounded work to Claude Code sessions.</p><p class="never">Never sizes, approves or places an order.</p></div>
+    <div class="layer"><span class="who">Layer 2 · Routines + sessions</span><h3>Orchestration</h3><p>The 16:40 ET close run, the Kalshi and carry refreshes, pull-request CI. The prompt calls AgenKit this layer; agenkit.xyz is a coding kit, useful for building, not for running the desk.</p><p class="never">Never disarms the kill switch or edits ledgers.</p></div>
+    <div class="layer"><span class="who">Layer 3 · TypeSafe JEV</span><h3>Typed judge</h3><p>Answers narrow yes/no, choice and score questions over a structured state in roughly 0.1–0.5 s. Every answer is stored and scored against outcomes.</p><p class="never">Veto only: never triggers, sizes up, or blocks an exit.</p></div>
+    <div class="layer"><span class="who">Layer 4 · Code + you</span><h3>Policy and approval</h3><p>Signals, sizing, limits, the kill switch, receipts. Real orders need a preview under 5 minutes old and your EXECUTE.</p><p class="foot">The final authority. Nothing overrides it.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">02</span>Departments, and where each one lives</h2>
+  <div class="wrap-x"><table>
+    <thead><tr><th>Department</th><th>Job</th><th>On this desk</th><th>State</th></tr></thead>
+    <tbody>
+      <tr><td>CIO</td><td>Capital, objectives, final approval</td><td>You. EXECUTE on the real book; <code>fund kill disarm</code></td><td><span class="chip done">set</span></td></tr>
+      <tr><td>Research desk</td><td>Theses, sources, bear cases</td><td>Opus 5.5 and research agents; <code>docs/research/</code></td><td><span class="chip done">running</span></td></tr>
+      <tr><td>Quant desk</td><td>Signals, backtests, walk-forward</td><td><code>fund/shadow.py</code>, <code>backtest/</code>, <code>fund/trendbook.py</code></td><td><span class="chip now">trend needs walk-forward</span></td></tr>
+      <tr><td>Fundamental desk</td><td>Earnings and company events</td><td>Earnings gate in <code>fund/putbook.py</code>; headline question in <code>fund/catalyst.py</code></td><td><span class="chip done">running</span></td></tr>
+      <tr><td>Macro desk</td><td>Regime and scheduled events</td><td>JEV <code>regime</code> and <code>event</code> questions; macro blackout in <code>fund/risk.py</code></td><td><span class="chip next">JEV stub</span></td></tr>
+      <tr><td>On-chain desk</td><td>Funding, basis, unlocks</td><td>S1.1 Carry Desk (Hyperliquid data only); Coinbase funding recorder planned</td><td><span class="chip plan">planned</span></td></tr>
+      <tr><td>Portfolio manager</td><td>Sizing and allocation</td><td>Sizing rules inside each book; vol targeting in the trend book</td><td><span class="chip done">in code</span></td></tr>
+      <tr><td>Risk committee</td><td>Limits, halts, kill switch</td><td><code>fund/risk.py</code>, <code>fund/killswitch.py</code>, receipt breach checks</td><td><span class="chip done">armed on breach</span></td></tr>
+      <tr><td>Execution desk</td><td>Orders, fills, slippage</td><td><code>fund/preview.py</code> gate; paper fills at bid/ask with decision IDs</td><td><span class="chip done">paper</span></td></tr>
+      <tr><td>Engineering desk</td><td>Build, test, deploy</td><td>Claude Code sessions, draft PRs, CI (145 tests)</td><td><span class="chip done">running</span></td></tr>
+      <tr><td>Investment committee</td><td>Promote or kill strategies</td><td>Go/no-go gates below; <code>fund/jevcheck.py</code>; <code>fund/calibration.py</code></td><td><span class="chip done">bars fixed</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2><span class="n">03</span>How a decision flows</h2>
+  <pre class="mermaid">
+flowchart LR
+  D[Market data<br/>TradingView bars, Robinhood quotes, news] --> S[Signals and state<br/>computed in code]
+  S --> R{Risk rules<br/>limits, earnings, kill switch}
+  R -- pass --> J{JEV questions<br/>veto only}
+  R -- fail --> X[Skip, logged]
+  J -- no veto --> P[Paper fill at bid/ask<br/>decision ID, slippage]
+  J -- veto --> G[Ghost trade<br/>same exits, no cash]
+  P --> E[Receipt, calibration,<br/>go/no-go gates]
+  G --> E
+  E --> H[Desk Head page<br/>Opus 5.5 brief]
+  H -. real orders only .-> Y[Preview + your EXECUTE]
+  </pre>
+</section>
+
+<section>
+  <h2><span class="n">04</span>Strategy pipeline</h2>
+  <div class="read"><p>The prompt's pipeline is observation → hypothesis → data → research → signal → backtest → cost model → stress test → risk review → paper → shadow → live. Here is where each strategy stands. Nothing is past paper.</p></div>
+  <div class="wrap-x"><table>
+    <thead><tr><th>Strategy</th><th>ID</th><th>Stage</th><th>Evidence so far</th></tr></thead>
+    <tbody>
+      <tr><td>Stock momentum / breakout / mean reversion</td><td class="num">shadow v1</td><td><span class="chip no">backtest failed</span> shadow only</td><td>+1.75% vs SPY +14.9% over 300 sessions; no edge</td></tr>
+      <tr><td>30-delta short put after a bullish signal</td><td class="num">put30d-v1</td><td><span class="chip now">paper</span> $100k</td><td>Only marginal survivor of the options lab; 2 puts open</td></tr>
+      <tr><td>$1–2 wide put credit spread</td><td class="num">pcs12-v1</td><td><span class="chip now">paper</span> $500</td><td>Cboe CNDR ≈1.6%/yr 2005–2026; needs to beat that on paper</td></tr>
+      <tr><td>Crypto trend via spot ETFs</td><td class="num">trend-etf-v1</td><td><span class="chip now">paper</span> $500 + $10k</td><td>Published Sharpe &gt;1.5 is likely inflated; walk-forward on this desk's harness is the gate</td></tr>
+      <tr><td>US funding carry (ETF + Coinbase perp)</td><td class="num">S-CARRY-PERP</td><td><span class="chip next">data</span></td><td>Break-even ≈7.2% funding; Coinbase funding is premium-only and unmeasured</td></tr>
+      <tr><td>Dated basis cash-and-carry</td><td class="num">S-BASIS-DATED</td><td><span class="chip plan">alert only</span></td><td>Needs basis ≥ ~7.8%; CME ≈5.3% now</td></tr>
+      <tr><td>Token-unlock shorts</td><td class="num">S-UNLOCK</td><td><span class="chip plan">spec</span></td><td>Conflicting studies; contract sizes unverified</td></tr>
+      <tr><td>Funding-extreme overlay</td><td class="num">S-FUNDX</td><td><span class="chip plan">spec</span></td><td>Weak alone; used as a risk gate</td></tr>
+      <tr><td>Kalshi 15-minute maker quotes</td><td class="num">Kalshi shadow</td><td><span class="chip now">shadow</span></td><td>Taker studies negative; own desk tracks ¢/contract vs backtest</td></tr>
+      <tr><td>Funding carry, Hyperliquid tracker</td><td class="num">S1.1</td><td><span class="chip now">paper tracker</span></td><td>30-day replay ≈5.4%/yr vs T-bill 4.06%; venue off-limits to US persons</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2><span class="n">05</span>JEV question sets</h2>
+  <div class="read"><p>Each set rides one request over a compact state built in code. A question vetoes only when a live answer's "bad" probability reaches its threshold. Answers below 0.60 confidence are escalated to the head agent rather than acted on. Stub answers never veto.</p></div>
+  <div class="wrap-x"><table>
+    <thead><tr><th>Book</th><th>Question</th><th>Type</th><th>Veto when</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="4">Put and spread books<br/><span class="tag">fund/battery.py</span></td><td>Material headline risk</td><td>noul</td><td class="num">P(yes) ≥ 0.80</td></tr>
+      <tr><td>Regime: calm trend · choppy · high vol · crisis</td><td>choice</td><td class="num">P(crisis) ≥ 0.70</td></tr>
+      <tr><td>Setup: poor · weak · acceptable · strong</td><td>score</td><td class="num">P(poor) ≥ 0.70</td></tr>
+      <tr><td>Liquidity: illiquid · thin · adequate · deep</td><td>score</td><td class="num">P(illiquid) ≥ 0.70</td></tr>
+      <tr><td rowspan="3">Crypto trend book<br/><span class="tag">buys only</span></td><td>Data error (stale bar, crossed quote, halt)</td><td>noul</td><td class="num">P(yes) ≥ 0.35</td></tr>
+      <tr><td>Event: none · macro · crypto structural · unknown</td><td>choice</td><td class="num">P(structural) ≥ 0.50</td></tr>
+      <tr><td>Order mistake vs spec</td><td>noul</td><td class="num">P(yes) ≥ 0.20</td></tr>
+      <tr><td rowspan="3">Carry (planned)</td><td>Legs matched within 3%</td><td>noul</td><td>No or unsure</td></tr>
+      <tr><td>Funding regime</td><td>choice</td><td>Anything but broad positive</td></tr>
+      <tr><td>Venue event, or ETF premium beyond 0.5%</td><td>noul</td><td>Yes or unsure</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2><span class="n">06</span>Risk engine and kill switch</h2>
+  <div class="grid2">
+    <dl><dt>Real paper book</dt><dd>5% per position, 150% gross, 20% per group, 1% of ADV; halts at −3% day or −10% drawdown; 15-minute macro blackout; quotes ≤120 s old; preview → EXECUTE within 5 minutes.</dd>
+    <dt>Put book</dt><dd>40% of NAV secured per position, 100% total; spreads under 10% of mid; exits at 50% credit, 3× credit, 15 sessions, 7 DTE, the session before earnings.</dd></dl>
+    <dl><dt>Spread book</dt><dd>Max loss ≤20% of NAV, one open, 1–2 wide, ≥20% credit/width; exits at 50% / 2× / 15 sessions / 7 DTE / earnings.</dd>
+    <dt>Trend book</dt><dd>Long or flat, no leverage, sleeves 50/30/20, 20% trailing stop per asset, 20% book drawdown kill.</dd>
+    <dt>Kill switch</dt><dd>One switch, <code>ledger/kill.json</code>. Arms itself on a receipt breach, a put book under $90k, a spread book under $350, or a trend book 20% off peak. Entries stop; exits run. Only you disarm it.</dd></dl>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">07</span>Execution records</h2>
+  <div class="read"><p>Every paper fill carries <code>strategy_id</code>, <code>decision_id</code>, <code>model_version</code>, <code>expected_px</code> (the mid at decision), <code>fill_px</code>, entry and exit slippage, and the JEV answers. Summaries report round-trip slippage as a share of credit. When the desk goes live, the same record is written before and after every real order, so paper and live can be compared line by line.</p></div>
+</section>
+
+<section>
+  <h2><span class="n">08</span>The daily operating loop</h2>
+  <ul class="timeline">
+    <li><span class="t">00:25 · 06:25<br/>12:25 · 18:25 UTC</span><span>Kalshi Shadow Desk refresh: trades, win rate and cents per contract against the backtest.</span></li>
+    <li><span class="t">07:52 ET</span><span>S1.1 Carry Desk update: Hyperliquid funding (data only), paper return, tracking flag.</span></li>
+    <li><span class="t">09:00 ET</span><span>Scalp scan premarket (on your Windows desktop): SPY, QQQ, PLTR, COIN, MSTR, SMCI game plan.</span></li>
+    <li><span class="t">16:40 ET</span><span>Close run: bars, marks, shadow books, crypto trend, put and spread books with the earnings gate and JEV, receipt with breach check, calibration and the JEV test, commit.</span></li>
+    <li><span class="t">After the close</span><span>Head agent reviews the receipt, fixes anything broken, refreshes the Desk Head page, and takes research or build tasks you queue there.</span></li>
+    <li><span class="t">Weekly</span><span>Walk-forward review of each paper strategy against its go/no-go bar; calibration review of every JEV question.</span></li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">09</span>Six-phase build plan</h2>
+  <div class="wrap-x"><table>
+    <thead><tr><th>Phase</th><th>What</th><th>Files</th><th>State</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td>Ledger, risk gate, approval, receipts</td><td><code>fund/ledger.py</code> <code>fund/risk.py</code> <code>fund/preview.py</code> <code>fund/receipt.py</code></td><td><span class="chip done">done</span></td></tr>
+      <tr><td class="num">2</td><td>Signals, shadow books, honest backtests</td><td><code>fund/shadow.py</code> <code>backtest/run.py</code> <code>backtest/options_lab.py</code></td><td><span class="chip done">done</span></td></tr>
+      <tr><td class="num">3</td><td>Options paper books on live quotes</td><td><code>fund/putbook.py</code> <code>fund/spreadbook.py</code></td><td><span class="chip done">done</span></td></tr>
+      <tr><td class="num">4</td><td>Judge and controls</td><td><code>judge/</code> <code>fund/battery.py</code> <code>fund/killswitch.py</code> <code>fund/jevcheck.py</code> <code>fund/calibration.py</code></td><td><span class="chip next">done; JEV needs key</span></td></tr>
+      <tr><td class="num">5</td><td>Crypto books</td><td><code>fund/trendbook.py</code> (done) · <code>fund/funding.py</code> Coinbase funding recorder · basis alert · unlock sleeve</td><td><span class="chip now">in progress</span></td></tr>
+      <tr><td class="num">6</td><td>Head agent and operations</td><td><code>scripts/build_head.py</code> <code>assets/head-template.html</code>; next: live numbers in the page's data store, weekly walk-forward job</td><td><span class="chip now">in progress</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2><span class="n">10</span>Five crypto strategies</h2>
+  <div class="read"><p>From the desk's research on 29 September 2026 (<code>docs/research/crypto-strategies.md</code>). Edge figures are estimates unless marked sourced. The hurdle for every one of them is the 3-month T-bill at 4.24%.</p></div>
+  <div class="cards">
+    <article class="card">
+      <header><h3>1 · Trend, vol-targeted, long or flat via ETFs</h3><span class="id">S-TREND · trend-etf-v1 · paper now</span></header>
+      <div class="grid2">
+        <dl><dt>Thesis</dt><dd>Crypto moves in trends driven by leveraged retail attention; slow signals avoid noise. The main value is cutting the left tail (flat through June 2026's drop from $73k to $58k).</dd>
+        <dt>Rules</dt><dd>SMA20 over SMA100 on 2 closes; off on the reverse or a 20% trailing stop. Weight = sleeve × min(1, 30% / RV30). Trade IBIT, ETHA, BSOL.</dd>
+        <dt>Today</dt><dd>BTC, ETH and SOL all long; about 65% invested at a 30% vol target.</dd></dl>
+        <dl><dt>Edge</dt><dd>Estimated −3% to +8%/yr over T-bills; cost drag ≈0.2%/yr through ETFs (6–11%/yr through Robinhood crypto spot).</dd>
+        <dt>$500 · $10k</dt><dd>Survives costs; edge ≈$0–40/yr · ≈$0–800/yr with a $2k drawdown kill.</dd>
+        <dt>Bear case</dt><dd>Chop like July–August 2026 whipsaws; weekend gaps hit while ETFs are closed; this desk's own momentum backtest failed.</dd>
+        <dt>Invalidation</dt><dd>Walk-forward net Sharpe under 0.3, or paper tracking error over 1%/month.</dd></dl>
+      </div>
+    </article>
+    <article class="card">
+      <header><h3>2 · US-legal funding carry</h3><span class="id">S-CARRY-PERP · data first</span></header>
+      <div class="grid2">
+        <dl><dt>Thesis</dt><dd>Leveraged longs pay shorts; hold IBIT or ETHA and short Coinbase's perp-style nano futures to collect funding with no price exposure.</dd>
+        <dt>Rules</dt><dd>Enter when 7-day funding ≥ T-bill + 3 and 30-day ≥ T-bill + 2; exit when 7-day falls under the T-bill, funding is negative 3 days, a margin alert fires or the hedge drifts over 3%.</dd></dl>
+        <dl><dt>Edge</dt><dd>Sourced: carry averaged ≈7% (2019–2024) and fell after ETFs. Coinbase funding is premium-only and likely lower; one snapshot shows ≈2.6%.</dd>
+        <dt>$500 · $10k</dt><dd>Not viable (≈$12/yr vs $21 of T-bills) · break-even at 7%, +$256/yr at 12%.</dd>
+        <dt>Bear case</dt><dd>High carry predicts crashes; margin calls on the short leg while the ETF gain sits at another broker. Hyperliquid is off-limits to US persons.</dd></dl>
+      </div>
+    </article>
+    <article class="card">
+      <header><h3>3 · Dated basis cash-and-carry</h3><span class="id">S-BASIS-DATED · alert only</span></header>
+      <div class="grid2">
+        <dl><dt>Rule</dt><dd>Basis B = (F/S − 1) × 365 / DTE. Enter when B − costs − T-bill ≥ 3.5 points and DTE is 30–120; hold to expiry.</dd></dl>
+        <dl><dt>Now</dt><dd>CME ≈5.3%, below the ≈7.8% trigger; 2026 basis has been under the bill on 64% of days. Same bet as carry (rank correlation +0.75).</dd></dl>
+      </div>
+    </article>
+    <article class="card">
+      <header><h3>4 · Token-unlock shorts</h3><span class="id">S-UNLOCK · spec</span></header>
+      <div class="grid2">
+        <dl><dt>Rule</dt><dd>Short Coinbase alt perp-style futures 7 days before a team or investor cliff unlock of ≥2% of supply; out at T+4, a +8% stop vs BTC, or −10% take-profit.</dd></dl>
+        <dl><dt>Evidence</dt><dd>Keyrock: 90% of unlocks pressure price; unlocks.app found +20% at 15 days for investor cliffs. Market makers pre-hedge. Contract sizes unverified. Testable only as a small $10k sleeve.</dd></dl>
+      </div>
+    </article>
+    <article class="card">
+      <header><h3>5 · Funding-extreme overlay</h3><span class="id">S-FUNDX · risk gate</span></header>
+      <div class="grid2">
+        <dl><dt>Rule</dt><dd>When BTC funding sits in the top decile of 180 days for 24 hours, halve the trend book's BTC weight for 72 hours and halve carry capital.</dd></dl>
+        <dl><dt>Evidence</dt><dd>Top-decile funding → −1.18% median 72 h (n = 37); the negative-funding signal is not robust. Too weak to trade alone, useful as a gate.</dd></dl>
+      </div>
+    </article>
+  </div>
+  <div class="read" style="margin-top:14px"><p><strong>Rejected:</strong> cross-sectional momentum (20–50%/yr cost drag at retail fees), stablecoin yield (3.5–4.7%, at or under T-bills with more risk), weekend effects (no current source), ETF-flow chasing (flows lag the basis).</p></div>
+</section>
+
+<section>
+  <h2><span class="n">11</span>Go / no-go gates</h2>
+  <div class="wrap-x"><table>
+    <thead><tr><th>Book</th><th>Promote only if</th><th>Kill if</th></tr></thead>
+    <tbody>
+      <tr><td>Spread book</td><td>≥8 closed trades; &gt;+2% per $ risked after slippage; slippage ≤25% of width; win rate ≥5 points above delta-implied</td><td>Book at $350 (kill switch)</td></tr>
+      <tr><td>Put book</td><td>Beats Cboe PUT-style returns net of costs over the run; IV/RV holds above 1</td><td>Book at $90k (kill switch)</td></tr>
+      <tr><td>Crypto trend</td><td>30 d: zero data or execution errors, fills within 5 bp. 90 d: walk-forward net Sharpe ≥0.5, max drawdown ≤15%, paper within 2σ of model</td><td>Walk-forward Sharpe &lt;0.3 or a 20% drawdown</td></tr>
+      <tr><td>JEV veto</td><td>≥20 live-judged trades and ≥8 ghosts; vetoed sales ≥0.25 worse per $ credit; errors ≤10%</td><td>Vetoes did as well or better, or inconclusive after 16 ghosts</td></tr>
+      <tr><td>Kalshi maker</td><td>≥300 windows; both-fill ≥60%; &gt;+0.5¢ per filled contract after adverse selection</td><td>Adverse selection wider than captured spread</td></tr>
+      <tr><td>Sportsbook CLV</td><td>≥200 picks vs the no-vig Pinnacle close; mean ≥+2% with the 95% interval above zero</td><td>Interval includes zero after 200</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="wrong">
+  <h2><span class="n">12</span>WHAT COULD I BE WRONG ABOUT?</h2>
+  <ul>
+    <li><strong>The edge may not be real.</strong> This desk's own stock-signal backtest found nothing. Published crypto trend Sharpes above 1.5 come from bull-heavy samples. Carry, basis and unlock drift are all being arbitraged by larger, faster capital. The T-bill at 4.24% is the default winner and every book has to beat it on the same capital.</li>
+    <li><strong>The catalyst may be priced.</strong> Unlock shorts at T−7 may be late (market makers hedge weeks out). High funding is a crash warning as much as an income source.</li>
+    <li><strong>Costs and slippage.</strong> Spread fills at the natural price, crossed quotes (Robinhood showed one today), ETF expense ratios and futures commissions are partly estimates. Slippage is now recorded per trade so this can be measured instead of assumed.</li>
+    <li><strong>JEV can be confidently wrong.</strong> It sees only the packet, and headlines are attacker-controllable text. That is why it can only veto, never touches exits or sizing, gets cleaned structured input, and is dropped automatically if its vetoes don't pay under the pre-registered test. Confidence is not a win rate.</li>
+    <li><strong>Liquidity can vanish.</strong> Option spreads widen in stress, ETFs can't trade on weekends while crypto moves, and single-name puts gap through strikes. Exits run even when the kill switch is armed, but a gap still fills where it fills.</li>
+    <li><strong>The regime can change.</strong> 2026 already has basis under the bill most days and months of negative funding. If crypto volatility converges toward equities, trend works less; if a crisis hits, the put books lose together.</li>
+    <li><strong>Exchanges and data fail.</strong> A connector outage means no data, and the routine then writes a NO DATA receipt instead of trading on stale numbers. Offshore venues and their data are legal gray zones for a US person, so they are data only.</li>
+    <li><strong>Strategies are correlated.</strong> Short puts, put spreads, crypto trend and carry are all, underneath, bets that markets don't crash. Five books may be about two independent bets.</li>
+    <li><strong>Size.</strong> At $500 no active stream beats paying down card debt (≈22%) or T-bills in dollars. The paper run exists to prove the process, not to produce income.</li>
+  </ul>
+  <p><strong>Priorities, in order:</strong> survival (kill switch, human approval, no leverage), reproducibility (receipts, decision IDs, fixed bars), then risk-adjusted return.</p>
+</section>
+
+<footer class="foot">
+  <p>Sources: BIS Working Paper 1087 “Crypto carry” (rev. 2025; <a href="https://www.bis.org/publ/work1087.htm">bis.org</a>) · TypeSafe API docs (<a href="https://docs.typesafe.ai/api">docs.typesafe.ai</a>) · Cboe PUT/BXM/CNDR index histories via TradingView · desk research files <code>docs/research/500-growth.md</code> and <code>docs/research/crypto-strategies.md</code> (38 dated sources) · S1.1 Carry Desk data, 29 Sep 2026. Estimates are marked as such in the research files. Not investment advice.</p>
+</footer>
+</main>

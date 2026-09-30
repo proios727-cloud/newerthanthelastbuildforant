@@ -1,0 +1,15 @@
+# Desk risk limits (ai-fund-desk). Read by fund/limits.py; code enforces them, never an agent or JEV.
+# Changing a number here is a policy change: open a PR, do not edit in a routine.
+version: 1
+fund:
+  dd_kill: 0.10            # the paper fund (every book, weighted by starting NAV) 10% below its peak arms the kill switch
+  daily_loss: 0.02         # reported in receipts; arms the kill switch on a live book only
+  corr_merge: 0.70         # sleeves correlated above this share one risk budget (backtest/portfolio.py)
+  vol_target: 0.10         # portfolio vol target used by the combination backtest
+strategy:
+  dd_review: 0.06          # a strategy 6% below its peak is flagged for review in the receipt
+floors:
+  putbook: 0.90            # share of starting NAV: $90k
+  spreadbook: 0.70         # $350
+jev:
+  escalate_below: 0.60     # confidence below this goes to the head agent; proposed: exits only (not yet adopted)

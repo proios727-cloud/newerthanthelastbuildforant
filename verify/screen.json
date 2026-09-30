@@ -1,0 +1,115 @@
+{
+ "summary": {
+  "pulled": 1000,
+  "unique_backtests": 612,
+  "survivors": 12,
+  "survival_rate": 0.0196,
+  "fail_reasons": {
+   "sharpe outside 0.8-4.5": 556,
+   "pf outside 1.2-4": 520,
+   "span<3y": 365,
+   "dd>30%": 156,
+   "trades<150": 91
+  },
+  "red_flags": {
+   "pf>4 or sharpe>5": {
+    "n": 298,
+    "share": 0.487
+   },
+   "cagr>60% with dd<20%": {
+    "n": 289,
+    "share": 0.472
+   },
+   "name says in-sample/verify/only": {
+    "n": 30,
+    "share": 0.049
+   },
+   "dd>100% (engine quirk)": {
+    "n": 4,
+    "share": 0.007
+   }
+  },
+  "families": {
+   "vanta_atr_trail_1h": {
+    "n": 7,
+    "symbols": [
+     "BTCUSDT"
+    ],
+    "timeframes_min": [
+     60
+    ],
+    "published_cagr_range": [
+     1.196,
+     1.207
+    ],
+    "realistic_cost_drag_yr": [
+     0.6296,
+     0.6328
+    ]
+   },
+   "ema9_vwap_trend_1h": {
+    "n": 4,
+    "symbols": [
+     "LTCUSDT",
+     "UNIUSDT"
+    ],
+    "timeframes_min": [
+     60
+    ],
+    "published_cagr_range": [
+     1.47,
+     2.915
+    ],
+    "realistic_cost_drag_yr": [
+     0.3984,
+     0.481
+    ]
+   },
+   "other": {
+    "n": 1,
+    "symbols": [
+     "SOLUSDT"
+    ],
+    "timeframes_min": [
+     120
+    ],
+    "published_cagr_range": [
+     2.589,
+     2.589
+    ],
+    "realistic_cost_drag_yr": [
+     0.4045,
+     0.4045
+    ]
+   }
+  },
+  "controls_surviving": [
+   {
+    "name": "CTRL-3b zero-info 0.10 ETH2h",
+    "sharpe": 4.18023089,
+    "cagr": 2.589
+   }
+  ],
+  "bar": {
+   "min_trades": 150,
+   "min_years": 3.0,
+   "max_dd_pct": 30.0,
+   "pf": [
+    1.2,
+    4.0
+   ],
+   "sharpe": [
+    0.8,
+    4.5
+   ]
+  },
+  "leaderboard": {
+   "fetched": "2026-09-29",
+   "source": "https://mcp-api.trader.dev/strategies/stats",
+   "response": {
+    "totalStrategies": 189107,
+    "totalBacktests": 903280
+   }
+  }
+ }
+}

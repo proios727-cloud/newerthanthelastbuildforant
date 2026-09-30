@@ -1,0 +1,79 @@
+{
+  "starting_nav": 100000.0,
+  "cash": 100000.0,
+  "positions": {},
+  "marks": {
+    "SPY": {
+      "price": 764.2,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "BTC/USD": {
+      "price": 83456.74,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-28T23:59:00+00:00"
+    },
+    "ETH/USD": {
+      "price": 2687.41,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-28T23:59:00+00:00"
+    },
+    "QQQ": {
+      "price": 737.93,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "IWM": {
+      "price": 279.01,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "NVDA": {
+      "price": 227.21,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "AMD": {
+      "price": 607.57,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "AAPL": {
+      "price": 329.4,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "MSFT": {
+      "price": 508.96,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "TSLA": {
+      "price": 352.84,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-29T20:00:00+00:00"
+    },
+    "SOL/USD": {
+      "price": 118.81,
+      "bid": null,
+      "ask": null,
+      "ts": "2026-09-28T23:59:00+00:00"
+    }
+  },
+  "fills": [],
+  "peak_nav": 100000.0,
+  "day": {
+    "date": "2026-09-28",
+    "start_nav": 100000.0
+  }
+}
