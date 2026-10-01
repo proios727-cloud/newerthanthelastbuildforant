@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Team Architect</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#14181f;--mute:#5b6472;--line:#e2e5ea;--acc:#0f766e;--acc2:#b45309;--warn:#b91c1c;--chip:#eef2f4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f14;--card:#121821;--ink:#e6ebf1;--mute:#93a0b0;--line:#222c38;--acc:#2dd4bf;--acc2:#fbbf24;--warn:#f87171;--chip:#1a2230}}
+:root[data-theme="dark"]{--bg:#0b0f14;--card:#121821;--ink:#e6ebf1;--mute:#93a0b0;--line:#222c38;--acc:#2dd4bf;--acc2:#fbbf24;--warn:#f87171;--chip:#1a2230}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:20px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:20px;margin:0}h2{font-size:15px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}h3{margin:0 0 4px;font-size:15px}
+.wrap{max-width:1200px;margin:0 auto;padding:16px;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+label{display:block;font-size:12px;color:var(--mute);margin-bottom:4px}
+input,textarea,select{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:60px;resize:vertical}
+button{background:var(--acc);color:var(--bg);border:0;border-radius:6px;padding:8px 14px;font-weight:600;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.kpi{padding:12px;border:1px solid var(--line);border-radius:8px}.kpi b{display:block;font-size:22px}.kpi span{font-size:12px;color:var(--mute)}
+.agent{border-left:3px solid var(--acc)}.agent.human{border-left-color:var(--acc2)}
+.chip{display:inline-block;background:var(--chip);border-radius:99px;padding:2px 8px;font-size:12px;margin:2px 4px 2px 0}
+dl{margin:8px 0 0;display:grid;grid-template-columns:90px 1fr;gap:4px 8px;font-size:13px}dt{color:var(--mute)}dd{margin:0}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.node{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--chip);font-weight:600}.node.h{border-color:var(--acc2)}.arr{color:var(--mute)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tabs button{background:var(--chip);color:var(--ink)}.tabs button.on{background:var(--acc);color:var(--bg)}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;font:12.5px/1.5 ui-monospace,Menlo,monospace;margin:0;max-height:420px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mute);font-weight:600}
+.days label{display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:13px;padding:6px 0;border-bottom:1px solid var(--line)}.days input{width:auto;margin-top:3px}
+ul{margin:0;padding-left:18px}.warn{color:var(--warn)}
+.bar{height:6px;background:var(--chip);border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+</style>
+</head>
+<body>
+<header>
+ <div><h1>Agent Team Architect</h1><div style="color:var(--mute)">Lean 3–5 agent team · roles · handoffs · prompts · 7-day launch</div></div>
+ <div><button class="ghost" id="theme">Theme</button> <button class="ghost" id="exp">Export JSON</button></div>
+</header>
+<div class="wrap">
+
+<section class="card"><h2>1 · Mission brief</h2>
+ <div class="grid">
+  <div><label>Business / workflow</label><input id="f_work" value="Solo builder shipping skills, tools and UI prototypes"></div>
+  <div><label>Desired outcome</label><input id="f_goal" value="Ship one tested prototype per week"></div>
+  <div><label>Main bottleneck</label><input id="f_bottle" value="Research + QA eat build time"></div>
+  <div><label>Weekly budget (USD)</label><input id="f_budget" type="number" value="50"></div>
+  <div><label>Primary KPI</label><input id="f_kpi" value="Prototypes shipped / week"></div>
+  <div><label>Human approval word</label><input id="f_word" value="APPROVE"></div>
+ </div>
+ <div style="margin-top:12px"><button id="gen">Generate blueprint</button></div>
+</section>
+
+<section class="card"><h2>Executive summary</h2><div class="kpis" id="kpis"></div><p id="summary" style="margin:12px 0 0"></p></section>
+
+<section class="card"><h2>2–3 · Recommended team &amp; blueprints</h2><div class="grid" id="team"></div></section>
+
+<section class="card"><h2>4 · Workflow map</h2><div class="flow" id="flow"></div>
+ <table style="margin-top:12px"><thead><tr><th>Handoff</th><th>Payload</th><th>Retry / escalation</th></tr></thead><tbody id="hand"></tbody></table></section>
+
+<section class="card"><h2>5 · Prompt pack</h2><div class="tabs" id="ptabs"></div><pre id="prompt"></pre>
+ <div style="margin-top:8px"><button class="ghost" id="copy">Copy prompt</button></div></section>
+
+<section class="card"><h2>6 · Tools &amp; stack</h2><table><thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead><tbody id="stack"></tbody></table></section>
+
+<section class="card"><h2>7 · 7-day implementation plan</h2><div class="bar"><i id="prog" style="width:0"></i></div><div class="days" id="days"></div></section>
+
+<div class="grid">
+ <section class="card"><h2>8 · Common mistakes</h2><ul id="mist"></ul></section>
+ <section class="card"><h2>Optimization layer</h2><ul id="opt"></ul></section>
+ <section class="card"><h2>9 · Final checks</h2><ul id="checks"></ul></section>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const fields=['work','goal','bottle','budget','kpi','word'];
+const saved=store.get('ata_brief');if(saved)fields.forEach(f=>{if(saved[f]!=null)$('f_'+f).value=saved[f]});
+
+function team(b){return[
+ {id:'router',name:'Router / Planner',model:'Opus 5.5',why:'Turns the goal into a scoped task list; the only seat that talks to the human.',in:'Brief, backlog, prior run log',out:'Task card (goal, acceptance criteria, budget)',tools:['Docs','Backlog/board'],ok:'Every task has testable acceptance criteria',fail:'Over-scoping → cap 3 tasks/run'},
+ {id:'research',name:'Researcher',model:'Haiku 4.5',why:'Cheap fan-out search and summarizing; cites every source.',in:'Task card',out:'Research memo with links + confidence',tools:['Web search','Knowledge base'],ok:'≥2 sources per claim, gaps flagged',fail:'Hallucinated facts → no-source = drop'},
+ {id:'builder',name:'Builder',model:'Sonnet 5.5',why:'Writes code/content against the acceptance criteria.',in:'Task card + memo',out:'Diff / artifact + run notes',tools:['Code exec','Repo','APIs'],ok:'Tests pass locally',fail:'Scope drift → reviewer rejects'},
+ {id:'qa',name:'Reviewer / QA',model:'Opus 5.5',why:'Independent check against the criteria; owns the veto.',in:'Artifact + criteria',out:'PASS / REWORK with reasons',tools:['Test runner','Linter','Checklist'],ok:'0 criteria unchecked',fail:'Rubber-stamping → must cite evidence'},
+ {id:'human',name:'You (approval gate)',model:'Human',human:true,why:'Final say on shipping, spend, and anything public.',in:'QA PASS + summary',out:`"${b.word}" or feedback`,tools:['Dashboard'],ok:'Decision < 24h',fail:'Bottleneck → batch approvals daily'}]}
+
+function prompt(a,b){return `<role>You are the ${a.name} on a ${team(b).length-1}-agent team for: ${b.work}.</role>
+<goal>${b.goal}. Your job: ${a.why}</goal>
+<inputs>${a.in}</inputs>
+<output>${a.out}. Return JSON: {"status":"done|blocked","result":...,"notes":"","confidence":0-1}</output>
+<tools>${a.tools.join(', ')}</tools>
+<rules>
+- Stay in your lane; never do another seat's job.
+- If inputs are missing or confidence < 0.6, return status "blocked" with the exact question.
+- Never ship, spend, or publish — only the human approves with "${b.word}".
+- Success = ${a.ok}.
+</rules>`}
+
+let cur='router';
+function render(){
+ const b={};fields.forEach(f=>b[f]=$('f_'+f).value);store.set('ata_brief',b);
+ const T=team(b),agents=T.filter(a=>!a.human);
+ $('kpis').innerHTML=[[agents.length,'AI agents'],['1','Human gate'],['$'+b.budget,'Weekly budget'],[b.kpi,'Primary KPI']].map(([v,l])=>`<div class="kpi"><b>${v}</b><span>${l}</span></div>`).join('');
+ $('summary').textContent=`For "${b.work}", the bottleneck is "${b.bottle}". A ${agents.length}-agent pipeline (plan → research → build → review) offloads research and QA to agents while you keep the ship decision. Cheap models handle fan-out; Opus handles planning and review where errors are costly.`;
+ $('team').innerHTML=T.map(a=>`<div class="card agent ${a.human?'human':''}"><h3>${a.name}</h3><span class="chip">${a.model}</span>${a.tools.map(t=>`<span class="chip">${t}</span>`).join('')}<p style="margin:8px 0 0;color:var(--mute)">${a.why}</p><dl><dt>Inputs</dt><dd>${a.in}</dd><dt>Outputs</dt><dd>${a.out}</dd><dt>Success</dt><dd>${a.ok}</dd><dt class="warn">Failure</dt><dd>${a.fail}</dd></dl></div>`).join('');
+ $('flow').innerHTML=['Brief',...T.map(a=>a.name),'Ship + log'].map((n,i,arr)=>`<span class="node ${n.startsWith('You')?'h':''}">${n}</span>${i<arr.length-1?'<span class="arr">→</span>':''}`).join('')+`<span class="arr" style="width:100%">↺ REWORK loops Reviewer → Builder (max 2), then escalates to you.</span>`;
+ $('hand').innerHTML=[['Router → Researcher','Task card JSON','Blocked → Router asks you'],['Researcher → Builder','Memo + sources','<2 sources → re-run once'],['Builder → Reviewer','Diff + run notes','Tests fail → back to Builder'],['Reviewer → You','PASS summary','REWORK ×2 → escalate'],['You → Router','"'+b.word+'" / feedback','Feedback becomes next task card']].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+ $('ptabs').innerHTML=agents.map(a=>`<button data-id="${a.id}" class="${a.id===cur?'on':''}">${a.name}</button>`).join('');
+ $('prompt').textContent=prompt(agents.find(a=>a.id===cur),b);
+ $('stack').innerHTML=[['Reasoning','Opus 5.5','Planning + review: where mistakes are expensive'],['Workers','Sonnet 5.5 / Haiku 4.5','Build and search at lower cost'],['Memory','Repo + run log (JSONL)','Durable, diffable, auditable'],['Orchestration','Claude Code + Cowork agents','Spawn seats, pass JSON handoffs'],['Review UI','This dashboard / artifact','One place to approve']].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+ const days=['Write the brief + acceptance-criteria template','Stand up Router + Builder only; run one real task','Add Reviewer with PASS/REWORK veto','Add Researcher; enforce sources','Wire the approval gate and run log','Run 3 tasks end-to-end; record cost + time','Review log: cut a seat or prompt that adds no value'];
+ const done=store.get('ata_days')||[];
+ $('days').innerHTML=days.map((d,i)=>`<label><input type="checkbox" data-d="${i}" ${done.includes(i)?'checked':''}><span><b>Day ${i+1}</b> · ${d}</span></label>`).join('');
+ $('prog').style.width=(done.length/7*100)+'%';
+ $('mist').innerHTML=['Starting with 8 agents instead of 2','Free-text handoffs instead of JSON','Same model reviewing its own work','No budget cap per run','Letting agents publish without a gate'].map(x=>`<li>${x}</li>`).join('');
+ $('opt').innerHTML=['Log every run: tokens, $, time, verdict','Version prompts in the repo','Eval set of 5 past tasks; rerun on prompt change','Hard $ cap per run; alert at 80%','ROI = hours saved × rate − spend'].map(x=>`<li>${x}</li>`).join('');
+ $('checks').innerHTML=['Is each agent necessary? (cut if no measurable gain)','Handoffs are explicit JSON — yes','Hallucination risk: Researcher → source rule','Duplication risk: Router owns scope','Human approves ship, spend, public','Success measured by '+b.kpi].map(x=>`<li>${x}</li>`).join('');
+ window._b={brief:b,team:T};
+}
+$('gen').onclick=render;
+$('ptabs').onclick=e=>{if(e.target.dataset.id){cur=e.target.dataset.id;render()}};
+$('days').onchange=e=>{const d=store.get('ata_days')||[],i=+e.target.dataset.d;const n=e.target.checked?[...new Set([...d,i])]:d.filter(x=>x!==i);store.set('ata_days',n);$('prog').style.width=(n.length/7*100)+'%'};
+$('copy').onclick=()=>navigator.clipboard&&navigator.clipboard.writeText($('prompt').textContent);
+$('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(window._b,null,2)],{type:'application/json'}));a.download='agent-team.json';a.click()};
+$('theme').onclick=()=>{const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark'};
+render();
+</script>
+</body>
+</html>
