@@ -1,8 +1,8 @@
-862 decisions, 165 settled trades
-win rate 81.8%
-P&L at live book  -505¢ total, -0.31¢/contract
-P&L at print VWAP +3004¢ total, +1.82¢/contract (backtest basis)
-book minus VWAP  +2.05¢ avg (positive = live costs more)
+902 decisions, 170 settled trades
+win rate 82.4%
+P&L at live book  +259¢ total, +0.15¢/contract
+P&L at print VWAP +3703¢ total, +2.18¢/contract (backtest basis)
+book minus VWAP  +1.95¢ avg (positive = live costs more)
 read landed 59.7s before close (median; target 60s)
-  KXBTC15M   87 trades, 72 won, +1087¢ at book
-  KXETH15M   78 trades, 63 won, -1592¢ at book
+  KXBTC15M   91 trades, 76 won, +1710¢ at book
+  KXETH15M   79 trades, 64 won, -1451¢ at book
