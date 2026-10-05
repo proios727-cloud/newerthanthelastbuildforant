@@ -1,7 +1,7 @@
 {
   "ticker": "PODD",
   "status": "FAIL",
-  "checked_at": "2026-10-05T19:30:00Z",
+  "checked_at": "2026-10-05T22:07:05Z",
   "material_unsupported_claims": [
     "Three 8-Ks filed 2026-09-10 (bbd03297), 2026-09-16 (38ce792e), 2026-09-21 (4e584e3f) remain UNREAD (feed 404, no matching press release). Contents could include guidance change, recall/FDA action, leadership or litigation - MATERIAL and unresolved",
     "FY2026 guidance conflict unresolved: bear (Tier 3, sentisense) says cut to $3.2-3.3B; fill Tier 2 excerpt shows 20-22% cc growth (possibly pre-cut). No company text confirms either - MATERIAL",

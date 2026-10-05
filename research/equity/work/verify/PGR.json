@@ -1,7 +1,7 @@
 {
   "ticker": "PGR",
   "status": "PASS_WITH_CAVEATS",
-  "checked_at": "2026-10-05T19:30:00Z",
+  "checked_at": "2026-10-05T22:07:05Z",
   "material_unsupported_claims": [],
   "downgrades": [
     "PGR-C8 (results 2026-10-14) VERIFIED_FACT -> Tier 2: 8-K/IR page seen only via search, 'not read in full'",

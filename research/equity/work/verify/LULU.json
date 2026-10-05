@@ -1,7 +1,7 @@
 {
   "ticker": "LULU",
   "status": "PASS_WITH_CAVEATS",
-  "checked_at": "2026-10-05T19:30:00Z",
+  "checked_at": "2026-10-05T22:07:05Z",
   "material_unsupported_claims": [],
   "downgrades": [
     "LULU-C10 (Q3 guide $2.29-2.32B) VERIFIED_FACT on Tier 3 (RTTNews) -> upgraded by fill to Tier 2 (8-K EX-99.1 via search); still not Tier 1",

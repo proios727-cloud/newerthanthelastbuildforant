@@ -1,7 +1,7 @@
 {
   "ticker": "EME",
   "status": "FAIL",
-  "checked_at": "2026-10-05T19:30:00Z",
+  "checked_at": "2026-10-05T22:07:05Z",
   "material_unsupported_claims": [
     "Bull thesis core premise ('if data-center backlog is comparable, the discount may be excessive') is unsupported - bull itself states 'Unsupported by filing data in this pass'; no peer backlog comparison exists",
     "Zero Tier 1 financial facts: Robinhood SEC feed returns no XBRL for 10-Q be8d7a3c (verifier re-pull returned empty) - all fundamentals (rev, OI, OCF, cash, RPO, guidance) are Tier 2 or Tier 3",
