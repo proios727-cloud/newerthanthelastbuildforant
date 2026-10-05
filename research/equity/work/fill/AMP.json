@@ -1,0 +1,121 @@
+{
+  "ticker": "AMP",
+  "as_of": "2026-10-05",
+  "claims": [
+    {
+      "id": "AMP-F1",
+      "text": "Q2 2026 adjusted operating net revenues $4.9B (+13%); adjusted operating EPS $11.07 (+22%)",
+      "label": "VERIFIED_FACT",
+      "value": 4900,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "earnings_release",
+          "url": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf",
+          "date": "2026-07-23",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "d67f20ff-c4c6-489d-94c9-cd8cfd59beae (8-K)"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "AMP-F2",
+      "text": "Assets under management, administration and advisement a record $1.8T, +14%",
+      "label": "VERIFIED_FACT",
+      "value": 1800000,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "earnings_release",
+          "url": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf",
+          "date": "2026-07-23",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "d67f20ff-c4c6-489d-94c9-cd8cfd59beae (8-K)"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "AMP-F3",
+      "text": "Asset Management net outflows $6.5B in Q2 2026",
+      "label": "VERIFIED_FACT",
+      "value": -6.5,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "earnings_release",
+          "url": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf",
+          "date": "2026-07-23",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "d67f20ff-c4c6-489d-94c9-cd8cfd59beae (8-K)"
+        }
+      ],
+      "material": true,
+      "confidence": "medium; conflicts with bear's $5.9B"
+    },
+    {
+      "id": "AMP-F4",
+      "text": "Total client net flows $3.1B (-28% YoY); wrap net flows $6.9B vs $5.4B",
+      "label": "VERIFIED_FACT",
+      "value": 3.1,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "earnings_release",
+          "url": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf",
+          "date": "2026-07-23",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "d67f20ff-c4c6-489d-94c9-cd8cfd59beae (8-K)"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "AMP-F5",
+      "text": "Q3 2026 release ~08:15 ET Thu 2026-10-29; call ~09:00 ET",
+      "label": "VERIFIED_FACT",
+      "value": "2026-10-29",
+      "as_of": "2026-10-05",
+      "sources": [
+        {
+          "type": "company_announcement",
+          "url": "https://s205.q4cdn.com/618704162/files/doc_news/Ameriprise-Financial-Announces-Schedule-for-Third-Quarter-2026-Investor-Conference-Call-2026.pdf",
+          "date": "2026",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible."
+        }
+      ],
+      "material": true
+    }
+  ],
+  "still_unavailable": [
+    "Robinhood SEC feed: 8-K/10-Q/10-K text returns 404 and the XBRL facts catalog is empty; EX-99.1 not read directly",
+    "CIK",
+    "GAAP revenue and GAAP pretax income",
+    "FCF and net debt",
+    "Form 4 direction"
+  ],
+  "corrections": [
+    {
+      "claim_id": "AMP-3",
+      "file": "work/bear/AMP.json",
+      "issue": "Asset management net outflows",
+      "correct_value": "-$6.5B (not -$5.9B)",
+      "source": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf"
+    },
+    {
+      "claim_id": "AMP-1",
+      "file": "work/bear/AMP.json",
+      "issue": "Revenue '~$5B'",
+      "correct_value": "Adjusted operating net revenues $4.9B",
+      "source": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf"
+    },
+    {
+      "claim_id": "AMP-2",
+      "file": "work/bear/AMP.json",
+      "issue": "'Client assets $1.2T' versus the company's total AUM/AUA/advisement figure",
+      "correct_value": "Total AUM/AUA/advisement $1.8T (wealth client assets not separately confirmed)",
+      "source": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf"
+    }
+  ]
+}
