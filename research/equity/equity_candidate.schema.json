@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EquityCandidate",
+  "type": "object",
+  "required": ["ticker","company","cik","as_of","claims","thesis","bear_case","valuation","catalysts","verification","gates","score","data_gaps"],
+  "$defs": {
+    "source": {"type":"object","required":["title","url","type","published"],
+      "properties":{"title":{"type":"string"},"url":{"type":"string"},
+        "type":{"enum":["10-K","10-Q","8-K","DEF14A","Form4","13F","transcript","earnings_release","company_announcement","market_data","secondary"]},
+        "published":{"type":"string","format":"date"},"accessed":{"type":"string","format":"date-time"}}},
+    "claim": {"type":"object","required":["id","text","label","sources"],
+      "properties":{"id":{"type":"string"},"text":{"type":"string"},
+        "label":{"enum":["VERIFIED_FACT","ANALYTICAL_INFERENCE","ESTIMATE","SPECULATION"]},
+        "value":{"type":["number","string","null"]},"unit":{"type":"string"},
+        "as_of":{"type":"string","format":"date-time"},
+        "sources":{"type":"array","items":{"$ref":"#/$defs/source"}},
+        "material":{"type":"boolean"}}}
+  },
+  "properties": {
+    "ticker":{"type":"string"}, "company":{"type":"string"}, "cik":{"type":"string","pattern":"^[0-9]{10}$"},
+    "sector":{"type":"string"}, "as_of":{"type":"string","format":"date-time"},
+    "claims":{"type":"array","items":{"$ref":"#/$defs/claim"}},
+    "thesis":{"type":"object","required":["mispricing","what_changes_it","supporting_claim_ids"],
+      "properties":{"mispricing":{"type":"string"},"what_changes_it":{"type":"array","items":{"type":"string"}},
+        "supporting_claim_ids":{"type":"array","items":{"type":"string"}}}},
+    "bear_case":{"type":"object","required":["summary","risks","completed_before_bull"],
+      "properties":{"summary":{"type":"string"},"risks":{"type":"array","items":{"type":"string"}},
+        "completed_before_bull":{"const":true}}},
+    "valuation":{"type":"object","required":["method","claim_ids"],
+      "properties":{"method":{"type":"string"},"claim_ids":{"type":"array","items":{"type":"string"}},"notes":{"type":"string"}}},
+    "catalysts":{"type":"array","minItems":1,"items":{"type":"object","required":["event","date","date_confirmed","source"],
+      "properties":{"event":{"type":"string"},"date":{"type":"string","format":"date"},"date_confirmed":{"type":"boolean"},"source":{"$ref":"#/$defs/source"}}}},
+    "positioning":{"type":"object","properties":{"insider_form4_summary":{"type":"string"},"institutional_13f_summary":{"type":"string"},"short_interest":{"$ref":"#/$defs/claim"}}},
+    "verification":{"type":"object","required":["status","material_unsupported_claims","checked_at"],
+      "properties":{"status":{"enum":["PASS","FAIL"]},"material_unsupported_claims":{"type":"array","items":{"type":"string"}},
+        "issues":{"type":"array","items":{"type":"string"}},"checked_at":{"type":"string","format":"date-time"}}},
+    "gates":{"type":"object","additionalProperties":{"type":"boolean"}},
+    "score":{"type":"object","required":["total","components"],"properties":{"total":{"type":"number"},"components":{"type":"object","additionalProperties":{"type":"number"}}}},
+    "data_gaps":{"type":"array","items":{"type":"string"}},
+    "uncertain_inputs":{"type":"array","items":{"type":"string"}}
+  }
+}
