@@ -1,0 +1,105 @@
+{
+ "ticker": "SNDK",
+ "checked_at": "2026-10-05T19:05:00Z",
+ "status": "PASS_WITH_CAVEATS",
+ "material_unsupported_claims": [],
+ "downgrades": [
+  {
+   "claim_id": "SNDK-F2 / catalyst",
+   "file": "fill/bull",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 2 company-attributed (IR release URL; no evidence the page was opened rather than seen as a search excerpt)"
+  },
+  {
+   "claim_id": "SI",
+   "file": "bull",
+   "from": "VERIFIED_FACT",
+   "to": "data gap"
+  }
+ ],
+ "arithmetic_errors": [
+  {
+   "item": "bear summary/accounting_red_flags '81% from Asia (CN/HK/Rest of Asia)'",
+   "expected": "(4.503+5.126+4.612)/20.248 = 70.3%",
+   "found": "81%"
+  }
+ ],
+ "arithmetic_checked_ok": [
+  "mcap 1707.95*146.419M=250.08B",
+  "EV/EBIT 245.32/12.389=19.80x",
+  "P/E 250.08/11.433=21.87x",
+  "FCF yield 4.60%",
+  "AR +327%, rev +175%",
+  "CN+HK 47.6%"
+ ],
+ "tier1_spot_checks": [
+  {
+   "concept": "OperatingIncomeLoss FY26",
+   "filed": 12389,
+   "repulled": 12389,
+   "ok": true
+  },
+  {
+   "concept": "NetIncomeLoss FY26",
+   "filed": 11433,
+   "repulled": 11433,
+   "ok": true
+  },
+  {
+   "concept": "Cash 2026-07-03",
+   "filed": 4762,
+   "repulled": 4762,
+   "ok": true
+  },
+  {
+   "concept": "CFO FY26",
+   "filed": 11671,
+   "repulled": 11671,
+   "ok": true
+  },
+  {
+   "concept": "OperatingIncomeLoss FY25/FY24",
+   "filed": "-1377/-468",
+   "repulled": "-1377/-468",
+   "ok": true
+  }
+ ],
+ "applied_corrections": [
+  {
+   "source": "fill SNDK-F2",
+   "effect": "catalyst 2026-10-29 company-announced (2026-09-29 release); bull gates.catalyst_company_confirmed=false is stale"
+  },
+  {
+   "source": "fill SNDK-F1",
+   "effect": "AR 4.7B confirmed (rounded to $100M); AR increase 3,640M in CFO - bear red flag stands"
+  }
+ ],
+ "notes": [
+  "Latest 10-Q (2026-05-01) predates 10-K 2026-08-17; FQ1 FY27 10-Q not yet due - filings current",
+  "Bull self-reported 'PASS' was not independent",
+  "FY26 FCF 11.494B relies on capex 177M not re-pulled"
+ ],
+ "gates": {
+  "1_verifier_pass": "PASS",
+  "2_identity": "PASS",
+  "3_filings_current_no_NT": "PASS",
+  "4_no_going_concern_or_auditor_resignation": "UNVERIFIABLE",
+  "5_dated_catalyst_180d_company_confirmed": "PASS",
+  "6_bear_independent": "FAIL",
+  "7_liquidity": "PASS"
+ },
+ "gate_notes": {
+  "5": "2026-10-29 (24 days) company announcement; Tier 2",
+  "6": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established.",
+  "7": "S&P 500, mcap ~$250B"
+ },
+ "tier_counts": {
+  "tier1": 13,
+  "tier2": 1,
+  "tier3": 0,
+  "market_data": 1,
+  "unsourced": 1
+ },
+ "bear_completed_at": "2026-10-05T16:00:00Z",
+ "bear_independence_flag": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established."
+}

@@ -1,0 +1,142 @@
+{
+ "ticker": "BKNG",
+ "checked_at": "2026-10-05T19:05:00Z",
+ "status": "FAIL",
+ "material_unsupported_claims": [
+  {
+   "claim_id": "BKNG-TTM",
+   "file": "work/bull/BKNG.json",
+   "reason": "Labeled VERIFIED_FACT with empty sources; it is a data gap. Stated valuation method (EV/EBIT, FCF yield on TTM) cannot be computed, so valuation rests only on vendor P/E."
+  },
+  {
+   "claim_id": "BKNG-PE-RH",
+   "file": "work/bull/BKNG.json",
+   "reason": "Sole valuation anchor is a vendor-computed P/E (17.59), not derivable from filings. Fill BKNG-F3 shows Q2/H1 2026 NI inflated by a $1,121M non-op swing, so the TTM P/E is not run-rate. The thesis' 'cheap at ~17.6x' is unsupported by Tier 1."
+  },
+  {
+   "claim_id": "BKNG-CAT",
+   "file": "work/bull/BKNG.json",
+   "reason": "Labeled VERIFIED_FACT but dates conflict (RH 2026-10-27 verified=false vs TV 2026-11-04); not company-confirmed."
+  }
+ ],
+ "downgrades": [
+  {
+   "claim_id": "BKNG-TTM",
+   "file": "bull",
+   "from": "VERIFIED_FACT",
+   "to": "data gap (UNAVAILABLE)"
+  },
+  {
+   "claim_id": "BKNG-CAT",
+   "file": "bull",
+   "from": "VERIFIED_FACT",
+   "to": "ESTIMATE (unconfirmed vendor date)"
+  },
+  {
+   "claim_id": "BKNG-PE-RH",
+   "file": "bull",
+   "from": "VERIFIED_FACT",
+   "to": "market_data (vendor ratio, not filing-verified)"
+  },
+  {
+   "claim_id": "B5",
+   "file": "bear",
+   "from": "VERIFIED_FACT",
+   "to": "ANALYTICAL_INFERENCE (sourced only to internal regime memo, Tier 3)"
+  },
+  {
+   "claim_id": "SI",
+   "file": "bull",
+   "from": "VERIFIED_FACT",
+   "to": "data gap (value UNAVAILABLE, no sources)"
+  }
+ ],
+ "arithmetic_errors": [
+  {
+   "item": "bull valuation.calc net_debt_bn / ev_bn",
+   "expected": "net_debt_bn 2.966; ev_bn 121.86",
+   "found": "net_debt_bn 2966000000.0; ev_bn 2966000118.89 (USD units added to bn)"
+  }
+ ],
+ "arithmetic_checked_ok": [
+  "mcap 158.23*751.381M=118.89B",
+  "net debt 20,180-17,214=2,966M",
+  "H1 rev +11.45%",
+  "H1 EBIT +13.86%",
+  "H1 FCF 6,751 vs 6,299 (+7.2%)",
+  "52w -29.7%"
+ ],
+ "tier1_spot_checks": [
+  {
+   "concept": "Revenues H1 2026",
+   "filed": 12884,
+   "repulled": 12884,
+   "ok": true
+  },
+  {
+   "concept": "OperatingIncomeLoss H1 2026",
+   "filed": 3771,
+   "repulled": 3771,
+   "ok": true
+  },
+  {
+   "concept": "LongTermDebtNoncurrent 2026-06-30",
+   "filed": 18180,
+   "repulled": 18180,
+   "ok": true
+  },
+  {
+   "concept": "Cash 2026-06-30",
+   "filed": 17214,
+   "repulled": 17214,
+   "ok": true
+  },
+  {
+   "concept": "CFO H1 2026",
+   "filed": 6934,
+   "repulled": 6934,
+   "ok": true
+  },
+  {
+   "concept": "Merchant/Agency Q2",
+   "filed": "5127/1903",
+   "repulled": "5127/1903",
+   "ok": true
+  }
+ ],
+ "applied_corrections": [
+  {
+   "source": "fill BKNG-F1",
+   "effect": "25-for-1 split 2026-04-02 explains ~$158 price; resolves bull identity note"
+  },
+  {
+   "source": "fill BKNG-F3",
+   "effect": "NI jump explained by non-op swing (-962M -> +159M); confirms bear B4 concern that vendor P/E is flattered"
+  }
+ ],
+ "gates": {
+  "1_verifier_pass": "FAIL",
+  "2_identity": "PASS",
+  "3_filings_current_no_NT": "PASS",
+  "4_no_going_concern_or_auditor_resignation": "UNVERIFIABLE",
+  "5_dated_catalyst_180d_company_confirmed": "FAIL",
+  "6_bear_independent": "FAIL",
+  "7_liquidity": "PASS"
+ },
+ "gate_notes": {
+  "5": "Q3 date conflicting (10-27 vs 11-04), no company announcement",
+  "2": "entity 0001075531 in 10-Q XBRL matches filer",
+  "3": "10-K 2026-02-18, 10-Q 2026-08-04; no NT in index",
+  "6": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established.",
+  "7": "S&P 500 constituent, mcap ~$119B; ADV not pulled"
+ },
+ "tier_counts": {
+  "tier1": 13,
+  "tier2": 0,
+  "tier3": 1,
+  "market_data": 4,
+  "unsourced": 2
+ },
+ "bear_completed_at": "2026-10-05T16:00:00Z",
+ "bear_independence_flag": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established."
+}

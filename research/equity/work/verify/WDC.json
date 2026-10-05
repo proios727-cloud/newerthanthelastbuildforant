@@ -1,0 +1,92 @@
+{
+ "ticker": "WDC",
+ "checked_at": "2026-10-05T19:05:00Z",
+ "status": "PASS",
+ "material_unsupported_claims": [],
+ "downgrades": [
+  {
+   "claim_id": "SI",
+   "file": "bull",
+   "from": "VERIFIED_FACT",
+   "to": "data gap"
+  },
+  {
+   "claim_id": "WDC-NI (Sandisk attribution)",
+   "file": "bull",
+   "note": "already ANALYTICAL_INFERENCE; fill WDC-F3 confirms attribution untagged - keep as inference"
+  }
+ ],
+ "arithmetic_errors": [],
+ "arithmetic_checked_ok": [
+  "mcap 440.29*360.541M=158.74B",
+  "net debt 1,052-1,579=-527M",
+  "EV/EBIT 158.21/4.453=35.53x",
+  "P/E 158.74/9.424=16.84x",
+  "FCF yield 3.511/158.74=2.21%",
+  "FY26 rev +35.7%",
+  "bear CN+HK 31.2%, Cloud 88.9%"
+ ],
+ "tier1_spot_checks": [
+  {
+   "concept": "OperatingIncomeLoss FY26",
+   "filed": 4453,
+   "repulled": 4453,
+   "ok": true
+  },
+  {
+   "concept": "NetIncomeLoss FY26",
+   "filed": 9424,
+   "repulled": 9424,
+   "ok": true
+  },
+  {
+   "concept": "LongTermDebt 2026-07-03",
+   "filed": 1052,
+   "repulled": 1052,
+   "ok": true
+  },
+  {
+   "concept": "Cash 2026-07-03",
+   "filed": 1579,
+   "repulled": 1579,
+   "ok": true
+  },
+  {
+   "concept": "OperatingIncomeLoss FY24",
+   "filed": -403,
+   "repulled": -403,
+   "ok": true
+  }
+ ],
+ "applied_corrections": [
+  {
+   "source": "fill WDC-F1/F2",
+   "effect": "Non-op +5,452M (incl. +6,498M equity-securities FV gain) confirmed; P/E 16.8x is not run-rate. EV/EBIT 35.5x is the relevant multiple, above sector p40 27.7x in screen. Valuation 'discount' is weak; $470M non-op residual unreconciled."
+  }
+ ],
+ "gates": {
+  "1_verifier_pass": "PASS",
+  "2_identity": "PASS",
+  "3_filings_current_no_NT": "PASS",
+  "4_no_going_concern_or_auditor_resignation": "UNVERIFIABLE",
+  "5_dated_catalyst_180d_company_confirmed": "FAIL",
+  "6_bear_independent": "FAIL",
+  "7_liquidity": "PASS"
+ },
+ "gate_notes": {
+  "5": "RH 2026-10-29 verified=false vs TV 2026-10-22; not company-confirmed",
+  "3": "10-K 2026-08-14; no NT",
+  "6": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established.",
+  "7": "S&P 500, mcap ~$159B"
+ },
+ "caveat": "Status PASS on claim support only; thesis valuation case is weak (EV/EBIT 35.5x).",
+ "tier_counts": {
+  "tier1": 13,
+  "tier2": 0,
+  "tier3": 0,
+  "market_data": 2,
+  "unsourced": 1
+ },
+ "bear_completed_at": "2026-10-05T16:00:00Z",
+ "bear_independence_flag": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established."
+}

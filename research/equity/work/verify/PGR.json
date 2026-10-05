@@ -1,0 +1,52 @@
+{
+  "ticker": "PGR",
+  "status": "PASS_WITH_CAVEATS",
+  "checked_at": "2026-10-05T19:30:00Z",
+  "material_unsupported_claims": [],
+  "downgrades": [
+    "PGR-C8 (results 2026-10-14) VERIFIED_FACT -> Tier 2: 8-K/IR page seen only via search, 'not read in full'",
+    "PGR-F1 (2026-10-14 IR event) VERIFIED_FACT -> Tier 2",
+    "PGR-F2/B1 (Aug CR 89.3 vs 83.1) VERIFIED_FACT -> Tier 2 (8-K ex99 via search; filing_id e9f31b15 in index but content not served)",
+    "PGR-F3/B2 (Aug NI $951M -22%, PIF 40.49M) VERIFIED_FACT -> Tier 2",
+    "PGR-C5 'UNAVAILABLE' labeled VERIFIED_FACT - label misuse (absence is not a fact)"
+  ],
+  "arithmetic_errors": [],
+  "applied_corrections": [
+    "PGR-C5: Aug-26 CR 89.3 (Tier 2)",
+    "PGR-C9: next report 2026-10-14 (company, Tier 2); TradingView 10-08 and bear's '2026-10-08' early-warning date are wrong"
+  ],
+  "spot_checks_tier1": [
+    "Q2 rev 23,609/22,004; H1 45,797/42,413 MATCH (10-Q 4aadb480)",
+    "H1 NI 6,129/5,742 MATCH",
+    "Equity 34,333 / 30,323 / 32,604 MATCH",
+    "Q2 NEP 21,573/20,310; Commercial Lines 2,691/2,765 MATCH (bear B3/B6)"
+  ],
+  "arithmetic_rechecked": [
+    "C1 +7.29%/+7.98% OK",
+    "C2 +6.74% OK",
+    "C4 12,258/32,328=37.9% OK",
+    "C6 122,914/34,333=3.58x OK",
+    "C7 10.54/9.65-1=+9.2%; 3.56/1.79-1=+98.9% OK",
+    "B4 14,572/21,573=67.5%; 13,605/20,310=67.0% OK (losses figure not re-pulled)",
+    "B5 45,567/41,154-1=+10.7% OK"
+  ],
+  "gates": {
+    "1_verifier": "PASS_WITH_CAVEATS",
+    "2_identity": "PASS: filing index for PGR; XBRL entity 0000080661 PROGRESSIVE CORP/OH/",
+    "3_filings_current": "PASS: 10-K 2026-03-02, 10-Q 2026-08-03; no NT forms since 2025-10-01 (re-pulled)",
+    "4_going_concern_auditor": "UNVERIFIABLE: filing text (10-K audit opinion, 8-K Item 4.01) not served by Robinhood SEC feed; EDGAR blocked",
+    "5_catalyst": "PASS (Tier 2 caveat): Sept/Q3 results 2026-10-14, company IR page + Aug 8-K seen via search; 9 days out",
+    "6_bear_independent": "PASS (caveat): bear completed_at 2026-10-05T18:37:28Z is after 18:10Z threshold. But all 15 bear files carry the identical stamp, bear as_of is 00:00Z, and the fill file (as_of 18:00Z) already corrects bear content, so bear content existed before its completed_at; 'completed_before_bull: true' is self-asserted and chronologically inconsistent with bull as_of 16:00Z. Independence cannot be proven from artifacts.",
+    "7_liquidity": "PASS (presumed): S&P 500 constituent per screen; ADV not re-pulled by verifier"
+  },
+  "tier_counts": {
+    "tier1": 8,
+    "tier2": 6,
+    "tier3": 0,
+    "market_data": 2
+  },
+  "notes": [
+    "ADVERSARIAL: bull thesis says peak margins 'haven't shown in H1 numbers', but Tier 2 Aug-26 data show CR +6.2pt and monthly NI -22%; the 37.9% ROE (annualized H1) used to justify the 99% P/B premium is already deteriorating. Not a contradiction of a Tier 1 claim, but the thesis inference is materially weakened.",
+    "Variable-dividend yield 6.6% correctly ignored by bull."
+  ]
+}
