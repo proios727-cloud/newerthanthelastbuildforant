@@ -1,0 +1,143 @@
+{
+ "ticker": "EME",
+ "as_of": "2026-10-05T18:00:00Z",
+ "claims": [
+  {
+   "id": "EME-F1",
+   "text": "Q2 2026 revenue $5.15B vs $4.30B (+19.8%). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 5150000000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "filing_id": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "published": "2026-07-30",
+     "title": "EMCOR Group, Inc. Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EME-F2",
+   "text": "Q2 2026 operating income $547.3M (10.6% margin) vs $415.2M (9.6%); net income $403.7M, diluted EPS $9.06. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 547300000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "filing_id": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "published": "2026-07-30",
+     "title": "EMCOR Group, Inc. Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EME-F3",
+   "text": "H1 2026 net cash from operating activities $289.9M. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 289913000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "filing_id": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "published": "2026-07-30",
+     "title": "EMCOR Group, Inc. Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EME-F4",
+   "text": "Cash and equivalents $924.4M at 2026-06-30. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 924411000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "filing_id": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "published": "2026-07-30",
+     "title": "EMCOR Group, Inc. Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EME-F5",
+   "text": "Remaining performance obligations (backlog) $17.14B at 2026-06-30, +43.9% YoY. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 17140000000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "filing_id": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "published": "2026-07-30",
+     "title": "EMCOR Group, Inc. Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EME-F6",
+   "text": "FY2026 guidance raised: revenue $20.00-20.50B (from $18.50-19.25B), diluted EPS $32.00-33.25 (from $28.25-29.75). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": "20.0-20.5B",
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "filing_id": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+     "published": "2026-07-30",
+     "title": "EMCOR Group, Inc. Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "still_unavailable": [
+  "H1 2026 capex -> FCF",
+  "Total debt at 2026-06-30 -> net debt",
+  "10-K FY2025 fundamentals",
+  "Q3 2026 earnings date (no company announcement found)",
+  "Form 4 direction (none indexed in feed query)",
+  "Robinhood SEC feed: get_sec_filing returned 404 'Filing content is not available' and get_sec_filing_facts/catalog returned empty for the filings tried (2026-10-05)."
+ ],
+ "corrections": [
+  {
+   "claim_id": "EME-C1",
+   "file": "work/bull/EME.json",
+   "issue": "Revenue/OI marked UNAVAILABLE",
+   "correct_value": "Q2 revenue $5.15B, OI $547.3M, H1 OCF $289.9M, cash $924.4M",
+   "source": {
+    "type": "earnings_release",
+    "url": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+    "filing_id": "https://www.businesswire.com/news/home/20260730052970/en/EMCOR-Group-Inc.-Reports-Second-Quarter-2026-Results (also 8-K EX-99.1 eme-ex991_2026630xq2.htm)",
+    "published": "2026-07-30",
+    "title": "EMCOR Group, Inc. Reports Second Quarter 2026 Results",
+    "accessed": "2026-10-05T18:00:00Z"
+   }
+  }
+ ]
+}

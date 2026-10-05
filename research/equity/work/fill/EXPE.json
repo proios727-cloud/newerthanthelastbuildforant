@@ -1,0 +1,146 @@
+{
+ "ticker": "EXPE",
+ "as_of": "2026-10-05T18:00:00Z",
+ "claims": [
+  {
+   "id": "EXPE-F1",
+   "text": "Q2 2026 free cash flow $1,279M, up 39% YoY (company-defined non-GAAP). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 1279000000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "filing_id": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "published": "2026-08-05",
+     "title": "Expedia Group Reports Second Quarter 2026 Results (8-K EX-99.1)",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EXPE-F2",
+   "text": "H1 2026 capital expenditures (incl. internal-use software and website development) $383M. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 383000000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "filing_id": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "published": "2026-08-05",
+     "title": "Expedia Group Reports Second Quarter 2026 Results (8-K EX-99.1)",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EXPE-F3",
+   "text": "H1 2026 FCF = OCF $5,409M (bull EXPE-C4) - capex $383M = $5,026M; seasonal, inflated by deferred merchant bookings.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 5026000000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "filing_id": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "published": "2026-08-05",
+     "title": "Expedia Group Reports Second Quarter 2026 Results (8-K EX-99.1)",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EXPE-F4",
+   "text": "H1 net income jump ($872M vs $130M) is driven by operating income (+$636M H1 per EXPE-C2) plus swing in Other, net: H1 2026 +$40M vs -$221M H1 2025 (Q2 +$215M vs -$78M), incl. ~$125M H1 gain on fair value of Global Business Travel Group investment (non-operating, non-recurring in nature). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 125000000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "filing_id": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "published": "2026-08-05",
+     "title": "Expedia Group Reports Second Quarter 2026 Results (8-K EX-99.1)",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EXPE-F5",
+   "text": "Current maturities of long-term debt $0 at 2026-06-30 (vs $1,692M at 2025-06-30); total debt $5,459M all long-term. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 0,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "filing_id": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+     "published": "2026-08-05",
+     "title": "Expedia Group Reports Second Quarter 2026 Results (8-K EX-99.1)",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "EXPE-F6",
+   "text": "Q3 2026 earnings date not announced by the company in any source found; third-party dates conflict (bull 2026-11-04, bear 2026-10-29).",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [],
+   "material": true
+  }
+ ],
+ "still_unavailable": [
+  "Company-confirmed Q3 2026 earnings date",
+  "Form 4 buy/sell direction (filing text not served)",
+  "Full GAAP OCF reconciliation read directly",
+  "Robinhood SEC feed: get_sec_filing returned 404 'Filing content is not available' and get_sec_filing_facts/catalog returned empty for the filings tried (2026-10-05)."
+ ],
+ "corrections": [
+  {
+   "claim_id": "EXPE-B6",
+   "file": "work/bear/EXPE.json",
+   "issue": "Decomposition no longer UNAVAILABLE",
+   "correct_value": "Other, net H1 2026 +$40M vs -$221M; ~$125M H1 gain on GBTG investment fair value",
+   "source": {
+    "type": "earnings_release",
+    "url": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+    "filing_id": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+    "published": "2026-08-05",
+    "title": "Expedia Group Reports Second Quarter 2026 Results (8-K EX-99.1)",
+    "accessed": "2026-10-05T18:00:00Z"
+   }
+  },
+  {
+   "claim_id": "EXPE-C3",
+   "file": "work/bull/EXPE.json",
+   "issue": "Current debt portion was unknown",
+   "correct_value": "Current maturities $0; net cash = 6,682-5,459 = +$1,223M (value field shows -1,223M, sign should be positive for net cash)",
+   "source": {
+    "type": "earnings_release",
+    "url": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+    "filing_id": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000051/earningsrelease-q22026.htm",
+    "published": "2026-08-05",
+    "title": "Expedia Group Reports Second Quarter 2026 Results (8-K EX-99.1)",
+    "accessed": "2026-10-05T18:00:00Z"
+   }
+  }
+ ]
+}

@@ -1,0 +1,117 @@
+{
+ "ticker": "LULU",
+ "as_of": "2026-10-05T18:00:00Z",
+ "claims": [
+  {
+   "id": "LULU-F1",
+   "text": "Q3 FY2026 guidance (company 8-K): net revenue $2.290-2.320B (-10% to -11%), diluted EPS $0.93-0.98. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": "2.290-2.320B",
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "8-K",
+     "url": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+     "filing_id": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+     "published": "2026-09-03",
+     "title": "lululemon Announces Second Quarter Fiscal 2026 Results (8-K EX-99.1)",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-F2",
+   "text": "Q2 FY2026 included IEEPA tariff refunds of $134.5M plus $4.1M interest; refunds added 560 bps to gross margin; $0.86/share in diluted EPS (refunds+interest, net of tax). One-time. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 134500000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "8-K",
+     "url": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+     "filing_id": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+     "published": "2026-09-03",
+     "title": "lululemon Announces Second Quarter Fiscal 2026 Results (8-K EX-99.1)",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "LULU-F3",
+   "text": "Revolving credit facility $600.0M; $593.7M available at Q2 close (difference = letters of credit/guarantees). No funded debt found. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 593700000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "url": "https://www.sec.gov/Archives/edgar/data/0001397187/000139718726000127/lulu-20260802.htm",
+     "filing_id": "https://www.sec.gov/Archives/edgar/data/0001397187/000139718726000127/lulu-20260802.htm",
+     "published": "2026-09-03",
+     "title": "lululemon 10-Q quarter ended 2026-08-02",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "LULU-F4",
+   "text": "Q2 FY2026 net revenue -4% (-5% cc), comparable sales -9% (-10% cc). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": -0.04,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "8-K",
+     "url": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+     "filing_id": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+     "published": "2026-09-03",
+     "title": "lululemon Announces Second Quarter Fiscal 2026 Results (8-K EX-99.1)",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "still_unavailable": [
+  "Operating lease liabilities at 2026-08-02",
+  "Confirmed zero funded borrowings at 2026-08-02 (only Q1 statement found)",
+  "Q3 FY2026 earnings date (not announced by company)",
+  "Form 4 direction",
+  "Robinhood SEC feed: get_sec_filing returned 404 'Filing content is not available' and get_sec_filing_facts/catalog returned empty for the filings tried (2026-10-05)."
+ ],
+ "corrections": [
+  {
+   "claim_id": "LULU-C10",
+   "file": "work/bull/LULU.json",
+   "issue": "Sourced via secondary press",
+   "correct_value": "Confirmed by company 8-K EX-99.1: $2.290-2.320B, EPS $0.93-0.98",
+   "source": {
+    "type": "8-K",
+    "url": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+    "filing_id": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+    "published": "2026-09-03",
+    "title": "lululemon Announces Second Quarter Fiscal 2026 Results (8-K EX-99.1)",
+    "accessed": "2026-10-05T18:00:00Z"
+   }
+  },
+  {
+   "claim_id": "LULU-C4/LULU-C5",
+   "file": "work/bull/LULU.json",
+   "issue": "H1 OI/FCF include one-time $134.5M tariff refund (+$4.1M interest), not flagged",
+   "correct_value": "Q2 includes $134.5M one-time refund",
+   "source": {
+    "type": "8-K",
+    "url": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+    "filing_id": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000126/lulu-20260802xex991.htm (also corporate.lululemon.com press release 2026-09-03)",
+    "published": "2026-09-03",
+    "title": "lululemon Announces Second Quarter Fiscal 2026 Results (8-K EX-99.1)",
+    "accessed": "2026-10-05T18:00:00Z"
+   }
+  }
+ ]
+}
