@@ -1,0 +1,179 @@
+{
+  "ticker": "EXPE",
+  "company": "Expedia Group",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T00:00:00Z",
+  "bear_case": {
+    "summary": "Cheap on trailing numbers (fwd P/E 12.5) but the market is pricing terminal-value risk from agentic AI disintermediation of OTAs; Expedia is joining third-party agents (Meta Muse, ChatGPT, Gemini) that may own the customer relationship and compress take rates. H1-2026 earnings surged off a weak base, so trailing multiples may flatter. Consumer softness (payrolls +29k) adds cyclical travel risk.",
+    "risks": [
+      "AI-agent disintermediation / take-rate compression",
+      "Cyclical travel slowdown",
+      "Earnings base effect / non-recurring items",
+      "Competitive marketing spend vs BKNG/Google"
+    ],
+    "completed_before_bull": true
+  },
+  "thesis_breaking_risks": [
+    {
+      "risk": "AI-agent disintermediation / take-rate compression",
+      "evidence": "EXPE fell ~7.7% on 2026-09-23 after joining Meta's Muse agent; stock ~29% down YTD on OTA disintermediation fears (secondary).",
+      "likelihood": "Medium-High over 3-5y; low within 1-2 quarters",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Direct-traffic share, B2C marketing efficiency and take-rate commentary in Q3 print (2026-10-29); booking volume routed via third-party agents"
+    },
+    {
+      "risk": "Cyclical travel slowdown",
+      "evidence": "Regime memo: Sept payrolls +29k, unemployment 4.2%, Fed hiking; travel is discretionary.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Gross bookings/room-night growth deceleration; US vs international mix in Q3"
+    },
+    {
+      "risk": "Earnings base effect / non-recurring items",
+      "evidence": "H1-26 net income $872M vs $130M H1-25; Q2 $878M vs $330M (10-Q). Composition of the jump not decomposed here (UNAVAILABLE).",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Q3 net income vs adjusted EBITDA divergence; other-income/tax items"
+    },
+    {
+      "risk": "Competitive marketing spend vs BKNG/Google",
+      "evidence": "ANALYTICAL_INFERENCE: performance marketing costs rise if Google/AI surfaces charge more for placement.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Selling & marketing as % of revenue"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "Stock-based comp $217M in H1-26 (vs $203M) - material dilution offset by buybacks; ROE of 199% (screen) reflects tiny equity base from buybacks, not pure economics.",
+    "Long-term debt $5.46B at 2026-06-30 incl. new 5.5% 2036 notes ($986M) refinancing cheaper 2026 converts - interest cost rising.",
+    "Merchant model float (deferred merchant bookings) flatters FCF; any booking slowdown reverses working capital - figure UNAVAILABLE."
+  ],
+  "value_trap_assessment": "Low P/E reflects a credible, unquantifiable risk to the long-term moat (AI agents owning travel intent); if take rate erodes, today's FCF is not durable and the multiple is fair.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:37:28Z",
+  "claims": [
+    {
+      "id": "EXPE-B1",
+      "text": "Q2-2026 net income $878M vs $330M in Q2-2025; H1-2026 $872M vs $130M.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-08-05 (filing_id fc519e82-c44b-40d0-aa90-a42803417bc3) via Robinhood SEC feed",
+          "url": "robinhood-sec:fc519e82-c44b-40d0-aa90-a42803417bc3",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 878000000,
+      "unit": "USD"
+    },
+    {
+      "id": "EXPE-B2",
+      "text": "Long-term debt $5,459M at 2026-06-30 vs $6,161M at 2025-12-31; includes 5.5% senior notes due 2036 of $986M not outstanding at year-end 2025.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-08-05 (filing_id fc519e82-c44b-40d0-aa90-a42803417bc3) via Robinhood SEC feed",
+          "url": "robinhood-sec:fc519e82-c44b-40d0-aa90-a42803417bc3",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 5459000000,
+      "unit": "USD"
+    },
+    {
+      "id": "EXPE-B3",
+      "text": "H1-2026 share-based compensation $217M vs $203M H1-2025.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-08-05 (filing_id fc519e82-c44b-40d0-aa90-a42803417bc3) via Robinhood SEC feed",
+          "url": "robinhood-sec:fc519e82-c44b-40d0-aa90-a42803417bc3",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 217000000,
+      "unit": "USD"
+    },
+    {
+      "id": "EXPE-B4",
+      "text": "EXPE fell 7.72% on 2026-09-23 after announcing it joined Meta's Muse AI agent (secondary source).",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Expedia stock closed down nearly 8% after Meta Muse tie-up (TIKR)",
+          "url": "https://www.tikr.com/blog/expedia-stock-closed-down-nearly-8-the-day-after-its-meta-muse-tie-up-heres-where-the-stock-could-go",
+          "type": "secondary",
+          "published": "2026-09-23",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "EXPE-B5",
+      "text": "Agentic AI booking tools could disintermediate OTAs and compress take rates over 3-5 years.",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Why Has Expedia Stock Fallen 30% Since the Start of 2026? (TIKR)",
+          "url": "https://www.tikr.com/blog/why-has-expedia-stock-fallen-30-since-the-start-of-2026",
+          "type": "secondary",
+          "published": "2026-09-24",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "EXPE-B6",
+      "text": "Trailing earnings jump may include non-recurring items; decomposition UNAVAILABLE.",
+      "label": "SPECULATION",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-08-05 (filing_id fc519e82-c44b-40d0-aa90-a42803417bc3) via Robinhood SEC feed",
+          "url": "robinhood-sec:fc519e82-c44b-40d0-aa90-a42803417bc3",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "EXPE-B7",
+      "text": "Screen: fwd P/E 12.5, -23.3% vs 52w high, next EPS 2026-10-29.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "work/screen.md TradingView screen",
+          "url": "work/screen.md",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": false
+    }
+  ],
+  "data_gaps": [
+    "SEC EDGAR blocked; CIK UNAVAILABLE",
+    "No price quote pulled; valuation multiples from work/screen.md (TradingView, single source)",
+    "Web sources are secondary summaries of company releases"
+  ]
+}

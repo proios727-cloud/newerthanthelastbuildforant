@@ -1,0 +1,158 @@
+{
+  "ticker": "PODD",
+  "company": "Insulet Corp",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T00:00:00Z",
+  "bear_case": {
+    "summary": "PODD is down ~62% from its high because the growth story broke: 2026 revenue outlook cut ($3.2-3.3B) on slower US pump sales, higher early attrition and lower utilization in type 2, plus a manufacturing correction (insulin under-delivery risk) and a securities class action. A 20x forward multiple is not cheap if growth decelerates to medtech-average and quality issues persist; GLP-1s and competition (Tandem, Medtronic, Beta Bionics patch pumps) add structural risk.",
+    "risks": [
+      "Type 2 adoption thesis failure",
+      "Product quality / FDA action",
+      "Competitive and pricing pressure in pharmacy channel",
+      "Further guidance cuts"
+    ],
+    "completed_before_bull": true
+  },
+  "thesis_breaking_risks": [
+    {
+      "risk": "Type 2 adoption thesis failure",
+      "evidence": "Management cited higher early attrition and lower utilization in T2 (secondary, Aug 2026).",
+      "likelihood": "Medium-High",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "New-patient starts and T2 retention commentary at Q3 (2026-11-04)"
+    },
+    {
+      "risk": "Product quality / FDA action",
+      "evidence": "Correction for Omnipod 5/DASH/Eros for manufacturing issue causing possible under-delivery; class action alleges misstatements on manufacturing controls.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "FDA recall classification, warning letter, MAUDE reports, 8-K disclosures"
+    },
+    {
+      "risk": "Competitive and pricing pressure in pharmacy channel",
+      "evidence": "ANALYTICAL_INFERENCE: new patch-pump entrants and PBM pressure.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Revenue per pod / gross margin trend"
+    },
+    {
+      "risk": "Further guidance cuts",
+      "evidence": "FY26 revenue guidance below prior consensus; multiple analyst downgrades.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Q3 guide vs $3.2-3.3B range"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "Securities class action pending (litigation reserve UNAVAILABLE).",
+    "Recall costs/remediation could hit gross margin; amounts UNAVAILABLE.",
+    "XBRL facts not returned by Robinhood SEC feed - inventory, debt, receivables UNAVAILABLE.",
+    "FCF TTM only $0.29B on a large-cap valuation (screen)."
+  ],
+  "value_trap_assessment": "Stock fell because the long-duration growth premium was justified by T2 expansion that is now visibly underperforming; a lower but still premium multiple can de-rate further as growth normalizes.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:37:28Z",
+  "claims": [
+    {
+      "id": "PODD-B1",
+      "text": "Insulet cut its 2026 revenue outlook to $3.2-3.3B, below ~$3.3B consensus; shares fell ~20% to a 52-week low (Aug 2026).",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Insulet stock down 21.9% on weaker 2026 revenue outlook",
+          "url": "https://app.sentisense.ai/stories/insulet-stock-down-21.9-percent-on-weaker-2026-revenue-outlook-08062026",
+          "type": "secondary",
+          "published": "2026-08-06",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "PODD-B2",
+      "text": "Management cited higher early attrition and lower utilization in type 2 patients.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Insulet stock down 21.9% on weaker 2026 revenue outlook",
+          "url": "https://app.sentisense.ai/stories/insulet-stock-down-21.9-percent-on-weaker-2026-revenue-outlook-08062026",
+          "type": "secondary",
+          "published": "2026-08-06",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "PODD-B3",
+      "text": "A correction notice covered Omnipod 5, DASH and Eros for a manufacturing issue that could cause insulin under-delivery.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Insulet stock drops 7% after Omnipod 5 recall (TIKR)",
+          "url": "https://www.tikr.com/blog/insulet-podd-stock-drops-7-after-omnipod-5-recall",
+          "type": "secondary",
+          "published": "2026",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "PODD-B4",
+      "text": "A securities-fraud class action alleges misrepresentations about manufacturing controls.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Glancy Prongay - Insulet securities class action",
+          "url": "https://www.glancylaw.com/cases/insulet-corporation/",
+          "type": "secondary",
+          "published": "2026",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "PODD-B5",
+      "text": "Screen: -61.9% vs 52w high, fwd P/E 20.8, FCF TTM $0.29B.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "work/screen.md TradingView screen",
+          "url": "work/screen.md",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": false
+    },
+    {
+      "id": "PODD-B6",
+      "text": "Type 2 growth may structurally disappoint as GLP-1 use reduces insulin intensification.",
+      "label": "SPECULATION",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Insulet stock down 21.9% on weaker 2026 revenue outlook",
+          "url": "https://app.sentisense.ai/stories/insulet-stock-down-21.9-percent-on-weaker-2026-revenue-outlook-08062026",
+          "type": "secondary",
+          "published": "2026-08-06",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    }
+  ],
+  "data_gaps": [
+    "SEC EDGAR blocked; CIK UNAVAILABLE",
+    "No price quote pulled; valuation multiples from work/screen.md (TradingView, single source)",
+    "Web sources are secondary summaries of company releases"
+  ]
+}
