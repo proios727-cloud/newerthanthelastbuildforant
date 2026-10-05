@@ -1,0 +1,283 @@
+{
+ "ticker": "ERIE",
+ "company": "Erie Indemnity Company (name per Robinhood profile; 10-K text UNAVAILABLE)",
+ "cik": "UNAVAILABLE",
+ "sector": "Finance",
+ "as_of": "2026-10-05T18:35:00Z",
+ "identity": {
+  "company_name_10k": "UNAVAILABLE (10-K text not served)",
+  "latest_10k": {
+   "date": "2026-02-23",
+   "filing_id": "aef80678-74f6-46e6-89c4-1fff3d603a6d"
+  },
+  "latest_10q": {
+   "date": "2026-07-30",
+   "filing_id": "0cfbfe82-29a9-4a68-96da-0e5379941102"
+  },
+  "nt_filings_12m": "None in index since 2025-10-01",
+  "going_concern": "UNAVAILABLE",
+  "auditor_change": "UNAVAILABLE (8-K item 4.01 content not readable)"
+ },
+ "fundamentals": {
+  "combined_ratio": "UNAVAILABLE",
+  "book_value_per_share": "UNAVAILABLE",
+  "roe": "UNAVAILABLE",
+  "aum": "UNAVAILABLE",
+  "trend_3y": "UNAVAILABLE"
+ },
+ "claims": [
+  {
+   "id": "ERIE-1",
+   "text": "Latest 10-K filed 2026-02-23 (filing_id aef80678-74f6-46e6-89c4-1fff3d603a6d); latest 10-Q filed 2026-07-30 (filing_id 0cfbfe82-29a9-4a68-96da-0e5379941102); no NT 10-K/NT 10-Q in index since 2025-10-01.",
+   "label": "VERIFIED_FACT",
+   "value": "2026-02-23",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "ERIE 10-K via Robinhood SEC feed",
+     "url": "aef80678-74f6-46e6-89c4-1fff3d603a6d",
+     "type": "10-K",
+     "published": "2026-02-23",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "ERIE 10-Q via Robinhood SEC feed",
+     "url": "0cfbfe82-29a9-4a68-96da-0e5379941102",
+     "type": "10-Q",
+     "published": "2026-07-30",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "ERIE-2",
+   "text": "Last trade 219.805 as of 2026-10-05T18:35:00Z.",
+   "label": "VERIFIED_FACT",
+   "value": 219.805,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_quotes ERIE",
+     "url": "robinhood:get_equity_quotes",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "ERIE-3",
+   "text": "Trailing P/E 20.19 (Robinhood fundamentals).",
+   "label": "VERIFIED_FACT",
+   "value": 20.19,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals ERIE",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "x"
+  },
+  {
+   "id": "ERIE-4",
+   "text": "Price vs 52w high: 219.805/330.535-1 = -33.5%.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -33.5,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_quotes ERIE",
+     "url": "robinhood:get_equity_quotes",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals ERIE",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "ERIE-5",
+   "text": "Peer trailing P/E: BRO P/E 18.94; AJG P/E 37.41; PGR P/E 10.54. Median of positive peer P/Es = 18.94; ERIE discount = 20.19/18.94-1 = 6.6%.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 6.6,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals BRO",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals AJG",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals PGR",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "ERIE-6",
+   "text": "Next catalyst: Q3 2026 earnings release (date not confirmed by a company source; TradingView screen shows 2026-10-22, third-party sites show 2026-10-29) on 2026-10-22.",
+   "label": "ESTIMATE",
+   "value": "2026-10-22",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "TradingView screener earnings_release_next_date (work/tv_raw_2026-10-05.json)",
+     "url": "work/screen.md",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "ERIE-7",
+   "text": "Filing-derived fundamentals (revenue, operating income, FCF, net debt / sector metrics) UNAVAILABLE: Robinhood SEC feed returned no XBRL facts and no filing text for the 10-K and latest 10-Q.",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "ERIE 10-K via Robinhood SEC feed",
+     "url": "aef80678-74f6-46e6-89c4-1fff3d603a6d",
+     "type": "10-K",
+     "published": "2026-02-23",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "ERIE-8",
+   "text": "ERIE is 33.5% below its 52w high and at ~20.2x trailing P/E, between BRO (18.9x) and AJG (37.4x). Bull view: management-fee model (attorney-in-fact for Erie Insurance Exchange) is a fee stream, not underwriting risk, and the de-rating may over-discount slower premium growth at the Exchange. ERIE remains the most expensive on P/E of the five names and fee-rate/Exchange combined ratio could not be sourced.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": null,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals ERIE",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "thesis": {
+  "mispricing": "ERIE is 33.5% below its 52w high and at ~20.2x trailing P/E, between BRO (18.9x) and AJG (37.4x). Bull view: management-fee model (attorney-in-fact for Erie Insurance Exchange) is a fee stream, not underwriting risk, and the de-rating may over-discount slower premium growth at the Exchange. ERIE remains the most expensive on P/E of the five names and fee-rate/Exchange combined ratio could not be sourced.",
+  "what_changes_it": [
+   "Board reduction of the management fee rate (typically set in December)",
+   "Exchange premium growth slowing sharply",
+   "Q3 results showing operating margin compression"
+  ],
+  "supporting_claim_ids": [
+   "ERIE-3",
+   "ERIE-4",
+   "ERIE-5",
+   "ERIE-8"
+  ]
+ },
+ "bear_case": {
+  "summary": "See work/bear/ (bear analyst owns this).",
+  "risks": [
+   "Board reduction of the management fee rate (typically set in December)",
+   "Exchange premium growth slowing sharply",
+   "Q3 results showing operating margin compression"
+  ],
+  "completed_before_bull": true
+ },
+ "valuation": {
+  "method": "Trailing P/E vs 3 named peers (Robinhood fundamentals); own-history multiple UNAVAILABLE (no historical P/E or filing EPS series)",
+  "claim_ids": [
+   "ERIE-3",
+   "ERIE-5"
+  ],
+  "notes": "Peers: BRO, AJG, PGR. Negative P/Es excluded from median."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 earnings release (date not confirmed by a company source; TradingView screen shows 2026-10-22, third-party sites show 2026-10-29)",
+   "date": "2026-10-22",
+   "date_confirmed": false,
+   "source": {
+    "title": "TradingView screener earnings_release_next_date (work/tv_raw_2026-10-05.json)",
+    "url": "work/screen.md",
+    "type": "market_data",
+    "published": "2026-10-05",
+    "accessed": "2026-10-05T18:35:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "Form 4 filings not returned in ERIE index query (form filter excluded Form 4). UNAVAILABLE.",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "ERIE-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [
+   "ERIE-7"
+  ],
+  "issues": [
+   "No filing-derived fundamentals"
+  ],
+  "checked_at": "2026-10-05T18:35:00Z"
+ },
+ "gates": {
+  "filing_fundamentals_sourced": false,
+  "catalyst_confirmed_company_source": false
+ },
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "data_gaps": [
+  "Filing XBRL facts/text",
+  "CIK",
+  "own-history valuation",
+  "13F",
+  "short interest",
+  "Form 4 contents",
+  "going-concern/auditor-change text"
+ ]
+}

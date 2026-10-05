@@ -1,0 +1,277 @@
+{
+ "ticker": "CF",
+ "company": "CF Industries Holdings, Inc. (name per Robinhood profile; 10-K text UNAVAILABLE)",
+ "cik": "UNAVAILABLE",
+ "sector": "Process Industries",
+ "as_of": "2026-10-05T18:35:00Z",
+ "identity": {
+  "company_name_10k": "UNAVAILABLE (10-K text not served)",
+  "latest_10k": {
+   "date": "2026-02-25",
+   "filing_id": "5be5ff01-cb42-4732-b48c-4f5b7dc4c217"
+  },
+  "latest_10q": {
+   "date": "2026-08-06",
+   "filing_id": "27bc3b34-bff9-4d23-a9ad-c13497cde6c1"
+  },
+  "nt_filings_12m": "None in index since 2025-10-01",
+  "going_concern": "UNAVAILABLE",
+  "auditor_change": "UNAVAILABLE (8-K item 4.01 content not readable)"
+ },
+ "fundamentals": {
+  "source": "UNAVAILABLE",
+  "revenue": "UNAVAILABLE",
+  "operating_income": "UNAVAILABLE",
+  "fcf": "UNAVAILABLE",
+  "net_debt": "UNAVAILABLE",
+  "trend_3y": "UNAVAILABLE"
+ },
+ "claims": [
+  {
+   "id": "CF-1",
+   "text": "Latest 10-K filed 2026-02-25 (filing_id 5be5ff01-cb42-4732-b48c-4f5b7dc4c217); latest 10-Q filed 2026-08-06 (filing_id 27bc3b34-bff9-4d23-a9ad-c13497cde6c1); no NT 10-K/NT 10-Q in index since 2025-10-01.",
+   "label": "VERIFIED_FACT",
+   "value": "2026-02-25",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "CF 10-K via Robinhood SEC feed",
+     "url": "5be5ff01-cb42-4732-b48c-4f5b7dc4c217",
+     "type": "10-K",
+     "published": "2026-02-25",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "CF 10-Q via Robinhood SEC feed",
+     "url": "27bc3b34-bff9-4d23-a9ad-c13497cde6c1",
+     "type": "10-Q",
+     "published": "2026-08-06",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "CF-2",
+   "text": "Last trade 117.33 as of 2026-10-05T18:35:00Z.",
+   "label": "VERIFIED_FACT",
+   "value": 117.33,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_quotes CF",
+     "url": "robinhood:get_equity_quotes",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "CF-3",
+   "text": "Trailing P/E 8.53 (Robinhood fundamentals).",
+   "label": "VERIFIED_FACT",
+   "value": 8.53,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals CF",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "x"
+  },
+  {
+   "id": "CF-4",
+   "text": "Price vs 52w high: 117.33/141.96-1 = -17.3%.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -17.3,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_quotes CF",
+     "url": "robinhood:get_equity_quotes",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals CF",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "CF-5",
+   "text": "Peer trailing P/E: NTR P/E 14.19; MOS P/E -10.44. Median of positive peer P/Es = 14.19; CF discount = 8.53/14.19-1 = -39.9%.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -39.9,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals NTR",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals MOS",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "CF-6",
+   "text": "Next catalyst: Q3 2026 results after market close; call 2026-11-05 11:00 ET on 2026-11-04.",
+   "label": "VERIFIED_FACT",
+   "value": "2026-11-04",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "CF Industries Announces Planned Schedule for Quarterly Financial Results to be Released in 2026",
+     "url": "https://ir.cfindustries.com/Investors/news/news-details/2026/CF-Industries-Holdings-Inc--Announces-Planned-Schedule-for-Quarterly-Financial-Results-to-be-Released-in-2026/default.aspx",
+     "type": "company_announcement",
+     "published": "2026-01-21",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "CF-7",
+   "text": "Filing-derived fundamentals (revenue, operating income, FCF, net debt / sector metrics) UNAVAILABLE: Robinhood SEC feed returned no XBRL facts and no filing text for the 10-K and latest 10-Q.",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "CF 10-K via Robinhood SEC feed",
+     "url": "5be5ff01-cb42-4732-b48c-4f5b7dc4c217",
+     "type": "10-K",
+     "published": "2026-02-25",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "CF-8",
+   "text": "Market prices CF at ~8.5x trailing P/E, 17% below its 52w high, vs NTR at 14.2x; the market appears to treat recent nitrogen earnings as cyclical peak. Bull view: low-cost US natural-gas feedstock position sustains above-cycle margins. Filing fundamentals could not be retrieved, so this is ANALYTICAL_INFERENCE only.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": null,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals CF",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "thesis": {
+  "mispricing": "Market prices CF at ~8.5x trailing P/E, 17% below its 52w high, vs NTR at 14.2x; the market appears to treat recent nitrogen earnings as cyclical peak. Bull view: low-cost US natural-gas feedstock position sustains above-cycle margins. Filing fundamentals could not be retrieved, so this is ANALYTICAL_INFERENCE only.",
+  "what_changes_it": [
+   "Q3 2026 results (2026-11-04) showing nitrogen price/margin compression",
+   "US natural gas price spike narrowing feedstock advantage",
+   "Retrieval of 10-K/10-Q facts contradicting FCF/net debt from TradingView screen"
+  ],
+  "supporting_claim_ids": [
+   "CF-3",
+   "CF-4",
+   "CF-5",
+   "CF-8"
+  ]
+ },
+ "bear_case": {
+  "summary": "See work/bear/ (bear analyst owns this).",
+  "risks": [
+   "Q3 2026 results (2026-11-04) showing nitrogen price/margin compression",
+   "US natural gas price spike narrowing feedstock advantage",
+   "Retrieval of 10-K/10-Q facts contradicting FCF/net debt from TradingView screen"
+  ],
+  "completed_before_bull": true
+ },
+ "valuation": {
+  "method": "Trailing P/E vs 3 named peers (Robinhood fundamentals); own-history multiple UNAVAILABLE (no historical P/E or filing EPS series)",
+  "claim_ids": [
+   "CF-3",
+   "CF-5"
+  ],
+  "notes": "Peers: NTR, MOS. Negative P/Es excluded from median."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 results after market close; call 2026-11-05 11:00 ET",
+   "date": "2026-11-04",
+   "date_confirmed": true,
+   "source": {
+    "title": "CF Industries Announces Planned Schedule for Quarterly Financial Results to be Released in 2026",
+    "url": "https://ir.cfindustries.com/Investors/news/news-details/2026/CF-Industries-Holdings-Inc--Announces-Planned-Schedule-for-Quarterly-Financial-Results-to-be-Released-in-2026/default.aspx",
+    "type": "company_announcement",
+    "published": "2026-01-21",
+    "accessed": "2026-10-05T18:35:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "Index lists Form 4 filings in the last 6 months (since 2026-04-05): 11 on 2026-04-30, 1 on 2026-05-28 (plus Form 3s 2026-04-08, 2026-05-28). Contents (buy/sell, size) UNAVAILABLE: filing text not served. Earlier cluster Mar 2026 outside 6-month window.",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "CF-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [
+   "CF-7"
+  ],
+  "issues": [
+   "No filing-derived fundamentals"
+  ],
+  "checked_at": "2026-10-05T18:35:00Z"
+ },
+ "gates": {
+  "filing_fundamentals_sourced": false,
+  "catalyst_confirmed_company_source": true
+ },
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "data_gaps": [
+  "Filing XBRL facts/text",
+  "CIK",
+  "own-history valuation",
+  "13F",
+  "short interest",
+  "Form 4 contents",
+  "going-concern/auditor-change text"
+ ]
+}

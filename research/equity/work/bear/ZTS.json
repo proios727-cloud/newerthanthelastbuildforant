@@ -1,0 +1,219 @@
+{
+  "ticker": "ZTS",
+  "company": "Zoetis",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T18:45:00Z",
+  "bear_case": {
+    "summary": "ZTS is -52% from its 52w high because its growth engine broke: US companion-animal sales fell 11% with Librela down sharply on safety concerns, lawsuits and competition, and 2026 guidance was cut (EPS $6.85-7.00). At ~11x, the market is pricing ex-growth; risk is that franchise erosion (Simparica/Apoquel competition, vet visit declines) continues and net debt (1.86x) limits flexibility.",
+    "risks": [
+      "Librela safety/litigation overhang drives label changes or further declines",
+      "Dermatology/parasiticide competition (generic/novel entrants) erodes Apoquel/Simparica",
+      "Vet visit volume decline as consumers cut spend",
+      "Further guidance cuts",
+      "Leverage limits buyback support"
+    ],
+    "completed_before_bull": true
+  },
+  "risks_detail": [
+    {
+      "risk": "Librela safety/litigation overhang drives label changes or further declines",
+      "evidence": [
+        "Librela US Q4 revenue -32% to $36M; lawsuits and safety concerns cited (zms)"
+      ],
+      "likelihood": "MEDIUM-HIGH",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "FDA CVM label/adverse-event updates; litigation filings"
+    },
+    {
+      "risk": "Dermatology/parasiticide competition (generic/novel entrants) erodes Apoquel/Simparica",
+      "evidence": [
+        "Competitive pressure cited in guidance cut (zm)"
+      ],
+      "likelihood": "MEDIUM-HIGH",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Segment revenue in Q3 print 2026-11-05"
+    },
+    {
+      "risk": "Vet visit volume decline as consumers cut spend",
+      "evidence": [
+        "Pet owners curbing vet spending (zm)"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Industry clinic visit data; IDXX volume commentary"
+    },
+    {
+      "risk": "Further guidance cuts",
+      "evidence": [
+        "Guidance already cut once: revenue $9.68-9.96B (zms)"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Q3 2026 (2026-11-05) guidance"
+    },
+    {
+      "risk": "Leverage limits buyback support",
+      "evidence": [
+        "ND/EBITDA 1.86 (screen)"
+      ],
+      "likelihood": "LOW-MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Debt issuance 8-Ks"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "Possible inventory destocking/channel effects muddy organic demand",
+    "Litigation contingency reserves for Librela UNAVAILABLE",
+    "ROE 64% inflated by buyback-reduced equity"
+  ],
+  "value_trap_assessment": "Plausible value trap: low multiple vs history reflects a genuine structural growth reset, not just sentiment. Cheapness without stabilization in Librela/derm trends is not a margin of safety.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:45:00Z",
+  "claims": [
+    {
+      "id": "ZTS-1",
+      "text": "2026 adjusted EPS guidance lowered to $6.85-$7.00 from $7.00-$7.10; revenue to $9.68-9.96B",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "MarketScreener: Zoetis plunges on earnings miss and lowered guidance",
+          "url": "https://in.marketscreener.com/news/zoetis-plunges-on-earnings-miss-and-lowered-guidance-ce7f5bdada81f620",
+          "type": "secondary",
+          "published": "2026-05-07",
+          "accessed": "2026-10-05T18:45:00Z"
+        },
+        {
+          "title": "Zoetis cuts outlook as pet owners curb vet spending",
+          "url": "https://www.thepoultrysite.com/news/2026/05/zoetis-cuts-outlook-as-pet-owners-curb-vet-spending",
+          "type": "secondary",
+          "published": "2026-05-07",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ZTS-2",
+      "text": "US revenue fell 8% to $1.09B with companion-animal -11% in the reported quarter",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Zoetis cuts outlook as pet owners curb vet spending",
+          "url": "https://www.thepoultrysite.com/news/2026/05/zoetis-cuts-outlook-as-pet-owners-curb-vet-spending",
+          "type": "secondary",
+          "published": "2026-05-07",
+          "accessed": "2026-10-05T18:45:00Z"
+        },
+        {
+          "title": "MarketScreener: Zoetis plunges on earnings miss and lowered guidance",
+          "url": "https://in.marketscreener.com/news/zoetis-plunges-on-earnings-miss-and-lowered-guidance-ce7f5bdada81f620",
+          "type": "secondary",
+          "published": "2026-05-07",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ZTS-3",
+      "text": "Librela US Q4 revenue -32% to $36M",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "MarketScreener: Zoetis plunges on earnings miss and lowered guidance",
+          "url": "https://in.marketscreener.com/news/zoetis-plunges-on-earnings-miss-and-lowered-guidance-ce7f5bdada81f620",
+          "type": "secondary",
+          "published": "2026-05-07",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 36,
+      "unit": "USD millions"
+    },
+    {
+      "id": "ZTS-4",
+      "text": "Stock -52.1% vs 52w high; P/E 11.7; ND/EBITDA 1.86 (TV)",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "work/screen.md (TradingView screen, single-source)",
+          "url": "work/screen.md",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ZTS-5",
+      "text": "Price 71.12",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Robinhood equity quotes 2026-10-05 ~18:35Z",
+          "url": "robinhood:get_equity_quotes",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": false,
+      "value": 71.12,
+      "unit": "USD"
+    },
+    {
+      "id": "ZTS-6",
+      "text": "Companion-animal franchise decline is structural",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Zoetis cuts outlook as pet owners curb vet spending",
+          "url": "https://www.thepoultrysite.com/news/2026/05/zoetis-cuts-outlook-as-pet-owners-curb-vet-spending",
+          "type": "secondary",
+          "published": "2026-05-07",
+          "accessed": "2026-10-05T18:45:00Z"
+        },
+        {
+          "title": "MarketScreener: Zoetis plunges on earnings miss and lowered guidance",
+          "url": "https://in.marketscreener.com/news/zoetis-plunges-on-earnings-miss-and-lowered-guidance-ce7f5bdada81f620",
+          "type": "secondary",
+          "published": "2026-05-07",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ZTS-7",
+      "text": "Q2 2026 results (8-K 2026-08-06) content",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Zoetis 8-K 2026-08-06 via Robinhood SEC feed (contents not extracted)",
+          "url": "robinhood:sec/56913282-2872-465c-95b7-7daac8fddffa",
+          "type": "8-K",
+          "published": "2026-08-06",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": "UNAVAILABLE",
+      "unit": null
+    }
+  ],
+  "data_gaps": [
+    "CIK UNAVAILABLE",
+    "Q2 2026 results not extracted (XBRL empty); guidance figures from May secondary coverage \u2014 may have changed in August",
+    "Librela litigation reserve UNAVAILABLE",
+    "Secondary-press guidance figures need primary confirm"
+  ]
+}
