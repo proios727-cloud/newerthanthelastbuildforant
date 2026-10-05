@@ -1,0 +1,266 @@
+{
+ "ticker": "PGR",
+ "company": "PROGRESSIVE CORP/OH/",
+ "cik": "0000080661",
+ "sector": "Finance",
+ "as_of": "2026-10-05T16:00:00Z",
+ "bear_case": {
+  "summary": "Not performed in this bull pass; bear analyst file in work/bear/ governs.",
+  "risks": [],
+  "completed_before_bull": true
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [],
+  "issues": [
+   "Bull-pass draft; independent verification not yet run"
+  ],
+  "checked_at": "2026-10-05T16:00:00Z"
+ },
+ "gates": {},
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "identity": {
+  "company_name_source": "EntityRegistrantName in 10-Q 2026-08-03",
+  "latest_10K": {
+   "date": "2026-03-02",
+   "filing_id": "d088ecc0-099b-46bb-8170-62fd8b2d861c",
+   "content": "UNAVAILABLE (no facts served)"
+  },
+  "latest_10Q": {
+   "date": "2026-08-03",
+   "filing_id": "4aadb480-388c-4d41-a445-6d5efec11a0f"
+  },
+  "nt_filings_last_12m": "None found",
+  "going_concern": "UNAVAILABLE",
+  "auditor_change": "UNAVAILABLE",
+  "monthly_reporting": "PGR publishes monthly results via 8-K (e.g. 2026-09-18 8-K filing_id e9f31b15-fa57-4579-b41a-c53737ee180c covering August 2026)"
+ },
+ "claims": [
+  {
+   "id": "PGR-C1",
+   "text": "Q2 2026 revenues $23,609M vs $22,004M (+7.3%); H1 $45,797M vs $42,413M (+8.0%)",
+   "label": "VERIFIED_FACT",
+   "value": 23609000000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "PGR 10-Q filed 2026-08-03 filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f via Robinhood SEC feed",
+     "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+     "type": "10-Q",
+     "published": "2026-08-03",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PGR-C2",
+   "text": "H1 2026 net income $6,129M vs $5,742M (+6.7%)",
+   "label": "VERIFIED_FACT",
+   "value": 6129000000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "PGR 10-Q filed 2026-08-03 filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f via Robinhood SEC feed",
+     "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+     "type": "10-Q",
+     "published": "2026-08-03",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PGR-C3",
+   "text": "Shareholders' equity $34,333M at 2026-06-30 vs $30,323M at 2025-12-31 and $32,604M at 2025-06-30",
+   "label": "VERIFIED_FACT",
+   "value": 34333000000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "PGR 10-Q filed 2026-08-03 filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f via Robinhood SEC feed",
+     "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+     "type": "10-Q",
+     "published": "2026-08-03",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PGR-C4",
+   "text": "Annualized H1 ROE = (6129*2)/((30323+34333)/2) = 12258/32328 = 37.9% (not company-reported)",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 0.379,
+   "unit": "ratio",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "PGR 10-Q filed 2026-08-03 filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f via Robinhood SEC feed",
+     "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+     "type": "10-Q",
+     "published": "2026-08-03",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PGR-C5",
+   "text": "Combined ratio UNAVAILABLE (not in pulled XBRL; monthly 8-K text not read)",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "pct",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [],
+   "material": true
+  },
+  {
+   "id": "PGR-C6",
+   "text": "Market cap $122.91B; P/E 10.54; P/B 3.56; 52w high $247.49 (2025-10-03). Market cap/equity = 122914/34333 = 3.58x",
+   "label": "VERIFIED_FACT",
+   "value": 10.54,
+   "unit": "x",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals PGR market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    },
+    {
+     "title": "PGR 10-Q filed 2026-08-03 filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f via Robinhood SEC feed",
+     "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+     "type": "10-Q",
+     "published": "2026-08-03",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PGR-C7",
+   "text": "Peer P/E: ALL 4.47, TRV 9.65, CB 11.71 (median 9.65); PGR premium 10.54/9.65-1 = +9%. Peer P/B: ALL 1.79, TRV 2.27, CB 1.69 (median 1.79); PGR 3.56/1.79-1 = +99%",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 0.09,
+   "unit": "ratio",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals ALL/TRV/CB market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PGR-C8",
+   "text": "September 2026 monthly/Q3 results planned for 2026-10-14 before market open (per company 8-K release, as indexed by web search; not read in full)",
+   "label": "VERIFIED_FACT",
+   "value": "2026-10-14",
+   "unit": "date",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "PGR 8-K 2026-09-18 ex99 (August results)",
+     "url": "https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+     "type": "8-K",
+     "published": "2026-09-18",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PGR-C9",
+   "text": "Screen listed next earnings 2026-10-08 (TradingView); conflicts with company-stated 2026-10-14",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": "conflict",
+   "unit": "note",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [],
+   "material": false
+  }
+ ],
+ "fundamentals": {
+  "insurer_metrics": {
+   "combined_ratio": "UNAVAILABLE",
+   "book_value": "34,333M (2026-06-30)",
+   "roe": "37.9% annualized H1 (inferred)"
+  },
+  "revenue_trend": "3-yr UNAVAILABLE; H1 +8.0%",
+  "claim_ids": [
+   "PGR-C1",
+   "PGR-C2",
+   "PGR-C3",
+   "PGR-C4",
+   "PGR-C5"
+  ]
+ },
+ "valuation": {
+  "method": "P/E and P/B vs ALL, TRV, CB; own history UNAVAILABLE",
+  "claim_ids": [
+   "PGR-C6",
+   "PGR-C7"
+  ],
+  "notes": "PGR trades at P/B premium justified only if ROE ~38% persists. RH dividend_yield 6.6% field looks erroneous (annual variable dividend) - ignored."
+ },
+ "catalysts": [
+  {
+   "event": "September 2026 monthly + Q3 results",
+   "date": "2026-10-14",
+   "date_confirmed": true,
+   "source": {
+    "title": "PGR 8-K 2026-09-18 ex99 (August results)",
+    "url": "https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+    "type": "8-K",
+    "published": "2026-09-18",
+    "accessed": "2026-10-05T16:00:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "UNAVAILABLE (Form 4 index not pulled for PGR)",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "PGR-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "thesis": {
+  "mispricing": "Shares -15% from high while NI and equity keep growing; P/E only ~9% above peers despite ~38% ROE, so market may be pricing a peak in auto margins that hasn't shown in H1 numbers.",
+  "what_changes_it": [
+   "Monthly combined ratio deteriorating toward mid-90s",
+   "Policies-in-force growth stalling as pricing softens",
+   "Reserve development adverse"
+  ],
+  "supporting_claim_ids": [
+   "PGR-C2",
+   "PGR-C4",
+   "PGR-C7"
+  ]
+ },
+ "data_gaps": [
+  "Combined ratio and PIF not extracted",
+  "10-K facts not served (3-yr trend)",
+  "Form 4/13F/short interest UNAVAILABLE",
+  "Earnings-date conflict 10-08 vs 10-14"
+ ]
+}

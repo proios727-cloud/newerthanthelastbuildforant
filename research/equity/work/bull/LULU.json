@@ -1,0 +1,331 @@
+{
+ "ticker": "LULU",
+ "company": "lululemon athletica inc.",
+ "cik": "0001397187",
+ "sector": "Consumer Non-Durables",
+ "as_of": "2026-10-05T16:00:00Z",
+ "bear_case": {
+  "summary": "Not performed in this bull pass; bear analyst file in work/bear/ governs.",
+  "risks": [],
+  "completed_before_bull": true
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [],
+  "issues": [
+   "Bull-pass draft; independent verification not yet run"
+  ],
+  "checked_at": "2026-10-05T16:00:00Z"
+ },
+ "gates": {},
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "identity": {
+  "company_name_source": "EntityRegistrantName / EntityCentralIndexKey in 10-K 2026-03-17",
+  "latest_10K": {
+   "date": "2026-03-17",
+   "filing_id": "95348e5b-8731-414a-adf2-8422337ed60f"
+  },
+  "latest_10Q": {
+   "date": "2026-09-03",
+   "filing_id": "7159d6a4-593c-45e8-9301-438de3f6d4d7"
+  },
+  "nt_filings_last_12m": "None found",
+  "going_concern": "UNAVAILABLE (text not read)",
+  "auditor_change": "UNAVAILABLE"
+ },
+ "claims": [
+  {
+   "id": "LULU-C1",
+   "text": "Revenue FY2023 $9,619.3M, FY2024 $10,588.1M, FY2025 $11,102.6M (+10.1%, +4.9%)",
+   "label": "VERIFIED_FACT",
+   "value": 11102600000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "LULU 10-K filed 2026-03-17 filing_id 95348e5b-8731-414a-adf2-8422337ed60f via Robinhood SEC feed",
+     "url": "robinhood-sec:95348e5b-8731-414a-adf2-8422337ed60f",
+     "type": "10-K",
+     "published": "2026-03-17",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C2",
+   "text": "Operating income FY2023 $2,132.7M, FY2024 $2,505.7M, FY2025 $2,210.6M (margins 22.2%, 23.7%, 19.9%)",
+   "label": "VERIFIED_FACT",
+   "value": 2210600000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "LULU 10-K filed 2026-03-17 filing_id 95348e5b-8731-414a-adf2-8422337ed60f via Robinhood SEC feed",
+     "url": "robinhood-sec:95348e5b-8731-414a-adf2-8422337ed60f",
+     "type": "10-K",
+     "published": "2026-03-17",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C3",
+   "text": "FCF = CFO - capex: FY2023 2296.2-651.9=1,644.3M; FY2024 2272.7-689.2=1,583.5M; FY2025 1602.5-680.8=921.7M",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 921700000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "LULU 10-K filed 2026-03-17 filing_id 95348e5b-8731-414a-adf2-8422337ed60f via Robinhood SEC feed",
+     "url": "robinhood-sec:95348e5b-8731-414a-adf2-8422337ed60f",
+     "type": "10-K",
+     "published": "2026-03-17",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C4",
+   "text": "H1 FY2026 revenue $4,887.2M vs $4,895.9M (-0.2%); Q2 $2,415.6M vs $2,525.2M (-4.3%); H1 OI $730.6M vs $962.4M (-24.1%)",
+   "label": "VERIFIED_FACT",
+   "value": 4887200000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "LULU 10-Q filed 2026-09-03 filing_id 7159d6a4-593c-45e8-9301-438de3f6d4d7 via Robinhood SEC feed",
+     "url": "robinhood-sec:7159d6a4-593c-45e8-9301-438de3f6d4d7",
+     "type": "10-Q",
+     "published": "2026-09-03",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C5",
+   "text": "H1 FY2026 FCF = 589.3-277.1 = $312.2M (vs 209.7-330.2 = -$120.4M H1 FY2025)",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 312200000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "LULU 10-Q filed 2026-09-03 filing_id 7159d6a4-593c-45e8-9301-438de3f6d4d7 via Robinhood SEC feed",
+     "url": "robinhood-sec:7159d6a4-593c-45e8-9301-438de3f6d4d7",
+     "type": "10-Q",
+     "published": "2026-09-03",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C6",
+   "text": "Cash incl. restricted $1,389.7M at 2026-08-02; no LongTermDebt tag in 10-K/10-Q facts -> net debt UNAVAILABLE (leases excluded)",
+   "label": "VERIFIED_FACT",
+   "value": 1389700000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "LULU 10-Q filed 2026-09-03 filing_id 7159d6a4-593c-45e8-9301-438de3f6d4d7 via Robinhood SEC feed",
+     "url": "robinhood-sec:7159d6a4-593c-45e8-9301-438de3f6d4d7",
+     "type": "10-Q",
+     "published": "2026-09-03",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C7",
+   "text": "Market cap $10.69B, P/E 7.74, P/B 2.20; at 52w low $91.28 (2026-10-05) vs high $225.98 (-59%)",
+   "label": "VERIFIED_FACT",
+   "value": 7.74,
+   "unit": "x",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals LULU market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C8",
+   "text": "Peer P/E: NKE 16.23, ONON 20.47, DECK 11.23 (median 16.23); LULU 7.74/16.23-1 = -52%",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -0.52,
+   "unit": "ratio",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals NKE/ONON/DECK market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C9",
+   "text": "FY2025 FCF yield on current cap = 921.7/10693 = 8.6%",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 0.086,
+   "unit": "ratio",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "LULU 10-K filed 2026-03-17 filing_id 95348e5b-8731-414a-adf2-8422337ed60f via Robinhood SEC feed",
+     "url": "robinhood-sec:95348e5b-8731-414a-adf2-8422337ed60f",
+     "type": "10-K",
+     "published": "2026-03-17",
+     "accessed": "2026-10-05T16:00:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals LULU market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C10",
+   "text": "Company guided Q3 FY2026 revenue $2.290-2.320B (-10% to -11%) and cut FY26 view (reported by secondary press; company 8-K ex99.1 not read directly)",
+   "label": "VERIFIED_FACT",
+   "value": "2.29-2.32B",
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "RTTNews LULU Q2",
+     "url": "https://www.rttnews.com/3688476/lululemon-athletica-q2-results-drop-warns-on-weak-q3-revenues-cuts-fy26-view-stock-down-18.aspx",
+     "type": "secondary",
+     "published": "2026-09-03",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "LULU-C11",
+   "text": "China Mainland revenue FY2024 $1,361.3M -> FY2025 $1,754.8M (+28.9%); Americas $7,928.2M -> $7,847.0M (-1.0%)",
+   "label": "VERIFIED_FACT",
+   "value": 1754800000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "LULU 10-K filed 2026-03-17 filing_id 95348e5b-8731-414a-adf2-8422337ed60f via Robinhood SEC feed",
+     "url": "robinhood-sec:95348e5b-8731-414a-adf2-8422337ed60f",
+     "type": "10-K",
+     "published": "2026-03-17",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "fundamentals": {
+  "revenue_3yr": [
+   9619.3,
+   10588.1,
+   11102.6
+  ],
+  "operating_income_3yr": [
+   2132.7,
+   2505.7,
+   2210.6
+  ],
+  "fcf_3yr": [
+   1644.3,
+   1583.5,
+   921.7
+  ],
+  "net_debt": "UNAVAILABLE (cash 1,389.7M)",
+  "units": "USD millions, fiscal years ending Jan/Feb",
+  "claim_ids": [
+   "LULU-C1",
+   "LULU-C2",
+   "LULU-C3",
+   "LULU-C4",
+   "LULU-C5",
+   "LULU-C6"
+  ]
+ },
+ "valuation": {
+  "method": "P/E vs NKE, ONON, DECK; FCF yield",
+  "claim_ids": [
+   "LULU-C7",
+   "LULU-C8",
+   "LULU-C9"
+  ],
+  "notes": "Own-history multiples UNAVAILABLE. FCF trend falling, so trailing FCF yield overstates if decline continues."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 FY2026 earnings (TradingView est. 2026-12-03)",
+   "date": "2026-12-03",
+   "date_confirmed": false,
+   "source": {
+    "title": "work/screen.md TradingView",
+    "url": "work/tv_raw_2026-10-05.json",
+    "type": "market_data",
+    "published": "2026-10-05",
+    "accessed": "2026-10-05T16:00:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "UNAVAILABLE (Form 4 index not pulled)",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "LULU-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "thesis": {
+  "mispricing": "At 7.7x earnings, half of peer median, and ~8.6% trailing FCF yield, the price implies sustained decline; H1 revenue was flat and H1 FCF improved y/y, so the market may be extrapolating Americas weakness while China grew 1,361->1,755M.",
+  "what_changes_it": [
+   "Q3 revenue below -11% guide",
+   "Further operating-margin compression below ~15%",
+   "Inventory build or markdown cycle"
+  ],
+  "supporting_claim_ids": [
+   "LULU-C4",
+   "LULU-C5",
+   "LULU-C8",
+   "LULU-C9",
+   "LULU-C11"
+  ]
+ },
+ "data_gaps": [
+  "Debt/lease figures -> net debt UNAVAILABLE",
+  "Form 4/13F/short interest UNAVAILABLE",
+  "Earnings date unconfirmed by company",
+  "Guidance sourced via secondary press"
+ ]
+}
