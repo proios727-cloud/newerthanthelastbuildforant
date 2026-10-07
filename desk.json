@@ -160,6 +160,96 @@
       "task": "Post the receipts: funnel counts, paper NAV, P&L, exposure, drawdown, trades and vetoes. Grade each session.",
       "done": "One report per session, with every number taken from the ledger.",
       "trigger": "08:30 ET pre-market · 16:15 ET close · 00:00 ET crypto day roll"
+    },
+    {
+      "id": "opt_scout",
+      "name": "Premium Scout",
+      "role": "scanner",
+      "color": "blue",
+      "status": "idle",
+      "task": "Scan the live SPY chain for put spreads and iron condors outside the GEX walls; post candidates with credit, max loss, breakevens and chain timestamp.",
+      "done": "Every candidate cites strikes, credit, width and the chain snapshot it came from.",
+      "trigger": "Market open · 10:00 · 14:00 ET"
+    },
+    {
+      "id": "opt_greeks",
+      "name": "Greeks/GEX Risk",
+      "role": "risk",
+      "color": "red",
+      "status": "idle",
+      "task": "Veto premium trades in negative-gamma regimes when the short strike sits inside the walls, or when size exceeds the snowball fraction.",
+      "done": "Each candidate gets PASS with max contracts, or VETO with the rule it broke.",
+      "trigger": "On every Premium Scout candidate"
+    },
+    {
+      "id": "opt_exit",
+      "name": "Exit Manager",
+      "role": "exit",
+      "color": "amber",
+      "status": "idle",
+      "task": "Watch open spreads: take profit at 50% of credit, preview a close when spot breaches a short strike or 1 day before expiry.",
+      "done": "Every open spread has a live take-profit and breach level.",
+      "trigger": "Every 15 min in market hours"
+    },
+    {
+      "id": "k_quoter",
+      "name": "Kalshi Quoter",
+      "role": "entry",
+      "color": "green",
+      "status": "idle",
+      "task": "Build maker YES/NO pair previews on BTC/ETH 15-min markets that lock at least the edge; paper/shadow only.",
+      "done": "Each quote logged to the shadow log with book, proposal and lock.",
+      "trigger": "Every new 15-min window"
+    },
+    {
+      "id": "k_settle",
+      "name": "Settlement Verifier",
+      "role": "intel",
+      "color": "violet",
+      "status": "idle",
+      "task": "Judge each new market's rules with TypeSafe: settles on the CF Benchmarks 60-second average? Only a confident yes unlocks quoting.",
+      "done": "Every quoted ticker has a cached, confident verification.",
+      "trigger": "On each new ticker"
+    },
+    {
+      "id": "k_fills",
+      "name": "Fill Auditor",
+      "role": "reporter",
+      "color": "blue",
+      "status": "idle",
+      "task": "Reconcile shadow fills against settlement and report realized lock, adverse selection and fees.",
+      "done": "Daily fill report with no unexplained rows.",
+      "trigger": "Daily 00:05 ET"
+    },
+    {
+      "id": "sb_lines",
+      "name": "Line Watcher",
+      "role": "scanner",
+      "color": "blue",
+      "status": "idle",
+      "task": "Track odds snapshots for steam, reverse line moves and volume anomalies; compute no-vig fair and EV%.",
+      "done": "Each flagged move has before/after odds and the books involved.",
+      "trigger": "Every 5 min on game days"
+    },
+    {
+      "id": "sb_cause",
+      "name": "News-Cause Judge",
+      "role": "custom",
+      "color": "violet",
+      "status": "idle",
+      "task": "Use TypeSafe to classify why a line moved (injury, sharp money, weather, public) from cited news.",
+      "done": "Each flagged move has a cause label with probability and source.",
+      "trigger": "On every Line Watcher flag"
+    },
+    {
+      "id": "sb_sizer",
+      "name": "Bet Sizer",
+      "role": "risk",
+      "color": "red",
+      "status": "idle",
+      "task": "Size +EV bets at quarter-Kelly under the snowball drawdown kill; veto stale or unexplained moves.",
+      "done": "Each bet has stake, EV% and the kill-switch state.",
+      "trigger": "On each judged +EV flag"
     }
   ],
   "queue": [
@@ -307,6 +397,62 @@
       "key": "session_receipt",
       "timeout": "30m",
       "on_failure": "PM posts a minimal receipt: funnel counts and NAV only"
+    },
+    {
+      "from": "opt_scout",
+      "to": "opt_greeks",
+      "key": "spread_candidates",
+      "timeout": "15m",
+      "on_failure": "Candidates expire; next scan replaces them"
+    },
+    {
+      "from": "opt_greeks",
+      "to": "pm",
+      "key": "premium_pass",
+      "timeout": "15m",
+      "on_failure": "No PASS means no preview"
+    },
+    {
+      "from": "opt_exit",
+      "to": "pm",
+      "key": "exit_previews",
+      "timeout": "15m",
+      "on_failure": "PM escalates open spreads to the human"
+    },
+    {
+      "from": "k_settle",
+      "to": "k_quoter",
+      "key": "settlement_ok",
+      "timeout": "15m",
+      "on_failure": "Quoter stays flat on that ticker"
+    },
+    {
+      "from": "k_quoter",
+      "to": "k_fills",
+      "key": "shadow_quotes",
+      "timeout": "15m",
+      "on_failure": "Auditor marks the window as missing"
+    },
+    {
+      "from": "sb_lines",
+      "to": "sb_cause",
+      "key": "line_flags",
+      "timeout": "15m",
+      "on_failure": "Flags expire at next snapshot"
+    },
+    {
+      "from": "sb_cause",
+      "to": "sb_sizer",
+      "key": "cause_labels",
+      "timeout": "15m",
+      "on_failure": "Unexplained moves are skipped"
+    },
+    {
+      "from": "sb_sizer",
+      "to": "pm",
+      "key": "bet_previews",
+      "timeout": "15m",
+      "on_failure": "No preview goes to the human"
     }
   ],
   "gates": [

@@ -11,8 +11,8 @@ VERIFIED_MIN_P = 0.90
 QUESTION = judge.Question(
     "cfb_settlement", "noul",
     "Do the rules in `market.rules` state that this market settles on the CF Benchmarks real-time index "
-    "for `market.asset`, compared between the start and end of the single `market.window_min`-minute "
-    "window named in the rules? Answer no if another price source, an average over a different period, "
+    "for `market.asset`, comparing the sixty-second average of that index before the end of the single "
+    "`market.window_min`-minute window with the sixty-second average before its start? Answer no if another price source, an average over a different period, "
     "or a discretionary settlement is described.")
 
 
