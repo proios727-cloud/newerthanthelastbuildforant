@@ -1,0 +1,283 @@
+{
+ "ticker": "AMP",
+ "company": "Ameriprise Financial, Inc. (name per Robinhood profile; 10-K text UNAVAILABLE)",
+ "cik": "UNAVAILABLE",
+ "sector": "Finance",
+ "as_of": "2026-10-05T18:35:00Z",
+ "identity": {
+  "company_name_10k": "UNAVAILABLE (10-K text not served)",
+  "latest_10k": {
+   "date": "2026-02-19",
+   "filing_id": "efe05548-7a31-432d-b076-b1c438fa9d46"
+  },
+  "latest_10q": {
+   "date": "2026-08-04",
+   "filing_id": "770399d1-5ce0-4d1c-9ff1-add6b0961c60"
+  },
+  "nt_filings_12m": "None in index since 2025-10-01",
+  "going_concern": "UNAVAILABLE",
+  "auditor_change": "UNAVAILABLE (8-K item 4.01 content not readable)"
+ },
+ "fundamentals": {
+  "combined_ratio": "UNAVAILABLE",
+  "book_value_per_share": "UNAVAILABLE",
+  "roe": "UNAVAILABLE",
+  "aum": "UNAVAILABLE",
+  "trend_3y": "UNAVAILABLE"
+ },
+ "claims": [
+  {
+   "id": "AMP-1",
+   "text": "Latest 10-K filed 2026-02-19 (filing_id efe05548-7a31-432d-b076-b1c438fa9d46); latest 10-Q filed 2026-08-04 (filing_id 770399d1-5ce0-4d1c-9ff1-add6b0961c60); no NT 10-K/NT 10-Q in index since 2025-10-01.",
+   "label": "VERIFIED_FACT",
+   "value": "2026-02-19",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "AMP 10-K via Robinhood SEC feed",
+     "url": "efe05548-7a31-432d-b076-b1c438fa9d46",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "AMP 10-Q via Robinhood SEC feed",
+     "url": "770399d1-5ce0-4d1c-9ff1-add6b0961c60",
+     "type": "10-Q",
+     "published": "2026-08-04",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "AMP-2",
+   "text": "Last trade 496.265 as of 2026-10-05T18:35:00Z.",
+   "label": "VERIFIED_FACT",
+   "value": 496.265,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_quotes AMP",
+     "url": "robinhood:get_equity_quotes",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "AMP-3",
+   "text": "Trailing P/E 11.84 (Robinhood fundamentals).",
+   "label": "VERIFIED_FACT",
+   "value": 11.84,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals AMP",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "x"
+  },
+  {
+   "id": "AMP-4",
+   "text": "Price vs 52w high: 496.265/572.56-1 = -13.3%.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -13.3,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_quotes AMP",
+     "url": "robinhood:get_equity_quotes",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals AMP",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "AMP-5",
+   "text": "Peer trailing P/E: RJF P/E 13.79; LPLA P/E 25.23; SCHW P/E 17.58. Median of positive peer P/Es = 17.58; AMP discount = 11.84/17.58-1 = -32.7%.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -32.7,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals RJF",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals LPLA",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals SCHW",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "AMP-6",
+   "text": "Next catalyst: Q3 2026 results press release ~08:15 ET; investor call ~09:00 ET on 2026-10-29.",
+   "label": "VERIFIED_FACT",
+   "value": "2026-10-29",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Ameriprise Financial Announces Schedule for Third Quarter 2026 Investor Conference Call",
+     "url": "https://s205.q4cdn.com/618704162/files/doc_news/Ameriprise-Financial-Announces-Schedule-for-Third-Quarter-2026-Investor-Conference-Call-2026.pdf",
+     "type": "company_announcement",
+     "published": "2026-10-01",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "AMP-7",
+   "text": "Filing-derived fundamentals (revenue, operating income, FCF, net debt / sector metrics) UNAVAILABLE: Robinhood SEC feed returned no XBRL facts and no filing text for the 10-K and latest 10-Q.",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "AMP 10-K via Robinhood SEC feed",
+     "url": "efe05548-7a31-432d-b076-b1c438fa9d46",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "AMP-8",
+   "text": "AMP trades at ~11.8x trailing P/E vs RJF 13.8x, SCHW 17.6x, LPLA 25.2x, 13.3% below its 52w high. Bull view: market discounts AMP for its insurance/annuity (RiverSource) block despite a wealth-management-led earnings mix. AUM/ROE could not be sourced from filings.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": null,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals AMP",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "thesis": {
+  "mispricing": "AMP trades at ~11.8x trailing P/E vs RJF 13.8x, SCHW 17.6x, LPLA 25.2x, 13.3% below its 52w high. Bull view: market discounts AMP for its insurance/annuity (RiverSource) block despite a wealth-management-led earnings mix. AUM/ROE could not be sourced from filings.",
+  "what_changes_it": [
+   "Q3 results 2026-10-29 showing advisor net outflows or AUM decline",
+   "Equity market drawdown reducing fee-based assets",
+   "Adverse variable-annuity reserve/hedging charges"
+  ],
+  "supporting_claim_ids": [
+   "AMP-3",
+   "AMP-4",
+   "AMP-5",
+   "AMP-8"
+  ]
+ },
+ "bear_case": {
+  "summary": "See work/bear/ (bear analyst owns this).",
+  "risks": [
+   "Q3 results 2026-10-29 showing advisor net outflows or AUM decline",
+   "Equity market drawdown reducing fee-based assets",
+   "Adverse variable-annuity reserve/hedging charges"
+  ],
+  "completed_before_bull": true
+ },
+ "valuation": {
+  "method": "Trailing P/E vs 3 named peers (Robinhood fundamentals); own-history multiple UNAVAILABLE (no historical P/E or filing EPS series)",
+  "claim_ids": [
+   "AMP-3",
+   "AMP-5"
+  ],
+  "notes": "Peers: RJF, LPLA, SCHW. Negative P/Es excluded from median."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 results press release ~08:15 ET; investor call ~09:00 ET",
+   "date": "2026-10-29",
+   "date_confirmed": true,
+   "source": {
+    "title": "Ameriprise Financial Announces Schedule for Third Quarter 2026 Investor Conference Call",
+    "url": "https://s205.q4cdn.com/618704162/files/doc_news/Ameriprise-Financial-Announces-Schedule-for-Third-Quarter-2026-Investor-Conference-Call-2026.pdf",
+    "type": "company_announcement",
+    "published": "2026-10-01",
+    "accessed": "2026-10-05T18:35:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "Form 4 filings not returned in AMP index query (form filter excluded Form 4; not re-queried). UNAVAILABLE.",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "AMP-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [
+   "AMP-7"
+  ],
+  "issues": [
+   "No filing-derived fundamentals"
+  ],
+  "checked_at": "2026-10-05T18:35:00Z"
+ },
+ "gates": {
+  "filing_fundamentals_sourced": false,
+  "catalyst_confirmed_company_source": true
+ },
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "data_gaps": [
+  "Filing XBRL facts/text",
+  "CIK",
+  "own-history valuation",
+  "13F",
+  "short interest",
+  "Form 4 contents",
+  "going-concern/auditor-change text"
+ ]
+}

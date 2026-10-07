@@ -1,0 +1,102 @@
+{
+ "ticker": "ALL",
+ "status": "PASS_WITH_CAVEATS",
+ "checked_at": "2026-10-05T19:20:00Z",
+ "material_unsupported_claims": [],
+ "downgrades": [
+  {
+   "id": "bear ALL-9",
+   "from": "VERIFIED_FACT",
+   "to": "UNSUPPORTED (no sources, value UNAVAILABLE)",
+   "reason": "Replaced by fill ALL-F3/F4 (Tier 2)."
+  },
+  {
+   "id": "fill ALL-F1..F3",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 2",
+   "reason": "Fill-file sources cite sec.gov EX-99.1/10-Q URLs, but SEC is blocked and the fill files state 'EX-99.1 not read directly' -> search-excerpt only = Tier 2; all fill sources have published=null (date missing)."
+  },
+  {
+   "id": "fill ALL-F4",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 2/3",
+   "reason": "Cites allstatenewsroom (company, excerpt) and finviz (Tier 3) as type 8-K; mislabeled source type."
+  },
+  {
+   "id": "bull ALL-12",
+   "from": "ESTIMATE",
+   "to": "ESTIMATE (keep)",
+   "reason": "Catalyst date from TradingView only; fill found no company announcement."
+  }
+ ],
+ "arithmetic_errors": [
+  {
+   "id": "bull ALL-8",
+   "issue": "Minor: P/B 1.69 uses total equity incl. preferred and market cap 56,895.6M; RH re-pull shows mcap $56,813M and pb 1.79. Not material; label approximate."
+  }
+ ],
+ "arithmetic_checked": [
+  "ALL-6 10,165/avg(21,442,30,610)=10,165/26,026=39.06% OK",
+  "ALL-8 33,698/252.858=133.27 OK; 56,895.6/33,698=1.688 OK",
+  "ALL-9 225.01/277.22-1=-18.83% OK",
+  "ALL-10 4.47/10.54-1=-57.6% OK",
+  "TTM EPS 38.06-9.85+21.73=49.94; 225.01/49.94=4.51x OK",
+  "ADV $ ~3.09M x 225 = ~$696M"
+ ],
+ "applied_corrections": [
+  {
+   "claim_id": "bull ALL-11",
+   "now": "Q2 2026 P-L recorded combined ratio 86.6 (Tier 2)"
+  },
+  {
+   "claim_id": "bear ALL-9",
+   "now": "Q2 cat $1.72B; Jul $682M; Aug $748M (Tier 2/3)"
+  },
+  {
+   "claim_id": "bull ALL-12",
+   "now": "catalyst date stays ESTIMATE/unconfirmed"
+  }
+ ],
+ "tier1_spot_checks": [
+  "10-K bf8d7e80: Revenues FY23/24/25 57,094/64,106/67,685M CONFIRMED",
+  "10-K: diluted EPS -1.20/16.99/38.06 CONFIRMED; OCF 4,228/8,931/10,110M CONFIRMED; equity 17,770/21,442/30,610M CONFIRMED",
+  "10-Q 8cbfb0a7: Q2 rev 18,596M vs 16,633M, Q2 EPS 12.51 vs 7.76, H1 EPS 21.73 vs 9.85, equity 33,698M, Q2 NI 3,271M, H1 NI 5,728M CONFIRMED",
+  "XBRL entity 0000899051 CONFIRMED"
+ ],
+ "notes": [
+  "Bull ALL-13 premise 'catastrophe-light' is partly contradicted: Q2 cat losses $1.72B and Jul+Aug $1.43B (Tier 2); and $634M favorable auto reserve releases (6.6 pts) flatter the 86.6 CR - earnings quality caveat.",
+  "Bull ALL-1 NT check: index query filtered to 10-K/10-Q/8-K per bull positioning note; NT forms not explicitly queried by bull."
+ ],
+ "gates": {
+  "1_verifier_pass": "PASS_WITH_CAVEATS",
+  "2_identity": {
+   "status": "PASS",
+   "note": "XBRL entity 0000899051 in Tier 1 facts; RH profile The Allstate Corp."
+  },
+  "3_filings_current_no_NT": "PASS",
+  "4_going_concern_auditor": {
+   "status": "UNVERIFIABLE",
+   "note": "Filing text not served by Robinhood SEC feed (404); 8-K item 4.01 / auditor report not readable; EDGAR blocked."
+  },
+  "5_catalyst_180d_company_confirmed": {
+   "status": "FAIL",
+   "note": "2026-11-04 is TradingView-only; no company announcement found."
+  },
+  "6_bear_independent": {
+   "status": "PASS",
+   "note": "bear completed_at 2026-10-05T18:45Z (not earlier than 18:10Z). Caveat: bull as_of 18:35Z precedes bear completion; independence asserted by bear file only (completed_before_bull=true), not provable from artifacts."
+  },
+  "7_liquidity": {
+   "status": "PASS",
+   "adv_usd": "~$696M"
+  }
+ },
+ "tier_counts": {
+  "tier1": 12,
+  "tier2": 5,
+  "tier3": 1,
+  "market_data": 5,
+  "unsourced": 1
+ },
+ "date_checks": "No date after 2026-10-05 found. Fill sources lack published dates."
+}

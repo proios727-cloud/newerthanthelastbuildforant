@@ -1,0 +1,105 @@
+{
+ "ticker": "ZTS",
+ "status": "FAIL",
+ "checked_at": "2026-10-05T19:20:00Z",
+ "material_unsupported_claims": [
+  {
+   "id": "bull ZTS-5",
+   "issue": "Peer 'median' 75.89 is the mean of IDXX 36.43 and MRK 115.34 (ELAN excluded); MRK is a human-pharma major with a distorted 115x TTM P/E. Resulting -84.9% 'discount' is meaningless as mispricing evidence."
+  },
+  {
+   "id": "bull ZTS-8",
+   "issue": "'If earnings hold' is contradicted: FY2026 adj. EPS guidance cut 2026-08-06 to $6.15-6.25 (adj. NI organic -9% to -5%) per fill (Tier 2). Bull also cites 52w high 148.79 dated 2025-10-03, which is 367 days before as-of (outside a 52-week window per RH's own date) - the -52.2% drawdown framing is stale-anchored."
+  }
+ ],
+ "downgrades": [
+  {
+   "id": "bear ZTS-1, ZTS-2, ZTS-3",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 3 (and stale/wrong)",
+   "reason": "Sole sources MarketScreener and thepoultrysite (secondary). ZTS-1 guidance stale (May); ZTS-2 US revenue wrong; ZTS-3 'Librela US Q4' period mismatched to a May article."
+  },
+  {
+   "id": "bear ZTS-4",
+   "from": "VERIFIED_FACT",
+   "to": "market data, single-source TradingView",
+   "reason": "OK as market data; ND/EBITDA is not market data and is Tier 3."
+  },
+  {
+   "id": "fill ZTS-F1..F4",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 2",
+   "reason": "Fill-file sources cite sec.gov EX-99.1/10-Q URLs, but SEC is blocked and the fill files state 'EX-99.1 not read directly' -> search-excerpt only = Tier 2; all fill sources have published=null (date missing)."
+  },
+  {
+   "id": "fill ZTS-F4 (duplicate id)",
+   "from": "-",
+   "to": "-",
+   "reason": "Two claims share id ZTS-F4 (guidance and Form 4); id collision."
+  }
+ ],
+ "arithmetic_errors": [
+  {
+   "id": "bull ZTS-5",
+   "issue": "Arithmetic itself correct (11.46/75.885-1=-84.9%) but n=2 'median' with outlier; methodologically invalid."
+  }
+ ],
+ "arithmetic_checked": [
+  "ZTS-4 71.12/148.79-1=-52.20% OK",
+  "Implied fwd P/E on revised guidance 71.12/6.20 = ~11.5x",
+  "ADV $ ~4.16M x 71 = ~$296M"
+ ],
+ "applied_corrections": [
+  {
+   "claim_id": "bear ZTS-1",
+   "now": "Adj. EPS $6.15-6.25; revenue $9.120-9.320B (2026-08-06)"
+  },
+  {
+   "claim_id": "bear ZTS-2",
+   "now": "Q2 US segment $1.3B, -7%; US CA -11%"
+  },
+  {
+   "claim_id": "bear ZTS-7",
+   "now": "See ZTS-F1..F4"
+  }
+ ],
+ "tier1_spot_checks": [
+  "10-K acebff1f filed 2026-02-12 CONFIRMED",
+  "10-Q 0f84e098 filed 2026-08-06 CONFIRMED",
+  "No NT since 2025-10-01 CONFIRMED",
+  "XBRL facts 10-Q 0f84e098: EMPTY",
+  "RH P/E 11.464; 52wH 148.79 dated 2025-10-03; MRK P/E 115.34 CONFIRMED"
+ ],
+ "gates": {
+  "1_verifier_pass": "FAIL",
+  "2_identity": {
+   "status": "PASS_WITH_CAVEATS",
+   "note": "Index for symbol ZTS matches; CIK not in Tier 1."
+  },
+  "3_filings_current_no_NT": "PASS",
+  "4_going_concern_auditor": {
+   "status": "UNVERIFIABLE",
+   "note": "Filing text not served by Robinhood SEC feed (404); 8-K item 4.01 / auditor report not readable; EDGAR blocked."
+  },
+  "5_catalyst_180d_company_confirmed": {
+   "status": "PASS_WITH_CAVEATS",
+   "note": "Q3 call 2026-11-05 (31d), Business Wire release 2026-09-24, Tier 2."
+  },
+  "6_bear_independent": {
+   "status": "PASS",
+   "note": "bear completed_at 2026-10-05T18:45Z (not earlier than 18:10Z). Caveat: bull as_of 18:35Z precedes bear completion; independence asserted by bear file only (completed_before_bull=true), not provable from artifacts."
+  },
+  "7_liquidity": {
+   "status": "PASS",
+   "adv_usd": "~$296M"
+  }
+ },
+ "tier_counts": {
+  "tier1": 3,
+  "tier2": 5,
+  "tier3": 4,
+  "market_data": 6,
+  "unsourced": 0
+ },
+ "date_checks": "No date after 2026-10-05 found. Fill sources lack published dates."
+}

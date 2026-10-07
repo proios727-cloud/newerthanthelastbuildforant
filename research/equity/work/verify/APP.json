@@ -1,0 +1,106 @@
+{
+ "ticker": "APP",
+ "checked_at": "2026-10-05T19:05:00Z",
+ "status": "PASS",
+ "material_unsupported_claims": [],
+ "downgrades": [
+  {
+   "claim_id": "A4",
+   "file": "bear",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 3 secondary report (Bloomberg); not company/SEC-confirmed"
+  },
+  {
+   "claim_id": "APP-F3",
+   "file": "fill",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 3 secondary report"
+  },
+  {
+   "claim_id": "SI",
+   "file": "bull",
+   "from": "VERIFIED_FACT",
+   "to": "data gap"
+  },
+  {
+   "claim_id": "thesis.what_changes_it Q3 guide $2.06-2.08B",
+   "file": "bull",
+   "note": "secondary search, unverified; not a supporting claim"
+  }
+ ],
+ "arithmetic_errors": [],
+ "arithmetic_checked_ok": [
+  "mcap 283.55*334.651M=94.89B",
+  "net debt 3,515-3,053=462M",
+  "TTM rev 6,829.1; EBIT 5,288.4; NI 4,410.0; CFO 4,527.6",
+  "EV/EBIT 95.35/5.288=18.03x",
+  "P/E 21.52x",
+  "CFO yield 4.77%",
+  "Q2 rev +52.8%"
+ ],
+ "tier1_spot_checks": [
+  {
+   "concept": "OperatingIncomeLoss Q2 2026",
+   "filed": 1494.3,
+   "repulled": 1494.277,
+   "ok": true
+  },
+  {
+   "concept": "OperatingIncomeLoss H1 26/H1 25",
+   "filed": "2934.2/1797.7",
+   "repulled": "2934.21/1797.664",
+   "ok": true
+  },
+  {
+   "concept": "NetIncomeLoss H1 26/H1 25",
+   "filed": "2472.2/1396.0",
+   "repulled": "2472.151/1395.95",
+   "ok": true
+  },
+  {
+   "concept": "LongTermDebtNoncurrent",
+   "filed": 3515,
+   "repulled": 3515.072,
+   "ok": true
+  },
+  {
+   "concept": "Cash",
+   "filed": 3053,
+   "repulled": 3053.306,
+   "ok": true
+  }
+ ],
+ "applied_corrections": [
+  {
+   "source": "fill APP-F2",
+   "effect": "FCF not computable (no capex tag); APP-FCFY stays UNAVAILABLE; CFO yield is a proxy only"
+  }
+ ],
+ "notes": [
+  "APP-Q2 and APP-TREND cite both 10-K and 10-Q; quarterly figures come from the 10-Q only (citation imprecise, not material)",
+  "Material bear risk (SEC probe) rests only on Tier 3 - does not affect bull status but is unresolved"
+ ],
+ "gates": {
+  "1_verifier_pass": "PASS",
+  "2_identity": "PASS",
+  "3_filings_current_no_NT": "PASS",
+  "4_no_going_concern_or_auditor_resignation": "UNVERIFIABLE",
+  "5_dated_catalyst_180d_company_confirmed": "FAIL",
+  "6_bear_independent": "FAIL",
+  "7_liquidity": "PASS"
+ },
+ "gate_notes": {
+  "5": "RH 2026-11-04 verified=false vs TV 2026-11-11; not company-confirmed",
+  "6": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established.",
+  "7": "S&P 500, mcap ~$95B"
+ },
+ "tier_counts": {
+  "tier1": 12,
+  "tier2": 0,
+  "tier3": 3,
+  "market_data": 2,
+  "unsourced": 1
+ },
+ "bear_completed_at": "2026-10-05T16:00:00Z",
+ "bear_independence_flag": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established."
+}

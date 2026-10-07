@@ -1,0 +1,114 @@
+{
+ "ticker": "PGR",
+ "as_of": "2026-10-05T18:00:00Z",
+ "claims": [
+  {
+   "id": "PGR-F1",
+   "text": "Next report: September 2026 (Q3) results planned for 2026-10-14 before market open, per company IR event listing. 2026-10-08 (TradingView) is not supported by any company source. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": "2026-10-14",
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "company_announcement",
+     "url": "https://investor.progressive.com/events/events/event-details/2026/The-Progressive-Corporation-September-Earnings-Release/default.aspx",
+     "filing_id": "https://investor.progressive.com/events/events/event-details/2026/The-Progressive-Corporation-September-Earnings-Release/default.aspx",
+     "published": "2026-09-18",
+     "title": "The Progressive Corporation September Earnings Release (IR events page)",
+     "accessed": "2026-10-05T18:00:00Z"
+    },
+    {
+     "type": "8-K",
+     "url": "PGR 8-K 2026-09-18 filing_id e9f31b15-fa57-4579-b41a-c53737ee180c (EX-99 August results); https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+     "filing_id": "PGR 8-K 2026-09-18 filing_id e9f31b15-fa57-4579-b41a-c53737ee180c (EX-99 August results); https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+     "published": "2026-09-18",
+     "title": "Progressive Reports August 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PGR-F2",
+   "text": "August 2026 combined ratio 89.3 vs 83.1 in August 2025 (+6.2 pts). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 89.3,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "8-K",
+     "url": "PGR 8-K 2026-09-18 filing_id e9f31b15-fa57-4579-b41a-c53737ee180c (EX-99 August results); https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+     "filing_id": "PGR 8-K 2026-09-18 filing_id e9f31b15-fa57-4579-b41a-c53737ee180c (EX-99 August results); https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+     "published": "2026-09-18",
+     "title": "Progressive Reports August 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "percent"
+  },
+  {
+   "id": "PGR-F3",
+   "text": "August 2026 NPW $7,605M (+6%) vs $7,199M; net income $951M (-22%) vs $1,220M; EPS $1.63 vs $2.07; PIF 40.492M (+7%). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 951000000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "8-K",
+     "url": "PGR 8-K 2026-09-18 filing_id e9f31b15-fa57-4579-b41a-c53737ee180c (EX-99 August results); https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+     "filing_id": "PGR 8-K 2026-09-18 filing_id e9f31b15-fa57-4579-b41a-c53737ee180c (EX-99 August results); https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+     "published": "2026-09-18",
+     "title": "Progressive Reports August 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "PGR-F4",
+   "text": "YTD/Q2 combined ratio not retrieved.",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [],
+   "material": true
+  }
+ ],
+ "still_unavailable": [
+  "YTD 2026 combined ratio",
+  "Form 4 direction (4 filings 2026-08-17..09-28; text not served)",
+  "Robinhood SEC feed: get_sec_filing returned 404 'Filing content is not available' and get_sec_filing_facts/catalog returned empty for the filings tried (2026-10-05)."
+ ],
+ "corrections": [
+  {
+   "claim_id": "PGR-C5",
+   "file": "work/bull/PGR.json",
+   "issue": "Combined ratio marked UNAVAILABLE",
+   "correct_value": "August 2026 CR 89.3 (vs 83.1)",
+   "source": {
+    "type": "8-K",
+    "url": "PGR 8-K 2026-09-18 filing_id e9f31b15-fa57-4579-b41a-c53737ee180c (EX-99 August results); https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+    "filing_id": "PGR 8-K 2026-09-18 filing_id e9f31b15-fa57-4579-b41a-c53737ee180c (EX-99 August results); https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+    "published": "2026-09-18",
+    "title": "Progressive Reports August 2026 Results",
+    "accessed": "2026-10-05T18:00:00Z"
+   }
+  },
+  {
+   "claim_id": "PGR-C9",
+   "file": "work/bull/PGR.json",
+   "issue": "Date conflict",
+   "correct_value": "2026-10-14 (company); 10-08 is wrong",
+   "source": {
+    "type": "company_announcement",
+    "url": "https://investor.progressive.com/events/events/event-details/2026/The-Progressive-Corporation-September-Earnings-Release/default.aspx",
+    "filing_id": "https://investor.progressive.com/events/events/event-details/2026/The-Progressive-Corporation-September-Earnings-Release/default.aspx",
+    "published": "2026-09-18",
+    "title": "The Progressive Corporation September Earnings Release (IR events page)",
+    "accessed": "2026-10-05T18:00:00Z"
+   }
+  }
+ ]
+}

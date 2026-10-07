@@ -1,0 +1,393 @@
+{
+ "ticker": "APP",
+ "company": "AppLovin Corporation",
+ "cik": "0001751008",
+ "sector": "Technology Services",
+ "as_of": "2026-10-05T18:40:00Z",
+ "identity": {
+  "latest_10k": {
+   "filing_id": "fb4bba65-a69a-4cfe-99dd-7e0f1e5f64ea",
+   "filed": "2026-02-19"
+  },
+  "latest_10q": {
+   "filing_id": "7aa7ce18-ab1d-46fd-a598-1554eed113df",
+   "filed": "2026-08-05"
+  },
+  "nt_filings_12m": "none found in index",
+  "going_concern": "UNAVAILABLE (filing text not reviewed)",
+  "auditor_change": "UNAVAILABLE",
+  "company_name_source": "RH profile/XBRL entity; 10-K cover text not read"
+ },
+ "fundamentals": {
+  "trend_usd_bn": {
+   "FY2023": {
+    "rev": 1.842,
+    "ebit": 0.772,
+    "cfo": 1.062
+   },
+   "FY2024": {
+    "rev": 3.224,
+    "ebit": 1.911,
+    "cfo": 2.099
+   },
+   "FY2025": {
+    "rev": 5.481,
+    "ebit": 4.152,
+    "cfo": 3.971
+   },
+   "TTM_2026Q2": {
+    "rev": 6.829,
+    "ebit": 5.288,
+    "cfo": 4.528
+   }
+  },
+  "ttm_basis": "TTM to 2026-06-30"
+ },
+ "valuation": {
+  "method": "TTM EV/EBIT, P/E, FCF yield from filings + RH price",
+  "claim_ids": [
+   "APP-PX",
+   "APP-DEBT",
+   "APP-EVEBIT",
+   "APP-PE",
+   "APP-FCFY"
+  ],
+  "calc": {
+   "mcap_bn": 94.89,
+   "net_debt_bn": 0.46,
+   "ev_bn": 95.35,
+   "ev_ebit": 18.03,
+   "pe": 21.52,
+   "fcf_yield_pct": null
+  },
+  "own_history": "UNAVAILABLE (historical price/multiple series not pulled)",
+  "peers": {
+   "GOOGL": {
+    "pe_rh": 17.26
+   },
+   "META": {
+    "pe_rh": 27.43
+   },
+   "TTD": {
+    "pe_rh": 14.18
+   }
+  },
+  "notes": "Peer P/E is RH vendor TTM; peer EV/EBIT and FCF yield UNAVAILABLE (peer filings not pulled)."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 earnings",
+   "date": "2026-11-04",
+   "date_confirmed": false,
+   "source": {
+    "title": "RH earnings calendar 2026-11-04 pm verified=false; TV screen says 2026-11-11; no company announcement found",
+    "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+    "type": "market_data",
+    "published": "2026-10-05",
+    "accessed": "2026-10-05T18:40:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "49 Form 4 filings indexed in Robinhood SEC feed between 2026-04-05 and 2026-10-05 (first: 2026-04-17 (first page)). Transaction codes/direction (buy vs sell vs RSU withholding) NOT parsed - UNAVAILABLE; counts alone are not evidence of net buying or selling.",
+  "institutional_13f_summary": "UNAVAILABLE - no 13F source accessible (EDGAR blocked).",
+  "short_interest": {
+   "id": "SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "sources": [],
+   "material": false
+  }
+ },
+ "thesis": {
+  "mispricing": "Down ~61% from 52w high to ~18x TTM EV/EBIT despite Q2 revenue +53% and ~77% EBIT margin; market appears to be pricing a durability/regulatory or ad-tech de-rating (cf. TTD collapse) rather than reported deterioration.",
+  "what_changes_it": [
+   "Q3 revenue below $2.06-2.08B guidance (guidance figure from secondary search, unverified)",
+   "Regulatory/platform (Apple/Google) policy change hitting attribution",
+   "Evidence of take-rate or e-commerce ad traction failing"
+  ],
+  "supporting_claim_ids": [
+   "APP-TREND",
+   "APP-Q2",
+   "APP-TTMCALC",
+   "APP-EVEBIT",
+   "APP-DEBT"
+  ]
+ },
+ "bear_case": {
+  "summary": "See work/bear/APP.json (separate bear agent)",
+  "risks": [],
+  "completed_before_bull": true
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [],
+  "issues": [
+   "FCF unavailable; catalyst date unconfirmed/conflicting"
+  ],
+  "checked_at": "2026-10-05T18:40:00Z"
+ },
+ "gates": {
+  "identity_confirmed_via_filing_index": true,
+  "no_nt_filings_12m": true,
+  "going_concern_checked": false,
+  "auditor_change_checked": false,
+  "catalyst_company_confirmed": false
+ },
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "claims": [
+  {
+   "id": "APP-PX",
+   "text": "Last trade $283.55 ~2026-10-05T18:35:38Z; shares 334,651,000 (RH); mcap = $94.89B",
+   "label": "VERIFIED_FACT",
+   "value": 94.89,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:35:38Z",
+   "sources": [
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "APP-DEBT",
+   "text": "At 2026-06-30: LongTermDebtNoncurrent $3,515M, cash $3,053M -> net debt $462M",
+   "label": "VERIFIED_FACT",
+   "value": 0.462,
+   "unit": "USD bn",
+   "as_of": "2026-06-30T00:00:00Z",
+   "sources": [
+    {
+     "title": "APP 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:fb4bba65-a69a-4cfe-99dd-7e0f1e5f64ea",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "APP 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "APP-EVEBIT",
+   "text": "EV/EBIT = (mcap 94.89 + net debt 0.46) / EBIT 5.288B = 18.03x (TTM to 2026-06-30)",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 18.03,
+   "unit": "x",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "APP 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:fb4bba65-a69a-4cfe-99dd-7e0f1e5f64ea",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "APP 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "APP-PE",
+   "text": "P/E = mcap 94.89 / net income 4.410B = 21.52x",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 21.52,
+   "unit": "x",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "APP 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:fb4bba65-a69a-4cfe-99dd-7e0f1e5f64ea",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "APP 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "APP-FCFY",
+   "text": "FCF yield UNAVAILABLE (capex not tagged)",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": "UNAVAILABLE",
+   "unit": "pct",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "APP 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:fb4bba65-a69a-4cfe-99dd-7e0f1e5f64ea",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "APP 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "APP-TREND",
+   "text": "3-year trend (USD bn): {\"FY2023\": {\"rev\": 1.842, \"ebit\": 0.772, \"cfo\": 1.062}, \"FY2024\": {\"rev\": 3.224, \"ebit\": 1.911, \"cfo\": 2.099}, \"FY2025\": {\"rev\": 5.481, \"ebit\": 4.152, \"cfo\": 3.971}, \"TTM_2026Q2\": {\"rev\": 6.829, \"ebit\": 5.288, \"cfo\": 4.528}}",
+   "label": "VERIFIED_FACT",
+   "value": null,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "APP 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:fb4bba65-a69a-4cfe-99dd-7e0f1e5f64ea",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "APP 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "APP-TTMCALC",
+   "text": "TTM = FY2025 + H1'26 - H1'25: revenue 5,480.7+3,766.1-2,417.7=6,829.1M; EBIT 4,151.9+2,934.2-1,797.7=5,288.4M; NI 3,333.8+2,472.2-1,396.0=4,410.0M; CFO 3,971.1+2,160.4-1,603.9=4,527.6M",
+   "label": "VERIFIED_FACT",
+   "value": 5288.4,
+   "unit": "USD m",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "APP 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:fb4bba65-a69a-4cfe-99dd-7e0f1e5f64ea",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "APP 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "APP-CFOY",
+   "text": "CFO yield (capex not tagged; FCF UNAVAILABLE) = 4.528/94.89 = 4.77%",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 4.77,
+   "unit": "pct",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "APP 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:fb4bba65-a69a-4cfe-99dd-7e0f1e5f64ea",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "APP 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "APP-Q2",
+   "text": "Q2 2026 revenue $1,923.7M vs $1,258.8M (+52.8%); EBIT $1,494.3M vs $957.7M",
+   "label": "VERIFIED_FACT",
+   "value": 1923.7,
+   "unit": "USD m",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "APP 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:fb4bba65-a69a-4cfe-99dd-7e0f1e5f64ea",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "APP 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "data_gaps": [
+  "FCF (PP&E capex not tagged in XBRL)",
+  "own historical multiples",
+  "peer EV/EBIT/FCF yield",
+  "Form 4 direction (49 filings)",
+  "13F",
+  "short interest",
+  "company-confirmed Q3 date",
+  "cause of drawdown not sourced"
+ ]
+}

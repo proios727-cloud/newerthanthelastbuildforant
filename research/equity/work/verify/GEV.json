@@ -1,0 +1,144 @@
+{
+ "ticker": "GEV",
+ "checked_at": "2026-10-05T19:05:00Z",
+ "status": "FAIL",
+ "material_unsupported_claims": [
+  {
+   "claim_id": "GEV-DEBT",
+   "file": "work/bull/GEV.json",
+   "reason": "VERIFIED_FACT treating debt as 0 is contradicted by 10-Q c61b7e6c: debt incl. finance leases $2,849M at 2026-06-30 ($2.6B notes issued 2026-02-04). Net debt is -10.27B, not -13.12B."
+  },
+  {
+   "claim_id": "GEV-EVEBIT",
+   "file": "work/bull/GEV.json",
+   "reason": "Computed on understated EV; corrected 141.0x (vs 139.4x)."
+  },
+  {
+   "claim_id": "thesis.mispricing / GEV-FCFY",
+   "file": "work/bull/GEV.json",
+   "reason": "Thesis says EBIT 'understates cash generation'; fill GEV-F3 shows +13,695M contract-liability inflow exceeds all of H1 CFO 10,680M, i.e. FCF is customer deposits, not earnings power. FCF yield 4.71% as valuation support is contradicted."
+  },
+  {
+   "claim_id": "GEV-PE",
+   "file": "work/bull/GEV.json",
+   "reason": "NI 9.529B TTM includes $3,992M Prolec remeasurement gain + $330M Proficy gain (fill GEV-F1); 27.7x is not run-rate."
+  }
+ ],
+ "downgrades": [
+  {
+   "claim_id": "G5",
+   "file": "bear",
+   "from": "VERIFIED_FACT",
+   "to": "market_data (TradingView vendor ratios via screen.md)"
+  },
+  {
+   "claim_id": "G6",
+   "file": "bear",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 3 (internal regime memo)"
+  },
+  {
+   "claim_id": "GEV-DEBT",
+   "file": "bull",
+   "from": "VERIFIED_FACT",
+   "to": "CONTRADICTED -> corrected"
+  },
+  {
+   "claim_id": "SI",
+   "file": "bull",
+   "from": "VERIFIED_FACT",
+   "to": "data gap"
+  }
+ ],
+ "arithmetic_errors": [
+  {
+   "item": "net debt",
+   "expected": "2.849-13.120 = -10.271B",
+   "found": "-13.12B"
+  },
+  {
+   "item": "EV",
+   "expected": "264.09-10.271 = 253.82B",
+   "found": "250.97B"
+  },
+  {
+   "item": "EV/EBIT",
+   "expected": "253.82/1.800 = 141.0x",
+   "found": "139.43x"
+  }
+ ],
+ "arithmetic_checked_ok": [
+  "mcap 991.5585*266.3336M=264.09B",
+  "TTM rev 41,367; EBIT 1,800; NI 9,529; CFO 14,139; capex 1,701; FCF 12,438",
+  "P/E 27.71x",
+  "FCF yield 4.71% (arithmetic only)",
+  "bear Q1 NI 5.413-0.668=4.745B"
+ ],
+ "tier1_spot_checks": [
+  {
+   "concept": "OperatingIncomeLoss H1 26/H1 25",
+   "filed": "833/421",
+   "repulled": "833/421",
+   "ok": true
+  },
+  {
+   "concept": "NetIncomeLoss H1 26/H1 25",
+   "filed": "5413/768",
+   "repulled": "5413/768",
+   "ok": true
+  },
+  {
+   "concept": "CFO H1 26/H1 25",
+   "filed": "10680/1528",
+   "repulled": "10680/1528",
+   "ok": true
+  },
+  {
+   "concept": "ContractWithCustomerLiability",
+   "filed": "40037/25950",
+   "repulled": "40037/25950",
+   "ok": true
+  }
+ ],
+ "applied_corrections": [
+  {
+   "source": "fill corrections GEV-DEBT",
+   "effect": "debt $2,849M; net debt -10.271B"
+  },
+  {
+   "source": "fill corrections GEV-EVEBIT",
+   "effect": "EV 253.82B; EV/EBIT 141.0x"
+  },
+  {
+   "source": "fill GEV-F1",
+   "effect": "Q1 gain identified (Prolec $3,992M, Proficy $330M pretax)"
+  },
+  {
+   "source": "fill GEV-F3",
+   "effect": "CFO deposit-driven"
+  }
+ ],
+ "gates": {
+  "1_verifier_pass": "FAIL",
+  "2_identity": "PASS",
+  "3_filings_current_no_NT": "PASS",
+  "4_no_going_concern_or_auditor_resignation": "UNVERIFIABLE",
+  "5_dated_catalyst_180d_company_confirmed": "FAIL",
+  "6_bear_independent": "FAIL",
+  "7_liquidity": "PASS"
+ },
+ "gate_notes": {
+  "5": "RH 2026-10-28 verified=true vs aggregators 2026-10-22; company IR blocked; not company-confirmed",
+  "6": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established.",
+  "7": "S&P 500, mcap ~$264B"
+ },
+ "tier_counts": {
+  "tier1": 13,
+  "tier2": 0,
+  "tier3": 1,
+  "market_data": 2,
+  "unsourced": 1
+ },
+ "bear_completed_at": "2026-10-05T16:00:00Z",
+ "bear_independence_flag": "bear completed_at 2026-10-05T16:00:00Z precedes run start ~2026-10-05T18:10Z; also bear as_of is a midnight placeholder. Independence/ordering cannot be established."
+}

@@ -1,0 +1,41 @@
+{
+ "ticker": "SNDK",
+ "as_of": "2026-10-05",
+ "claims": [
+  {
+   "id": "SNDK-F1",
+   "text": "Accounts receivable $4.7B at 2026-07-03 vs $1.1B at 2025-06-27 (tagged to $100M precision); cash-flow AR increase $3,640M in FY2026",
+   "label": "VERIFIED_FACT",
+   "value": 4700,
+   "as_of": "2026-07-03",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "date": "2026-08-17",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "SNDK-F2",
+   "text": "Company-confirmed FQ1 2027 results and conference call Thursday 2026-10-29, 1:30 p.m. PT (press release dated 2026-09-29)",
+   "label": "VERIFIED_FACT",
+   "value": "2026-10-29",
+   "as_of": "2026-09-29",
+   "sources": [
+    {
+     "type": "company_announcement",
+     "url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-report-first-quarter-fiscal-year-2027-results-october-29",
+     "date": "2026-09-29"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "still_unavailable": [
+  "Form 4 direction"
+ ],
+ "corrections": []
+}

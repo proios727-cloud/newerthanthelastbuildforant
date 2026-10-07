@@ -1,0 +1,192 @@
+{
+  "ticker": "ERIE",
+  "company": "Erie Indemnity",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T18:45:00Z",
+  "bear_case": {
+    "summary": "ERIE still trades ~20x TTM despite growth slowing to mid-single digits: Q2 management fee revenue +4.7%, operating income +2.5%, as commissions rose faster. Its fee base is tied to Exchange premium growth, which decelerates as homeowners/auto rate increases roll off, while the Exchange's own cat losses/surplus can pressure the fee rate.",
+    "risks": [
+      "Exchange premium growth decelerates as rate actions fade",
+      "Margin squeeze from commissions/agent incentives",
+      "Board cuts the 25% management fee rate to support Exchange surplus after cat losses",
+      "Multiple compression from premium valuation",
+      "Governance: dual-class, Hagen family control limits shareholder recourse"
+    ],
+    "completed_before_bull": true
+  },
+  "risks_detail": [
+    {
+      "risk": "Exchange premium growth decelerates as rate actions fade",
+      "evidence": [
+        "Fee revenue +4.7% Q2 2026 (er)"
+      ],
+      "likelihood": "HIGH",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Exchange written premium growth, policy retention"
+    },
+    {
+      "risk": "Margin squeeze from commissions/agent incentives",
+      "evidence": [
+        "Commissions +$44.7M Q2; operating income only +2.5% (er)"
+      ],
+      "likelihood": "MEDIUM-HIGH",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Operating margin trend in Q3 print 2026-10-22"
+    },
+    {
+      "risk": "Board cuts the 25% management fee rate to support Exchange surplus after cat losses",
+      "evidence": [
+        "Fee rate decision annual (December); current rate detail UNAVAILABLE in this pass"
+      ],
+      "likelihood": "LOW-MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "December board fee-rate announcement; Exchange surplus ratio"
+    },
+    {
+      "risk": "Multiple compression from premium valuation",
+      "evidence": [
+        "P/E TTM 20.0, -33.6% vs 52w high (screen)"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Further EPS growth deceleration"
+    },
+    {
+      "risk": "Governance: dual-class, Hagen family control limits shareholder recourse",
+      "evidence": [
+        "Structure well documented in 10-K; not re-read here"
+      ],
+      "likelihood": "LOW (as catalyst)",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Proxy/related-party disclosures"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "Revenue is related-party (Exchange) \u2014 attorney-in-fact conflict of interest",
+    "No direct reserve risk but indirect cat/pricing-cycle exposure via Exchange",
+    "Exchange financials not consolidated; Exchange surplus/combined ratio UNAVAILABLE in this pass"
+  ],
+  "value_trap_assessment": "Not obviously cheap at 20x; drawdown reflects de-rating from a scarcity premium. Risk is a 'quality trap' \u2014 paying a quality multiple for low-single-digit operating growth.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:45:00Z",
+  "claims": [
+    {
+      "id": "ERIE-1",
+      "text": "Q2 2026 management fee revenue (policy issuance/renewal) +$39.0M, +4.7% YoY",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Erie Indemnity Q2 2026 results",
+          "url": "https://finviz.com/news/375312/erie-indemnity-reports-second-quarter-2026-results",
+          "type": "earnings_release",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 4.7,
+      "unit": "%"
+    },
+    {
+      "id": "ERIE-2",
+      "text": "Q2 2026 operating income before taxes +2.5% YoY",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Erie Indemnity Q2 2026 results",
+          "url": "https://finviz.com/news/375312/erie-indemnity-reports-second-quarter-2026-results",
+          "type": "earnings_release",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 2.5,
+      "unit": "%"
+    },
+    {
+      "id": "ERIE-3",
+      "text": "Q2 2026 net income $180.3M, $3.45/diluted share",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Erie Indemnity Q2 2026 results",
+          "url": "https://finviz.com/news/375312/erie-indemnity-reports-second-quarter-2026-results",
+          "type": "earnings_release",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 180.3,
+      "unit": "USD millions"
+    },
+    {
+      "id": "ERIE-4",
+      "text": "Commissions +$44.7M Q2 2026",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Erie Indemnity Q2 2026 results",
+          "url": "https://finviz.com/news/375312/erie-indemnity-reports-second-quarter-2026-results",
+          "type": "earnings_release",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 44.7,
+      "unit": "USD millions"
+    },
+    {
+      "id": "ERIE-5",
+      "text": "Growth will decelerate further as Exchange rate increases lap",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Erie Indemnity Q2 2026 results",
+          "url": "https://finviz.com/news/375312/erie-indemnity-reports-second-quarter-2026-results",
+          "type": "earnings_release",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ERIE-6",
+      "text": "Price 219.81; P/E 20.0 (TV)",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Robinhood equity quotes 2026-10-05 ~18:35Z",
+          "url": "robinhood:get_equity_quotes",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        },
+        {
+          "title": "work/screen.md (TradingView screen, single-source)",
+          "url": "work/screen.md",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": false,
+      "value": 219.805,
+      "unit": "USD"
+    }
+  ],
+  "data_gaps": [
+    "CIK UNAVAILABLE",
+    "10-Q XBRL facts empty",
+    "Exchange surplus, cat losses, fee rate UNAVAILABLE"
+  ]
+}

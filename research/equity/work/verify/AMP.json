@@ -1,0 +1,100 @@
+{
+ "ticker": "AMP",
+ "status": "FAIL",
+ "checked_at": "2026-10-05T19:20:00Z",
+ "material_unsupported_claims": [
+  {
+   "id": "bull AMP-8",
+   "issue": "Thesis 'market discounts AMP for RiverSource block despite wealth-led mix' has no source on earnings mix or discount driver; only a P/E quote."
+  },
+  {
+   "id": "bull AMP-5",
+   "issue": "Peer set (RJF, LPLA, SCHW) are brokerage/bank models, not insurance/asset-manager hybrids; a -32.7% 'discount' vs median 17.58 is a framing choice, not evidence of mispricing. Support is market data only."
+  }
+ ],
+ "downgrades": [
+  {
+   "id": "bear AMP-4",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 3 - must not be VERIFIED_FACT",
+   "reason": "Sole source wealthmanagement.com (secondary)."
+  },
+  {
+   "id": "bear AMP-1..AMP-3",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 2 and partly WRONG",
+   "reason": "Release PDF not fetched (bear data_gaps); values corrected by fill."
+  },
+  {
+   "id": "fill AMP-F1..F5",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 2",
+   "reason": "Fill-file sources cite sec.gov EX-99.1/10-Q URLs, but SEC is blocked and the fill files state 'EX-99.1 not read directly' -> search-excerpt only = Tier 2; all fill sources have published=null (date missing)."
+  },
+  {
+   "id": "bull AMP-6 catalyst",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 2",
+   "reason": "Company PDF (q4cdn) published 2026-10-01; not shown to be opened."
+  }
+ ],
+ "arithmetic_errors": [],
+ "arithmetic_checked": [
+  "AMP-4 496.265/572.56-1=-13.33% OK",
+  "AMP-5 median(13.79,17.58,25.23)=17.58; 11.84/17.58-1=-32.65% OK",
+  "ADV $ ~0.727M x 496 = ~$361M"
+ ],
+ "applied_corrections": [
+  {
+   "claim_id": "bear AMP-3",
+   "now": "AM net outflows -$6.5B (not -$5.9B)"
+  },
+  {
+   "claim_id": "bear AMP-1",
+   "now": "Adj. op. net revenues $4.9B"
+  },
+  {
+   "claim_id": "bear AMP-2",
+   "now": "Total AUM/AUA/advisement $1.8T; '$1.2T client assets' unconfirmed"
+  }
+ ],
+ "tier1_spot_checks": [
+  "10-K efe05548 filed 2026-02-19 CONFIRMED",
+  "10-Q 770399d1 filed 2026-08-04 CONFIRMED",
+  "No NT since 2025-10-01 CONFIRMED",
+  "XBRL facts 10-Q 770399d1: EMPTY",
+  "RH P/E 11.842, 52wH 572.56 (2026-08-14) CONFIRMED"
+ ],
+ "gates": {
+  "1_verifier_pass": "FAIL",
+  "2_identity": {
+   "status": "PASS_WITH_CAVEATS",
+   "note": "Index for symbol AMP matches; CIK not in Tier 1."
+  },
+  "3_filings_current_no_NT": "PASS",
+  "4_going_concern_auditor": {
+   "status": "UNVERIFIABLE",
+   "note": "Filing text not served by Robinhood SEC feed (404); 8-K item 4.01 / auditor report not readable; EDGAR blocked."
+  },
+  "5_catalyst_180d_company_confirmed": {
+   "status": "PASS_WITH_CAVEATS",
+   "note": "Q3 release 2026-10-29 (24d), company announcement 2026-10-01, Tier 2."
+  },
+  "6_bear_independent": {
+   "status": "PASS",
+   "note": "bear completed_at 2026-10-05T18:45Z (not earlier than 18:10Z). Caveat: bull as_of 18:35Z precedes bear completion; independence asserted by bear file only (completed_before_bull=true), not provable from artifacts."
+  },
+  "7_liquidity": {
+   "status": "PASS",
+   "adv_usd": "~$361M"
+  }
+ },
+ "tier_counts": {
+  "tier1": 3,
+  "tier2": 10,
+  "tier3": 1,
+  "market_data": 6,
+  "unsourced": 0
+ },
+ "date_checks": "No date after 2026-10-05 found. Fill sources lack published dates."
+}

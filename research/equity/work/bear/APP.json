@@ -1,0 +1,141 @@
+{
+ "ticker": "APP",
+ "as_of": "2026-10-05T00:00:00Z",
+ "bear_case": {
+  "summary": "AppLovin's growth is real: Q2 2026 revenue rose 53% YoY. But the SEC described a probe tied to alleged data and contract practices as 'active and ongoing' in Feb 2026, and the business depends on app-store/OS platform rules. SBC nearly doubled YoY. The stock is down 61% from its high, which suggests the market prices a real regulatory or platform tail risk.",
+  "risks": [
+   {
+    "risk": "SEC enforcement or platform-partner action over data/targeting practices",
+    "evidence": "Bloomberg 2026-02-20: probe 'active and ongoing'",
+    "likelihood": "Medium (outcome unknowable)",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Wells notice or 8-K; 10-Q legal note; Apple/Google policy changes",
+    "claim_ids": [
+     "A4"
+    ]
+   },
+   {
+    "risk": "Platform dependency (Apple ATT, Google Privacy Sandbox on Android)",
+    "evidence": "Not sourced in this run",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "OS policy announcements",
+    "claim_ids": []
+   },
+   {
+    "risk": "Growth deceleration from a high base, plus e-commerce advertiser churn",
+    "evidence": "Revenue +53% YoY Q2 2026",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Q3 guide on 2026-11-11",
+    "claim_ids": [
+     "A1"
+    ]
+   },
+   {
+    "risk": "SBC/dilution acceleration",
+    "evidence": "H1 SBC 169M vs 97M",
+    "likelihood": "Low-Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "SBC % of revenue",
+    "claim_ids": [
+     "A2"
+    ]
+   }
+  ],
+  "completed_before_bull": true
+ },
+ "accounting_red_flags": {
+  "receivables_vs_revenue": "AR +19% in 6 months (1.82B to 2.17B) vs Q2 revenue +53% YoY: not alarming",
+  "inventory": "N/A",
+  "sbc_share_of_fcf": "SBC 169M vs OCF 2.16B in H1 2026 (~8%)",
+  "one_time_items": "Apps business sold (discontinued ops); comparisons are distorted",
+  "customer_concentration": "UNAVAILABLE",
+  "debt_maturities": "LTD ~3.52B noncurrent; maturity schedule UNAVAILABLE"
+ },
+ "value_trap": "An 18x forward P/E looks cheap for 50% growth only if earnings are durable. A regulatory finding against its data practices would impair the moat itself, not just one year of earnings.",
+ "completed_before_bull": true,
+ "completed_at": "2026-10-05T16:00:00Z",
+ "claims": [
+  {
+   "id": "A1",
+   "text": "Q2 2026 revenue 1.924B vs 1.259B; net income 1.267B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "title": "APP 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-08-05"
+    }
+   ],
+   "material": true,
+   "value": 1923686000
+  },
+  {
+   "id": "A2",
+   "text": "H1 2026 SBC 169.0M vs 97.0M; OCF 2.160B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "title": "APP 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-08-05"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "A3",
+   "text": "AR 2.171B at 6/30/26 vs 1.819B at 12/31/25; LTD 3.515B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "url": "robinhood-sec-feed:7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "title": "APP 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-08-05"
+    }
+   ],
+   "material": false
+  },
+  {
+   "id": "A4",
+   "text": "SEC said in Feb 2026 a probe involving AppLovin is active and ongoing",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "secondary",
+     "url": "https://www.bloomberg.com/news/articles/2026-02-20/sec-says-probe-involving-applovin-is-still-active-and-ongoing",
+     "title": "Bloomberg: SEC says probe involving AppLovin still active",
+     "published": "2026-02-20"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "A5",
+   "text": "Probability of an adverse SEC outcome",
+   "label": "SPECULATION",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "secondary",
+     "url": "https://www.bloomberg.com/news/articles/2026-02-20/sec-says-probe-involving-applovin-is-still-active-and-ongoing",
+     "title": "Bloomberg: SEC says probe involving AppLovin still active",
+     "published": "2026-02-20"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "notes": "Bull folder not read. CIK UNAVAILABLE per SOURCES.md. Capex/FCF not pulled; OCF used as proxy where noted."
+}

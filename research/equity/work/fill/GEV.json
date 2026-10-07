@@ -1,0 +1,84 @@
+{
+ "ticker": "GEV",
+ "as_of": "2026-10-05",
+ "claims": [
+  {
+   "id": "GEV-F1",
+   "text": "Q1 2026 one-time gain: $3,992M remeasurement gain on previously held equity interest in Prolec GE (step acquisition, 2026-02-02); plus $330M pretax ($210M after tax) gain on sale of Proficy software business in Q1. Total gains on purchase/disposition of business interests H1 2026 $4,428M. Other non-op income H1 $4,842M vs Q2 $80M.",
+   "label": "VERIFIED_FACT",
+   "value": 3992,
+   "as_of": "2026-06-30",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "date": "2026-07-22",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "GEV-F2",
+   "text": "Borrowings at 2026-06-30: long-term debt and finance leases incl. current $2,849M (current $55M, noncurrent $2,794M) vs $289M at 2025-12-31; $2.6B senior notes issued 2026-02-04 (2031 $600M, 2036 $1.0B, 2056 $1.0B)",
+   "label": "VERIFIED_FACT",
+   "value": 2849,
+   "as_of": "2026-06-30",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "date": "2026-07-22",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "GEV-F3",
+   "text": "Deposit-driven cash flow: increase in contract liabilities contributed $13,695M to H1 2026 CFO ($10,680M total) vs $1,860M in H1 2025",
+   "label": "VERIFIED_FACT",
+   "value": 13695,
+   "as_of": "2026-06-30",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "date": "2026-07-22",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "still_unavailable": [
+  "Company-confirmed Q3 2026 earnings date: aggregators list 2026-10-22, but gevernova.com is blocked by the proxy and the 8-K text is unavailable, so it is not confirmed",
+  "Form 4 direction"
+ ],
+ "corrections": [
+  {
+   "claim_id": "GEV-DEBT",
+   "file": "work/bull/GEV.json",
+   "issue": "debt treated as 0 / borrowings not returned",
+   "correct_value": "$2,849M debt incl. finance leases at 2026-06-30",
+   "source": {
+    "type": "10-Q",
+    "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+    "date": "2026-07-22",
+    "note": "via Robinhood SEC feed"
+   }
+  },
+  {
+   "claim_id": "GEV-EVEBIT",
+   "file": "work/bull/GEV.json",
+   "issue": "EV excludes $2,849M debt",
+   "correct_value": "EV must add $2.849B debt; ratio should be recomputed by synthesis",
+   "source": {
+    "type": "10-Q",
+    "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+    "date": "2026-07-22",
+    "note": "via Robinhood SEC feed"
+   }
+  }
+ ]
+}

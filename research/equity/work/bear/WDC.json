@@ -1,0 +1,143 @@
+{
+ "ticker": "WDC",
+ "as_of": "2026-10-05T00:00:00Z",
+ "bear_case": {
+  "summary": "WDC is a pure-play HDD maker at peak cycle. FY26 revenue rose 36% to 12.9B and net income to 9.42B, which almost certainly includes large non-operating gains (likely its retained Sandisk stake; cause UNAVAILABLE). That makes TTM P/E misleading. Cloud is 89% of revenue, and AR grew 36%, in line with sales. The stock is down 45% from its high, which the market may be reading as a sign that the hyperscaler capex cycle is peaking.",
+  "risks": [
+   {
+    "risk": "Hyperscaler capex/nearline digestion",
+    "evidence": "Cloud 11.49B of 12.92B FY26 revenue",
+    "likelihood": "Medium-High over 12 months",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Exabyte shipment guide at 2026-10-22 earnings; hyperscaler capex commentary",
+    "claim_ids": [
+     "W1"
+    ]
+   },
+   {
+    "risk": "Earnings quality: net income 9.42B exceeds plausible operating profit on 12.9B revenue",
+    "evidence": "NI 9.42B vs OCF 3.93B",
+    "likelihood": "High that the TTM P/E understates the multiple",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Non-operating gains in the 10-K income statement",
+    "claim_ids": [
+     "W2"
+    ]
+   },
+   {
+    "risk": "China/HK exposure (tariff and export-control risk)",
+    "evidence": "CN 2.54B plus HK 1.49B = ~31% of FY26 revenue",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "US-China trade actions",
+    "claim_ids": [
+     "W3"
+    ]
+   },
+   {
+    "risk": "HAMR/flash substitution and competition from Seagate",
+    "evidence": "Not sourced",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Pricing per TB; gross-margin trend",
+    "claim_ids": []
+   }
+  ],
+  "completed_before_bull": true
+ },
+ "accounting_red_flags": {
+  "receivables_vs_revenue": "AR +36% (1.49B to 2.03B) vs revenue +36%: neutral",
+  "inventory": "+17% (1.29B to 1.51B) vs revenue +36%: OK",
+  "sbc_share_of_fcf": "SBC 204M vs OCF 3.93B (~5%; capex UNAVAILABLE)",
+  "one_time_items": "NI 9.42B vs OCF 3.93B: large non-cash/non-operating gain likely",
+  "customer_concentration": "Cloud segment 89%; top-customer % UNAVAILABLE",
+  "debt_maturities": "LTD noncurrent 0 at 2026-07-03 (2.485B prior year)"
+ },
+ "value_trap": "Cyclical peak earnings plus one-time gains make P/E look low exactly when the cycle is topping.",
+ "completed_before_bull": true,
+ "completed_at": "2026-10-05T16:00:00Z",
+ "claims": [
+  {
+   "id": "W1",
+   "text": "FY26 revenue 12.919B (FY25 9.520B); Cloud 11.490B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "url": "robinhood-sec-feed:9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "title": "WDC 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-14"
+    }
+   ],
+   "material": true,
+   "value": 12919000000
+  },
+  {
+   "id": "W2",
+   "text": "FY26 net income 9.424B; OCF 3.929B; SBC 204M",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "url": "robinhood-sec-feed:9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "title": "WDC 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-14"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "W3",
+   "text": "FY26 revenue: China 2.541B, Hong Kong 1.487B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "url": "robinhood-sec-feed:9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "title": "WDC 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-14"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "W4",
+   "text": "AR 2.03B vs 1.49B; inventory 1.511B vs 1.291B; LTD noncurrent 0 vs 2.485B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "url": "robinhood-sec-feed:9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "title": "WDC 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-14"
+    }
+   ],
+   "material": false
+  },
+  {
+   "id": "W5",
+   "text": "Net income likely includes non-operating gains such as the Sandisk stake",
+   "label": "ANALYTICAL_INFERENCE",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "url": "robinhood-sec-feed:9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "title": "WDC 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-14"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "notes": "Bull folder not read. CIK UNAVAILABLE per SOURCES.md. Capex/FCF not pulled; OCF used as proxy where noted."
+}

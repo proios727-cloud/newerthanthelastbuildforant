@@ -1,0 +1,196 @@
+{
+  "ticker": "PGR",
+  "company": "Progressive Corp",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T00:00:00Z",
+  "bear_case": {
+    "summary": "PGR is past peak auto-insurance margins: August 2026 combined ratio 89.3% vs 83.1% a year earlier, Q2 loss/LAE ratio edged up, and claims reserves are growing faster than earned premium. Rate cuts to chase growth plus inflation re-accelerating (CPI 3.4%) point to a margin mean-reversion cycle; P/E ~10.6 is cheap only if peak-cycle earnings persist.",
+    "risks": [
+      "Underwriting margin mean reversion",
+      "Reserve adequacy / adverse development",
+      "Severity inflation (tariffs on parts, medical, litigation)",
+      "Growth slowdown / competitive price war",
+      "Investment portfolio mark-to-market"
+    ],
+    "completed_before_bull": true
+  },
+  "thesis_breaking_risks": [
+    {
+      "risk": "Underwriting margin mean reversion",
+      "evidence": "Aug-26 CR 89.3 vs 83.1 (+6.2pt); Q2 losses/NEP 67.5% vs 67.0% (computed).",
+      "likelihood": "High that margins compress further; Medium that CR exceeds 96 target",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Monthly CR releases (Sept results / Q3 on 2026-10-08), rate-filing cuts"
+    },
+    {
+      "risk": "Reserve adequacy / adverse development",
+      "evidence": "Loss & LAE reserves $45.6B at 2026-06-30, +10.7% YoY vs Q2 NEP +6.2%.",
+      "likelihood": "Low-Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Prior-year development disclosed in monthly/quarterly reports"
+    },
+    {
+      "risk": "Severity inflation (tariffs on parts, medical, litigation)",
+      "evidence": "CPI 3.4% headline (regime memo); auto repair costs tariff-sensitive.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "CPI motor-vehicle repair/insurance components 2026-10-14"
+    },
+    {
+      "risk": "Growth slowdown / competitive price war",
+      "evidence": "PIF +7% Aug-26; commercial lines Q2 NEP fell to $2.69B from $2.77B.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "PIF growth deceleration, advertising spend cuts"
+    },
+    {
+      "risk": "Investment portfolio mark-to-market",
+      "evidence": "10y at 5.24% and rising rates cause unrealized losses on fixed income.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "AOCI / book value per share in Q3"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "Reserve growth outpacing premium growth - could be prudence or rising severity; development detail UNAVAILABLE.",
+    "Earnings include investment gains/losses that are volatile; split UNAVAILABLE here.",
+    "Variable dividend means headline yield not stable."
+  ],
+  "value_trap_assessment": "Low P/E on peak-margin earnings is classic insurance-cycle trap: as CR moves from low-80s to low/mid-90s, EPS can fall sharply even with premium growth.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:37:28Z",
+  "claims": [
+    {
+      "id": "PGR-B1",
+      "text": "August 2026 combined ratio 89.3% vs 83.1% in August 2025.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Progressive Reports August 2026 Results (8-K ex99, via search)",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+          "type": "8-K",
+          "published": "2026-09-18",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 89.3,
+      "unit": "%"
+    },
+    {
+      "id": "PGR-B2",
+      "text": "Policies in force 40.49M at 2026-08-31, up 7% YoY.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Progressive Reports August 2026 Results (8-K ex99, via search)",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+          "type": "8-K",
+          "published": "2026-09-18",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": false,
+      "value": 40492000,
+      "unit": "policies"
+    },
+    {
+      "id": "PGR-B3",
+      "text": "Q2-2026 net premiums earned $21,573M vs $20,310M; losses and LAE $14,572M vs $13,605M.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-08-03 (filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f) via Robinhood SEC feed",
+          "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+          "type": "10-Q",
+          "published": "2026-08-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "PGR-B4",
+      "text": "Q2 loss/LAE ratio ~67.5% vs ~67.0% prior year (computed from 10-Q facts).",
+      "label": "ESTIMATE",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-08-03 (filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f) via Robinhood SEC feed",
+          "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+          "type": "10-Q",
+          "published": "2026-08-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 67.5,
+      "unit": "%"
+    },
+    {
+      "id": "PGR-B5",
+      "text": "Liability for claims and CAE $45,567M at 2026-06-30 vs $41,154M at 2025-06-30.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-08-03 (filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f) via Robinhood SEC feed",
+          "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+          "type": "10-Q",
+          "published": "2026-08-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 45567000000,
+      "unit": "USD"
+    },
+    {
+      "id": "PGR-B6",
+      "text": "Commercial Lines Q2 NEP $2,691M vs $2,765M.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-08-03 (filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f) via Robinhood SEC feed",
+          "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+          "type": "10-Q",
+          "published": "2026-08-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": false
+    },
+    {
+      "id": "PGR-B7",
+      "text": "Margins are mean-reverting from cyclical peak; further CR deterioration likely through 2027.",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Progressive Reports August 2026 Results (8-K ex99, via search)",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000080661/000008066126000322/pgr202608ex99earningsrelea.htm",
+          "type": "8-K",
+          "published": "2026-09-18",
+          "accessed": "2026-10-05T18:37:28Z"
+        },
+        {
+          "title": "10-Q filed 2026-08-03 (filing_id 4aadb480-388c-4d41-a445-6d5efec11a0f) via Robinhood SEC feed",
+          "url": "robinhood-sec:4aadb480-388c-4d41-a445-6d5efec11a0f",
+          "type": "10-Q",
+          "published": "2026-08-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    }
+  ],
+  "data_gaps": [
+    "SEC EDGAR blocked; CIK UNAVAILABLE",
+    "No price quote pulled; valuation multiples from work/screen.md (TradingView, single source)",
+    "Web sources are secondary summaries of company releases"
+  ]
+}

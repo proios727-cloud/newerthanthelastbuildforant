@@ -1,0 +1,289 @@
+{
+ "ticker": "SNDK",
+ "company": "Sandisk Corporation",
+ "cik": "0002023554",
+ "sector": "Electronic Technology",
+ "as_of": "2026-10-05T18:40:00Z",
+ "identity": {
+  "latest_10k": {
+   "filing_id": "e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+   "filed": "2026-08-17"
+  },
+  "latest_10q": "10-K is the most recent periodic report",
+  "nt_filings_12m": "none found in index",
+  "going_concern": "UNAVAILABLE (filing text not reviewed)",
+  "auditor_change": "UNAVAILABLE",
+  "company_name_source": "RH profile/XBRL entity; 10-K cover text not read"
+ },
+ "fundamentals": {
+  "trend_usd_bn": {
+   "FY2024": {
+    "rev": 6.663,
+    "ebit": -0.468,
+    "fcf": -0.475
+   },
+   "FY2025": {
+    "rev": 7.355,
+    "ebit": -1.377,
+    "fcf": -0.12
+   },
+   "FY2026": {
+    "rev": 20.248,
+    "ebit": 12.389,
+    "fcf": 11.494
+   }
+  },
+  "ttm_basis": "FY2026 ended 2026-07-03"
+ },
+ "valuation": {
+  "method": "TTM EV/EBIT, P/E, FCF yield from filings + RH price",
+  "claim_ids": [
+   "SNDK-PX",
+   "SNDK-DEBT",
+   "SNDK-EVEBIT",
+   "SNDK-PE",
+   "SNDK-FCFY"
+  ],
+  "calc": {
+   "mcap_bn": 250.08,
+   "net_debt_bn": -4.76,
+   "ev_bn": 245.31,
+   "ev_ebit": 19.8,
+   "pe": 21.87,
+   "fcf_yield_pct": 4.6
+  },
+  "own_history": "UNAVAILABLE (historical price/multiple series not pulled)",
+  "peers": {
+   "MU": {
+    "pe_rh": 14.46
+   },
+   "STX": {
+    "pe_rh": 61.06
+   },
+   "WDC": {
+    "pe_rh": 17.11
+   }
+  },
+  "notes": "Peer P/E is RH vendor TTM; peer EV/EBIT and FCF yield UNAVAILABLE (peer filings not pulled)."
+ },
+ "catalysts": [
+  {
+   "event": "Fiscal Q1 2027 earnings (call 1:30pm PT)",
+   "date": "2026-10-29",
+   "date_confirmed": true,
+   "source": {
+    "title": "Sandisk to Report First Quarter Fiscal Year 2027 Results on October 29, 2026",
+    "url": "https://investor.sandisk.com/news-releases/news-release-details/sandisk-report-first-quarter-fiscal-year-2027-results-october-29",
+    "type": "company_announcement",
+    "published": "2026-09-29",
+    "accessed": "2026-10-05T18:40:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "26 Form 4 filings indexed in Robinhood SEC feed between 2026-04-05 and 2026-10-05 (first: 2026-04-21). Transaction codes/direction (buy vs sell vs RSU withholding) NOT parsed - UNAVAILABLE; counts alone are not evidence of net buying or selling.",
+  "institutional_13f_summary": "UNAVAILABLE - no 13F source accessible (EDGAR blocked).",
+  "short_interest": {
+   "id": "SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "sources": [],
+   "material": false
+  }
+ },
+ "thesis": {
+  "mispricing": "~27% below 52w high at ~19.8x EV/EBIT, ~4.6% FCF yield, debt fully repaid; market may treat FY2026 NAND margins as peak while datacenter mix (5.4x YoY) may be structural.",
+  "what_changes_it": [
+   "NAND contract price declines / supply additions",
+   "Q1 FY27 guide below run-rate",
+   "Datacenter SSD share loss"
+  ],
+  "supporting_claim_ids": [
+   "SNDK-TREND",
+   "SNDK-DEBT",
+   "SNDK-DC",
+   "SNDK-FCFY",
+   "SNDK-EVEBIT"
+  ]
+ },
+ "bear_case": {
+  "summary": "See work/bear/SNDK.json (separate bear agent)",
+  "risks": [],
+  "completed_before_bull": true
+ },
+ "verification": {
+  "status": "PASS",
+  "material_unsupported_claims": [],
+  "issues": [],
+  "checked_at": "2026-10-05T18:40:00Z"
+ },
+ "gates": {
+  "identity_confirmed_via_filing_index": true,
+  "no_nt_filings_12m": true,
+  "going_concern_checked": false,
+  "auditor_change_checked": false,
+  "catalyst_company_confirmed": false
+ },
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "claims": [
+  {
+   "id": "SNDK-PX",
+   "text": "Last trade $1707.95 ~2026-10-05T18:35:38Z; shares 146,419,000 (RH); mcap = $250.08B",
+   "label": "VERIFIED_FACT",
+   "value": 250.08,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:35:38Z",
+   "sources": [
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "SNDK-DEBT",
+   "text": "At 2026-07-03: long-term debt $0 (vs $1,849M at 2025-06-27); cash $4,762M -> net debt -$4,762M",
+   "label": "VERIFIED_FACT",
+   "value": -4.762,
+   "unit": "USD bn",
+   "as_of": "2026-07-03T00:00:00Z",
+   "sources": [
+    {
+     "title": "SNDK 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "type": "10-K",
+     "published": "2026-08-17",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "SNDK-EVEBIT",
+   "text": "EV/EBIT = (mcap 250.08 + net debt -4.76) / EBIT 12.389B = 19.8x (FY2026 ended 2026-07-03)",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 19.8,
+   "unit": "x",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "SNDK 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "type": "10-K",
+     "published": "2026-08-17",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "SNDK-PE",
+   "text": "P/E = mcap 250.08 / net income 11.433B = 21.87x",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 21.87,
+   "unit": "x",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "SNDK 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "type": "10-K",
+     "published": "2026-08-17",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "SNDK-FCFY",
+   "text": "FCF yield = FCF 11.494B / mcap = 4.6%",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 4.6,
+   "unit": "pct",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "SNDK 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "type": "10-K",
+     "published": "2026-08-17",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "SNDK-TREND",
+   "text": "3-year trend (USD bn): {\"FY2024\": {\"rev\": 6.663, \"ebit\": -0.468, \"fcf\": -0.475}, \"FY2025\": {\"rev\": 7.355, \"ebit\": -1.377, \"fcf\": -0.12}, \"FY2026\": {\"rev\": 20.248, \"ebit\": 12.389, \"fcf\": 11.494}}",
+   "label": "VERIFIED_FACT",
+   "value": null,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "SNDK 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "type": "10-K",
+     "published": "2026-08-17",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "SNDK-DC",
+   "text": "Datacenter revenue FY2026 $5,153M vs $960M FY2025",
+   "label": "VERIFIED_FACT",
+   "value": 5.153,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "SNDK 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "type": "10-K",
+     "published": "2026-08-17",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "data_gaps": [
+  "latest 10-Q predates 10-K, so TTM = FY2026",
+  "own historical multiples (spun 2025, short history)",
+  "peer EV/EBIT/FCF yield",
+  "Form 4 direction",
+  "13F",
+  "short interest"
+ ]
+}

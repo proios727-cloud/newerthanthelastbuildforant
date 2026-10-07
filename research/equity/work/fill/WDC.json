@@ -1,0 +1,76 @@
+{
+ "ticker": "WDC",
+ "as_of": "2026-10-05",
+ "claims": [
+  {
+   "id": "WDC-F1",
+   "text": "FY2026 bridge: operating income $4,453M + non-operating income $5,452M = pretax $9,905M; tax $481M; NI $9,424M",
+   "label": "VERIFIED_FACT",
+   "value": 5452,
+   "as_of": "2026-07-03",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "date": "2026-08-14",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "WDC-F2",
+   "text": "Non-op components tagged: unrealized gain on equity securities (FV-NI) +$6,498M; loss on debt extinguishment -$545M (incl. Term Loan A-3 $539M, Feb 2026); gain on convertible notes transactions +$108M; net interest -$114M (interest expense $165M); other -$25M. Tagged items sum to $5,922M vs reported $5,452M; $470M unreconciled in feed.",
+   "label": "VERIFIED_FACT",
+   "value": 6498,
+   "as_of": "2026-07-03",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "date": "2026-08-14",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "WDC-F3",
+   "text": "The equity-securities gain is not tagged to a Sandisk member in the feed; attribution to the retained Sandisk stake remains inference",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": null,
+   "as_of": "2026-07-03",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "date": "2026-08-14",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "WDC-F4",
+   "text": "Total debt (LongTermDebt) $1,052M at 2026-07-03 vs $4,711M; AR $2,030M vs $1,490M",
+   "label": "VERIFIED_FACT",
+   "value": 1052,
+   "as_of": "2026-07-03",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "9831aca6-b863-49df-bf7e-a46a3bf07683",
+     "date": "2026-08-14",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": false
+  }
+ ],
+ "still_unavailable": [
+  "Company-confirmed FQ1 2027 earnings date",
+  "$470M non-op reconciliation residual",
+  "Form 4 direction"
+ ],
+ "corrections": []
+}

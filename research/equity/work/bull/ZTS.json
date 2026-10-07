@@ -1,0 +1,284 @@
+{
+ "ticker": "ZTS",
+ "company": "Zoetis Inc. (name per Robinhood profile; 10-K text UNAVAILABLE)",
+ "cik": "UNAVAILABLE",
+ "sector": "Health Technology",
+ "as_of": "2026-10-05T18:35:00Z",
+ "identity": {
+  "company_name_10k": "UNAVAILABLE (10-K text not served)",
+  "latest_10k": {
+   "date": "2026-02-12",
+   "filing_id": "acebff1f-49d3-4c3a-8a85-cd0de0e89862"
+  },
+  "latest_10q": {
+   "date": "2026-08-06",
+   "filing_id": "0f84e098-4aff-4a6b-9026-49fa40f23c9b"
+  },
+  "nt_filings_12m": "None in index since 2025-10-01",
+  "going_concern": "UNAVAILABLE",
+  "auditor_change": "UNAVAILABLE (8-K item 4.01 content not readable)"
+ },
+ "fundamentals": {
+  "source": "UNAVAILABLE",
+  "revenue": "UNAVAILABLE",
+  "operating_income": "UNAVAILABLE",
+  "fcf": "UNAVAILABLE",
+  "net_debt": "UNAVAILABLE",
+  "trend_3y": "UNAVAILABLE"
+ },
+ "claims": [
+  {
+   "id": "ZTS-1",
+   "text": "Latest 10-K filed 2026-02-12 (filing_id acebff1f-49d3-4c3a-8a85-cd0de0e89862); latest 10-Q filed 2026-08-06 (filing_id 0f84e098-4aff-4a6b-9026-49fa40f23c9b); no NT 10-K/NT 10-Q in index since 2025-10-01.",
+   "label": "VERIFIED_FACT",
+   "value": "2026-02-12",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "ZTS 10-K via Robinhood SEC feed",
+     "url": "acebff1f-49d3-4c3a-8a85-cd0de0e89862",
+     "type": "10-K",
+     "published": "2026-02-12",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "ZTS 10-Q via Robinhood SEC feed",
+     "url": "0f84e098-4aff-4a6b-9026-49fa40f23c9b",
+     "type": "10-Q",
+     "published": "2026-08-06",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "ZTS-2",
+   "text": "Last trade 71.12 as of 2026-10-05T18:35:00Z.",
+   "label": "VERIFIED_FACT",
+   "value": 71.12,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_quotes ZTS",
+     "url": "robinhood:get_equity_quotes",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "ZTS-3",
+   "text": "Trailing P/E 11.46 (Robinhood fundamentals).",
+   "label": "VERIFIED_FACT",
+   "value": 11.46,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals ZTS",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "x"
+  },
+  {
+   "id": "ZTS-4",
+   "text": "Price vs 52w high: 71.12/148.79-1 = -52.2%.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -52.2,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_quotes ZTS",
+     "url": "robinhood:get_equity_quotes",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals ZTS",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "ZTS-5",
+   "text": "Peer trailing P/E: IDXX P/E 36.43; ELAN P/E -54.73; MRK P/E 115.34. Median of positive peer P/Es = 75.89; ZTS discount = 11.46/75.89-1 = -84.9%.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -84.9,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals IDXX",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals ELAN",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals MRK",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "ZTS-6",
+   "text": "Next catalyst: Q3 2026 results webcast and conference call 08:30 ET on 2026-11-05.",
+   "label": "VERIFIED_FACT",
+   "value": "2026-11-05",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Zoetis to Host Webcast and Conference Call on Third Quarter 2026 Financial Results",
+     "url": "https://secure.businesswire.com/news/home/20260924119056/en/Zoetis-to-Host-Webcast-and-Conference-Call-on-Third-Quarter-2026-Financial-Results",
+     "type": "company_announcement",
+     "published": "2026-09-24",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "ZTS-7",
+   "text": "Filing-derived fundamentals (revenue, operating income, FCF, net debt / sector metrics) UNAVAILABLE: Robinhood SEC feed returned no XBRL facts and no filing text for the 10-K and latest 10-Q.",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "ZTS 10-K via Robinhood SEC feed",
+     "url": "acebff1f-49d3-4c3a-8a85-cd0de0e89862",
+     "type": "10-K",
+     "published": "2026-02-12",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "ZTS-8",
+   "text": "ZTS has fallen 52.2% from its 52w high (148.79 on 2025-10-03) to 71.12, and prints at 11.5x trailing P/E, which for a historically premium animal-health franchise implies the market expects a durable earnings decline (pricing/competition in key franchises). Bull view: if earnings hold, multiple compression is excessive. Peer P/Es are distorted (ELAN negative, MRK 115x) so peer comparison is weak. The drivers of the drawdown were not sourced.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": null,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals ZTS",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "thesis": {
+  "mispricing": "ZTS has fallen 52.2% from its 52w high (148.79 on 2025-10-03) to 71.12, and prints at 11.5x trailing P/E, which for a historically premium animal-health franchise implies the market expects a durable earnings decline (pricing/competition in key franchises). Bull view: if earnings hold, multiple compression is excessive. Peer P/Es are distorted (ELAN negative, MRK 115x) so peer comparison is weak. The drivers of the drawdown were not sourced.",
+  "what_changes_it": [
+   "Q3 2026 results 2026-11-05 with guidance cut",
+   "Evidence of sustained share loss in key franchises",
+   "Net debt/FCF from filings materially worse than TV screen (ND/EBITDA 1.86)"
+  ],
+  "supporting_claim_ids": [
+   "ZTS-3",
+   "ZTS-4",
+   "ZTS-5",
+   "ZTS-8"
+  ]
+ },
+ "bear_case": {
+  "summary": "See work/bear/ (bear analyst owns this).",
+  "risks": [
+   "Q3 2026 results 2026-11-05 with guidance cut",
+   "Evidence of sustained share loss in key franchises",
+   "Net debt/FCF from filings materially worse than TV screen (ND/EBITDA 1.86)"
+  ],
+  "completed_before_bull": true
+ },
+ "valuation": {
+  "method": "Trailing P/E vs 3 named peers (Robinhood fundamentals); own-history multiple UNAVAILABLE (no historical P/E or filing EPS series)",
+  "claim_ids": [
+   "ZTS-3",
+   "ZTS-5"
+  ],
+  "notes": "Peers: IDXX, ELAN, MRK. Negative P/Es excluded from median."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 results webcast and conference call 08:30 ET",
+   "date": "2026-11-05",
+   "date_confirmed": true,
+   "source": {
+    "title": "Zoetis to Host Webcast and Conference Call on Third Quarter 2026 Financial Results",
+    "url": "https://secure.businesswire.com/news/home/20260924119056/en/Zoetis-to-Host-Webcast-and-Conference-Call-on-Third-Quarter-2026-Financial-Results",
+    "type": "company_announcement",
+    "published": "2026-09-24",
+    "accessed": "2026-10-05T18:35:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "Form 4 filings not returned in ZTS index query (form filter excluded Form 4). UNAVAILABLE.",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "ZTS-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [
+   "ZTS-7"
+  ],
+  "issues": [
+   "No filing-derived fundamentals"
+  ],
+  "checked_at": "2026-10-05T18:35:00Z"
+ },
+ "gates": {
+  "filing_fundamentals_sourced": false,
+  "catalyst_confirmed_company_source": true
+ },
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "data_gaps": [
+  "Filing XBRL facts/text",
+  "CIK",
+  "own-history valuation",
+  "13F",
+  "short interest",
+  "Form 4 contents",
+  "going-concern/auditor-change text"
+ ]
+}

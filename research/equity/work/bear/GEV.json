@@ -1,0 +1,183 @@
+{
+ "ticker": "GEV",
+ "as_of": "2026-10-05T00:00:00Z",
+ "bear_case": {
+  "summary": "GE Vernova's 'cheap' screen is an artifact. EV/EBIT is 116 and forward P/E 32.6, the highest of the five. H1 2026 net income of 5.41B includes ~4.7B in Q1 that is far above Q2's 0.67B, which suggests a one-time gain (cause UNAVAILABLE). H1 OCF of 10.68B is largely driven by customer deposits: contract liabilities rose 14.1B. Cash flow could reverse sharply if orders slow. Inventory is up 22% in 6 months.",
+  "risks": [
+   {
+    "risk": "Valuation already prices sustained gas-turbine and grid supercycle",
+    "evidence": "EV/EBIT 116, fwd P/E 32.6",
+    "likelihood": "High sensitivity",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Order/backlog growth in Q3 on 2026-10-28",
+    "claim_ids": [
+     "G5"
+    ]
+   },
+   {
+    "risk": "FCF is deposit-driven and non-recurring",
+    "evidence": "Contract liabilities 25.95B to 40.04B in H1 2026; OCF 10.68B",
+    "likelihood": "Medium-High",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Change in contract liabilities each quarter",
+    "claim_ids": [
+     "G2",
+     "G3"
+    ]
+   },
+   {
+    "risk": "One-time gain flatters TTM P/E",
+    "evidence": "H1 NI 5.413B vs Q2 0.668B",
+    "likelihood": "High that the TTM P/E is overstated",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Non-GAAP reconciliation",
+    "claim_ids": [
+     "G1"
+    ]
+   },
+   {
+    "risk": "Execution/wind segment losses, plus AI datacenter power-demand narrative reversal",
+    "evidence": "Wind not sourced this run",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Wind margins; hyperscaler capex",
+    "claim_ids": []
+   },
+   {
+    "risk": "Rate sensitivity: utilities sector -12.3% 3M with 10y at 5.24%",
+    "evidence": "Regime memo",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Utility capex plans",
+    "claim_ids": [
+     "G6"
+    ]
+   }
+  ],
+  "completed_before_bull": true
+ },
+ "accounting_red_flags": {
+  "receivables_vs_revenue": "UNAVAILABLE (AR not returned)",
+  "inventory": "+22% in 6 months (10.43B to 12.69B) vs H1 revenue +19% YoY: watch",
+  "sbc_share_of_fcf": "UNAVAILABLE",
+  "one_time_items": "Q1 2026 NI ~4.75B (derived: 5.413B - 0.668B), cause UNAVAILABLE",
+  "customer_concentration": "UNAVAILABLE",
+  "debt_maturities": "Net cash per screen (ND/EBITDA -3.02)"
+ },
+ "value_trap": "Not cheap. It passed the screen on a one-time-inflated P/E and on deposit-inflated FCF.",
+ "completed_before_bull": true,
+ "completed_at": "2026-10-05T16:00:00Z",
+ "claims": [
+  {
+   "id": "G1",
+   "text": "H1 2026 NI 5.413B; Q2 2026 NI 0.668B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "title": "GEV 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-07-22"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "G2",
+   "text": "Contract liabilities 40.037B at 6/30/26 vs 25.950B at 12/31/25",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "title": "GEV 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-07-22"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "G3",
+   "text": "H1 2026 OCF 10.680B vs 1.528B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "title": "GEV 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-07-22"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "G4",
+   "text": "Q2 2026 revenue 11.104B vs 9.111B; inventory 12.692B vs 10.429B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "title": "GEV 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-07-22"
+    }
+   ],
+   "material": false
+  },
+  {
+   "id": "G5",
+   "text": "EV/EBIT 116.0, fwd P/E 32.6",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "market_data",
+     "url": "work/screen.md (TradingView screener)",
+     "title": "S&P500 screen 2026-10-05",
+     "published": "2026-10-05"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "G6",
+   "text": "10y 5.24%; XLU -12.3% 3M",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "secondary",
+     "url": "work/regime_memo.md",
+     "title": "Regime memo 2026-10-05",
+     "published": "2026-10-05"
+    }
+   ],
+   "material": false
+  },
+  {
+   "id": "G7",
+   "text": "Q1 NI includes a one-time gain",
+   "label": "ANALYTICAL_INFERENCE",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "title": "GEV 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-07-22"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "notes": "Bull folder not read. CIK UNAVAILABLE per SOURCES.md. Capex/FCF not pulled; OCF used as proxy where noted."
+}
