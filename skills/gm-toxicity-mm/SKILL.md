@@ -35,5 +35,19 @@ A system that only runs A-S quotes too tight whenever informed flow is present.
 - `gm_report.json` (decomposition, VPIN stats, sim vs A-S), `gm_log.jsonl` (state transitions)
 - `board.html`: replayable control board (state light, VPIN vs thresholds, decomposed half-spread, inventory vs dynamic limit, P&L vs pure A-S, transition log, threshold sliders). Runs the engine in-browser; no data leaves the page.
 
+## Real-data desk (repo package `gmdesk/`, Kalshi KXBTC15M / KXETH15M)
+Each stage writes a report the next stage reads; nothing advances on a FAIL.
+
+| Stage | Command | Output | Gate |
+|---|---|---|---|
+| 1 Record | `python -m gmdesk.record backfill --series KXETH15M --markets 120` (one process per series) · `record live` | `data/gm/<series>/<ticker>.json.gz` | data present |
+| 2 Calibrate | `python -m gmdesk.analyze --series KXETH15M` | `report_<series>.json` | Q5−Q1 maker markout z ≤ −2, and holds inside ≥2 time-to-close buckets |
+| 3 Replay | `python -m gmdesk.replay --series KXETH15M` | `replay_<series>.json` | GM−A-S per-window CI95 > 0 **and** GM net P&L > 0 after maker fees |
+| 4 Shadow | `python -m gmdesk.shadow run --series KXETH15M --minutes 240` then `report` | `shadow_<series>.jsonl`, `shadow_gate_<series>.json` | ≥20 settled windows within replay's fill rate and P&L/contract |
+| 5–6 Execute | not shipped: needs the user's explicit permission to add order-placing code | — | approval word + caps $250 / 5 contracts / 20% daily stop |
+| Board | `python -m gmdesk.board_data` → publish `board.html` with `gm_real.json` | Real-tape view | — |
+
+Facts the desk relies on: Kalshi tags the aggressor (`taker_side`), so VPIN uses true signed flow; settlement (0/1) is the GM true value V, so maker markout at settlement is exact. Train = oldest 60% of windows, test = newest 40%; every fitted number (VPIN bucket, quintile cuts, adverse cost per quintile, stop-before-close, warn/halt, spread width) comes from train only. Replay fills need a trade printing *through* the quote, quotes refresh ≤1/s, maker fee 0.0175·C·P·(1−P) per fill.
+
 ## Script reference
 `scripts/gm_engine.py` — `gm_quotes`, `bayesian_update`, `pin_score`, `compute_vpin`, `build_toxicity_features`, `decompose_spread`, `MarketStateMonitor`, `GMASQuoteEngine`, `position_limit`, plus CLI `decompose` / `simulate`. CSV columns: `price,volume,side` (side ±1 optional; tick rule used if absent).

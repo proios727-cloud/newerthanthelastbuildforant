@@ -18,7 +18,7 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `fund/risk.py` | The Risk Officer's rules as pure functions. PASS comes with a max size; VETO names the rule. |
 | `fund/preview.py` | Order preview → `EXECUTE` gate → paper fill. There is no live execution path. |
 | `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
-| `tests/` | 32 unit tests: `python3 -m unittest -v` |
+| `tests/` | unit tests: `python3 -m unittest -v` |
 
 ```bash
 python3 scripts/build_board.py desk.json --out board.html
@@ -121,3 +121,18 @@ Four desks share one TypeSafe judgment layer. Strategy notes and the Heatseeker 
 | `sportsbook/` | Sportsbook line tracker (ported from 456CASH) | `sportsbook/cause.py`: why the line moved (Choice) | A move counts as sharp only when no news explains it |
 
 `judge/` holds the questions and clients. Without credentials, `judge.from_env()` returns a stub whose answers never count as confident, so every desk behaves as it did before. To go live, set `TYPESAFE_API_KEY`, `TYPESAFE_API_URL` and `TYPESAFE_LIVE=1`, and allow the API host in the network policy. Before that, check `judge.HttpClient` against the [TypeSafe API docs](https://docs.typesafe.ai/api.md); its request format has not been verified.
+
+## GM toxicity desk (`gmdesk/`)
+
+Glosten-Milgrom × Avellaneda-Stoikov market-making research on Kalshi 15-minute BTC/ETH markets, built
+from the `skills/gm-toxicity-mm` skill. Read-only: it records public trades, calibrates a VPIN toxicity
+signal out of sample, replays both quoters with fees, and runs a live shadow. **It places no orders.**
+
+```bash
+python3 -m gmdesk.record backfill --series KXETH15M --markets 120   # stage 1 (data/ is git-ignored)
+python3 -m gmdesk.analyze --series KXETH15M                         # stage 2 gate
+python3 -m gmdesk.replay  --series KXETH15M                         # stage 3 gate
+python3 -m gmdesk.shadow run --series KXETH15M --minutes 240        # stage 4 (live, no orders)
+python3 -m gmdesk.shadow report data/gm/shadow_KXETH15M.jsonl --replay data/gm/replay_KXETH15M.json
+python3 -m gmdesk.board_data                                        # board Real-tape data
+```

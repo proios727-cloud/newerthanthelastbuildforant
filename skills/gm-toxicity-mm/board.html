@@ -61,6 +61,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .cmp th:first-child,.cmp td:first-child{text-align:left;font-family:var(--f-body)}
 .cmp th{font-weight:500;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
 .good{color:var(--ok)} .badc{color:var(--bad)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button[aria-pressed="true"]{background:var(--fg);color:var(--panel);border-color:var(--fg)}
+.gates{display:flex;flex-wrap:wrap;gap:8px}
+.gate{font:600 12px var(--f-mono);letter-spacing:.04em;padding:5px 10px;border-radius:999px}
+.gate.pass{color:var(--ok);background:var(--okbg)} .gate.fail{color:var(--bad);background:var(--badbg)} .gate.wait{color:var(--warn);background:var(--warnbg)}
+.finding{font-size:13px;max-width:80ch;margin:0}
+.empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:8px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -70,8 +77,39 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <h1>GM × A-S Toxicity Board</h1>
       <p class="sub">Glosten-Milgrom adverse-selection layer on an Avellaneda-Stoikov quoter. Replays a synthetic tape where every third 2,000-step regime is toxic (85% informed, directional). Research only. Never places orders.</p>
     </div>
-    <span class="tag">gm-toxicity-mm · demo tape</span>
+    <div class="tabs" role="group" aria-label="View">
+      <button id="tab-real" aria-pressed="true">Real Kalshi tape</button>
+      <button id="tab-demo" aria-pressed="false">Synthetic demo</button>
+    </div>
   </header>
+
+  <section id="real" class="wrap" style="padding:0">
+    <div class="bar" style="justify-content:space-between">
+      <div class="tabs" role="group" aria-label="Series" id="series-tabs"></div>
+      <span class="tag" id="r-gen">loading gm_real.json…</span>
+    </div>
+    <div class="gates" id="r-gates"></div>
+    <p class="finding" id="r-finding"></p>
+    <section class="strip" id="r-kpis" aria-label="Replay summary"></section>
+    <div class="grid">
+      <div class="panel"><h2>Maker markout by VPIN quintile <span>¢/contract at settlement · test set</span></h2>
+        <canvas id="r-vpin"></canvas>
+        <div class="legend"><span><b style="background:var(--accent)"></b>settlement ±1 SE</span><span><b style="background:var(--accent2)"></b>60-second markout</span></div></div>
+      <div class="panel"><h2>Maker markout by time to close <span>¢/contract · test set</span></h2>
+        <canvas id="r-tau"></canvas>
+        <div class="legend"><span><b style="background:var(--accent)"></b>settlement ±1 SE</span><span>below zero = makers lose</span></div></div>
+      <div class="panel"><h2>Cumulative replay P&amp;L, test markets <span>$ after maker fees</span></h2>
+        <canvas id="r-cum"></canvas>
+        <div class="legend"><span><b style="background:var(--accent)"></b>GM × A-S</span><span><b style="background:var(--accent2)"></b>pure A-S</span></div></div>
+      <div class="panel"><h2 id="r-trace-h">Quote trace <span></span></h2>
+        <canvas id="r-trace"></canvas>
+        <div class="legend"><span><b style="background:var(--fg)"></b>mid</span><span><b style="background:var(--accent)"></b>GM bid/ask</span><span><b style="background:var(--warnbg);height:8px"></b>WARNING</span><span><b style="background:var(--badbg);height:8px"></b>HALTED</span></div></div>
+    </div>
+    <div class="panel"><h2>Fitted model and spread decomposition <span>train set only</span></h2>
+      <table class="cmp" id="r-model"></table></div>
+  </section>
+
+  <section id="demo" class="wrap" style="padding:0" hidden>
 
   <section class="strip" aria-label="Live readouts">
     <div class="kpi"><div class="l">State</div><div id="state" class="pill st-ACTIVE"><i></i><span>ACTIVE</span></div></div>
@@ -121,8 +159,77 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <p class="note">Toxicity ML score is wired as 0 in this demo; VPIN alone drives state. Thresholds are uncalibrated defaults from the source article. Calibrate per instrument before trusting any edge shown here.</p>
     </div>
   </div>
-</div>
+</section>
 
+</div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id), css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let D=null, cur=0;
+function tabs(which){['real','demo'].forEach(k=>{$(k).hidden=k!==which;$('tab-'+k).setAttribute('aria-pressed',k===which)});window.dispatchEvent(new Event('resize'))}
+$('tab-real').onclick=()=>tabs('real');$('tab-demo').onclick=()=>tabs('demo');
+function setup(c){const dpr=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*dpr;c.height=h*dpr;const x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,w,h);return[x,w,h]}
+function axes(c,lo,hi,n,fmt){const[x,w,h]=setup(c);const L=46,R=8,T=10,B=22,pw=w-L-R,ph=h-T-B,sy=v=>T+(1-(v-lo)/(hi-lo))*ph;
+  x.font='11px '+css('--f-mono');x.fillStyle=css('--muted');x.strokeStyle=css('--grid');x.lineWidth=1;x.textAlign='right';
+  for(let i=0;i<=n;i++){const v=lo+(hi-lo)*i/n,y=Math.round(sy(v))+.5;x.beginPath();x.moveTo(L,y);x.lineTo(L+pw,y);x.stroke();x.fillText(fmt(v),L-6,y+4)}
+  if(lo<0&&hi>0){x.strokeStyle=css('--muted');const y=Math.round(sy(0))+.5;x.beginPath();x.moveTo(L,y);x.lineTo(L+pw,y);x.stroke()}
+  return{x,w,h,L,T,pw,ph,sy}}
+function range(vals,pad=.1){let lo=Math.min(0,...vals),hi=Math.max(0,...vals);const p=(hi-lo)*pad||1;return[lo-p,hi+p]}
+function bars(c,labels,mean,se,dots){
+  const v=[];mean.forEach((m,i)=>{if(m!=null){v.push(m+(se[i]||0),m-(se[i]||0))}});(dots||[]).forEach(d=>d!=null&&v.push(d));
+  const[lo,hi]=range(v);const f=axes(c,lo,hi,4,v=>v.toFixed(1)),{x,L,pw,sy,h}=f,bw=pw/labels.length;
+  labels.forEach((lab,i)=>{const cx=L+bw*(i+.5),m=mean[i];x.fillStyle=css('--muted');x.textAlign='center';x.fillText(lab,cx,h-6);
+    if(m==null)return;x.fillStyle=css('--accent');const y0=sy(0),y1=sy(m);x.fillRect(cx-bw*.3,Math.min(y0,y1),bw*.6,Math.max(1,Math.abs(y1-y0)));
+    if(se[i]!=null){x.strokeStyle=css('--fg');x.beginPath();x.moveTo(cx,sy(m-se[i]));x.lineTo(cx,sy(m+se[i]));x.moveTo(cx-5,sy(m-se[i]));x.lineTo(cx+5,sy(m-se[i]));x.moveTo(cx-5,sy(m+se[i]));x.lineTo(cx+5,sy(m+se[i]));x.stroke()}
+    if(dots&&dots[i]!=null){x.fillStyle=css('--accent2');x.beginPath();x.arc(cx+bw*.38,sy(dots[i]),4,0,7);x.fill()}})}
+function lines(c,series,colors,xlab){const all=series.flat();const[lo,hi]=range(all,.08);const f=axes(c,lo,hi,4,v=>v.toFixed(0)),{x,L,pw,sy,h}=f;
+  series.forEach((s,k)=>{x.strokeStyle=colors[k];x.lineWidth=2;x.beginPath();s.forEach((v,i)=>{const px=L+(s.length>1?i/(s.length-1):0)*pw;i?x.lineTo(px,sy(v)):x.moveTo(px,sy(v))});x.stroke()});
+  x.fillStyle=css('--muted');x.textAlign='center';x.fillText(xlab,L+pw/2,h-6)}
+function trace(c,t){const[x,w,h]=setup(c);const L=46,R=8,T=10,B=22,pw=w-L-R,ph=h-T-B,g=t.gm;
+  const sx=s=>L+(s+900)/900*pw,sy=v=>T+(1-v)*ph;x.font='11px '+css('--f-mono');
+  g.forEach((r,i)=>{const n=g[i+1],x0=sx(r[0]),x1=n?sx(n[0]):L+pw;if(r[3]!=='ACTIVE'){x.fillStyle=css(r[3]==='HALTED'?'--badbg':'--warnbg');x.fillRect(x0,T,x1-x0,ph)}});
+  x.strokeStyle=css('--grid');x.fillStyle=css('--muted');x.textAlign='right';[0,.25,.5,.75,1].forEach(v=>{const y=Math.round(sy(v))+.5;x.beginPath();x.moveTo(L,y);x.lineTo(L+pw,y);x.stroke();x.fillText(Math.round(v*100)+'¢',L-6,y+4)});
+  x.textAlign='center';[-900,-600,-300,0].forEach(s=>x.fillText(s===0?'close':(s/60)+'m',sx(s),h-6));
+  const path=(k,col,lw)=>{x.strokeStyle=col;x.lineWidth=lw;x.beginPath();let on=false;g.forEach(r=>{const v=r[k];if(v==null){on=false;return}on?x.lineTo(sx(r[0]),sy(v)):x.moveTo(sx(r[0]),sy(v));on=true});x.stroke()};
+  path(4,css('--accent'),1.2);path(5,css('--accent'),1.2);path(1,css('--fg'),2)}
+const gate=(n,g,txt)=>`<span class="gate ${g==null?'wait':g?'pass':'fail'}">${n} ${g==null?'PENDING':g?'PASS':'FAIL'}${txt?' · '+txt:''}</span>`;
+const fmt=(v,d=2)=>v==null?'—':(v>=0?'+':'')+(+v).toFixed(d);
+function render(){
+  if(!D||!D.series.length)return;const b=D.series[cur],r=b.replay;
+  $('series-tabs').innerHTML=D.series.map((s,i)=>`<button data-i="${i}" aria-pressed="${i===cur}">${s.series}</button>`).join('');
+  $('series-tabs').querySelectorAll('button').forEach(el=>el.onclick=()=>{cur=+el.dataset.i;render()});
+  const sh=b.shadow&&b.shadow.gate4;
+  $('r-gates').innerHTML=gate('Stage 2 toxicity signal',b.gate2.pass,`Q5−Q1 z ${b.q5_q1?b.q5_q1.z:'—'}`)+gate('Stage 3 replay',r.gate3.pass,`CI ${r.diff.ci95.map(v=>v.toFixed(2)).join('…')} $/mkt`)+
+    gate('Stage 4 shadow',sh?sh.pass:null,b.shadow&&b.shadow.markets?b.shadow.markets+' settled':'no settled windows yet')+gate('Stage 5–6 execution',null,'needs your approval');
+  const better=r.gm.total_pnl>r.as.total_pnl;
+  $('r-finding').textContent=`On ${b.markets.test} unseen ${b.series} windows, ${r.gm.total_pnl>0?'GM × A-S made money':'both quoters lost money'} after fees. `+
+    (better?`The GM layer lost $${(r.as.total_pnl-r.gm.total_pnl).toFixed(2)} less than pure A-S by quoting wider and stepping back when VPIN ran hot.`:`The GM layer did not beat pure A-S.`)+
+    ` Median spread decomposition puts ${Math.round((b.decomp.as_fraction||0)*100)}% of the effective spread in adverse selection.`;
+  const k=(l,v,s)=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+  $('r-kpis').innerHTML=k('Test windows',b.markets.test,`${b.trades.test.toLocaleString()} trades · fit on ${b.markets.train}`)+
+    k('GM × A-S P&amp;L','$'+fmt(r.gm.total_pnl),`${r.gm.fills} fills · half-spread ${r.half_c.gm}¢`)+
+    k('Pure A-S P&amp;L','$'+fmt(r.as.total_pnl),`${r.as.fills} fills · half-spread ${r.half_c.as}¢`)+
+    k('GM − A-S per window','$'+fmt(r.diff.mean,3),`95% CI ${r.diff.ci95[0].toFixed(2)} to ${r.diff.ci95[1].toFixed(2)}`)+
+    k('VPIN warn / halt',`${b.vpin.suggested_warn} / ${b.vpin.suggested_halt}`,`train p80 / p95 · bucket ${Math.round(b.vpin.bucket_contracts)} ct`);
+  const Q=['Q1','Q2','Q3','Q4','Q5'];bars($('r-vpin'),Q,Q.map(q=>b.by_vpin[q].mean_c),Q.map(q=>b.by_vpin[q].se_c),Q.map(q=>b.by_vpin_60s[q].mean_c));
+  const T=Object.keys(b.by_tau);bars($('r-tau'),T,T.map(t=>b.by_tau[t].mean_c),T.map(t=>b.by_tau[t].se_c));
+  let a=0,c=0;const g1=[0],a1=[0];r.per_market.forEach(m=>{a+=m.gm;c+=m.as;g1.push(a);a1.push(c)});lines($('r-cum'),[g1,a1],[css('--accent'),css('--accent2')],'test windows, oldest → newest');
+  if(b.trace){$('r-trace-h').innerHTML=`Quote trace <span>${b.trace.ticker}</span>`;trace($('r-trace'),b.trace)}
+  const m=r.model,d=b.decomp;
+  $('r-model').innerHTML=`<thead><tr><th>Parameter</th><th>Value</th><th>Source</th></tr></thead><tbody>`+
+   `<tr><td>Adverse cost by VPIN quintile</td><td>${m.adverse_c.map(v=>v.toFixed(2)).join(' · ')} ¢</td><td>train maker markout</td></tr>`+
+   `<tr><td>Stop quoting before close</td><td>${m.stop_tau}s</td><td>train time buckets, loss &gt; 2 SE</td></tr>`+
+   `<tr><td>Effective spread (Roll)</td><td>${d.effective_c}¢</td><td>median of ${d.markets} windows</td></tr>`+
+   `<tr><td>Adverse / inventory+processing</td><td>${d.adverse_c}¢ / ${d.inventory_c}¢</td><td>Kyle λ ${d.kyle_lambda_c}</td></tr></tbody>`;
+  $('r-gen').textContent='data '+D.generated;
+}
+fetch('gm_real.json').then(r=>r.ok?r.json():Promise.reject()).then(d=>{D=d;render()}).catch(()=>{
+  $('r-gen').textContent='no real data loaded';$('r-finding').innerHTML='<span class="empty" style="display:block">Real-tape results appear here once <code>gm_real.json</code> is published next to this page (python -m gmdesk.board_data).</span>'});
+addEventListener('resize',()=>{if(!$('real').hidden)render()});
+new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',render);
+})();
+</script>
 <script>
 (()=>{
 const N=20000, REG=2000, BUCKET=50, NB=50;
