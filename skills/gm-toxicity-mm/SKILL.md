@@ -33,7 +33,7 @@ A system that only runs A-S quotes too tight whenever informed flow is present.
 
 ## Outputs
 - `gm_report.json` (decomposition, VPIN stats, sim vs A-S), `gm_log.jsonl` (state transitions)
-- `board.html`: replayable control board (state light, VPIN vs thresholds, decomposed half-spread, inventory vs dynamic limit, P&L vs pure A-S, transition log, threshold sliders). Runs the engine in-browser; no data leaves the page.
+- `board.html`: real-tape control board (reads `gm_real.json` from `python -m gmdesk.board_data`): gate status, maker markout by VPIN quintile and time-to-close, cumulative replay P&L GM vs pure A-S, a real quote trace, fitted model, and live-shadow settled windows. No synthetic data.
 
 ## Real-data desk (repo package `gmdesk/`, Kalshi KXBTC15M / KXETH15M)
 Each stage writes a report the next stage reads; nothing advances on a FAIL.

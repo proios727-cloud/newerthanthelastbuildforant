@@ -49,22 +49,30 @@ def bucket_size(train, per_market=50):
     return max(1.0, st.median(vols) / per_market)
 
 
-def annotate(markets, bucket, n=20, horizon=60):
-    """Walk markets in time order with one continuous VPIN; tag each trade (no look-ahead)."""
+def annotate(markets, bucket, n=20, horizon=60, ofi_s=30):
+    """Walk markets in time order with one continuous VPIN; tag each trade (no look-ahead).
+
+    `ofi` = signed taker volume / total volume over the previous `ofi_s` seconds of the same market;
+    `aligned` = s * ofi, i.e. how strongly this taker trades *with* the recent flow.
+    """
     v, out = VPIN(bucket, n), []
     for m in markets:
         tr = m["trades"]
-        j = 0
+        j, k, sv, tv = 0, 0, 0.0, 0.0
         for i, r in enumerate(tr):
             while j < len(tr) and tr[j]["ts"] < r["ts"] + horizon:
                 j += 1
+            while k < i and tr[k]["ts"] < r["ts"] - ofi_s:
+                sv -= tr[k]["s"] * tr[k]["q"]; tv -= tr[k]["q"]; k += 1
+            ofi = sv / tv if tv > 1e-9 else 0.0
             later = tr[j - 1]["p"] if j - 1 > i and tr[j - 1]["ts"] >= r["ts"] + horizon * 0.5 else None
             out.append({
-                "ticker": m["ticker"], "vpin": v.value, "tau": m["close_ts"] - r["ts"], "q": r["q"], "p": r["p"],
+                "ticker": m["ticker"], "vpin": v.value, "ofi": ofi, "aligned": r["s"] * ofi, "tau": m["close_ts"] - r["ts"], "q": r["q"], "p": r["p"],
                 "settle_c": r["s"] * (r["p"] - m["R"]) * 100,
                 "mark60_c": None if later is None else r["s"] * (r["p"] - later) * 100,
             })
             v.push(r["q"], r["s"])
+            sv += r["s"] * r["q"]; tv += r["q"]
     return out
 
 
@@ -123,6 +131,18 @@ def run(markets, frac=0.6, n=20):
     held = [g for g in tau_gaps.values() if g and g["z"] <= -1]
     gate2 = bool(main_gap and main_gap["z"] <= -2 and len(held) >= 2)
 
+    tr_al = [r["aligned"] for r in annotate(train, bucket, n)]
+    acuts = quantiles(tr_al)
+    by_al = {f"A{k + 1}": clustered([r for r in te if which(r["aligned"], acuts) == k]) for k in range(5)}
+    al_gap = gap(by_al["A5"], by_al["A1"])
+    al_within = {}
+    for lo, hi, lab in TAU:
+        rs = [r for r in te if lo <= r["tau"] < hi]
+        al_within[lab] = gap(clustered([r for r in rs if which(r["aligned"], acuts) == 4]),
+                             clustered([r for r in rs if which(r["aligned"], acuts) == 0]))
+    al_held = [g for g in al_within.values() if g and g["z"] <= -1]
+    gate2_ofi = bool(al_gap and al_gap["z"] <= -2 and len(al_held) >= 2)
+
     dec = [d for d in (decompose([r["p"] for r in m["trades"]], [r["s"] * r["q"] for r in m["trades"]])
                        for m in markets) if d]
     med = {k: round(st.median(d[k] for d in dec), 4) for k in dec[0]} if dec else {}
@@ -140,7 +160,10 @@ def run(markets, frac=0.6, n=20):
         "q5_minus_q1_within_time_bucket": tau_gaps,
         "q5_minus_q1": main_gap,
         "spread_decomposition_median": med | {"markets": len(dec)},
-        "gate2": {"pass": gate2, "rule": "Q5-Q1 maker markout z <= -2 overall and z <= -1 in >= 2 time-to-close buckets"},
+        "ofi30": {"train_cuts": [round(c, 4) for c in acuts], "maker_markout_settle_by_aligned": by_al,
+                  "a5_minus_a1": al_gap, "a5_minus_a1_within_time_bucket": al_within,
+                  "gate2": {"pass": gate2_ofi, "rule": "same rule, aligned-OFI quintiles instead of VPIN"}},
+        "gate2": {"pass": gate2 or gate2_ofi, "vpin_pass": gate2, "ofi_pass": gate2_ofi, "rule": "Q5-Q1 maker markout z <= -2 overall and z <= -1 in >= 2 time-to-close buckets"},
     }
 
 
@@ -159,7 +182,13 @@ def render(series, rep):
     L.append(f"Q5-Q1 overall: {rep['q5_minus_q1']}")
     L.append(f"Q5-Q1 within time buckets: {rep['q5_minus_q1_within_time_bucket']}")
     L.append(f"spread decomposition (median per market): {rep['spread_decomposition_median']}")
-    L.append(f"GATE 2: {'PASS' if rep['gate2']['pass'] else 'FAIL'}  ({rep['gate2']['rule']})")
+    o = rep["ofi30"]
+    L.append("maker markout by aligned 30s OFI quintile (A5 = taker trades hardest WITH recent flow):")
+    for k, b in o["maker_markout_settle_by_aligned"].items():
+        L.append(f"  OFI {k}: {b['mean_c']:>8} ± {b['se_c']:<7} ({b['contracts']} ct)")
+    L.append(f"A5-A1 overall: {o['a5_minus_a1']}  within time buckets: {o['a5_minus_a1_within_time_bucket']}")
+    L.append(f"GATE 2: {'PASS' if rep['gate2']['pass'] else 'FAIL'}  (VPIN {'PASS' if rep['gate2']['vpin_pass'] else 'FAIL'}, OFI {'PASS' if rep['gate2']['ofi_pass'] else 'FAIL'})")
+    L.append(f"gate 2 rule: {rep['gate2']['rule']}")
     return "\n".join(L)
 
 

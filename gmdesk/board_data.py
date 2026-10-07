@@ -17,6 +17,14 @@ def _read(p):
         return json.load(f)
 
 
+def shadow_windows(path):
+    if not os.path.exists(path):
+        return []
+    keep = ("ticker", "result", "pnl", "fills", "contracts", "final_inv")
+    with open(path, encoding="utf-8") as f:
+        return [{k: d[k] for k in keep} for d in map(json.loads, f) if d.get("ev") == "settle"]
+
+
 def series_block(data, s):
     rep, rp = _read(os.path.join(data, f"report_{s}.json")), _read(os.path.join(data, f"replay_{s}.json"))
     if not rep or not rp:
@@ -41,6 +49,7 @@ def series_block(data, s):
                    "per_market": rp["per_market"]},
         "trace": tr and {"ticker": tk, "gm": step(tr["gm"]), "as": step(tr["as"])},
         "shadow": sh,
+        "shadow_windows": shadow_windows(sh_log),
     }
 
 
