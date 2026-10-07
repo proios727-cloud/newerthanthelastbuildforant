@@ -1,0 +1,21 @@
+{
+  "strategy": "OU spread mean-reversion (XOM/CVX, z_entry=2.0, z_exit=0.5, hold=3)",
+  "years": 5.0,
+  "closed_trades": 24,
+  "sharpe": 0.39,
+  "profit_factor": null,
+  "win_rate": null,
+  "avg_win": null,
+  "avg_loss": null,
+  "expectancy": null,
+  "return_pct": 5.11,
+  "buy_hold_return_pct": 58.0,
+  "max_drawdown_pct": 4.45,
+  "beta": 0.84,
+  "slippage_bps": 10,
+  "variants_tested": 8,
+  "settings": { "venue_fees": true, "min_slippage_bps": 10 },
+  "directional": "long_short",
+  "sample": "2021-2026 daily EOD, delay-1 fills, both legs costed",
+  "detail": "Source: backtest_5y.py run 2026-10-07 on the fork at _archive/Quant-Trading-Strategies. EWA/EWC variant: Sharpe -0.17, return -1.87%. Kelly saturated at leverage cap -> step sizing; no-trade band inert (0 resizing bars)."
+}
