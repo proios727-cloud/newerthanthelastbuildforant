@@ -33,7 +33,7 @@ A system that only runs A-S quotes too tight whenever informed flow is present.
 
 ## Outputs
 - `gm_report.json` (decomposition, VPIN stats, sim vs A-S), `gm_log.jsonl` (state transitions)
-- Optional: HTML board via artifact-design — panels: state light, VPIN gauge, AS-vs-inventory stacked bar, spread multiplier timeline.
+- `board.html`: replayable control board (state light, VPIN vs thresholds, decomposed half-spread, inventory vs dynamic limit, P&L vs pure A-S, transition log, threshold sliders). Runs the engine in-browser; no data leaves the page.
 
 ## Script reference
 `scripts/gm_engine.py` — `gm_quotes`, `bayesian_update`, `pin_score`, `compute_vpin`, `build_toxicity_features`, `decompose_spread`, `MarketStateMonitor`, `GMASQuoteEngine`, `position_limit`, plus CLI `decompose` / `simulate`. CSV columns: `price,volume,side` (side ±1 optional; tick rule used if absent).
