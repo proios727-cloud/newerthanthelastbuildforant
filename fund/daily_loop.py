@@ -91,6 +91,25 @@ def run_loop(mode="full", now=None):
             r = subprocess.run([sys.executable, "-m", "options.gex_board", "SPY,QQQ"],
                                capture_output=True, text=True, timeout=600, cwd=ROOT)
             digest["steps"].append("gex board: " + (r.stdout.strip().splitlines() or ["ran"])[-1])
+            # ledger: append ARMED setup states from the fresh snapshot
+            try:
+                from options import ledger as opt_ledger
+                import json as _json
+                snap = _json.loads((ROOT / "data" / "gex_snapshot.json").read_text(encoding="utf-8"))
+                n = sum(len(opt_ledger.from_snapshot(snap, sym) or [])
+                        for sym in snap.get("symbols", {}))
+                if n:
+                    digest["steps"].append(f"ledger: {n} armed setups logged")
+            except Exception as e:
+                digest["steps"].append(f"ledger skipped: {str(e)[:60]}")
+            # Friday (or weekend catch-up): weekly options report
+            if clock.to_et(now).weekday() >= 4:
+                try:
+                    rr = subprocess.run([sys.executable, "-m", "options.report", "--no-resolve"],
+                                        capture_output=True, text=True, timeout=120, cwd=ROOT)
+                    digest["steps"].append("options weekly: " + (rr.stdout.strip().splitlines() or ["ran"])[-1])
+                except Exception as e:
+                    digest["steps"].append(f"options weekly skipped: {str(e)[:60]}")
         except Exception as e:
             digest["steps"].append(f"gex board skipped: {str(e)[:80]}")
 
