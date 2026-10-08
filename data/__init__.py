@@ -1,0 +1,1 @@
+"""Data spine: keyless collectors (Binance 24/7 crypto, yfinance equities)."""

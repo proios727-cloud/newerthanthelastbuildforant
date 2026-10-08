@@ -1,7 +1,7 @@
 __pycache__/
 *.pyc
 .DS_Store
-data/
+data/store.json
 *.log
 .env
 .venv/
