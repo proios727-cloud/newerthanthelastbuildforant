@@ -179,8 +179,17 @@ def main(argv=None):
     sub.add_parser("status")
     sub.add_parser("sync-board")
     sub.add_parser("auto-mark")
+    p_loop = sub.add_parser("loop")
+    p_loop.add_argument("--once", action="store_true")
+    p_loop.add_argument("--watch", action="store_true")
     a = ap.parse_args(argv)
     cfg = config.load()
+    if a.cmd == "loop":
+        from .daily_loop import run_loop
+        import json as _json
+        d = run_loop(mode="watch" if a.watch else "full")
+        print(_json.dumps(d, indent=2))
+        return
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
      "status": cmd_status, "sync-board": cmd_sync_board, "auto-mark": cmd_auto_mark}[a.cmd](a, cfg)
 
