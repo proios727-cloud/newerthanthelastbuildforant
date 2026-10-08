@@ -19,22 +19,22 @@
   "tiles": [
     {
       "label": "Paper NAV",
-      "value": "—",
-      "trend": "flat"
+      "value": "$100,001",
+      "trend": "up"
     },
     {
       "label": "Day P&L",
-      "value": "—",
-      "trend": "flat"
+      "value": "+1 (+0.00%)",
+      "trend": "up"
     },
     {
       "label": "Gross exposure",
-      "value": "—",
+      "value": "5.0%",
       "trend": "flat"
     },
     {
       "label": "Drawdown from peak",
-      "value": "—",
+      "value": "0.00%",
       "trend": "flat"
     },
     {
@@ -46,32 +46,32 @@
   "funnel": [
     {
       "stage": "Scanned",
-      "count": null,
+      "count": 1,
       "seat": "quant"
     },
     {
       "stage": "Thesis written",
-      "count": null,
+      "count": 0,
       "seat": "analyst"
     },
     {
       "stage": "Risk-passed",
-      "count": null,
+      "count": 1,
       "seat": "risk"
     },
     {
       "stage": "Previewed",
-      "count": null,
+      "count": 1,
       "seat": "trader"
     },
     {
       "stage": "Approved",
-      "count": null,
+      "count": 1,
       "seat": "pm"
     },
     {
       "stage": "Filled (paper)",
-      "count": null,
+      "count": 1,
       "seat": "trader"
     },
     {
@@ -217,7 +217,7 @@
     },
     {
       "label": "Risk budget used today",
-      "value": "—",
+      "value": "0%",
       "delta": ""
     }
   ],
