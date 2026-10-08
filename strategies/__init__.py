@@ -1,0 +1,1 @@
+"""Strategies package: each <id>/ has spec.yaml + signal.py emitting dicts."""

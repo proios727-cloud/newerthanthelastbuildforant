@@ -1,0 +1,18 @@
+id: s1_carry
+name: Funding-rate carry on BTC/ETH perps
+family: carry
+description: >
+  Harvest perp funding when it is meaningfully positive: sell (short) the perp
+  against held cash in the paper book. Desk-native version of the incumbent
+  strategy family. Signals only; sizing and risk run through the normal
+  preview pipeline.
+data: OKX funding (keyless), Binance vision quotes (keyless)
+universe: [BTC/USD, ETH/USD]
+rules:
+  min_funding_8h: 0.00005      # 0.005% per 8h -> skip below
+  conviction: min(funding_annualized / 0.10, 1.0)
+  side: sell                    # positive funding pays the short
+  refresh: every 15 min during the loop
+notes: >
+  This is a SIGNAL spec, not a return promise. The five-gate check must pass
+  before any capital is committed. Paper receipts decide.

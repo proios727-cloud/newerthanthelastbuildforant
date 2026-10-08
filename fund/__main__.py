@@ -126,6 +126,13 @@ def cmd_sync_board(a, cfg):
     counts = {"Previewed": len(ps),
               "Approved": sum(1 for p in ps.values() if p["status"] == "filled_paper"),
               "Filled (paper)": len(L.fills)}
+    # observed funnel counts from the event log override where stages overlap
+    try:
+        from . import funnel
+        obs = funnel.counts()
+        counts.update({k: v for k, v in obs.items() if k in counts or True})
+    except Exception:
+        pass
     for f in desk["funnel"]:
         if f["stage"] in counts:
             f["count"] = counts[f["stage"]]
