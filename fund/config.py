@@ -1,9 +1,44 @@
-"""Load the fund block (limits, universe, fees) from desk.json — the single source of truth."""
+"""Load the fund block (limits, universe, fees) from desk.json — the single source of truth.
+
+Also loads .env (if present) into os.environ WITHOUT overriding existing values.
+.env values are never logged or printed.
+"""
 import json
+import os
 import pathlib
 from dataclasses import dataclass, field
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+TRUTHY = {"1", "true", "yes", "on"}
+
+
+def load_env(path=ROOT / ".env"):
+    """Stdlib .env loader: fills empty/missing env values only; existing env wins."""
+    p = pathlib.Path(path)
+    if not p.exists():
+        return
+    for line in p.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, val = line.partition("=")
+        key, val = key.strip(), val.strip().strip('"').strip("'")
+        if not key or key.startswith("#"):
+            continue
+        if key not in os.environ or not os.environ[key]:
+            os.environ[key] = val
+
+
+def env(name, default=""):
+    return os.environ.get(name, default)
+
+
+def env_bool(name, default=False):
+    v = os.environ.get(name)
+    if v is None or v == "":
+        return default
+    return v.strip().lower() in TRUTHY
 
 
 @dataclass(frozen=True)
@@ -49,4 +84,5 @@ def from_dict(desk):
 
 
 def load(path=ROOT / "desk.json"):
+    load_env()
     return from_dict(json.loads(pathlib.Path(path).read_text(encoding="utf-8")))

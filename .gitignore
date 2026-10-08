@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 data/
 *.log
+.env
+.venv/
+ledger/*.bak
