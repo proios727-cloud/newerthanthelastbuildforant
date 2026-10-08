@@ -85,6 +85,15 @@ def run_loop(mode="full", now=None):
     subprocess.run([sys.executable, "-m", "fund", "sync-board"], check=True, cwd=ROOT)
     digest["steps"].append("board synced")
 
+    # 5b. options discovery board (SPY+QQQ), equity session only
+    if mode == "full" and clock.equity_session_open(now):
+        try:
+            r = subprocess.run([sys.executable, "-m", "options.gex_board", "SPY,QQQ"],
+                               capture_output=True, text=True, timeout=600, cwd=ROOT)
+            digest["steps"].append("gex board: " + (r.stdout.strip().splitlines() or ["ran"])[-1])
+        except Exception as e:
+            digest["steps"].append(f"gex board skipped: {str(e)[:80]}")
+
     # 6. receipt
     day = clock.fund_day(now)
     RECEIPTS.mkdir(parents=True, exist_ok=True)
