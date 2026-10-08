@@ -40,8 +40,9 @@ def propose(signal, ledger, cfg, previews_path, now=None, events=()):
     q = collectors.get_stored_quote(signal["symbol"])
     if q is None or (now - parse_ts(q["ts"])).total_seconds() > cfg.limits.max_quote_age_sec:
         q = collectors.quote(signal["symbol"], cfg)
-    if q is None:
-        raise RuntimeError(f"no fresh quote for {signal['symbol']}")
+    # Whatever quote we use - stored or freshly fetched - must be fresh.
+    if q is None or (now - parse_ts(q["ts"])).total_seconds() > cfg.limits.max_quote_age_sec:
+        raise RuntimeError(f"no fresh quote for {signal['symbol']} (stale or missing)")
 
     nav = ledger.nav()
     px = q["price"]
