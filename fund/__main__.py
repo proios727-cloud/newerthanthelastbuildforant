@@ -137,6 +137,25 @@ def cmd_sync_board(a, cfg):
     subprocess.run([sys.executable, str(ROOT / "scripts/build_board.py"), str(path), "--out", str(ROOT / "board.html")], check=True)
 
 
+def cmd_auto_mark(a, cfg):
+    """Pull fresh quotes for universe + open positions and mark the ledger."""
+    from data import collectors
+    from datetime import datetime, timezone
+    L = load_ledger()
+    symbols = sorted(set(cfg.universe) | {s for s, p in L.positions.items() if p.get("qty")})
+    marked = collectors.mark_all(cfg, symbols)
+    now = datetime.now(timezone.utc)
+    n = 0
+    for sym, q in marked.items():
+        L.mark(sym, q["price"], now, q.get("bid"), q.get("ask"))
+        n += 1
+    L.save(STATE)
+    log("auto_mark", marked=n)
+    snap = L.snapshot()
+    print(f"auto-mark: {n} symbols marked")
+    print(json.dumps({k: snap[k] for k in ("nav", "day_pnl", "day_pnl_pct", "gross_pct", "drawdown_pct")}, indent=2))
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m fund")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -152,10 +171,11 @@ def main(argv=None):
     p = sub.add_parser("approve"); p.add_argument("id"); p.add_argument("word")
     sub.add_parser("status")
     sub.add_parser("sync-board")
+    sub.add_parser("auto-mark")
     a = ap.parse_args(argv)
     cfg = config.load()
     {"init": cmd_init, "mark": cmd_mark, "preview": cmd_preview, "approve": cmd_approve,
-     "status": cmd_status, "sync-board": cmd_sync_board}[a.cmd](a, cfg)
+     "status": cmd_status, "sync-board": cmd_sync_board, "auto-mark": cmd_auto_mark}[a.cmd](a, cfg)
 
 
 if __name__ == "__main__":
