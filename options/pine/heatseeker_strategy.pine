@@ -1,0 +1,347 @@
+//@version=6
+// GEX/VEX HEATSEEKER STRATEGY - TradingView backtest + live replay edition.
+// Strategy() conversion of heatseeker_v6.pine (the indicator companion).
+// Trades the UNDERLYING as an options proxy: same setups, gates, tier sizing and
+// regime-conditional exits as the skill doctrine. Backtest fills are TV's
+// assumptions on the underlying; option premium P&L is NOT modeled here.
+// The ledger (options/ledger.py) is the real record - this is the visual replay.
+// Use on 5-min charts of SPY/QQQ (or NVDA/TSLA/AMD/META with tier-2 gates).
+strategy("GEX/VEX Heatseeker Strategy", "HXstrat", overlay=true,
+         max_labels_count=500, calc_on_every_tick=false,
+         default_qty_type=strategy.fixed, default_qty_value=100,
+         initial_capital=100000, commission_type=strategy.commission.percent,
+         commission_value=0.01, slippage=0)
+
+// == Map inputs - paste from python -m options.tv_sync ==
+grpM    = "GEX map - paste from tv_sync (sync every premarket)"
+mapSrc  = input.string("vendor", "Map source", options=["vendor", "rh-recon", "auto-estimate"], group=grpM)
+lvDate  = input.time(0, "Levels as-of date (staleness check)", group=grpM)
+flipIn  = input.float(0.0, "Gamma flip", minval=0.0, group=grpM)
+callWIn = input.float(0.0, "Call wall", minval=0.0, group=grpM)
+putWIn  = input.float(0.0, "Put wall", minval=0.0, group=grpM)
+kingIn  = input.float(0.0, "King node", minval=0.0, group=grpM)
+pLoIn   = input.float(0.0, "Air pocket low edge", minval=0.0, group=grpM)
+pHiIn   = input.float(0.0, "Air pocket high edge", minval=0.0, group=grpM)
+vannaIn = input.string("aligned", "Vanna (from map)", options=["aligned", "divergent"], group=grpM)
+earn3   = input.bool(false, "Earnings within 3 sessions (blocks tier-2)", group=grpM)
+step    = input.float(1.0, "Auto-estimate strike step", minval=0.01, group=grpM)
+
+// == Gates & sizing ==
+grpG = "Gates & sizing"
+rvolGate  = input.float(1.4, "RVOL gate", group=grpG)
+rvolAPlus = input.float(1.8, "RVOL for A+", group=grpG)
+tolPct    = input.float(0.08, "Level proximity %", group=grpG)
+armBars   = input.int(12, "Bars to keep flip setups armed", group=grpG)
+orBars    = input.int(3, "Opening-range bars (15m on a 5m chart)", group=grpG)
+barsSess  = input.int(78, "Bars per regular session (5m=78)", group=grpG)
+gapMin    = input.float(0.4, "Min gap % for gap-fill", group=grpG)
+gapExt    = input.float(0.3, "Gap extension invalidation %", group=grpG)
+trailMult = input.float(2.5, "-GEX ATR trail multiple", group=grpG)
+qtyFull   = input.int(100, "Base qty (underlying shares; A+/A = full, B = half)", group=grpG)
+showLvls  = input.bool(true, "Plot levels", group=grpG)
+logGates  = input.bool(true, "Log gate-blocked signals as comments", group=grpG)
+
+roundTo(x, s) => math.round(x / s) * s
+
+// == Market state ==
+prevD   = request.security(syminfo.tickerid, "D", close[1], lookahead=barmerge.lookahead_on)
+pdH     = request.security(syminfo.tickerid, "D", high[1],  lookahead=barmerge.lookahead_on)
+pdL     = request.security(syminfo.tickerid, "D", low[1],   lookahead=barmerge.lookahead_on)
+vixPrev = request.security("CBOE:VIX", "D", close[1], lookahead=barmerge.lookahead_on)
+vixNow  = request.security("CBOE:VIX", timeframe.period, close)
+spyNow  = request.security("AMEX:SPY", timeframe.period, close)
+spyPD   = request.security("AMEX:SPY", "D", close[1], lookahead=barmerge.lookahead_on)
+spyDay  = (spyNow - spyPD) / spyPD * 100
+avgDVol = request.security(syminfo.tickerid, "D", ta.sma(volume, 14)[1], lookahead=barmerge.lookahead_on)
+vwapNow = ta.vwap(close)
+atr14   = ta.atr(14)
+
+isTier1 = syminfo.ticker == "SPY" or syminfo.ticker == "QQQ"
+isTier2 = syminfo.ticker == "NVDA" or syminfo.ticker == "TSLA" or syminfo.ticker == "AMD" or syminfo.ticker == "META"
+scopeOk = isTier1 or isTier2
+
+// == Day state ==
+hm        = hour(time, "America/New_York") * 60 + minute(time, "America/New_York")
+entryWin  = hm >= 585 and hm <= 930     // 9:45-15:30 ET entries
+flatWarn  = hm >= 945                    // 15:45 flat rule
+newDay    = timeframe.change("D")
+mfBar     = high > low ? volume * ((close - low) - (high - close)) / (high - low) : 0.0
+
+var float dayVol = na
+var float dayDlt = na
+var float gapPct = na
+var float orHi   = na
+var float orLo   = na
+var int   nBars  = 0
+if newDay
+    dayVol := volume
+    dayDlt := mfBar
+    gapPct := prevD > 0 ? (open - prevD) / prevD * 100 : na
+    orHi   := high
+    orLo   := low
+    nBars  := 1
+else
+    dayVol += volume
+    dayDlt += mfBar
+    if nBars <= orBars
+        orHi := math.max(orHi, high)
+        orLo := math.min(orLo, low)
+    nBars += 1
+
+frac = math.min(nBars / float(barsSess), 1.0)
+rvol = nBars >= 3 and not na(avgDVol) and avgDVol > 0 ? dayVol / math.max(avgDVol * frac, 0.01) : na
+
+// == Levels (manual sync > auto estimate) ==
+auto    = flipIn <= 0
+pdPiv   = (pdH + pdL + prevD) / 3.0
+lvStale = flipIn > 0 and lvDate > 0 and (time - lvDate) > 36 * 3600000
+confOk  = flipIn > 0 and not lvStale and mapSrc != "auto-estimate"
+
+flip  = auto ? roundTo(pdPiv, step) : flipIn
+aCW   = math.ceil(close / step) * step
+aPW   = math.floor(close / step) * step
+callW = callWIn > 0 ? callWIn : auto ? (aCW <= close ? aCW + step : aCW) : 0.0
+putW  = putWIn > 0 ? putWIn : auto ? (aPW >= close ? aPW - step : aPW) : 0.0
+king  = kingIn > 0 ? kingIn : auto ? roundTo(prevD, step) : 0.0
+pLo   = pLoIn
+pHi   = pHiIn
+
+hasFlip = not na(flip) and flip > 0
+posGEX  = hasFlip and close > flip
+negGEX  = hasFlip and close < flip
+vannaAl = vannaIn == "aligned"
+
+dayChg = prevD > 0 ? (close - prevD) / prevD * 100 : na
+idxChg = isTier1 ? dayChg : spyDay
+alignL = not na(idxChg) and idxChg > 0
+alignS = not na(idxChg) and idxChg < 0
+
+lo5    = ta.lowest(low, 5)
+hi5    = ta.highest(high, 5)
+covKing = king > 0 and ta.crossover(close, king)
+cudKing = king > 0 and ta.crossunder(close, king)
+covCW   = callW > 0 and ta.crossover(close, callW)
+cudPW   = putW > 0 and ta.crossunder(close, putW)
+
+// == Setup arming ==
+var int fbArm = 999999
+var int frArm = 999999
+fbBreak = hasFlip and ta.crossunder(close, flip)
+frCross = hasFlip and ta.crossover(close, flip)
+if fbBreak
+    fbArm := 0
+else
+    fbArm += 1
+if frCross
+    frArm := 0
+else
+    frArm += 1
+
+fbFire = hasFlip and fbArm > 0 and fbArm <= armBars and high >= flip * (1 - tolPct / 100) and close < flip
+frHold = hasFlip and frArm > 0 and frArm <= armBars and low <= flip * (1 + tolPct / 100) and low >= flip * (1 - tolPct / 200) and close > flip
+
+orLocked = nBars > orBars and not na(orHi)
+extended = (gapPct >= gapMin and high > orHi + prevD * gapExt / 100) or (gapPct <= -gapMin and (na(dayLo_) ? false : dayLo_ < orLo - prevD * gapExt / 100))
+var float dayHi = na
+var float dayLo_ = na
+if newDay
+    dayHi := high
+    dayLo_ := low
+else
+    dayHi := math.max(dayHi, high)
+    dayLo_ := math.min(dayLo_, low)
+gfLong  = not na(gapPct) and gapPct <= -gapMin and posGEX and orLocked and not extended and close > open
+gfShort = not na(gapPct) and gapPct >=  gapMin and posGEX and orLocked and not extended and close < open
+
+tagKingS = king > 0 and high >= king * (1 - tolPct / 100) and close < king
+tagKingL = king > 0 and low  <= king * (1 + tolPct / 100) and close > king
+knShort = posGEX and tagKingS and tagKingS[1] and high <= high[1] and volume < volume[1]
+knLong  = posGEX and tagKingL and tagKingL[1] and low >= low[1] and volume < volume[1]
+
+pocketOn = pLo > 0 and pHi > pLo
+apLong  = pocketOn and negGEX and ta.crossover(close, pLo) and close < pHi
+apShort = pocketOn and negGEX and ta.crossunder(close, pHi) and close > pLo
+
+dec3    = math.abs(close - open) < math.abs(close[1] - open[1]) and math.abs(close[1] - open[1]) < math.abs(close[2] - open[2])
+rvRoll  = not na(rvol) and not na(rvol[2]) and rvol < rvol[2]
+hxLong  = negGEX and putW > 0 and close < putW and dec3 and rvRoll and not vannaAl
+hxShort = negGEX and callW > 0 and close > callW and dec3 and rvRoll and not vannaAl
+
+// == Setup selection (transition beats state) ==
+setupS = ""
+dirn = 0
+float stopLvl = na
+float tgtLvl = na
+if fbFire
+    setupS := "FB"
+    dirn := -1
+    stopLvl := flip
+    tgtLvl := putW > 0 and putW < close ? putW : close - 2 * atr14
+else if frHold
+    setupS := "FR"
+    dirn := 1
+    stopLvl := flip
+    tgtLvl := callW > 0 and callW > close ? callW : close + 2 * atr14
+else if apLong
+    setupS := "AP"
+    dirn := 1
+    stopLvl := pLo
+    tgtLvl := pHi
+else if apShort
+    setupS := "AP"
+    dirn := -1
+    stopLvl := pHi
+    tgtLvl := pLo
+else if gfLong
+    setupS := "GF"
+    dirn := 1
+    stopLvl := orLo - prevD * gapExt / 100
+    tgtLvl := king > close and king < prevD ? king : prevD
+else if gfShort
+    setupS := "GF"
+    dirn := -1
+    stopLvl := orHi + prevD * gapExt / 100
+    tgtLvl := king < close and king > prevD ? king : prevD
+else if knShort
+    setupS := "KN"
+    dirn := -1
+    stopLvl := king * 1.001
+    tgtLvl := flip < close ? flip : close - 2 * atr14
+else if knLong
+    setupS := "KN"
+    dirn := 1
+    stopLvl := king * 0.999
+    tgtLvl := flip > close ? flip : close + 2 * atr14
+else if hxLong
+    setupS := "HX"
+    dirn := 1
+    stopLvl := lo5
+    tgtLvl := putW > close ? putW : close + 2 * atr14
+else if hxShort
+    setupS := "HX"
+    dirn := -1
+    stopLvl := hi5
+    tgtLvl := callW < close ? callW : close - 2 * atr14
+
+// == Gates & conviction tier ==
+gStruct = setupS != ""
+gVol    = not na(rvol) and rvol >= rvolGate
+gIdx    = dirn > 0 ? alignL : dirn < 0 ? alignS : false
+gMap    = confOk
+gSess   = entryWin
+gCal    = not earn3
+gT2     = (not isTier2) or vannaAl or mapSrc == "vendor"
+gatesAll = gStruct and gVol and gIdx and gMap and gSess and gCal and gT2
+
+aPlus = gatesAll and isTier1 and vannaAl and rvol >= rvolAPlus and (setupS == "FB" or setupS == "FR" or setupS == "AP") and mapSrc == "vendor"
+qualA  = gatesAll and isTier1 and vannaAl and setupS != "HX"
+tier   = not gatesAll ? "NO" : setupS == "HX" ? "B" : aPlus ? "A+" : qualA ? "A" : "B"
+fire   = gatesAll and scopeOk
+
+// Log gated-out signals so the backtest shows gate quality, not just trades
+if logGates and setupS != "" and not fire and barstate.isconfirmed
+    failed = (gVol ? "" : "RVOL ") + (gIdx ? "" : "IDX ") + (gMap ? "" : "MAP ") + (gSess ? "" : "SES ") + (gCal ? "" : "CAL ") + (gT2 ? "" : "T2 ")
+    log.info("NO TRADE {0} {1} gate: {2}", syminfo.ticker, setupS, failed == "" ? "tier" : failed)
+
+// == Strategy entries (underlying proxy for the option trade) ==
+qtyFor(t) => t == "B" ? qtyFull / 2 : qtyFull
+
+if fire and strategy.position_size == 0
+    q = qtyFor(tier)
+    if dirn > 0
+        strategy.entry("LONG", strategy.long, qty=q)
+    else
+        strategy.entry("SHORT", strategy.short, qty=q)
+
+// == Regime-conditional exit engine ==
+inPos  = strategy.position_size != 0
+isLong = strategy.position_size > 0
+var bool  posScaled = false
+var string posTier = ""
+var string posReg = ""
+if strategy.position_size != 0 and strategy.position_size[1] == 0
+    posScaled := false
+    posTier := tier
+    posReg := posGEX ? "+GEX" : "-GEX"
+
+stopHit = inPos and ((isLong and close <= strategy.opentrades.entry_stop(0) or (not isLong and close >= strategy.opentrades.entry_stop(0)))) // approx; real stop tracked below
+
+// structural stop level carried in a var (TV strategy stop orders below)
+var float posStop = na
+var float posTgt  = na
+if strategy.position_size != 0 and strategy.position_size[1] == 0
+    posStop := stopLvl
+    posTgt  := tgtLvl
+
+if inPos
+    regimeNow = posGEX ? "+GEX" : "-GEX"
+    if regimeNow != posReg
+        posReg := regimeNow
+    if posGEX
+        // damped: scale at first node, stop to breakeven, sell rest at target - no runners
+        float sn = na
+        if isLong
+            if king > strategy.position_avg_price and king < posTgt
+                sn := king
+            if callW > strategy.position_avg_price and callW < posTgt and (na(sn) or callW < sn)
+                sn := callW
+        else
+            if king < strategy.position_avg_price and king > posTgt
+                sn := king
+            if putW < strategy.position_avg_price and putW > posTgt and (na(sn) or putW > sn)
+                sn := putW
+        if not posScaled and not na(sn) and ((isLong and close >= sn) or (not isLong and close <= sn))
+            strategy.close("LONG", qty_percent=50, comment="scale50@node")
+            strategy.close("SHORT", qty_percent=50, comment="scale50@node")
+            posScaled := true
+            posStop := strategy.position_avg_price
+        if (isLong and close >= posTgt) or (not isLong and close <= posTgt)
+            strategy.close_all(comment="target-node")
+    else
+        // amplified: trail behind ATR and reclaimed nodes; runner allowed
+        if isLong
+            posStop := math.max(posStop, close - trailMult * atr14)
+            if king > 0 and strategy.position_avg_price < king and covKing
+                posStop := math.max(posStop, king)
+            if callW > 0 and strategy.position_avg_price < callW and covCW
+                posStop := math.max(posStop, callW)
+        else
+            posStop := math.min(posStop, close + trailMult * atr14)
+            if king > 0 and strategy.position_avg_price > king and cudKing
+                posStop := math.min(posStop, king)
+            if putW > 0 and strategy.position_avg_price > putW and cudPW
+                posStop := math.min(posStop, putW)
+
+// structural stop as a real order every bar while in position
+if inPos and not na(posStop)
+    if isLong
+        strategy.order("STOP-L", strategy.short, qty=strategy.position_size, stop=posStop, comment="struct-stop")
+    else
+        strategy.order("STOP-S", strategy.long, qty=math.abs(strategy.position_size), stop=posStop, comment="struct-stop")
+
+// 15:45 flat rule - time stop
+if inPos and flatWarn and strategy.position_size != 0
+    strategy.close_all(comment="1545-flat")
+
+// == Drawing ==
+plot(showLvls and hasFlip ? flip : na, "Flip", color.new(color.orange, 0), 2, plot.style_linebr)
+plot(showLvls and callW > 0 ? callW : na, "Call wall", color.new(color.green, 0), 2, plot.style_linebr)
+plot(showLvls and putW > 0 ? putW : na, "Put wall", color.new(color.red, 0), 2, plot.style_linebr)
+plot(showLvls and king > 0 ? king : na, "King node", color.new(color.purple, 0), 1, plot.style_circles)
+pPLo = plot(showLvls and pocketOn ? pLo : na, "", display=display.none)
+pPHi = plot(showLvls and pocketOn ? pHi : na, "", display=display.none)
+fill(pPLo, pPHi, color=color.new(color.purple, 88), title="Air pocket")
+bgcolor(negGEX ? color.new(color.red, 95) : na, title="Negative gamma")
+plot(inPos and not na(posStop) ? posStop : na, "Stop", color.new(color.red, 40), 1, plot.style_linebr)
+plot(inPos and not na(posTgt) ? posTgt : na, "Target", color.new(color.teal, 40), 1, plot.style_linebr)
+
+plotshape(fire and setupS == "FB", "Flip break", shape.triangledown, location.abovebar, color.red, text="FB", textcolor=color.red, size=size.small)
+plotshape(fire and setupS == "FR", "Flip reclaim", shape.diamond, location.belowbar, color.aqua, text="FR", textcolor=color.aqua, size=size.small)
+plotshape(fire and setupS == "AP", "Air-pocket run", shape.triangleup, location.belowbar, color.fuchsia, text="AP", textcolor=color.fuchsia, size=size.small)
+plotshape(fire and setupS == "GF", "Gap fill", shape.circle, location.belowbar, color.yellow, text="GF", textcolor=color.yellow, size=size.small)
+plotshape(fire and setupS == "KN", "King-node rejection", shape.xcross, location.abovebar, color.orange, text="KN", textcolor=color.orange, size=size.small)
+plotshape(fire and setupS == "HX", "Hedge exhaustion", shape.square, location.belowbar, color.maroon, text="HX", textcolor=color.maroon, size=size.small)
+
+// == Webhook (live use - same format as v6) ==
+if fire and barstate.isconfirmed
+    alert("HEATSEEKER|" + syminfo.ticker + "|" + setupS + "|" + tier + "|" + str.tostring(close, "#.##") + "|stop=" + str.tostring(stopLvl, "#.##") + "|target=" + str.tostring(tgtLvl, "#.##") + "|rvol=" + str.tostring(rvol, "#.##") + "|regime=" + (posGEX ? "+GEX" : "-GEX") + "|vanna=" + vannaIn, alert.freq_once_per_bar_close)
