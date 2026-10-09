@@ -118,16 +118,22 @@ alignS = not na(idxChg) and idxChg < 0
 
 lo5    = ta.lowest(low, 5)
 hi5    = ta.highest(high, 5)
-covKing = king > 0 and ta.crossover(close, king)
-cudKing = king > 0 and ta.crossunder(close, king)
-covCW   = callW > 0 and ta.crossover(close, callW)
-cudPW   = putW > 0 and ta.crossunder(close, putW)
+coKing = ta.crossover(close, king)
+cuKing = ta.crossunder(close, king)
+coCW   = ta.crossover(close, callW)
+cuPW   = ta.crossunder(close, putW)
+covKing = king > 0 and coKing
+cudKing = king > 0 and cuKing
+covCW   = callW > 0 and coCW
+cudPW   = putW > 0 and cuPW
 
 // == Setup arming ==
 var int fbArm = 999999
 var int frArm = 999999
-fbBreak = hasFlip and ta.crossunder(close, flip)
-frCross = hasFlip and ta.crossover(close, flip)
+cuFlip = ta.crossunder(close, flip)
+coFlip = ta.crossover(close, flip)
+fbBreak = hasFlip and cuFlip
+frCross = hasFlip and coFlip
 if fbBreak
     fbArm := 0
 else
@@ -141,7 +147,6 @@ fbFire = hasFlip and fbArm > 0 and fbArm <= armBars and high >= flip * (1 - tolP
 frHold = hasFlip and frArm > 0 and frArm <= armBars and low <= flip * (1 + tolPct / 100) and low >= flip * (1 - tolPct / 200) and close > flip
 
 orLocked = nBars > orBars and not na(orHi)
-extended = (gapPct >= gapMin and high > orHi + prevD * gapExt / 100) or (gapPct <= -gapMin and (na(dayLo_) ? false : dayLo_ < orLo - prevD * gapExt / 100))
 var float dayHi = na
 var float dayLo_ = na
 if newDay
@@ -150,6 +155,7 @@ if newDay
 else
     dayHi := math.max(dayHi, high)
     dayLo_ := math.min(dayLo_, low)
+extended = (gapPct >= gapMin and high > orHi + prevD * gapExt / 100) or (gapPct <= -gapMin and (na(dayLo_) ? false : dayLo_ < orLo - prevD * gapExt / 100))
 gfLong  = not na(gapPct) and gapPct <= -gapMin and posGEX and orLocked and not extended and close > open
 gfShort = not na(gapPct) and gapPct >=  gapMin and posGEX and orLocked and not extended and close < open
 
@@ -158,9 +164,11 @@ tagKingL = king > 0 and low  <= king * (1 + tolPct / 100) and close > king
 knShort = posGEX and tagKingS and tagKingS[1] and high <= high[1] and volume < volume[1]
 knLong  = posGEX and tagKingL and tagKingL[1] and low >= low[1] and volume < volume[1]
 
+coPLo = ta.crossover(close, pLo)
+cuPHi = ta.crossunder(close, pHi)
 pocketOn = pLo > 0 and pHi > pLo
-apLong  = pocketOn and negGEX and ta.crossover(close, pLo) and close < pHi
-apShort = pocketOn and negGEX and ta.crossunder(close, pHi) and close > pLo
+apLong  = pocketOn and negGEX and coPLo and close < pHi
+apShort = pocketOn and negGEX and cuPHi and close > pLo
 
 dec3    = math.abs(close - open) < math.abs(close[1] - open[1]) and math.abs(close[1] - open[1]) < math.abs(close[2] - open[2])
 rvRoll  = not na(rvol) and not na(rvol[2]) and rvol < rvol[2]
@@ -263,8 +271,6 @@ if strategy.position_size != 0 and strategy.position_size[1] == 0
     posScaled := false
     posTier := tier
     posReg := posGEX ? "+GEX" : "-GEX"
-
-stopHit = inPos and ((isLong and close <= strategy.opentrades.entry_stop(0) or (not isLong and close >= strategy.opentrades.entry_stop(0)))) // approx; real stop tracked below
 
 // structural stop level carried in a var (TV strategy stop orders below)
 var float posStop = na
