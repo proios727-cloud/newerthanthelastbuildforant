@@ -19,12 +19,12 @@
   "tiles": [
     {
       "label": "Paper NAV",
-      "value": "$100,001",
+      "value": "$100,020",
       "trend": "up"
     },
     {
       "label": "Day P&L",
-      "value": "+1 (+0.00%)",
+      "value": "+19 (+0.02%)",
       "trend": "up"
     },
     {

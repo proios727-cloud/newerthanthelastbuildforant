@@ -1,0 +1,7 @@
+{"ts": "2026-10-08T05:39:12.400328+00:00", "kind": "init", "starting_nav": 100000.0}
+{"ts": "2026-10-08T05:39:16.281830+00:00", "kind": "auto_mark", "marked": 11}
+{"ts": "2026-10-08T05:40:11.209111+00:00", "kind": "scan_hit", "symbol": "BTC/USD", "strategy": "s1_carry", "reason": "test"}
+{"ts": "2026-10-08T05:40:11.215890+00:00", "kind": "risk_pass", "symbol": "BTC/USD", "strategy": "s1_carry"}
+{"ts": "2026-10-08T05:40:11.216164+00:00", "kind": "preview", "id": "4905f1b3", "symbol": "BTC/USD", "strategy": "s1_carry"}
+{"ts": "2026-10-08T05:42:29.586120+00:00", "kind": "auto_mark", "marked": 11}
+{"ts": "2026-10-08T05:44:04.302722+00:00", "kind": "fill", "symbol": "BTC/USD", "side": "sell", "qty": 0.060236, "price": 83006.23, "fee": 5.0, "realized": 0.0, "ref": "4905f1b3"}

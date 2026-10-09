@@ -1,0 +1,31 @@
+{
+  "captured_at": "2026-10-08T14:53:26.272372-04:00",
+  "symbols": {
+    "SPY": {
+      "symbol": "SPY",
+      "as_of": "2026-10-08T14:53:26.272372-04:00",
+      "spot": 772.8900146484375,
+      "flip": null,
+      "call_wall": 773.0,
+      "put_wall": 767.0,
+      "king": 773.0,
+      "pocket_lo": null,
+      "pocket_hi": null,
+      "vanna": "aligned",
+      "source": "gex_board snapshot"
+    },
+    "QQQ": {
+      "symbol": "QQQ",
+      "as_of": "2026-10-08T14:53:26.272372-04:00",
+      "spot": 746.6199951171875,
+      "flip": 400.0,
+      "call_wall": 760.0,
+      "put_wall": 746.0,
+      "king": 747.0,
+      "pocket_lo": null,
+      "pocket_hi": null,
+      "vanna": "aligned",
+      "source": "gex_board snapshot"
+    }
+  }
+}

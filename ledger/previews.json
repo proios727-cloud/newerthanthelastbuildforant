@@ -1,0 +1,33 @@
+{
+  "4905f1b3": {
+    "id": "4905f1b3",
+    "created_at": "2026-10-08T05:40:11.208985+00:00",
+    "symbol": "BTC/USD",
+    "side": "sell",
+    "qty": 0.060236,
+    "limit": 83006.23,
+    "stop": null,
+    "target": null,
+    "est_fee": 5.0,
+    "notional": 4999.96,
+    "reducing": false,
+    "risk": [
+      [
+        "sized_down",
+        "position_cap limits size to 0.060236 (asked 0.0602364)"
+      ]
+    ],
+    "order": {
+      "symbol": "BTC/USD",
+      "side": "sell",
+      "qty": 0.06023643886510453,
+      "price": 83006.235,
+      "quote_ts": "2026-10-08T05:40:11.208985+00:00",
+      "bid": 83006.23,
+      "ask": 83006.24,
+      "adv": null
+    },
+    "status": "filled_paper",
+    "filled_at": "2026-10-08T05:44:04.302722+00:00"
+  }
+}
