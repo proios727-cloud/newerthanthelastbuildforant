@@ -1,0 +1,74 @@
+{
+  "now": 1800000000,
+  "snapshots": {
+    "SYNTHETIC-NFL-TEAM-A": {
+      "market": {
+        "ticker": "SYNTHETIC-NFL-TEAM-A",
+        "status": "active"
+      },
+      "book": {
+        "yes_dollars": [
+          [
+            ".38",
+            "100"
+          ]
+        ],
+        "no_dollars": [
+          [
+            ".60",
+            "100"
+          ]
+        ]
+      },
+      "book_received_at": 1800000000,
+      "book_source_timestamp": 1800000000,
+      "odds_received_at": 1800000000,
+      "synthetic": true,
+      "odds": {
+        "id": "synthetic-event",
+        "sport_key": "americanfootball_nfl",
+        "commence_time": 1800003600,
+        "bookmakers": [
+          {
+            "key": "synthetic-book-a",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": 1800000000,
+                "outcomes": [
+                  {
+                    "name": "Team A",
+                    "price": 1.3
+                  },
+                  {
+                    "name": "Team B",
+                    "price": 4.2
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "synthetic-book-b",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": 1800000000,
+                "outcomes": [
+                  {
+                    "name": "Team A",
+                    "price": 1.3
+                  },
+                  {
+                    "name": "Team B",
+                    "price": 4.2
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
