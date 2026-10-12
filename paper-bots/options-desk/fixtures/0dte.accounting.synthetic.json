@@ -1,0 +1,93 @@
+{
+  "mode": "PAPER EVENT REPLAY ONLY",
+  "synthetic": true,
+  "performance_evidence": "NONE: fixtures are accounting tests",
+  "policy": {
+    "dte_bucket": "0dte",
+    "strategy": "breakout20",
+    "target": "0.25",
+    "fee_per_contract_per_side": "0.65",
+    "multiplier": 100,
+    "external_delta_range": [
+      0.45,
+      0.65
+    ]
+  },
+  "report_complete": true,
+  "inputs_present": true,
+  "net_total_return": "0.0097",
+  "initial_bankroll": "1000.0",
+  "cash": "1009.70",
+  "realized_net_pnl": "9.70",
+  "fees_paid": "1.30",
+  "unresolved_positions": [],
+  "trades": [
+    {
+      "action": "entry",
+      "symbol": "SPY261012C00600000",
+      "root": "SPY",
+      "timestamp": "2026-10-12T09:55:01-04:00",
+      "signal_close": "2026-10-12T09:55:00-04:00",
+      "signal_available_at": "2026-10-12T09:55:00-04:00",
+      "ask": "0.4",
+      "contracts": 1,
+      "entry_fee": "0.65",
+      "basis": "40.65",
+      "source": "SYNTHETIC_FIXTURE",
+      "external_delta": 0.55,
+      "strategy": "breakout20"
+    },
+    {
+      "action": "exit",
+      "symbol": "SPY261012C00600000",
+      "timestamp": "2026-10-12T09:56:00-04:00",
+      "bid": "0.51",
+      "contracts": 1,
+      "net_realized_pnl": "9.70",
+      "reason": "premium_target",
+      "source": "SYNTHETIC_FIXTURE"
+    }
+  ],
+  "skipped": [],
+  "snapshots": [
+    {
+      "timestamp": "2026-10-12T09:55:01-04:00",
+      "cash": "959.35",
+      "equity": "996.70",
+      "full_premium_at_risk": "40.65",
+      "realized_net_pnl": "0",
+      "fees_paid": "0.65",
+      "sampled_peak": "1000.0",
+      "drawdown": "3.30"
+    },
+    {
+      "timestamp": "2026-10-12T09:56:00-04:00",
+      "cash": "1009.70",
+      "equity": "1009.70",
+      "full_premium_at_risk": "0",
+      "realized_net_pnl": "9.70",
+      "fees_paid": "1.30",
+      "sampled_peak": "1009.70",
+      "drawdown": "0.00"
+    },
+    {
+      "timestamp": "2026-10-12T09:56:00-04:00",
+      "cash": "1009.70",
+      "equity": "1009.70",
+      "full_premium_at_risk": "0",
+      "realized_net_pnl": "9.70",
+      "fees_paid": "1.30",
+      "sampled_peak": "1009.70",
+      "drawdown": "0.00"
+    }
+  ],
+  "sources": [
+    "SYNTHETIC_FIXTURE"
+  ],
+  "limitations": [
+    "No live orders, option Greeks estimation, IV model, or depth/queue guarantee",
+    "Bid/ask history and external delta must be independently sourced",
+    "Exchange holiday calendar not included; exact contract metadata required",
+    "Signals are unvalidated hypotheses; ORB/VWAP/EMA/RVOL do not establish an edge"
+  ]
+}

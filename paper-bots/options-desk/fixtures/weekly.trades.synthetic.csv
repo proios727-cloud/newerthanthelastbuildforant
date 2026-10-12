@@ -1,0 +1,3 @@
+action,ask,basis,bid,contracts,entry_fee,external_delta,net_realized_pnl,reason,root,signal_available_at,signal_close,source,strategy,symbol,timestamp
+entry,0.4,40.65,,1,0.65,0.55,,,SPY,2026-10-12T09:55:00-04:00,2026-10-12T09:55:00-04:00,SYNTHETIC_FIXTURE,breakout20,SPY261016C00600000,2026-10-12T09:55:01-04:00
+exit,,,0.51,1,,,9.70,premium_target,,,,SYNTHETIC_FIXTURE,,SPY261016C00600000,2026-10-12T09:56:00-04:00

@@ -1,0 +1,41 @@
+{
+  "label": "SYNTHETIC ACCOUNTING FIXTURES: NOT MARKET DATA",
+  "rows": [
+    {
+      "root": "SPY",
+      "symbol": "SPY261012C00600000",
+      "strike": 600,
+      "expiration": "2026-10-12",
+      "option_type": "call",
+      "dte": 0,
+      "multiplier": 100,
+      "delta": 0.55,
+      "source": "SYNTHETIC_FIXTURE",
+      "bid_size": 10,
+      "ask_size": 10,
+      "timestamp": "2026-10-12T09:55:01-04:00",
+      "bid": ".38",
+      "ask": ".40",
+      "source_timestamp": "2026-10-12T09:55:01-04:00",
+      "receive_time": "2026-10-12T09:55:01-04:00"
+    },
+    {
+      "root": "SPY",
+      "symbol": "SPY261012C00600000",
+      "strike": 600,
+      "expiration": "2026-10-12",
+      "option_type": "call",
+      "dte": 0,
+      "multiplier": 100,
+      "delta": 0.55,
+      "source": "SYNTHETIC_FIXTURE",
+      "bid_size": 10,
+      "ask_size": 10,
+      "timestamp": "2026-10-12T09:56:00-04:00",
+      "bid": ".51",
+      "ask": ".52",
+      "source_timestamp": "2026-10-12T09:56:00-04:00",
+      "receive_time": "2026-10-12T09:56:00-04:00"
+    }
+  ]
+}

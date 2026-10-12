@@ -1,0 +1,41 @@
+{
+  "bars": {
+    "required": [
+      "timestamp",
+      "receive_time",
+      "root",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume",
+      "source"
+    ],
+    "optional": [
+      "session_close"
+    ]
+  },
+  "quotes": {
+    "required": [
+      "timestamp",
+      "source_timestamp",
+      "receive_time",
+      "root",
+      "symbol",
+      "strike",
+      "expiration",
+      "option_type",
+      "dte",
+      "multiplier",
+      "delta",
+      "bid",
+      "ask",
+      "source",
+      "bid_size",
+      "ask_size"
+    ],
+    "optional": [
+      "session_close"
+    ]
+  }
+}

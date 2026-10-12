@@ -1,0 +1,87 @@
+{
+  "label": "REPOSITORY-RECORDED QUOTE-ENDPOINT COMPARISON; NOT A STRATEGY BACKTEST OR ACTUAL TRADE",
+  "source_quality": "Manually recorded repo chains attributed to Robinhood; not independently authenticated OPRA history",
+  "files": [
+    "SPY-2026-07-31.json",
+    "SPY-2026-08-03T1343.json",
+    "SPY-2026-08-03T1412.json",
+    "SPY-2026-08-03T1506.json"
+  ],
+  "symbols": [
+    "SPY"
+  ],
+  "complete_underlying_minute_bars": false,
+  "complete_option_intraday_path": false,
+  "qqq_available": false,
+  "weekly_path_available": false,
+  "notes": [
+    "Only same contract matched by root,strike,expiration,type",
+    "No implied-volatility generated premiums used",
+    "09:43 capture precedes15-minute ORB trigger09:45",
+    "Later11:06 snapshot cannot validate a20-minute0DTE stop/exit",
+    "Winning endpoint pairs do not establish win rate; unobserved losses/stops not reconstructed",
+    "No broker costs verified; $0.65/side is an explicit configurable research assumption"
+  ],
+  "matched_call_pairs": [
+    {
+      "underlying": "SPY",
+      "strike": 750,
+      "expiration": "2026-08-03",
+      "entry_quote_time": "2026-08-03T13:43:00Z",
+      "exit_quote_time": "2026-08-03T15:06:00Z",
+      "early_ask": 2.19,
+      "later_bid": 4.96,
+      "entry_delta": 0.612704,
+      "contract_multiplier": 100,
+      "gross_observed_quote_change_dollars": "277.00",
+      "gross_return_on_premium": "1.264840182648401826484018265",
+      "hypothetical_net_after_065_each_side": "275.70",
+      "entry_cost_with_assumed_fee": "219.65"
+    },
+    {
+      "underlying": "SPY",
+      "strike": 752,
+      "expiration": "2026-08-03",
+      "entry_quote_time": "2026-08-03T13:43:00Z",
+      "exit_quote_time": "2026-08-03T15:06:00Z",
+      "early_ask": 1.0,
+      "later_bid": 3.07,
+      "entry_delta": 0.400925,
+      "contract_multiplier": 100,
+      "gross_observed_quote_change_dollars": "207.00",
+      "gross_return_on_premium": "2.07",
+      "hypothetical_net_after_065_each_side": "205.70",
+      "entry_cost_with_assumed_fee": "100.65"
+    },
+    {
+      "underlying": "SPY",
+      "strike": 755,
+      "expiration": "2026-08-03",
+      "entry_quote_time": "2026-08-03T13:43:00Z",
+      "exit_quote_time": "2026-08-03T15:06:00Z",
+      "early_ask": 0.16,
+      "later_bid": 0.75,
+      "entry_delta": 0.107026,
+      "contract_multiplier": 100,
+      "gross_observed_quote_change_dollars": "59.00",
+      "gross_return_on_premium": "3.6875",
+      "hypothetical_net_after_065_each_side": "57.70",
+      "entry_cost_with_assumed_fee": "16.65"
+    },
+    {
+      "underlying": "SPY",
+      "strike": 756,
+      "expiration": "2026-08-03",
+      "entry_quote_time": "2026-08-03T13:43:00Z",
+      "exit_quote_time": "2026-08-03T15:06:00Z",
+      "early_ask": 0.08,
+      "later_bid": 0.33,
+      "entry_delta": 0.059567,
+      "contract_multiplier": 100,
+      "gross_observed_quote_change_dollars": "25.00",
+      "gross_return_on_premium": "3.125",
+      "hypothetical_net_after_065_each_side": "23.70",
+      "entry_cost_with_assumed_fee": "8.65"
+    }
+  ]
+}

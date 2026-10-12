@@ -1,0 +1,280 @@
+{
+  "label": "SYNTHETIC ACCOUNTING FIXTURES: NOT MARKET DATA",
+  "rows": [
+    {
+      "timestamp": "2026-10-12T09:30:00-04:00",
+      "root": "SPY",
+      "open": 600.0,
+      "high": 600.001,
+      "low": 599.999,
+      "close": 600.0,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:31:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:31:00-04:00",
+      "root": "SPY",
+      "open": 600.002,
+      "high": 600.0029999999999,
+      "low": 600.001,
+      "close": 600.002,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:32:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:32:00-04:00",
+      "root": "SPY",
+      "open": 600.004,
+      "high": 600.005,
+      "low": 600.003,
+      "close": 600.004,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:33:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:33:00-04:00",
+      "root": "SPY",
+      "open": 600.006,
+      "high": 600.007,
+      "low": 600.005,
+      "close": 600.006,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:34:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:34:00-04:00",
+      "root": "SPY",
+      "open": 600.008,
+      "high": 600.009,
+      "low": 600.0070000000001,
+      "close": 600.008,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:35:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:35:00-04:00",
+      "root": "SPY",
+      "open": 600.01,
+      "high": 600.011,
+      "low": 600.009,
+      "close": 600.01,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:36:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:36:00-04:00",
+      "root": "SPY",
+      "open": 600.012,
+      "high": 600.0129999999999,
+      "low": 600.011,
+      "close": 600.012,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:37:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:37:00-04:00",
+      "root": "SPY",
+      "open": 600.014,
+      "high": 600.015,
+      "low": 600.013,
+      "close": 600.014,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:38:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:38:00-04:00",
+      "root": "SPY",
+      "open": 600.016,
+      "high": 600.0169999999999,
+      "low": 600.015,
+      "close": 600.016,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:39:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:39:00-04:00",
+      "root": "SPY",
+      "open": 600.018,
+      "high": 600.019,
+      "low": 600.017,
+      "close": 600.018,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:40:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:40:00-04:00",
+      "root": "SPY",
+      "open": 600.02,
+      "high": 600.021,
+      "low": 600.019,
+      "close": 600.02,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:41:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:41:00-04:00",
+      "root": "SPY",
+      "open": 600.022,
+      "high": 600.023,
+      "low": 600.0210000000001,
+      "close": 600.022,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:42:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:42:00-04:00",
+      "root": "SPY",
+      "open": 600.024,
+      "high": 600.025,
+      "low": 600.023,
+      "close": 600.024,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:43:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:43:00-04:00",
+      "root": "SPY",
+      "open": 600.026,
+      "high": 600.0269999999999,
+      "low": 600.025,
+      "close": 600.026,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:44:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:44:00-04:00",
+      "root": "SPY",
+      "open": 600.028,
+      "high": 600.029,
+      "low": 600.027,
+      "close": 600.028,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:45:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:45:00-04:00",
+      "root": "SPY",
+      "open": 600.03,
+      "high": 600.031,
+      "low": 600.029,
+      "close": 600.03,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:46:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:46:00-04:00",
+      "root": "SPY",
+      "open": 600.032,
+      "high": 600.033,
+      "low": 600.0310000000001,
+      "close": 600.032,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:47:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:47:00-04:00",
+      "root": "SPY",
+      "open": 600.034,
+      "high": 600.035,
+      "low": 600.033,
+      "close": 600.034,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:48:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:48:00-04:00",
+      "root": "SPY",
+      "open": 600.036,
+      "high": 600.0369999999999,
+      "low": 600.035,
+      "close": 600.036,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:49:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:49:00-04:00",
+      "root": "SPY",
+      "open": 600.038,
+      "high": 600.039,
+      "low": 600.037,
+      "close": 600.038,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:50:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:50:00-04:00",
+      "root": "SPY",
+      "open": 600.04,
+      "high": 600.0409999999999,
+      "low": 600.039,
+      "close": 600.04,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:51:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:51:00-04:00",
+      "root": "SPY",
+      "open": 600.042,
+      "high": 600.043,
+      "low": 600.041,
+      "close": 600.042,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:52:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:52:00-04:00",
+      "root": "SPY",
+      "open": 600.044,
+      "high": 600.045,
+      "low": 600.043,
+      "close": 600.044,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:53:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:53:00-04:00",
+      "root": "SPY",
+      "open": 600.046,
+      "high": 600.047,
+      "low": 600.0450000000001,
+      "close": 600.046,
+      "volume": 100,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:54:00-04:00"
+    },
+    {
+      "timestamp": "2026-10-12T09:54:00-04:00",
+      "root": "SPY",
+      "open": 601,
+      "high": 601.001,
+      "low": 600.999,
+      "close": 601,
+      "volume": 300,
+      "source": "SYNTHETIC_FIXTURE",
+      "receive_time": "2026-10-12T09:55:00-04:00"
+    }
+  ]
+}
