@@ -1,0 +1,36 @@
+{
+  "mappings": [
+    {
+      "ticker": "REPLACE_WITH_EXACT_KALSHI_TICKER",
+      "sport": "americanfootball_nfl",
+      "event_id": "REPLACE_WITH_EXACT_ODDS_API_EVENT_ID",
+      "market_type": "h2h",
+      "outcome": "REPLACE_WITH_EXACT_TEAM_NAME",
+      "side": "yes",
+      "expected_outcomes": [
+        "REPLACE_WITH_HOME_TEAM",
+        "REPLACE_WITH_AWAY_TEAM"
+      ],
+      "independent_bookmakers": [
+        "REPLACE_WITH_REVIEWED_BOOK_1",
+        "REPLACE_WITH_REVIEWED_BOOK_2"
+      ],
+      "settlement_verified": false,
+      "rules_note": "Verify overtime, ties, cancellations, postponements and nonbinary settlements against BOTH market rules before enabling. Team string matching alone is insufficient.",
+      "fee_per_contract": null,
+      "exit_fee_per_contract": null,
+      "uncertainty_margin": 0.05,
+      "minimum_edge": 0.03,
+      "profit_target_per_contract": 0.05,
+      "max_book_age_seconds": 5,
+      "max_source_age_seconds": 120,
+      "minimum_books": 2,
+      "allow_receipt_only_book": false,
+      "fee_verified": false,
+      "fee_note": "REQUIRED: verify series fee_type, multiplier, fee schedule and rounding; configured fees are conservative PAPER reserves, not exchange-confirmed fills. Minimum supported reserve $0.02 per contract per side.",
+      "max_spread": 0.03,
+      "flatten_before_start_seconds": 600
+    }
+  ],
+  "max_odds_requests_per_day": 100
+}
