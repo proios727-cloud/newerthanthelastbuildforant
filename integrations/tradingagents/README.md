@@ -46,3 +46,11 @@ python integrations/tradingagents/run_desk.py NVDA 2026-09-30
 ```
 
 Output lands in `shadow.jsonl` as a PAPER-mode signal row.
+
+## Backtest
+
+```bash
+python integrations/tradingagents/backtest_desk.py NVDA,SPY,AAPL 2026-06-01 2026-08-31 7
+```
+
+Scores each rating (Buy/Overweight/Hold/Underweight/Sell) by how often it called the direction correctly (hit rate) and its mean alpha vs. the benchmark. It evaluates decision quality only; there's no position sizing or fills. Results go to `integrations/tradingagents/results/`.
