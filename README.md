@@ -136,3 +136,12 @@ python3 -m gmdesk.shadow run --series KXETH15M --minutes 240        # stage 4 (l
 python3 -m gmdesk.shadow report data/gm/shadow_KXETH15M.jsonl --replay data/gm/replay_KXETH15M.json
 python3 -m gmdesk.board_data                                        # board Real-tape data
 ```
+
+## Router doctor (`skills/router-doctor/`)
+
+Read-only home Wi-Fi diagnosis, plus an agent workflow for tuning the router one approved change at a time. It's the safe version of the viral "Claude Code fixed my router" post. Run it on a machine on your home network; a cloud session can't reach your router.
+
+```bash
+python3 skills/router-doctor/scripts/router_doctor.py diagnose --out router_report.json  # verdict + channel congestion
+python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin          # store router password in the OS keychain
+```
