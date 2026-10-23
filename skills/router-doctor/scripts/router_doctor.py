@@ -211,15 +211,17 @@ def eero_recommendations(v, current=None):
 def summarize_watch(samples, spike_ms=100.0):
     """Find intermittent trouble in a series of {"gw": ms|None, "net": ms|None}.
 
-    A spike is a reply over `spike_ms` or over 3x the median; None is a drop.
+    A spike is a reply over min(spike_ms, max(3x median, median + 30)) ms, so
+    a 1 ms router baseline doesn't flag 4 ms as a spike; None is a drop.
     If the router link spikes too, the cause is local Wi-Fi; if only the
-    internet does, it's upstream.
+    internet does, it's upstream. windows/Check-WiFi.bat uses the same rule.
     """
     def side(key):
         vals = [s[key] for s in samples if s.get(key) is not None]
         med = statistics.median(vals) if vals else None
+        thr = min(spike_ms, max(3 * med, med + 30)) if med is not None else 0
         bad = [i for i, s in enumerate(samples) if s.get(key) is None or
-               (med is not None and (s[key] > spike_ms or s[key] > 3 * med))]
+               (med is not None and s[key] > thr)]
         return {"median_ms": round(med, 1) if med is not None else None,
                 "drops": sum(1 for s in samples if s.get(key) is None),
                 "spikes": len(bad), "bad_at": bad}

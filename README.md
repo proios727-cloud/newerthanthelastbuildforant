@@ -147,3 +147,5 @@ python3 skills/router-doctor/scripts/router_doctor.py diagnose --router eero    
 python3 skills/router-doctor/scripts/router_doctor.py watch --minutes 10                  # catch on-and-off drops
 python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin          # store router password in the OS keychain
 ```
+
+**Windows, no install:** double-click `skills/router-doctor/windows/Check-WiFi.bat`. It watches the router and the internet for a few minutes, tracks the Wi-Fi band and signal, then saves a verdict report (`WiFi-Check-*.txt` plus a CSV) to the Desktop.
