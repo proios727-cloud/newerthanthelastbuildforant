@@ -143,5 +143,7 @@ Read-only home Wi-Fi diagnosis, plus an agent workflow for tuning the router one
 
 ```bash
 python3 skills/router-doctor/scripts/router_doctor.py diagnose --out router_report.json  # verdict + channel congestion
+python3 skills/router-doctor/scripts/router_doctor.py diagnose --router eero              # eero: advice as eero app steps
+python3 skills/router-doctor/scripts/router_doctor.py watch --minutes 10                  # catch on-and-off drops
 python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin          # store router password in the OS keychain
 ```

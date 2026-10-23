@@ -84,6 +84,35 @@ class AnalysisTest(unittest.TestCase):
         recs = rd.recommendations("isp_or_upstream", rd.congestion([]))
         self.assertIn("upstream", recs[0])
 
+    def test_eero_advice_is_app_steps_without_channel_picks(self):
+        on24 = {"ssid": "home", "channel": 6, "band": "2.4", "signal": 60, "current": True}
+        recs = rd.eero_recommendations("wifi_link", on24)
+        self.assertTrue(any("2.4 GHz" in r for r in recs))
+        self.assertTrue(any("eero app" in r for r in recs))
+        self.assertFalse(any("channel 1" in r or "channel 11" in r for r in recs))
+        self.assertIn("speed test", rd.eero_recommendations("isp_or_upstream")[0])
+        self.assertIn("home network", rd.eero_recommendations("no_data")[0])
+
+    def test_watch_blames_wifi_when_router_spikes_with_internet(self):
+        s = [{"gw": 3.0, "net": 15.0}] * 20
+        s[5] = {"gw": 180.0, "net": 210.0}
+        s[12] = {"gw": None, "net": None}
+        out = rd.summarize_watch(s)
+        self.assertEqual(out["cause"], "wifi_link")
+        self.assertEqual(out["gateway"]["drops"], 1)
+        self.assertEqual(out["internet"]["spikes"], 2)
+
+    def test_watch_blames_upstream_when_router_is_clean(self):
+        s = [{"gw": 3.0, "net": 15.0}] * 20
+        s[5] = {"gw": 3.0, "net": 240.0}
+        s[9] = {"gw": 3.0, "net": None}
+        self.assertEqual(rd.summarize_watch(s)["cause"], "isp_or_upstream")
+
+    def test_watch_stable_and_no_data(self):
+        self.assertEqual(rd.summarize_watch([{"gw": 3.0, "net": 15.0}] * 10)["cause"], "stable")
+        self.assertEqual(rd.summarize_watch([{"gw": None, "net": None}] * 3)["cause"], "no_data")
+        self.assertEqual(rd.summarize_watch([])["cause"], "no_data")
+
     def test_keychain_cmd_never_takes_password_argument(self):
         for os_name in ("Darwin", "Linux", "Windows"):
             cmd = rd.keychain_cmd("admin", os_name)

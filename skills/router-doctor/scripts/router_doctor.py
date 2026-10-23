@@ -6,7 +6,8 @@ channel congestion and writes a JSON report with a verdict. It never logs into
 or changes the router; that happens in the agent workflow (SKILL.md), one
 approved change at a time.
 
-  python router_doctor.py diagnose --out router_report.json
+  python router_doctor.py diagnose --out router_report.json [--router eero]
+  python router_doctor.py watch --minutes 10      # catch on-and-off drops
   python router_doctor.py keychain-cmd --user admin
 """
 import argparse
@@ -186,6 +187,56 @@ def verdict(gw, inet, dns_ms):
     return "healthy"
 
 
+def eero_recommendations(v, current=None):
+    """App steps for eero. It has no local admin page and picks channels itself,
+    so channel advice is dropped and every fix goes through the eero app."""
+    if v == "no_data":
+        return recommendations(v, {})
+    recs = []
+    if v == "isp_or_upstream":
+        recs.append("eero app → run its speed test. Slow at the eero too means the ISP line; report it to the provider with screenshots.")
+    if v == "dns":
+        recs.append("eero app → Settings → Network settings → DNS: pick a resolver you trust (may be locked on ISP-managed eeros).")
+    if v == "wifi_link":
+        if current and current.get("band") == "2.4":
+            recs.append("This device is on 2.4 GHz. In the eero app's device page, check the band; if it stays on 2.4 near an eero, "
+                        "try Troubleshooting → 'My device has trouble connecting' to pause 5 GHz briefly and let it rejoin.")
+        recs.append("eero app → tap this device: note which eero it's on and the signal. A far eero or weak signal means placement, "
+                    "or add a node. No setting replaces coverage.")
+        recs.append("Turn on 'Optimize for conferencing and gaming' if your app shows it, then restart the network once from the app.")
+    recs.append("ISP-supplied eeros can have settings locked; if an option is missing, the provider controls it.")
+    return recs
+
+
+def summarize_watch(samples, spike_ms=100.0):
+    """Find intermittent trouble in a series of {"gw": ms|None, "net": ms|None}.
+
+    A spike is a reply over `spike_ms` or over 3x the median; None is a drop.
+    If the router link spikes too, the cause is local Wi-Fi; if only the
+    internet does, it's upstream.
+    """
+    def side(key):
+        vals = [s[key] for s in samples if s.get(key) is not None]
+        med = statistics.median(vals) if vals else None
+        bad = [i for i, s in enumerate(samples) if s.get(key) is None or
+               (med is not None and (s[key] > spike_ms or s[key] > 3 * med))]
+        return {"median_ms": round(med, 1) if med is not None else None,
+                "drops": sum(1 for s in samples if s.get(key) is None),
+                "spikes": len(bad), "bad_at": bad}
+    gw, net = side("gw"), side("net")
+    n = len(samples)
+    if n == 0 or (gw["median_ms"] is None and net["median_ms"] is None):
+        cause = "no_data"
+    elif not net["bad_at"]:
+        cause = "stable"
+    else:
+        shared = len(set(gw["bad_at"]) & set(net["bad_at"]))
+        cause = "wifi_link" if gw["median_ms"] is not None and shared >= 0.5 * len(net["bad_at"]) else "isp_or_upstream"
+    for d in (gw, net):
+        d.pop("bad_at")
+    return {"samples": n, "gateway": gw, "internet": net, "cause": cause}
+
+
 def recommendations(v, cong):
     recs = []
     if v == "no_data":
@@ -269,7 +320,26 @@ def keychain_cmd(user, os_name=None):
 
 # ---------- CLI ----------
 
-def diagnose(count):
+def watch(minutes, interval):
+    """Ping the router and the internet once per interval to catch on-and-off drops."""
+    gw = gateway()
+    flag = "-n" if platform.system() == "Windows" else "-c"
+
+    def one(host):
+        if not host:
+            return None
+        r = parse_ping(_run(["ping", flag, "1", host], timeout=5))
+        return r[0] if r else None
+
+    samples, end = [], time.time() + minutes * 60
+    while time.time() < end:
+        samples.append({"t": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                        "gw": one(gw), "net": one(INTERNET_HOST)})
+        time.sleep(interval)
+    return {"gateway": gw, "summary": summarize_watch(samples), "samples": samples}
+
+
+def diagnose(count, router="generic"):
     gw = gateway()
     gw_stats = ping(gw, count) if gw else link_stats([], count)
     net_stats = ping(INTERNET_HOST, count)
@@ -277,6 +347,8 @@ def diagnose(count):
     nets = scan()
     cong = congestion(nets)
     v = verdict(gw_stats, net_stats, d)
+    current = next((n for n in nets if n.get("current")), None)
+    recs = eero_recommendations(v, current) if router == "eero" else recommendations(v, cong)
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "platform": platform.system(),
@@ -285,10 +357,11 @@ def diagnose(count):
         "internet_link": net_stats,
         "dns_ms": d,
         "networks_seen": len(nets),
-        "current_network": next((n for n in nets if n.get("current")), None),
+        "router": router,
+        "current_network": current,
         "congestion": cong,
         "verdict": v,
-        "recommendations": recommendations(v, cong),
+        "recommendations": recs,
     }
 
 
@@ -298,13 +371,27 @@ def main(argv=None):
     d = sub.add_parser("diagnose", help="read-only network diagnosis")
     d.add_argument("--count", type=int, default=20)
     d.add_argument("--out", default="router_report.json")
+    d.add_argument("--router", choices=("generic", "eero"), default="generic",
+                   help="eero: app-managed mesh, advice becomes eero app steps")
+    w = sub.add_parser("watch", help="log router vs internet pings over time to catch intermittent drops")
+    w.add_argument("--minutes", type=float, default=10)
+    w.add_argument("--interval", type=float, default=2)
+    w.add_argument("--out", default="router_watch.json")
     k = sub.add_parser("keychain-cmd", help="print the keychain command for the user to run")
     k.add_argument("--user", default="admin")
     a = p.parse_args(argv)
     if a.cmd == "keychain-cmd":
         print(keychain_cmd(a.user))
         return 0
-    rep = diagnose(a.count)
+    if a.cmd == "watch":
+        rep = watch(a.minutes, a.interval)
+        with open(a.out, "w") as f:
+            json.dump(rep, f, indent=2)
+        s = rep["summary"]
+        print(f"cause: {s['cause']} | {s['samples']} samples | router spikes {s['gateway']['spikes']} drops {s['gateway']['drops']} "
+              f"| internet spikes {s['internet']['spikes']} drops {s['internet']['drops']}")
+        return 0
+    rep = diagnose(a.count, a.router)
     with open(a.out, "w") as f:
         json.dump(rep, f, indent=2)
     g, n = rep["gateway_link"], rep["internet_link"]
