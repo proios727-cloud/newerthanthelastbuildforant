@@ -1,0 +1,13 @@
+{
+  "signal_minutes": 240,
+  "research_only": true,
+  "fee_rate": 0.008,
+  "slippage_rate": 0.0005,
+  "max_cost": 0.02,
+  "max_exposure": 0.10,
+  "risk_fraction": 0.005,
+  "stop_fraction": 0.04,
+  "max_hours": 72,
+  "quote_max_age": 10,
+  "source_max_age": 30
+}
