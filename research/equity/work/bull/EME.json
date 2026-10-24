@@ -1,0 +1,163 @@
+{
+ "ticker": "EME",
+ "company": "EMCOR Group, Inc. (label from RH profile; 10-K name UNAVAILABLE)",
+ "cik": "UNAVAILABLE",
+ "sector": "Industrial Services",
+ "as_of": "2026-10-05T16:00:00Z",
+ "bear_case": {
+  "summary": "Not performed in this bull pass; bear analyst file in work/bear/ governs.",
+  "risks": [],
+  "completed_before_bull": true
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [],
+  "issues": [
+   "Bull-pass draft; independent verification not yet run"
+  ],
+  "checked_at": "2026-10-05T16:00:00Z"
+ },
+ "gates": {},
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "identity": {
+  "company_name_source": "UNAVAILABLE - feed served no XBRL facts for EME 10-K/10-Q",
+  "latest_10K": {
+   "date": "2026-02-26",
+   "filing_id": "21d03a50-f29a-4604-8c62-4b70337ed202"
+  },
+  "latest_10Q": {
+   "date": "2026-07-30",
+   "filing_id": "be8d7a3c-f352-41cf-9243-e09f052f825a"
+  },
+  "nt_filings_last_12m": "None found",
+  "going_concern": "UNAVAILABLE",
+  "auditor_change": "UNAVAILABLE"
+ },
+ "claims": [
+  {
+   "id": "EME-C1",
+   "text": "Revenue, operating income, FCF, net debt: UNAVAILABLE from filings (feed returned no facts)",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [],
+   "material": true
+  },
+  {
+   "id": "EME-C2",
+   "text": "Market cap $34.68B, P/E 24.41, 52w high $951.96 (2026-05-06); implied price 34679.6/44.110 = $786.2, -17.4% vs high",
+   "label": "VERIFIED_FACT",
+   "value": 24.41,
+   "unit": "x",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals EME market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "EME-C3",
+   "text": "Peer P/E: FIX 42.51, PWR 77.49, MTZ 34.40 (median 42.51); EME 24.41/42.51-1 = -43% discount",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -0.43,
+   "unit": "ratio",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals FIX/PWR/MTZ market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "EME-C4",
+   "text": "Q3 2026 earnings date not yet announced by company (prior: Q2 on 2026-07-30)",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "date",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "EME 8-K 2026-07-31 via Robinhood SEC feed",
+     "url": "robinhood-sec:8e9b2422-fdfe-4b6f-be3b-f868da8fd2f2",
+     "type": "8-K",
+     "published": "2026-07-31",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": false
+  }
+ ],
+ "fundamentals": {
+  "all": "UNAVAILABLE",
+  "claim_ids": [
+   "EME-C1"
+  ]
+ },
+ "valuation": {
+  "method": "P/E vs FIX, PWR, MTZ",
+  "claim_ids": [
+   "EME-C2",
+   "EME-C3"
+  ],
+  "notes": "Own history UNAVAILABLE"
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 earnings (TradingView est. 2026-10-22)",
+   "date": "2026-10-22",
+   "date_confirmed": false,
+   "source": {
+    "title": "work/screen.md TradingView",
+    "url": "work/tv_raw_2026-10-05.json",
+    "type": "market_data",
+    "published": "2026-10-05",
+    "accessed": "2026-10-05T16:00:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "UNAVAILABLE",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "EME-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "thesis": {
+  "mispricing": "Trades at ~43% P/E discount to electrical/mechanical contractor peers after a 17% pullback; if data-center backlog is comparable, the discount may be excessive. Unsupported by filing data in this pass.",
+  "what_changes_it": [
+   "Backlog/RPO decline in Q3",
+   "Margin compression on fixed-price work",
+   "Peers de-rating toward EME multiple"
+  ],
+  "supporting_claim_ids": [
+   "EME-C3"
+  ]
+ },
+ "data_gaps": [
+  "All filing fundamentals UNAVAILABLE (feed empty)",
+  "Form 4/13F/short interest UNAVAILABLE",
+  "Earnings date unconfirmed"
+ ]
+}

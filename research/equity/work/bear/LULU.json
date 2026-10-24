@@ -1,0 +1,215 @@
+{
+  "ticker": "LULU",
+  "company": "lululemon athletica",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T00:00:00Z",
+  "bear_case": {
+    "summary": "LULU at ~7.6x P/E looks optically cheap, but the core Americas franchise is shrinking (Americas comps -12%, US revenue -8%), guidance has been cut twice (FY revenue now -5% to -7%), and the Q2 EPS beat relied on a one-time $134.5M tariff refund. Brand erosion vs Alo/Vuori, tariff exposure and growing dependence on China make the low multiple potentially deserved.",
+    "risks": [
+      "Brand erosion in core Americas",
+      "Earnings quality / tariff headwind",
+      "China concentration",
+      "Inventory / markdown risk",
+      "Accessories weakness"
+    ],
+    "completed_before_bull": true
+  },
+  "thesis_breaking_risks": [
+    {
+      "risk": "Brand erosion in core Americas",
+      "evidence": "Q2 US revenue $1,302M vs $1,415M (-8%); Americas comps -12% (secondary).",
+      "likelihood": "High that declines continue near term",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Americas comps in Q3 (2026-12-03), markdown levels, holiday traffic"
+    },
+    {
+      "risk": "Earnings quality / tariff headwind",
+      "evidence": "Q2 EPS $2.92 included $0.86 one-time tariff refund; ex-refund $2.06. FY EPS guide cut to $9.48-9.73.",
+      "likelihood": "High",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Product margin ex-refund; tariff policy changes"
+    },
+    {
+      "risk": "China concentration",
+      "evidence": "China Mainland H1 revenue $885M vs $761M (+16%) - now the growth engine; geopolitics/consumer risk.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "China comp growth deceleration"
+    },
+    {
+      "risk": "Inventory / markdown risk",
+      "evidence": "Inventory $1,711M at 2026-08-02 vs $1,701M at 2026-02-01 while revenue declines.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Inventory growth vs sales growth gap; gross margin markdown commentary"
+    },
+    {
+      "risk": "Accessories weakness",
+      "evidence": "Q2 accessories & other revenue $306M vs $353M (-13%).",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Category mix"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "Q2 gross margin 60.5% vs 58.5% (computed) flattered by one-time tariff refund - underlying margin lower.",
+    "Two guidance cuts in one year - management visibility poor.",
+    "Inventory flat-to-up against falling sales."
+  ],
+  "value_trap_assessment": "Earnings are declining (H1 net income $524M vs $685M, -24%); a low P/E on falling earnings with structural brand share loss in its largest market is a textbook value trap until Americas comps stabilize.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:37:28Z",
+  "claims": [
+    {
+      "id": "LULU-B1",
+      "text": "Q2 FY26 (ended 2026-08-02) revenue $2,415.6M vs $2,525.2M (-4.3%).",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-09-03 (filing_id 7159d6a4-593c-45e8-9301-438de3f6d4d7) via Robinhood SEC feed",
+          "url": "robinhood-sec:7159d6a4-593c-45e8-9301-438de3f6d4d7",
+          "type": "10-Q",
+          "published": "2026-09-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 2415631000,
+      "unit": "USD"
+    },
+    {
+      "id": "LULU-B2",
+      "text": "Q2 US revenue $1,302.1M vs $1,415.0M; Canada $285.8M vs $321.3M.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-09-03 (filing_id 7159d6a4-593c-45e8-9301-438de3f6d4d7) via Robinhood SEC feed",
+          "url": "robinhood-sec:7159d6a4-593c-45e8-9301-438de3f6d4d7",
+          "type": "10-Q",
+          "published": "2026-09-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "LULU-B3",
+      "text": "H1 net income $524.3M vs $685.5M.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-09-03 (filing_id 7159d6a4-593c-45e8-9301-438de3f6d4d7) via Robinhood SEC feed",
+          "url": "robinhood-sec:7159d6a4-593c-45e8-9301-438de3f6d4d7",
+          "type": "10-Q",
+          "published": "2026-09-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 524271000,
+      "unit": "USD"
+    },
+    {
+      "id": "LULU-B4",
+      "text": "Inventory $1,711.5M at 2026-08-02 vs $1,700.8M at 2026-02-01.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-09-03 (filing_id 7159d6a4-593c-45e8-9301-438de3f6d4d7) via Robinhood SEC feed",
+          "url": "robinhood-sec:7159d6a4-593c-45e8-9301-438de3f6d4d7",
+          "type": "10-Q",
+          "published": "2026-09-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "LULU-B5",
+      "text": "Americas comparable sales -12%; FY revenue guide cut to $10.35-10.50B and EPS to $9.48-9.73.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Lululemon slides on tariff-inflated Q2 beat and guidance cut",
+          "url": "https://app.sentisense.ai/stories/lululemon-shares-slide-over-15-percent-after-q2-miss-and-forecast-cut-ahead-of-c-09032026",
+          "type": "secondary",
+          "published": "2026-09-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        },
+        {
+          "title": "Lululemon Q2 net revenue drops 4 percent (FashionUnited)",
+          "url": "https://fashionunited.com/news/business/lululemon-q2-net-revenue-drops-4-percent-amidst-challenging-dynamics/2026090474444",
+          "type": "secondary",
+          "published": "2026-09-04",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "LULU-B6",
+      "text": "Q2 EPS $2.92 included a one-time $134.5M ($0.86/sh) tariff refund.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "Lululemon slides on tariff-inflated Q2 beat and guidance cut",
+          "url": "https://app.sentisense.ai/stories/lululemon-shares-slide-over-15-percent-after-q2-miss-and-forecast-cut-ahead-of-c-09032026",
+          "type": "secondary",
+          "published": "2026-09-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "LULU-B7",
+      "text": "Americas decline reflects structural brand share loss rather than cyclical weakness.",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-09-03 (filing_id 7159d6a4-593c-45e8-9301-438de3f6d4d7) via Robinhood SEC feed",
+          "url": "robinhood-sec:7159d6a4-593c-45e8-9301-438de3f6d4d7",
+          "type": "10-Q",
+          "published": "2026-09-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        },
+        {
+          "title": "Lululemon slides on tariff-inflated Q2 beat and guidance cut",
+          "url": "https://app.sentisense.ai/stories/lululemon-shares-slide-over-15-percent-after-q2-miss-and-forecast-cut-ahead-of-c-09032026",
+          "type": "secondary",
+          "published": "2026-09-03",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "LULU-B8",
+      "text": "Screen: P/E 7.6, -59.1% vs 52w high.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "work/screen.md TradingView screen",
+          "url": "work/screen.md",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": false
+    }
+  ],
+  "data_gaps": [
+    "SEC EDGAR blocked; CIK UNAVAILABLE",
+    "No price quote pulled; valuation multiples from work/screen.md (TradingView, single source)",
+    "Web sources are secondary summaries of company releases"
+  ]
+}

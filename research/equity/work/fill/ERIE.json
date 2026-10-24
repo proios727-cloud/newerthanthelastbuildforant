@@ -1,0 +1,88 @@
+{
+  "ticker": "ERIE",
+  "as_of": "2026-10-05",
+  "claims": [
+    {
+      "id": "ERIE-F1",
+      "text": "Q2 2026 operating income $204.1M vs $199.2M Q2 2025 (+2.5%)",
+      "label": "VERIFIED_FACT",
+      "value": 204.1,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000922621/000162828026051071/ex-99106302026.htm",
+          "date": "2026-07-30",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "d0cff6b6-3694-4730-bafe-d14cd62bb2b2"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ERIE-F2",
+      "text": "Management fee revenue for policy issuance/renewal +$39.0M (+4.7%); administrative services +$1.3M (+7.2%)",
+      "label": "VERIFIED_FACT",
+      "value": 4.7,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000922621/000162828026051071/ex-99106302026.htm",
+          "date": "2026-07-30",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "d0cff6b6-3694-4730-bafe-d14cd62bb2b2"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ERIE-F3",
+      "text": "Q2 2026 diluted EPS $3.45; H1 $6.32",
+      "label": "VERIFIED_FACT",
+      "value": 3.45,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000922621/000162828026051071/ex-99106302026.htm",
+          "date": "2026-07-30",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "d0cff6b6-3694-4730-bafe-d14cd62bb2b2"
+        }
+      ],
+      "material": false
+    },
+    {
+      "id": "ERIE-F4",
+      "text": "50+ Form 4 filings since 2026-04-05 (latest 2026-10-01) are listed in the Robinhood SEC feed, but filing content returns 404, so buy/sell direction can't be determined.",
+      "label": "VERIFIED_FACT",
+      "value": "UNAVAILABLE",
+      "as_of": "2026-10-05",
+      "sources": [
+        {
+          "type": "Form4",
+          "filing_id": "index via Robinhood SEC feed",
+          "date": "2026-10-01"
+        }
+      ],
+      "material": false
+    }
+  ],
+  "still_unavailable": [
+    "Robinhood SEC feed: 8-K/10-Q/10-K text returns 404 and the XBRL facts catalog is empty; EX-99.1 not read directly",
+    "CIK",
+    "2026 management fee rate (not found)",
+    "Q3 2026 date: there is no company announcement, so the 10-22 vs 10-29 conflict is unresolved (10-29 is third-party only)",
+    "Revenue total, FCF, net debt"
+  ],
+  "corrections": [
+    {
+      "claim_id": "ERIE-7",
+      "file": "work/bull/ERIE.json",
+      "issue": "Operating income was UNAVAILABLE",
+      "correct_value": "$204.1M Q2 2026",
+      "source": "https://www.sec.gov/Archives/edgar/data/0000922621/000162828026051071/ex-99106302026.htm"
+    }
+  ]
+}

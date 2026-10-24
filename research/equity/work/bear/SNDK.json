@@ -1,0 +1,162 @@
+{
+ "ticker": "SNDK",
+ "as_of": "2026-10-05T00:00:00Z",
+ "bear_case": {
+  "summary": "Sandisk is a NAND supercycle story: FY26 revenue rose 175% to 20.2B, and net income swung to 11.4B from a 1.6B loss. NAND is the most cyclical memory market. AR quadrupled (1.1B to 4.7B), far faster than revenue's 2.75x. Revenue is 81% from Asia (CN/HK/Rest of Asia). The 8x forward P/E is a classic peak-cycle multiple.",
+  "risks": [
+   {
+    "risk": "NAND price/oversupply reversal",
+    "evidence": "FY25 net loss 1.641B to FY26 NI 11.433B shows extreme operating leverage",
+    "likelihood": "High within 12\u201324 months (inference)",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "NAND contract price trends; competitor capex; Q1 FY27 guide on 2026-10-29",
+    "claim_ids": [
+     "S1",
+     "S2"
+    ]
+   },
+   {
+    "risk": "Receivables growth outpacing revenue",
+    "evidence": "AR +327% vs revenue +175%",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "DSO in Q1 FY27; any factoring",
+    "claim_ids": [
+     "S3"
+    ]
+   },
+   {
+    "risk": "China/HK concentration and export controls",
+    "evidence": "CN 4.50B plus HK 5.13B = 48% of revenue",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Trade/export-control actions",
+    "claim_ids": [
+     "S4"
+    ]
+   },
+   {
+    "risk": "Kioxia JV dependency",
+    "evidence": "Equity-method JV-related revenue line 2.775B",
+    "likelihood": "Low-Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "JV agreement changes",
+    "claim_ids": [
+     "S5"
+    ]
+   }
+  ],
+  "completed_before_bull": true
+ },
+ "accounting_red_flags": {
+  "receivables_vs_revenue": "AR 4.7B vs 1.1B (+327%) vs revenue +175%: RED FLAG",
+  "inventory": "+30% (2.08B to 2.70B), slower than revenue",
+  "sbc_share_of_fcf": "SBC 232M vs OCF 11.67B (~2%)",
+  "one_time_items": "FY25 loss included impairments (inference; not verified)",
+  "customer_concentration": "Geographic: 81% Asia; customer % UNAVAILABLE",
+  "debt_maturities": "LTD noncurrent 0 at 2026-07-03 (1.829B prior)"
+ },
+ "value_trap": "Low forward P/E on peak memory margins. History shows memory stocks bottom on high P/Es and top on low ones.",
+ "completed_before_bull": true,
+ "completed_at": "2026-10-05T16:00:00Z",
+ "claims": [
+  {
+   "id": "S1",
+   "text": "FY26 revenue 20.248B vs 7.355B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "title": "SNDK 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-17"
+    }
+   ],
+   "material": true,
+   "value": 20248000000
+  },
+  {
+   "id": "S2",
+   "text": "FY26 NI 11.433B vs -1.641B; OCF 11.671B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "title": "SNDK 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-17"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "S3",
+   "text": "AR 4.7B vs 1.1B; inventory 2.698B vs 2.079B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "title": "SNDK 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-17"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "S4",
+   "text": "FY26 revenue: CN 4.503B, HK 5.126B, Rest of Asia 4.612B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "title": "SNDK 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-17"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "S5",
+   "text": "Revenue tagged to equity-method investee axis 2.775B FY26",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "title": "SNDK 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-17"
+    }
+   ],
+   "material": false
+  },
+  {
+   "id": "S6",
+   "text": "NAND cycle likely to peak within 24 months",
+   "label": "SPECULATION",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-K",
+     "filing_id": "e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "url": "robinhood-sec-feed:e6dfa4e2-a9bf-4798-8d8e-344dbd021e7f",
+     "title": "SNDK 10-K FY2026 (via Robinhood SEC feed)",
+     "published": "2026-08-17"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "notes": "Bull folder not read. CIK UNAVAILABLE per SOURCES.md. Capex/FCF not pulled; OCF used as proxy where noted."
+}

@@ -1,0 +1,1033 @@
+{
+ "as_of": "2026-10-05",
+ "universe": {
+  "source": "TradingView screener index filter \"S&P 500\" (RH_TV_HFT mcp-tv-run-screener)",
+  "as_of": "2026-10-05",
+  "count": 504,
+  "note": "Constituent list not cross-checked against S&P DJI; GOOG/GOOGL both present (504 lines)"
+ },
+ "thresholds": {
+  "fcf": "free_cash_flow_ttm > 0",
+  "quality": "return_on_invested_capital > sector median OR return_on_equity > sector median (TV sector classification, medians over all S&P 500 members in sector, nulls excluded)",
+  "valuation": "any of P/E TTM, non-GAAP forward P/E (next FY), EV/EBIT TTM <= 40th percentile of positive values within sector (linear interpolation); negative/missing multiples ignored",
+  "leverage": "net_debt_fq / ebitda_ttm < 3.0; net cash passes; skipped for TV sector \"Finance\" (includes REITs, e.g. SBAC)",
+  "discount": "close / price_52_week_high - 1 <= -10%",
+  "catalyst": "0 <= earnings_release_next_date - 2026-10-05 <= 60 days",
+  "ranking": "score = (ROIC, else ROE) / |sector median ROIC| + (pct below 52w high)/20; GOOG dropped as duplicate share class of GOOGL"
+ },
+ "sector_stats": {
+  "Health Technology": {
+   "n": 42,
+   "roic_med": 9.94588052127552,
+   "roe_med": 13.77487296934305,
+   "pe_ttm_p40": 29.368880884713914,
+   "pe_fwd_p40": 18.35477696207822,
+   "ev_ebit_p40": 20.537397414708746
+  },
+  "Electronic Technology": {
+   "n": 57,
+   "roic_med": 14.12637595609175,
+   "roe_med": 21.891751813676848,
+   "pe_ttm_p40": 33.77546130827965,
+   "pe_fwd_p40": 23.778381622814816,
+   "ev_ebit_p40": 27.674291638193456
+  },
+  "Consumer Services": {
+   "n": 28,
+   "roic_med": 8.74484261878195,
+   "roe_med": 14.861937350855452,
+   "pe_ttm_p40": 17.14440114196304,
+   "pe_fwd_p40": 15.35764248081005,
+   "ev_ebit_p40": 14.682841524890062
+  },
+  "Finance": {
+   "n": 96,
+   "roic_med": 6.928234584690916,
+   "roe_med": 12.6063804115253,
+   "pe_ttm_p40": 14.75048727502381,
+   "pe_fwd_p40": 13.599521230076334,
+   "ev_ebit_p40": 21.48273745816373
+  },
+  "Technology Services": {
+   "n": 47,
+   "roic_med": 16.91079626920955,
+   "roe_med": 27.165962661437653,
+   "pe_ttm_p40": 20.22491626236309,
+   "pe_fwd_p40": 16.881785686065886,
+   "ev_ebit_p40": 18.67631645127221
+  },
+  "Process Industries": {
+   "n": 20,
+   "roic_med": 4.32871889522075,
+   "roe_med": 7.61117629094854,
+   "pe_ttm_p40": 19.005585116645953,
+   "pe_fwd_p40": 15.452483568496799,
+   "ev_ebit_p40": 15.96698090775271
+  },
+  "Utilities": {
+   "n": 32,
+   "roic_med": 4.1241645048211755,
+   "roe_med": 10.117867136995951,
+   "pe_ttm_p40": 19.425607232850506,
+   "pe_fwd_p40": 16.94627589387152,
+   "ev_ebit_p40": 20.874567440753502
+  },
+  "Consumer Durables": {
+   "n": 11,
+   "roic_med": 9.83860675866425,
+   "roe_med": 12.754321905732702,
+   "pe_ttm_p40": 15.953273772940026,
+   "pe_fwd_p40": 14.785208982018537,
+   "ev_ebit_p40": 12.95059944167866
+  },
+  "Producer Manufacturing": {
+   "n": 33,
+   "roic_med": 13.3392579426794,
+   "roe_med": 20.87609719645625,
+   "pe_ttm_p40": 28.487704653401217,
+   "pe_fwd_p40": 22.117995969585948,
+   "ev_ebit_p40": 21.623902933564036
+  },
+  "Retail Trade": {
+   "n": 23,
+   "roic_med": 21.3983289840795,
+   "roe_med": 41.070561795770544,
+   "pe_ttm_p40": 19.430251315118877,
+   "pe_fwd_p40": 16.26820343656817,
+   "ev_ebit_p40": 15.711116545324547
+  },
+  "Energy Minerals": {
+   "n": 14,
+   "roic_med": 10.8042174068766,
+   "roe_med": 14.513238347744952,
+   "pe_ttm_p40": 15.050724312372381,
+   "pe_fwd_p40": 9.206433437531635,
+   "ev_ebit_p40": 12.023917506320421
+  },
+  "Consumer Non-Durables": {
+   "n": 28,
+   "roic_med": 14.0979304265345,
+   "roe_med": 22.46611722979445,
+   "pe_ttm_p40": 20.04405286343612,
+   "pe_fwd_p40": 14.426852951227847,
+   "ev_ebit_p40": 14.06831741177502
+  },
+  "Industrial Services": {
+   "n": 11,
+   "roic_med": 9.06632362185157,
+   "roe_med": 17.3102669058486,
+   "pe_ttm_p40": 24.43694786913892,
+   "pe_fwd_p40": 21.5031609011993,
+   "ev_ebit_p40": 19.253153018866847
+  },
+  "Distribution Services": {
+   "n": 9,
+   "roic_med": 21.4103336294854,
+   "roe_med": 37.4679213003867,
+   "pe_ttm_p40": 24.459091124737892,
+   "pe_fwd_p40": 17.78468902947221,
+   "ev_ebit_p40": 17.427134707794583
+  },
+  "Transportation": {
+   "n": 15,
+   "roic_med": 10.788744316863,
+   "roe_med": 24.366825432826804,
+   "pe_ttm_p40": 23.065765310383128,
+   "pe_fwd_p40": 21.021038458703075,
+   "ev_ebit_p40": 19.434498565930546
+  },
+  "Health Services": {
+   "n": 11,
+   "roic_med": 7.94115439465586,
+   "roe_med": 14.351600651112301,
+   "pe_ttm_p40": 14.867099230186026,
+   "pe_fwd_p40": 13.091173990448945,
+   "ev_ebit_p40": 12.387857553309756
+  },
+  "Commercial Services": {
+   "n": 15,
+   "roic_med": 13.56339362222225,
+   "roe_med": 19.8335967004695,
+   "pe_ttm_p40": 24.292548305942795,
+   "pe_fwd_p40": 16.054951150532144,
+   "ev_ebit_p40": 15.135234685567951
+  },
+  "Non-Energy Minerals": {
+   "n": 7,
+   "roic_med": 10.3384371795102,
+   "roe_med": 15.2569355638489,
+   "pe_ttm_p40": 16.844563910545663,
+   "pe_fwd_p40": 14.162864476573121,
+   "ev_ebit_p40": 16.58786299002421
+  },
+  "Communications": {
+   "n": 4,
+   "roic_med": 6.3317313755693,
+   "roe_med": 16.810237118398902,
+   "pe_ttm_p40": 11.098290046242711,
+   "pe_fwd_p40": 9.350931449635636,
+   "ev_ebit_p40": 12.682634817226267
+  },
+  "Miscellaneous": {
+   "n": 1,
+   "roic_med": 36.3750333825464,
+   "roe_med": 36.5655841169308,
+   "pe_ttm_p40": 44.2522214714619,
+   "pe_fwd_p40": 37.31352108018833,
+   "ev_ebit_p40": 35.25551861085624
+  }
+ },
+ "pass_counts": {
+  "total": 504,
+  "all_six_pass": 98,
+  "excluded_missing_data": 13,
+  "excluded_missing_tickers": {
+   "AMCR": [
+    "earnings_within_60d"
+   ],
+   "AZO": [
+    "fcf_positive"
+   ],
+   "CI": [
+    "net_debt_ebitda_lt3"
+   ],
+   "CNC": [
+    "net_debt_ebitda_lt3"
+   ],
+   "COIN": [
+    "valuation_bottom40_sector"
+   ],
+   "ELV": [
+    "net_debt_ebitda_lt3"
+   ],
+   "FDXF": [
+    "fcf_positive",
+    "net_debt_ebitda_lt3"
+   ],
+   "HONA": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3"
+   ],
+   "HUM": [
+    "net_debt_ebitda_lt3"
+   ],
+   "MRNA": [
+    "valuation_bottom40_sector"
+   ],
+   "UNH": [
+    "net_debt_ebitda_lt3"
+   ],
+   "VRSN": [
+    "quality_roic_or_roe_gt_sector_median"
+   ],
+   "VYLR": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "earnings_within_60d"
+   ]
+  }
+ },
+ "field_null_counts": {
+  "return_on_equity": 33,
+  "enterprise_value_to_ebit_ttm": 49,
+  "ebitda_ttm": 44,
+  "price_earnings_ttm": 30,
+  "non_gaap_price_to_earnings_per_share_forecast_next_fy": 10,
+  "earnings_release_next_date": 2,
+  "free_cash_flow_ttm": 4,
+  "return_on_invested_capital": 3,
+  "net_debt_fq": 1
+ },
+ "data_gaps": [
+  "SEC EDGAR (www.sec.gov, data.sec.gov) blocked by egress proxy: no CIK confirmed on EDGAR; no EDGAR cross-check of FCF/debt",
+  "Alpha Vantage free key hit 25/day limit after 6 successful COMPANY_OVERVIEW calls; CIK UNAVAILABLE for 9 of 15; EARNINGS/CASH_FLOW/BALANCE_SHEET/GLOBAL_QUOTE not pulled",
+  "All filter values are single-source (TradingView); not independently verified",
+  "TV return_on_equity/return_on_invested_capital are TTM-basis per TV defaults; *_ttm column variants returned null"
+ ],
+ "shortlist": [
+  {
+   "rank": 1,
+   "ticker": "BKNG",
+   "company": "Booking Holdings Inc",
+   "company_name_source": "Alpha Vantage COMPANY_OVERVIEW 2026-10-05",
+   "cik": "1075531",
+   "cik_status": "Alpha Vantage-reported; EDGAR confirmation UNAVAILABLE (sec.gov/data.sec.gov blocked by egress proxy)",
+   "sector_tv": "Consumer Services",
+   "rank_score": 9.993,
+   "values": {
+    "close": 157.845,
+    "high_52w": 220.806,
+    "pct_vs_52w_high": -28.514170810575802,
+    "next_earnings": "2026-11-04",
+    "days_to_earnings": 30,
+    "fcf_ttm": 9539000000,
+    "roic_pct": 74.9220536271046,
+    "roe_pct": "UNAVAILABLE",
+    "pe_ttm": 17.458026411838876,
+    "pe_fwd_nongaap_next_fy": 15.095258064408156,
+    "ev_ebit_ttm": 12.263383056068182,
+    "net_debt_fq": 3186000000,
+    "ebitda_ttm": 10646000000,
+    "net_debt_to_ebitda": 0.2992673304527522
+   },
+   "sector_thresholds": {
+    "n": 28,
+    "roic_med": 8.74484261878195,
+    "roe_med": 14.861937350855452,
+    "pe_ttm_p40": 17.14440114196304,
+    "pe_fwd_p40": 15.35764248081005,
+    "ev_ebit_p40": 14.682841524890062
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 2,
+   "ticker": "WDC",
+   "company": "Western Digital Corporation",
+   "company_name_source": "Alpha Vantage COMPANY_OVERVIEW 2026-10-05",
+   "cik": "106040",
+   "cik_status": "Alpha Vantage-reported; EDGAR confirmation UNAVAILABLE (sec.gov/data.sec.gov blocked by egress proxy)",
+   "sector_tv": "Electronic Technology",
+   "rank_score": 9.949,
+   "values": {
+    "close": 440.9,
+    "high_52w": 799.87,
+    "pct_vs_52w_high": -44.87854276319902,
+    "next_earnings": "2026-10-22",
+    "days_to_earnings": 17,
+    "fcf_ttm": 3511000000,
+    "roic_pct": 108.850695662341,
+    "roe_pct": 131.358024691358,
+    "pe_ttm": 18.23777357694487,
+    "pe_fwd_nongaap_next_fy": 21.625409743637608,
+    "ev_ebit_ttm": 34.502719037095474,
+    "net_debt_fq": -388000000,
+    "ebitda_ttm": 4968000000,
+    "net_debt_to_ebitda": -0.07809983896940419
+   },
+   "sector_thresholds": {
+    "n": 57,
+    "roic_med": 14.12637595609175,
+    "roe_med": 21.891751813676848,
+    "pe_ttm_p40": 33.77546130827965,
+    "pe_fwd_p40": 23.778381622814816,
+    "ev_ebit_p40": 27.674291638193456
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 3,
+   "ticker": "APP",
+   "company": "Applovin Corp",
+   "company_name_source": "Alpha Vantage COMPANY_OVERVIEW 2026-10-05",
+   "cik": "1751008",
+   "cik_status": "Alpha Vantage-reported; EDGAR confirmation UNAVAILABLE (sec.gov/data.sec.gov blocked by egress proxy)",
+   "sector_tv": "Technology Services",
+   "rank_score": 7.664,
+   "values": {
+    "close": 284.655,
+    "high_52w": 738.01,
+    "pct_vs_52w_high": -61.429384425685285,
+    "next_earnings": "2026-11-11",
+    "days_to_earnings": 37,
+    "fcf_ttm": 4527589000,
+    "roic_pct": 77.6641919773501,
+    "roe_pct": 203.681033166803,
+    "pe_ttm": 21.879371569998924,
+    "pe_fwd_nongaap_next_fy": 18.065587497627206,
+    "ev_ebit_ttm": 18.030441114317814,
+    "net_debt_fq": 461766000,
+    "ebitda_ttm": 5442968000,
+    "net_debt_to_ebitda": 0.0848371697206377
+   },
+   "sector_thresholds": {
+    "n": 47,
+    "roic_med": 16.91079626920955,
+    "roe_med": 27.165962661437653,
+    "pe_ttm_p40": 20.22491626236309,
+    "pe_fwd_p40": 16.881785686065886,
+    "ev_ebit_p40": 18.67631645127221
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 4,
+   "ticker": "SNDK",
+   "company": "Sandisk Corp",
+   "company_name_source": "Alpha Vantage COMPANY_OVERVIEW 2026-10-05",
+   "cik": "2023554",
+   "cik_status": "Alpha Vantage-reported; EDGAR confirmation UNAVAILABLE (sec.gov/data.sec.gov blocked by egress proxy)",
+   "sector_tv": "Electronic Technology",
+   "rank_score": 7.322,
+   "values": {
+    "close": 1713.77,
+    "high_52w": 2354.3899,
+    "pct_vs_52w_high": -27.209592599764388,
+    "next_earnings": "2026-10-29",
+    "days_to_earnings": 24,
+    "fcf_ttm": 11494000000,
+    "roic_pct": 84.2178925269787,
+    "roe_pct": 91.6399487015069,
+    "pe_ttm": 23.510859112092156,
+    "pe_fwd_nongaap_next_fy": 8.063491703214384,
+    "ev_ebit_ttm": 19.759985489548328,
+    "net_debt_fq": -4561000000,
+    "ebitda_ttm": 12617000000,
+    "net_debt_to_ebitda": -0.36149639375445825
+   },
+   "sector_thresholds": {
+    "n": 57,
+    "roic_med": 14.12637595609175,
+    "roe_med": 21.891751813676848,
+    "pe_ttm_p40": 33.77546130827965,
+    "pe_fwd_p40": 23.778381622814816,
+    "ev_ebit_p40": 27.674291638193456
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 5,
+   "ticker": "GEV",
+   "company": "GE Vernova",
+   "company_name_source": "Alpha Vantage COMPANY_OVERVIEW 2026-10-05",
+   "cik": "1996810",
+   "cik_status": "Alpha Vantage-reported; EDGAR confirmation UNAVAILABLE (sec.gov/data.sec.gov blocked by egress proxy)",
+   "sector_tv": "Producer Manufacturing",
+   "rank_score": 6.896,
+   "values": {
+    "close": 992.76,
+    "high_52w": 1195.94,
+    "pct_vs_52w_high": -16.989146612706328,
+    "next_earnings": "2026-10-28",
+    "days_to_earnings": 23,
+    "fcf_ttm": 12438000000,
+    "roic_pct": 80.6585407144066,
+    "roe_pct": 91.4754727848709,
+    "pe_ttm": 28.417509188545516,
+    "pe_fwd_nongaap_next_fy": 32.56241465674706,
+    "ev_ebit_ttm": 115.98924840354124,
+    "net_debt_fq": -10271000000,
+    "ebitda_ttm": 3404000000,
+    "net_debt_to_ebitda": -3.0173325499412456
+   },
+   "sector_thresholds": {
+    "n": 33,
+    "roic_med": 13.3392579426794,
+    "roe_med": 20.87609719645625,
+    "pe_ttm_p40": 28.487704653401217,
+    "pe_fwd_p40": 22.117995969585948,
+    "ev_ebit_p40": 21.623902933564036
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 6,
+   "ticker": "CF",
+   "company": "CF Industries Holdings",
+   "company_name_source": "analyst label; not source-verified (AV rate-limited)",
+   "cik": "UNAVAILABLE",
+   "cik_status": "UNAVAILABLE: EDGAR blocked, Alpha Vantage daily limit reached",
+   "sector_tv": "Process Industries",
+   "rank_score": 6.412,
+   "values": {
+    "close": 117.71,
+    "high_52w": 141.96,
+    "pct_vs_52w_high": -17.082276697661325,
+    "next_earnings": "2026-11-04",
+    "days_to_earnings": 30,
+    "fcf_ttm": 1910000000,
+    "roic_pct": 24.0600641907382,
+    "roe_pct": 39.1933526281393,
+    "pe_ttm": 8.73070618514645,
+    "pe_fwd_nongaap_next_fy": 7.851426543704784,
+    "ev_ebit_ttm": 6.8949533598078085,
+    "net_debt_fq": 1133000000,
+    "ebitda_ttm": 4096000000,
+    "net_debt_to_ebitda": 0.276611328125
+   },
+   "sector_thresholds": {
+    "n": 20,
+    "roic_med": 4.32871889522075,
+    "roe_med": 7.61117629094854,
+    "pe_ttm_p40": 19.005585116645953,
+    "pe_fwd_p40": 15.452483568496799,
+    "ev_ebit_p40": 15.96698090775271
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 7,
+   "ticker": "ALL",
+   "company": "The Allstate Corporation",
+   "company_name_source": "Alpha Vantage COMPANY_OVERVIEW 2026-10-05",
+   "cik": "899051",
+   "cik_status": "Alpha Vantage-reported; EDGAR confirmation UNAVAILABLE (sec.gov/data.sec.gov blocked by egress proxy)",
+   "sector_tv": "Finance",
+   "rank_score": 6.237,
+   "values": {
+    "close": 224.19,
+    "high_52w": 277.22,
+    "pct_vs_52w_high": -19.129211456604867,
+    "next_earnings": "2026-11-04",
+    "days_to_earnings": 30,
+    "fcf_ttm": 12249000000,
+    "roic_pct": 36.5820801143706,
+    "roe_pct": 46.1077325571322,
+    "pe_ttm": 4.4771201367559605,
+    "pe_fwd_nongaap_next_fy": 6.298990922389571,
+    "ev_ebit_ttm": "UNAVAILABLE",
+    "net_debt_fq": 6652000000,
+    "ebitda_ttm": "UNAVAILABLE",
+    "net_debt_to_ebitda": "UNAVAILABLE"
+   },
+   "sector_thresholds": {
+    "n": 96,
+    "roic_med": 6.928234584690916,
+    "roe_med": 12.6063804115253,
+    "pe_ttm_p40": 14.75048727502381,
+    "pe_fwd_p40": 13.599521230076334,
+    "ev_ebit_p40": 21.48273745816373
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": "SKIPPED_FINANCIAL",
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 8,
+   "ticker": "AMP",
+   "company": "Ameriprise Financial",
+   "company_name_source": "analyst label; not source-verified (AV rate-limited)",
+   "cik": "UNAVAILABLE",
+   "cik_status": "UNAVAILABLE: EDGAR blocked, Alpha Vantage daily limit reached",
+   "sector_tv": "Finance",
+   "rank_score": 5.326,
+   "values": {
+    "close": 493.495,
+    "high_52w": 572.56,
+    "pct_vs_52w_high": -13.809033114433412,
+    "next_earnings": "2026-10-29",
+    "days_to_earnings": 24,
+    "fcf_ttm": 8222000000,
+    "roic_pct": 32.1171446003661,
+    "roe_pct": 63.4318766066838,
+    "pe_ttm": 11.904181823444842,
+    "pe_fwd_nongaap_next_fy": 10.619998570213061,
+    "ev_ebit_ttm": 7.411896549649092,
+    "net_debt_fq": -3716000000,
+    "ebitda_ttm": 5327000000,
+    "net_debt_to_ebitda": "UNAVAILABLE"
+   },
+   "sector_thresholds": {
+    "n": 96,
+    "roic_med": 6.928234584690916,
+    "roe_med": 12.6063804115253,
+    "pe_ttm_p40": 14.75048727502381,
+    "pe_fwd_p40": 13.599521230076334,
+    "ev_ebit_p40": 21.48273745816373
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": "SKIPPED_FINANCIAL",
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 9,
+   "ticker": "ERIE",
+   "company": "Erie Indemnity",
+   "company_name_source": "analyst label; not source-verified (AV rate-limited)",
+   "cik": "UNAVAILABLE",
+   "cik_status": "UNAVAILABLE: EDGAR blocked, Alpha Vantage daily limit reached",
+   "sector_tv": "Finance",
+   "rank_score": 5.263,
+   "values": {
+    "close": 219.33,
+    "high_52w": 330.535,
+    "pct_vs_52w_high": -33.64394088371883,
+    "next_earnings": "2026-10-22",
+    "days_to_earnings": 17,
+    "fcf_ttm": 553083000,
+    "roic_pct": 24.8084389822022,
+    "roe_pct": 24.8084389822022,
+    "pe_ttm": 20.026113474918283,
+    "pe_fwd_nongaap_next_fy": 17.270078740157484,
+    "ev_ebit_ttm": 13.35832608037021,
+    "net_debt_fq": -346590000,
+    "ebitda_ttm": 817042000,
+    "net_debt_to_ebitda": "UNAVAILABLE"
+   },
+   "sector_thresholds": {
+    "n": 96,
+    "roic_med": 6.928234584690916,
+    "roe_med": 12.6063804115253,
+    "pe_ttm_p40": 14.75048727502381,
+    "pe_fwd_p40": 13.599521230076334,
+    "ev_ebit_p40": 21.48273745816373
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": "SKIPPED_FINANCIAL",
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 10,
+   "ticker": "ZTS",
+   "company": "Zoetis",
+   "company_name_source": "analyst label; not source-verified (AV rate-limited)",
+   "cik": "UNAVAILABLE",
+   "cik_status": "UNAVAILABLE: EDGAR blocked, Alpha Vantage daily limit reached",
+   "sector_tv": "Health Technology",
+   "rank_score": 4.91,
+   "values": {
+    "close": 71.075,
+    "high_52w": 148.3,
+    "pct_vs_52w_high": -52.07349966284558,
+    "next_earnings": "2026-11-05",
+    "days_to_earnings": 31,
+    "fcf_ttm": 2366000000,
+    "roic_pct": 22.94334327311,
+    "roe_pct": 64.3938461538462,
+    "pe_ttm": 11.692274791077187,
+    "pe_fwd_nongaap_next_fy": 11.358086797995927,
+    "ev_ebit_ttm": 10.307526810558858,
+    "net_debt_fq": 7562000000,
+    "ebitda_ttm": 4066000000,
+    "net_debt_to_ebitda": 1.8598130841121496
+   },
+   "sector_thresholds": {
+    "n": 42,
+    "roic_med": 9.94588052127552,
+    "roe_med": 13.77487296934305,
+    "pe_ttm_p40": 29.368880884713914,
+    "pe_fwd_p40": 18.35477696207822,
+    "ev_ebit_p40": 20.537397414708746
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 11,
+   "ticker": "EXPE",
+   "company": "Expedia Group",
+   "company_name_source": "analyst label; not source-verified (AV rate-limited)",
+   "cik": "UNAVAILABLE",
+   "cik_status": "UNAVAILABLE: EDGAR blocked, Alpha Vantage daily limit reached",
+   "sector_tv": "Consumer Services",
+   "rank_score": 4.898,
+   "values": {
+    "close": 262.48,
+    "high_52w": 342,
+    "pct_vs_52w_high": -23.25146198830409,
+    "next_earnings": "2026-10-29",
+    "days_to_earnings": 24,
+    "fcf_ttm": 4459000000,
+    "roic_pct": 32.6674689129563,
+    "roe_pct": 199.119804400978,
+    "pe_ttm": 16.370723797049926,
+    "pe_fwd_nongaap_next_fy": 12.538509892109486,
+    "ev_ebit_ttm": 11.06795164862538,
+    "net_debt_fq": -3844000000,
+    "ebitda_ttm": 3514000000,
+    "net_debt_to_ebitda": -1.0939100739897554
+   },
+   "sector_thresholds": {
+    "n": 28,
+    "roic_med": 8.74484261878195,
+    "roe_med": 14.861937350855452,
+    "pe_ttm_p40": 17.14440114196304,
+    "pe_fwd_p40": 15.35764248081005,
+    "ev_ebit_p40": 14.682841524890062
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 12,
+   "ticker": "PGR",
+   "company": "Progressive Corp",
+   "company_name_source": "analyst label; not source-verified (AV rate-limited)",
+   "cik": "UNAVAILABLE",
+   "cik_status": "UNAVAILABLE: EDGAR blocked, Alpha Vantage daily limit reached",
+   "sector_tv": "Finance",
+   "rank_score": 4.866,
+   "values": {
+    "close": 210.78,
+    "high_52w": 245.64,
+    "pct_vs_52w_high": -14.1914997557401,
+    "next_earnings": "2026-10-08",
+    "days_to_earnings": 3,
+    "fcf_ttm": 15951000000,
+    "roic_pct": 28.7986801117965,
+    "roe_pct": 34.943304898636,
+    "pe_ttm": 10.567320418722176,
+    "pe_fwd_nongaap_next_fy": 11.626723592270364,
+    "ev_ebit_ttm": "UNAVAILABLE",
+    "net_debt_fq": 8194000000,
+    "ebitda_ttm": "UNAVAILABLE",
+    "net_debt_to_ebitda": "UNAVAILABLE"
+   },
+   "sector_thresholds": {
+    "n": 96,
+    "roic_med": 6.928234584690916,
+    "roe_med": 12.6063804115253,
+    "pe_ttm_p40": 14.75048727502381,
+    "pe_fwd_p40": 13.599521230076334,
+    "ev_ebit_p40": 21.48273745816373
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": "SKIPPED_FINANCIAL",
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 13,
+   "ticker": "EME",
+   "company": "EMCOR Group",
+   "company_name_source": "analyst label; not source-verified (AV rate-limited)",
+   "cik": "UNAVAILABLE",
+   "cik_status": "UNAVAILABLE: EDGAR blocked, Alpha Vantage daily limit reached",
+   "sector_tv": "Industrial Services",
+   "rank_score": 4.756,
+   "values": {
+    "close": 787.96,
+    "high_52w": 951.96,
+    "pct_vs_52w_high": -17.227614605655695,
+    "next_earnings": "2026-10-22",
+    "days_to_earnings": 17,
+    "fcf_ttm": 1171382000,
+    "roic_pct": 35.3054240129274,
+    "roe_pct": 40.3662123371855,
+    "pe_ttm": 24.449926305174156,
+    "pe_fwd_nongaap_next_fy": 23.914174590106022,
+    "ev_ebit_ttm": 19.253153018866847,
+    "net_debt_fq": -376383000,
+    "ebitda_ttm": 1990424000,
+    "net_debt_to_ebitda": -0.18909689593774995
+   },
+   "sector_thresholds": {
+    "n": 11,
+    "roic_med": 9.06632362185157,
+    "roe_med": 17.3102669058486,
+    "pe_ttm_p40": 24.43694786913892,
+    "pe_fwd_p40": 21.5031609011993,
+    "ev_ebit_p40": 19.253153018866847
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 14,
+   "ticker": "PODD",
+   "company": "Insulet Corp",
+   "company_name_source": "analyst label; not source-verified (AV rate-limited)",
+   "cik": "UNAVAILABLE",
+   "cik_status": "UNAVAILABLE: EDGAR blocked, Alpha Vantage daily limit reached",
+   "sector_tv": "Health Technology",
+   "rank_score": 4.684,
+   "values": {
+    "close": 135.125,
+    "high_52w": 354.88,
+    "pct_vs_52w_high": -61.92374887285843,
+    "next_earnings": "2026-11-04",
+    "days_to_earnings": 30,
+    "fcf_ttm": 293800000,
+    "roic_pct": 15.7901380006732,
+    "roe_pct": 26.0164292398877,
+    "pe_ttm": 26.7881923793664,
+    "pe_fwd_nongaap_next_fy": 20.77714917985423,
+    "ev_ebit_ttm": 18.98891078016492,
+    "net_debt_fq": 413500000,
+    "ebitda_ttm": 639600000,
+    "net_debt_to_ebitda": 0.6464978111319575
+   },
+   "sector_thresholds": {
+    "n": 42,
+    "roic_med": 9.94588052127552,
+    "roe_med": 13.77487296934305,
+    "pe_ttm_p40": 29.368880884713914,
+    "pe_fwd_p40": 18.35477696207822,
+    "ev_ebit_p40": 20.537397414708746
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  },
+  {
+   "rank": 15,
+   "ticker": "LULU",
+   "company": "lululemon athletica",
+   "company_name_source": "analyst label; not source-verified (AV rate-limited)",
+   "cik": "UNAVAILABLE",
+   "cik_status": "UNAVAILABLE: EDGAR blocked, Alpha Vantage daily limit reached",
+   "sector_tv": "Consumer Non-Durables",
+   "rank_score": 4.575,
+   "values": {
+    "close": 92.41,
+    "high_52w": 225.98,
+    "pct_vs_52w_high": -59.10700061952385,
+    "next_earnings": "2026-12-03",
+    "days_to_earnings": 59,
+    "fcf_ttm": 1354336000,
+    "roic_pct": 22.8379422003861,
+    "roe_pct": 30.8979519751313,
+    "pe_ttm": 7.574341824858201,
+    "pe_fwd_nongaap_next_fy": 9.643784220510693,
+    "ev_ebit_ttm": 5.726756696223475,
+    "net_debt_fq": 751390000,
+    "ebitda_ttm": 2539889000,
+    "net_debt_to_ebitda": 0.29583576290144964
+   },
+   "sector_thresholds": {
+    "n": 28,
+    "roic_med": 14.0979304265345,
+    "roe_med": 22.46611722979445,
+    "pe_ttm_p40": 20.04405286343612,
+    "pe_fwd_p40": 14.426852951227847,
+    "ev_ebit_p40": 14.06831741177502
+   },
+   "tests": {
+    "fcf_positive": true,
+    "quality_roic_or_roe_gt_sector_median": true,
+    "valuation_bottom40_sector": true,
+    "net_debt_ebitda_lt3": true,
+    "ge10pct_below_52w_high": true,
+    "earnings_within_60d": true
+   },
+   "filters_passed": [
+    "fcf_positive",
+    "quality_roic_or_roe_gt_sector_median",
+    "valuation_bottom40_sector",
+    "net_debt_ebitda_lt3",
+    "ge10pct_below_52w_high",
+    "earnings_within_60d"
+   ],
+   "source": "TradingView screener via RH_TV_HFT mcp-tv-run-screener, pulled 2026-10-05 (raw: work/tv_raw_2026-10-05.json)",
+   "as_of": "2026-10-05"
+  }
+ ]
+}

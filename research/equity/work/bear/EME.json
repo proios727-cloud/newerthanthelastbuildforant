@@ -1,0 +1,175 @@
+{
+  "ticker": "EME",
+  "company": "EMCOR Group",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T00:00:00Z",
+  "bear_case": {
+    "summary": "EME is not a deep value name (P/E 24) - it screens 'cheap' only relative to industrial-services peers. The bear case is concentration in data-center / network & communications construction: record RPOs ($17.1B, +44%) imply peak-cycle margins (10.6% op margin) that historically mean-revert. Any hyperscaler capex pause or fixed-price project cost overrun hits a richly valued stock.",
+    "risks": [
+      "Data-center capex cycle reversal",
+      "Margin mean reversion / fixed-price overruns",
+      "Labor scarcity/wage inflation for skilled trades",
+      "Multiple compression in rate-hike regime"
+    ],
+    "completed_before_bull": true
+  },
+  "thesis_breaking_risks": [
+    {
+      "risk": "Data-center capex cycle reversal",
+      "evidence": "RPO growth led by Network & Communications (secondary). Hyperscaler capex is the swing factor.",
+      "likelihood": "Medium over 12-24m",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Hyperscaler capex guidance (late Oct prints); N&C RPO growth in Q3 (2026-10-22)"
+    },
+    {
+      "risk": "Margin mean reversion / fixed-price overruns",
+      "evidence": "Q2 op margin 10.6%, op income +31.8% YoY vs revenue +19.8%; historically mid/high-single digit.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Gross margin by segment, project write-downs"
+    },
+    {
+      "risk": "Labor scarcity/wage inflation for skilled trades",
+      "evidence": "ANALYTICAL_INFERENCE from tight specialty labor; CPI 3.4%.",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "SG&A and cost-of-revenue growth vs revenue"
+    },
+    {
+      "risk": "Multiple compression in rate-hike regime",
+      "evidence": "10y 5.24%; XLI -7.6% 3M (regime memo).",
+      "likelihood": "Medium",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Relative performance vs XLI; forward P/E de-rating"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "XBRL facts for EME were not retrievable from the Robinhood SEC feed - contract asset/cost-in-excess and change-order exposure UNAVAILABLE.",
+    "Percentage-of-completion revenue recognition relies on estimates; unapproved change orders are a classic overrun source (amount UNAVAILABLE).",
+    "Acquisition-driven goodwill - amount UNAVAILABLE."
+  ],
+  "value_trap_assessment": "Price already discounts sustained boom (24x trailing); 'discount' is relative to a frothy 52w high, not intrinsic value. Peak margins x peak multiple = double-compression risk.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:37:28Z",
+  "claims": [
+    {
+      "id": "EME-B1",
+      "text": "Q2-2026 revenue $5.15B (+19.8%), operating margin 10.6%, diluted EPS $9.06.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "EMCOR Q2 2026 results (Nasdaq/Zacks summary)",
+          "url": "https://www.nasdaq.com/articles/eme-q2-earnings-beat-estimates-broad-based-growth-stock",
+          "type": "secondary",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:37:28Z"
+        },
+        {
+          "title": "EMCOR 8-K ex99.1 Q2 2026 (via search; fetch blocked)",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000105634/000010563426000112/eme-ex991_2026630xq2.htm",
+          "type": "8-K",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 5150000000,
+      "unit": "USD"
+    },
+    {
+      "id": "EME-B2",
+      "text": "RPOs $17.14B at 2026-06-30 vs $11.91B a year earlier.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "EMCOR 8-K ex99.1 Q2 2026 (via search; fetch blocked)",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000105634/000010563426000112/eme-ex991_2026630xq2.htm",
+          "type": "8-K",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:37:28Z"
+        },
+        {
+          "title": "EMCOR Q2 2026 results (Nasdaq/Zacks summary)",
+          "url": "https://www.nasdaq.com/articles/eme-q2-earnings-beat-estimates-broad-based-growth-stock",
+          "type": "secondary",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true,
+      "value": 17140000000,
+      "unit": "USD"
+    },
+    {
+      "id": "EME-B3",
+      "text": "FY2026 guidance raised to revenue $20.0-20.5B and EPS $32.00-33.25.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "EMCOR Q2 2026 results (Nasdaq/Zacks summary)",
+          "url": "https://www.nasdaq.com/articles/eme-q2-earnings-beat-estimates-broad-based-growth-stock",
+          "type": "secondary",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "EME-B4",
+      "text": "Current margins are cyclically elevated and likely to mean-revert.",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "EMCOR Q2 2026 results (Nasdaq/Zacks summary)",
+          "url": "https://www.nasdaq.com/articles/eme-q2-earnings-beat-estimates-broad-based-growth-stock",
+          "type": "secondary",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "EME-B5",
+      "text": "Screen: P/E 24.4, fwd P/E 23.9, -17.2% vs 52w high.",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "work/screen.md TradingView screen",
+          "url": "work/screen.md",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": false
+    },
+    {
+      "id": "EME-B6",
+      "text": "Contract asset / unapproved change-order balances: UNAVAILABLE (SEC facts not returned).",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T00:00:00Z",
+      "sources": [
+        {
+          "title": "10-Q filed 2026-07-30 (filing_id be8d7a3c-f352-41cf-9243-e09f052f825a) via Robinhood SEC feed",
+          "url": "robinhood-sec:be8d7a3c-f352-41cf-9243-e09f052f825a",
+          "type": "10-Q",
+          "published": "2026-07-30",
+          "accessed": "2026-10-05T18:37:28Z"
+        }
+      ],
+      "material": false
+    }
+  ],
+  "data_gaps": [
+    "SEC EDGAR blocked; CIK UNAVAILABLE",
+    "No price quote pulled; valuation multiples from work/screen.md (TradingView, single source)",
+    "Web sources are secondary summaries of company releases"
+  ]
+}

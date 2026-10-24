@@ -1,0 +1,51 @@
+{
+  "ticker": "EME",
+  "status": "FAIL",
+  "checked_at": "2026-10-05T22:07:05Z",
+  "material_unsupported_claims": [
+    "Bull thesis core premise ('if data-center backlog is comparable, the discount may be excessive') is unsupported - bull itself states 'Unsupported by filing data in this pass'; no peer backlog comparison exists",
+    "Zero Tier 1 financial facts: Robinhood SEC feed returns no XBRL for 10-Q be8d7a3c (verifier re-pull returned empty) - all fundamentals (rev, OI, OCF, cash, RPO, guidance) are Tier 2 or Tier 3",
+    "Net debt / FCF UNAVAILABLE - balance-sheet and quality components unsupported"
+  ],
+  "downgrades": [
+    "EME-B1 (Q2 rev $5.15B, margin 10.6%, EPS $9.06) VERIFIED_FACT -> Tier 3 (Nasdaq/Zacks) + Tier 2 8-K via search",
+    "EME-B2 (RPO $17.14B) VERIFIED_FACT -> Tier 2/3",
+    "EME-B3 (FY26 guide $20.0-20.5B, EPS $32.00-33.25) VERIFIED_FACT -> Tier 3 only in bear; Tier 2 via fill F6",
+    "EME-F1..F6 VERIFIED_FACT -> Tier 2 (search excerpt of BusinessWire/8-K)",
+    "EME-C1 and EME-B6 'UNAVAILABLE' labeled VERIFIED_FACT - label misuse"
+  ],
+  "arithmetic_errors": [
+    "EME-F5: RPO +43.9% vs bear '+44%' consistent (17.14/11.91-1=43.9%) - no error",
+    "EME-C3: peer 'median' 42.51 correct but PWR 77.49 is an outlier; discount -42.6% rounds to -43% OK"
+  ],
+  "applied_corrections": [
+    "EME-C1: Q2 rev $5.15B, OI $547.3M, H1 OCF $289.9M, cash $924.4M - applied but Tier 2 only"
+  ],
+  "spot_checks_tier1": [
+    "ATTEMPTED: 10-Q be8d7a3c facts (Revenues, RevenueFromContract..., OperatingIncomeLoss, Cash, OCF, LTD, capex) -> feed returned empty; 0 of 3 spot-checks possible",
+    "Filing index re-pulled: 10-K 2026-02-26, 10-Q 2026-07-30, 8-K 2026-07-31 MATCH bull identity block"
+  ],
+  "arithmetic_rechecked": [
+    "C2 34,679.6/44.110=$786.2; /951.96-1=-17.4% OK",
+    "C3 24.41/42.51-1=-42.6% OK",
+    "F2 547.3/5150=10.6% OK; 547.3/415.2-1=+31.8% OK"
+  ],
+  "gates": {
+    "1_verifier": "FAIL",
+    "2_identity": "PASS (caveat): filing index for EME exists; company name only from RH profile/Tier 2; 8-K URL CIK 105634 seen via search only",
+    "3_filings_current": "PASS: 10-K 2026-02-26, 10-Q 2026-07-30; no NT forms since 2025-10-01 (re-pulled)",
+    "4_going_concern_auditor": "UNVERIFIABLE: filing text (10-K audit opinion, 8-K Item 4.01) not served by Robinhood SEC feed; EDGAR blocked",
+    "5_catalyst": "FAIL: Q3 date 2026-10-22 is TradingView estimate; no company confirmation found",
+    "6_bear_independent": "PASS (caveat): bear completed_at 2026-10-05T18:37:28Z is after 18:10Z threshold. But all 15 bear files carry the identical stamp, bear as_of is 00:00Z, and the fill file (as_of 18:00Z) already corrects bear content, so bear content existed before its completed_at; 'completed_before_bull: true' is self-asserted and chronologically inconsistent with bull as_of 16:00Z. Independence cannot be proven from artifacts.",
+    "7_liquidity": "PASS (presumed): S&P 500 constituent per screen; ADV not re-pulled by verifier"
+  },
+  "tier_counts": {
+    "tier1": 0,
+    "tier2": 7,
+    "tier3": 3,
+    "market_data": 3
+  },
+  "notes": [
+    "Also: EME at 24x trailing is not cheap in absolute terms; 'discount' is purely relative to a high-multiple peer set."
+  ]
+}

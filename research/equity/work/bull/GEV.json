@@ -1,0 +1,368 @@
+{
+ "ticker": "GEV",
+ "company": "GE Vernova Inc.",
+ "cik": "0001996810",
+ "sector": "Producer Manufacturing",
+ "as_of": "2026-10-05T18:40:00Z",
+ "identity": {
+  "latest_10k": {
+   "filing_id": "ddac8a28-6683-4fea-b6fd-0420b9d70914",
+   "filed": "2026-01-29"
+  },
+  "latest_10q": {
+   "filing_id": "c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+   "filed": "2026-07-22"
+  },
+  "nt_filings_12m": "none found in index",
+  "going_concern": "UNAVAILABLE (filing text not reviewed)",
+  "auditor_change": "UNAVAILABLE",
+  "company_name_source": "RH profile/XBRL entity; 10-K cover text not read"
+ },
+ "fundamentals": {
+  "trend_usd_bn": {
+   "FY2023": {
+    "rev": 33.239,
+    "ebit": -0.923,
+    "fcf": 0.442
+   },
+   "FY2024": {
+    "rev": 34.935,
+    "ebit": 0.471,
+    "fcf": 1.7
+   },
+   "FY2025": {
+    "rev": 38.068,
+    "ebit": 1.388,
+    "fcf": 3.71
+   },
+   "TTM_2026Q2": {
+    "rev": 41.367,
+    "ebit": 1.8,
+    "fcf": 12.438
+   }
+  },
+  "ttm_basis": "TTM to 2026-06-30"
+ },
+ "valuation": {
+  "method": "TTM EV/EBIT, P/E, FCF yield from filings + RH price",
+  "claim_ids": [
+   "GEV-PX",
+   "GEV-DEBT",
+   "GEV-EVEBIT",
+   "GEV-PE",
+   "GEV-FCFY"
+  ],
+  "calc": {
+   "mcap_bn": 264.09,
+   "net_debt_bn": -13.12,
+   "ev_bn": 250.97,
+   "ev_ebit": 139.43,
+   "pe": 27.71,
+   "fcf_yield_pct": 4.71
+  },
+  "own_history": "UNAVAILABLE (historical price/multiple series not pulled)",
+  "peers": {
+   "ETN": {
+    "pe_rh": 44.37
+   },
+   "VRT": {
+    "pe_rh": 57.06
+   },
+   "SIEGY": {
+    "pe_rh": "UNAVAILABLE"
+   }
+  },
+  "notes": "Peer P/E is RH vendor TTM; peer EV/EBIT and FCF yield UNAVAILABLE (peer filings not pulled)."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 earnings",
+   "date": "2026-10-28",
+   "date_confirmed": false,
+   "source": {
+    "title": "RH earnings calendar 2026-10-28 am verified=true; secondary search says 2026-10-22; company IR blocked",
+    "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+    "type": "market_data",
+    "published": "2026-10-05",
+    "accessed": "2026-10-05T18:40:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "31 Form 4 filings indexed in Robinhood SEC feed between 2026-04-05 and 2026-10-05 (first: 2026-04-07). Transaction codes/direction (buy vs sell vs RSU withholding) NOT parsed - UNAVAILABLE; counts alone are not evidence of net buying or selling.",
+  "institutional_13f_summary": "UNAVAILABLE - no 13F source accessible (EDGAR blocked).",
+  "short_interest": {
+   "id": "SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "sources": [],
+   "material": false
+  }
+ },
+ "thesis": {
+  "mispricing": "~17% off high; GAAP EBIT (~$1.8B TTM) badly understates cash generation ($12.4B TTM FCF, 4.7% yield) driven by backlog deposits; if gas-turbine/grid pricing converts to margins, EV/EBIT (~139x) compresses fast. Weakest valuation support of the five.",
+  "what_changes_it": [
+   "Reversal of customer advances (FCF normalisation)",
+   "Wind losses or order slowdown",
+   "Q3 2026 margin miss"
+  ],
+  "supporting_claim_ids": [
+   "GEV-TREND",
+   "GEV-TTMCALC",
+   "GEV-FCFY",
+   "GEV-ONEOFF",
+   "GEV-DEBT"
+  ]
+ },
+ "bear_case": {
+  "summary": "See work/bear/GEV.json (separate bear agent)",
+  "risks": [],
+  "completed_before_bull": true
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [],
+  "issues": [
+   "catalyst date conflicting; EV debt input incomplete; FCF/NI include one-offs"
+  ],
+  "checked_at": "2026-10-05T18:40:00Z"
+ },
+ "gates": {
+  "identity_confirmed_via_filing_index": true,
+  "no_nt_filings_12m": true,
+  "going_concern_checked": false,
+  "auditor_change_checked": false,
+  "catalyst_company_confirmed": false
+ },
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "claims": [
+  {
+   "id": "GEV-PX",
+   "text": "Last trade $991.5585 ~2026-10-05T18:35:38Z; shares 266,333,600 (RH); mcap = $264.09B",
+   "label": "VERIFIED_FACT",
+   "value": 264.09,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:35:38Z",
+   "sources": [
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "GEV-DEBT",
+   "text": "At 2026-06-30 cash incl. restricted $13,120M. Borrowings at 2026-06-30 not returned by feed (FY2025 short-term borrowings $63M; no LongTermDebt tag) - debt treated as 0 in EV, so EV is understated by any borrowings",
+   "label": "VERIFIED_FACT",
+   "value": -13.12,
+   "unit": "USD bn",
+   "as_of": "2026-06-30T00:00:00Z",
+   "sources": [
+    {
+     "title": "GEV 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:ddac8a28-6683-4fea-b6fd-0420b9d70914",
+     "type": "10-K",
+     "published": "2026-01-29",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "GEV 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "type": "10-Q",
+     "published": "2026-07-22",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "GEV-EVEBIT",
+   "text": "EV/EBIT = (mcap 264.09 + net debt -13.12) / EBIT 1.800B = 139.43x (TTM to 2026-06-30)",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 139.43,
+   "unit": "x",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "GEV 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:ddac8a28-6683-4fea-b6fd-0420b9d70914",
+     "type": "10-K",
+     "published": "2026-01-29",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "GEV 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "type": "10-Q",
+     "published": "2026-07-22",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "GEV-PE",
+   "text": "P/E = mcap 264.09 / net income 9.529B = 27.71x",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 27.71,
+   "unit": "x",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "GEV 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:ddac8a28-6683-4fea-b6fd-0420b9d70914",
+     "type": "10-K",
+     "published": "2026-01-29",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "GEV 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "type": "10-Q",
+     "published": "2026-07-22",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "GEV-FCFY",
+   "text": "FCF yield = FCF 12.438B / mcap = 4.71%",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 4.71,
+   "unit": "pct",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "GEV 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:ddac8a28-6683-4fea-b6fd-0420b9d70914",
+     "type": "10-K",
+     "published": "2026-01-29",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "GEV 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "type": "10-Q",
+     "published": "2026-07-22",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "RH",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "GEV-TREND",
+   "text": "3-year trend (USD bn): {\"FY2023\": {\"rev\": 33.239, \"ebit\": -0.923, \"fcf\": 0.442}, \"FY2024\": {\"rev\": 34.935, \"ebit\": 0.471, \"fcf\": 1.7}, \"FY2025\": {\"rev\": 38.068, \"ebit\": 1.388, \"fcf\": 3.71}, \"TTM_2026Q2\": {\"rev\": 41.367, \"ebit\": 1.8, \"fcf\": 12.438}}",
+   "label": "VERIFIED_FACT",
+   "value": null,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "GEV 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:ddac8a28-6683-4fea-b6fd-0420b9d70914",
+     "type": "10-K",
+     "published": "2026-01-29",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "GEV 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "type": "10-Q",
+     "published": "2026-07-22",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "GEV-TTMCALC",
+   "text": "TTM: rev 38,068+20,442-17,143=41,367M; EBIT 1,388+833-421=1,800M; NI 4,884+5,413-768=9,529M; CFO 4,987+10,680-1,528=14,139M; capex 1,277+783-359=1,701M; FCF 12,438M",
+   "label": "VERIFIED_FACT",
+   "value": 12438,
+   "unit": "USD m",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "GEV 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:ddac8a28-6683-4fea-b6fd-0420b9d70914",
+     "type": "10-K",
+     "published": "2026-01-29",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "GEV 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "type": "10-Q",
+     "published": "2026-07-22",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "GEV-ONEOFF",
+   "text": "H1 2026 NI $5,413M vs EBIT $833M and H1 CFO $10,680M vs $1,528M prior: large non-operating/working-capital items (e.g., customer deposits, gains) inflate NI and FCF; P/E and FCF yield likely not run-rate",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": null,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "GEV 10-K (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:ddac8a28-6683-4fea-b6fd-0420b9d70914",
+     "type": "10-K",
+     "published": "2026-01-29",
+     "accessed": "2026-10-05T18:40:00Z"
+    },
+    {
+     "title": "GEV 10-Q (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:c61b7e6c-8f2b-41d4-9cc8-84cca5a72f3a",
+     "type": "10-Q",
+     "published": "2026-07-22",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "data_gaps": [
+  "total debt at 2026-06-30",
+  "own historical multiples",
+  "peer EV/EBIT/FCF yield",
+  "SIEGY P/E",
+  "Form 4 direction",
+  "13F",
+  "short interest",
+  "company-confirmed Q3 date"
+ ]
+}

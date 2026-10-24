@@ -1,0 +1,97 @@
+{
+ "ticker": "ERIE",
+ "status": "FAIL",
+ "checked_at": "2026-10-05T19:20:00Z",
+ "material_unsupported_claims": [
+  {
+   "id": "bull ERIE-5",
+   "issue": "Labeled a 'discount' but 20.19/18.94-1 = +6.6% is a PREMIUM to peer median; the valuation leg of the thesis is contradicted by its own math. PGR (underwriter) is not a fee-model peer."
+  },
+  {
+   "id": "bull ERIE-8",
+   "issue": "'De-rating may over-discount slower Exchange growth' unsupported; management-fee rate for 2026 UNAVAILABLE (fill)."
+  },
+  {
+   "id": "bull ERIE-6",
+   "issue": "Catalyst date conflicting (TV 10-22 vs third-party 10-29), no company source."
+  }
+ ],
+ "downgrades": [
+  {
+   "id": "bear ERIE-1..ERIE-4",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 3",
+   "reason": "Sole source finviz.com news mirror (aggregator), typed as earnings_release. Values corroborated only by fill Tier 2 excerpts."
+  },
+  {
+   "id": "fill ERIE-F1..F3",
+   "from": "VERIFIED_FACT",
+   "to": "Tier 2",
+   "reason": "Fill-file sources cite sec.gov EX-99.1/10-Q URLs, but SEC is blocked and the fill files state 'EX-99.1 not read directly' -> search-excerpt only = Tier 2; all fill sources have published=null (date missing)."
+  },
+  {
+   "id": "bull ERIE-6",
+   "from": "ESTIMATE",
+   "to": "ESTIMATE (keep)",
+   "reason": "Unconfirmed."
+  }
+ ],
+ "arithmetic_errors": [
+  {
+   "id": "bull ERIE-5",
+   "issue": "Sign/label error: +6.6% reported as 'discount'."
+  }
+ ],
+ "arithmetic_checked": [
+  "ERIE-4 219.805/330.535-1=-33.50% OK",
+  "ADV $ ~0.175M x 219.8 = ~$38M (passes $20M but thinnest of the five)"
+ ],
+ "applied_corrections": [
+  {
+   "claim_id": "bull ERIE-7",
+   "now": "Q2 2026 operating income $204.1M (Tier 2)"
+  }
+ ],
+ "tier1_spot_checks": [
+  "10-K aef80678 filed 2026-02-23 CONFIRMED",
+  "10-Q 0cfbfe82 filed 2026-07-30 CONFIRMED",
+  "No NT since 2025-10-01 CONFIRMED",
+  "XBRL facts 10-Q 0cfbfe82: EMPTY",
+  "RH P/E 20.187, 52wH 330.535 (2025-10-27) CONFIRMED"
+ ],
+ "notes": [
+  "Ex-dividend date 2026-10-05 (today): quote may reflect ex-div adjustment."
+ ],
+ "gates": {
+  "1_verifier_pass": "FAIL",
+  "2_identity": {
+   "status": "PASS_WITH_CAVEATS",
+   "note": "Index for symbol ERIE matches; CIK not in Tier 1."
+  },
+  "3_filings_current_no_NT": "PASS",
+  "4_going_concern_auditor": {
+   "status": "UNVERIFIABLE",
+   "note": "Filing text not served by Robinhood SEC feed (404); 8-K item 4.01 / auditor report not readable; EDGAR blocked."
+  },
+  "5_catalyst_180d_company_confirmed": {
+   "status": "FAIL",
+   "note": "No company-confirmed date."
+  },
+  "6_bear_independent": {
+   "status": "PASS",
+   "note": "bear completed_at 2026-10-05T18:45Z (not earlier than 18:10Z). Caveat: bull as_of 18:35Z precedes bear completion; independence asserted by bear file only (completed_before_bull=true), not provable from artifacts."
+  },
+  "7_liquidity": {
+   "status": "PASS",
+   "adv_usd": "~$38M"
+  }
+ },
+ "tier_counts": {
+  "tier1": 3,
+  "tier2": 3,
+  "tier3": 4,
+  "market_data": 6,
+  "unsourced": 0
+ },
+ "date_checks": "No date after 2026-10-05 found. Fill sources lack published dates."
+}

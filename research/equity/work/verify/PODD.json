@@ -1,0 +1,51 @@
+{
+  "ticker": "PODD",
+  "status": "FAIL",
+  "checked_at": "2026-10-05T22:07:05Z",
+  "material_unsupported_claims": [
+    "Three 8-Ks filed 2026-09-10 (bbd03297), 2026-09-16 (38ce792e), 2026-09-21 (4e584e3f) remain UNREAD (feed 404, no matching press release). Contents could include guidance change, recall/FDA action, leadership or litigation - MATERIAL and unresolved",
+    "FY2026 guidance conflict unresolved: bear (Tier 3, sentisense) says cut to $3.2-3.3B; fill Tier 2 excerpt shows 20-22% cc growth (possibly pre-cut). No company text confirms either - MATERIAL",
+    "Bull mispricing thesis is self-labeled SPECULATION and the bull concedes P/E is ~in line with peers (-5%); no supported mispricing claim",
+    "Zero Tier 1 financial facts: verifier re-pull of 10-Q cd81178a returned empty; all fundamentals Tier 2",
+    "Net debt UNAVAILABLE (only senior-note fair value $456.5M)"
+  ],
+  "downgrades": [
+    "PODD-F1..F4 (Q2 rev $801.7M, GAAP OI $129.7M, H1 FCF $145.4M, cash $535M) VERIFIED_FACT -> Tier 2",
+    "PODD-F5 (Q3 results 2026-11-04) VERIFIED_FACT -> Tier 2; 'published' given only as '2026' (no exact date)",
+    "PODD-B1 (guidance cut to $3.2-3.3B), B2 (T2 attrition) VERIFIED_FACT -> Tier 3 only (sentisense)",
+    "PODD-B3 (Omnipod correction notice) VERIFIED_FACT -> Tier 3 only (TIKR, undated '2026')",
+    "PODD-B4 (securities class action) VERIFIED_FACT -> Tier 3 only (plaintiff law firm page, undated)",
+    "PODD-C1 'UNAVAILABLE' labeled VERIFIED_FACT - label misuse"
+  ],
+  "arithmetic_errors": [
+    "None in bull math. Note: bear B1 text says shares fell '~20%' while its own source title says 21.9% (minor)"
+  ],
+  "applied_corrections": [
+    "PODD-C1: Q2 rev $801.7M, GAAP OI $129.7M, H1 FCF $145.4M (vs $229.4M, -37%), cash+inv $535M - applied as Tier 2",
+    "PODD catalysts[0]: 2026-11-04 company-announced (Tier 2)"
+  ],
+  "spot_checks_tier1": [
+    "ATTEMPTED: 10-Q cd81178a facts -> feed returned empty; 0 of 3 spot-checks possible",
+    "Filing index re-pulled: 10-K 2026-02-18 (per bull), 10-Q 2026-08-05, Sept 8-Ks 09-10/09-16/09-21 CONFIRMED in index; Form 4s 10-02 x2 and 10-05 also present"
+  ],
+  "arithmetic_rechecked": [
+    "C2 9,360/69.354=$134.96; /354.88-1=-62.0% OK",
+    "C3 (33.69+21.27)/2=27.48; 26.11/27.48-1=-5.0% OK",
+    "F2 129.7/801.7=16.2% OK"
+  ],
+  "gates": {
+    "1_verifier": "FAIL",
+    "2_identity": "PASS (caveat): filing index for PODD exists; name only from RH profile/Tier 2",
+    "3_filings_current": "PASS: 10-Q 2026-08-05 present; no NT forms in index since 2025-10-01",
+    "4_going_concern_auditor": "UNVERIFIABLE: filing text (10-K audit opinion, 8-K Item 4.01) not served by Robinhood SEC feed; EDGAR blocked; also 3 unread Sept 8-Ks could carry Item 4.01",
+    "5_catalyst": "PASS (Tier 2 caveat): Q3 results 2026-11-04 per company release seen via search",
+    "6_bear_independent": "PASS (caveat): bear completed_at 2026-10-05T18:37:28Z is after 18:10Z threshold. But all 15 bear files carry the identical stamp, bear as_of is 00:00Z, and the fill file (as_of 18:00Z) already corrects bear content, so bear content existed before its completed_at; 'completed_before_bull: true' is self-asserted and chronologically inconsistent with bull as_of 16:00Z. Independence cannot be proven from artifacts.",
+    "7_liquidity": "PASS (presumed): S&P 500 constituent per screen; ADV not re-pulled by verifier"
+  },
+  "tier_counts": {
+    "tier1": 1,
+    "tier2": 6,
+    "tier3": 5,
+    "market_data": 2
+  }
+}

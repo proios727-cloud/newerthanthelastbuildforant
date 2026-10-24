@@ -1,0 +1,77 @@
+{
+ "ticker": "BKNG",
+ "as_of": "2026-10-05",
+ "claims": [
+  {
+   "id": "BKNG-F1",
+   "text": "25-for-1 common stock split effective 2026-04-02 (StockholdersEquityNoteStockSplitConversionRatio1=25); explains ~$158 price",
+   "label": "VERIFIED_FACT",
+   "value": 25,
+   "as_of": "2026-04-02",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "date": "2026-08-04",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-F2",
+   "text": "Q2 2026 diluted EPS $2.53 vs $1.10 (split-adjusted); diluted shares 770M vs 815M",
+   "label": "VERIFIED_FACT",
+   "value": 2.53,
+   "as_of": "2026-06-30",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "date": "2026-08-04",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-F3",
+   "text": "NI jump driver: other non-operating income/expense swung from -$962M (Q2 2025) to +$159M (Q2 2026), a $1,121M swing vs operating income +$250M. Pretax $2,560M vs $1,104M; tax $610M vs $209M. H1: other non-op +$353M vs -$1,220M. Detailed composition of the 2025 charge not tagged in feed.",
+   "label": "VERIFIED_FACT",
+   "value": 1121,
+   "as_of": "2026-06-30",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "date": "2026-08-04",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-F4",
+   "text": "Equity securities FV gain/loss: Q2 2026 -$25M, H1 2026 -$132M",
+   "label": "VERIFIED_FACT",
+   "value": -132,
+   "as_of": "2026-06-30",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "date": "2026-08-04",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": false
+  }
+ ],
+ "still_unavailable": [
+  "Company-confirmed Q3 2026 earnings date (no IR announcement found as of 2026-10-05; prior Q3 call was Oct 28, 2025)",
+  "Composition of Q2 2025 -$962M non-op charge (8-K/10-Q text 404 in feed)",
+  "Form 4 direction (not completed; web search session limit)",
+  "TTM figures (FY2025 10-K facts not served)"
+ ],
+ "corrections": []
+}

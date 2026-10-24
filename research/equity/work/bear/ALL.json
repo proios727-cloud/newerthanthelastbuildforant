@@ -1,0 +1,236 @@
+{
+  "ticker": "ALL",
+  "company": "The Allstate Corporation",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T18:45:00Z",
+  "bear_case": {
+    "summary": "Allstate at ~4.5x TTM earnings is priced on a peak-margin year: H1 2026 net income $5.73B vs $2.70B H1 2025 after hard-market rate increases. Personal auto is turning soft (auto earned premium only +1.2% YoY in Q2), homeowners concentration rises (+11.4%), and Q3/Q4 cat exposure plus falling reserves mean earnings likely peak now.",
+    "risks": [
+      "Personal auto pricing cycle turns: rate cuts/competitive spend compress margins",
+      "Catastrophe losses (hurricane season, convective storms) with homeowners premiums growing faster",
+      "Adverse reserve development as favorable releases flatter earnings",
+      "Earnings normalization makes P/E optically cheap",
+      "Rate/credit marks on investment portfolio in hiking regime"
+    ],
+    "completed_before_bull": true
+  },
+  "risks_detail": [
+    {
+      "risk": "Personal auto pricing cycle turns: rate cuts/competitive spend compress margins",
+      "evidence": [
+        "Q2 auto earned premium $9.644B vs $9.528B (+1.2%) (a10q)"
+      ],
+      "likelihood": "HIGH",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Auto PIF trend, rate filings with negative changes, ad spend ramps by peers (PGR prints 2026-10-08)"
+    },
+    {
+      "risk": "Catastrophe losses (hurricane season, convective storms) with homeowners premiums growing faster",
+      "evidence": [
+        "Homeowners earned premium Q2 $4.201B vs $3.771B (+11.4%) (a10q); 2026 cat figures UNAVAILABLE"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Monthly cat-loss press releases (Allstate publishes monthly when over threshold)"
+    },
+    {
+      "risk": "Adverse reserve development as favorable releases flatter earnings",
+      "evidence": [
+        "Claims reserve fell to $40.98B at 2026-06-30 from $44.14B at 2025-06-30 (a10q) while premiums grew; prior-year development amounts UNAVAILABLE"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Prior-year reserve reestimates in Q3 10-Q; bodily injury severity trends; social inflation"
+    },
+    {
+      "risk": "Earnings normalization makes P/E optically cheap",
+      "evidence": [
+        "NI Q2 $3.271B vs $2.109B (a10q)"
+      ],
+      "likelihood": "HIGH (that earnings decline from peak)",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Combined ratio drifting toward high-90s"
+    },
+    {
+      "risk": "Rate/credit marks on investment portfolio in hiking regime",
+      "evidence": [
+        "10y 5.24% (regime memo)"
+      ],
+      "likelihood": "LOW-MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Unrealized loss in AOCI; credit spread widening"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "Reserve balance down ~7% YoY while earned premium rose ~5.5%: implies either faster claim settlement or reserve releases; prior-year development detail UNAVAILABLE in this pass \u2014 key check",
+    "Reserve development, cat losses, and underlying combined ratio not extracted (XBRL concept missing)",
+    "Benefits segment divested (group health premiums to 0) \u2014 comparability distortions"
+  ],
+  "value_trap_assessment": "Probably cheap for a reason: the market applies a low multiple to cyclically peak P&C margins. Value trap if soft auto cycle + cat year arrive together in 2027.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:45:00Z",
+  "claims": [
+    {
+      "id": "ALL-1",
+      "text": "Q2 2026 net income $3,271M vs $2,109M Q2 2025",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Allstate 10-Q Q2 2026 filing_id 8cbfb0a7 via Robinhood SEC feed",
+          "url": "robinhood:sec/8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 3271,
+      "unit": "USD millions"
+    },
+    {
+      "id": "ALL-2",
+      "text": "H1 2026 net income $5,728M vs $2,704M H1 2025",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Allstate 10-Q Q2 2026 filing_id 8cbfb0a7 via Robinhood SEC feed",
+          "url": "robinhood:sec/8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 5728,
+      "unit": "USD millions"
+    },
+    {
+      "id": "ALL-3",
+      "text": "Allstate Protection auto earned premium Q2 2026 $9,644M vs $9,528M",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Allstate 10-Q Q2 2026 filing_id 8cbfb0a7 via Robinhood SEC feed",
+          "url": "robinhood:sec/8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 9644,
+      "unit": "USD millions"
+    },
+    {
+      "id": "ALL-4",
+      "text": "Homeowners earned premium Q2 2026 $4,201M vs $3,771M",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Allstate 10-Q Q2 2026 filing_id 8cbfb0a7 via Robinhood SEC feed",
+          "url": "robinhood:sec/8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 4201,
+      "unit": "USD millions"
+    },
+    {
+      "id": "ALL-5",
+      "text": "Claims and CAE reserve $40,979M at 2026-06-30 vs $44,141M at 2025-06-30",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Allstate 10-Q Q2 2026 filing_id 8cbfb0a7 via Robinhood SEC feed",
+          "url": "robinhood:sec/8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 40979,
+      "unit": "USD millions"
+    },
+    {
+      "id": "ALL-6",
+      "text": "Auto pricing cycle is softening and margins will mean-revert",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Allstate 10-Q Q2 2026 filing_id 8cbfb0a7 via Robinhood SEC feed",
+          "url": "robinhood:sec/8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ALL-7",
+      "text": "Shrinking reserves alongside growing premiums may indicate favorable development supporting earnings",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Allstate 10-Q Q2 2026 filing_id 8cbfb0a7 via Robinhood SEC feed",
+          "url": "robinhood:sec/8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+          "type": "10-Q",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ALL-8",
+      "text": "Price 224.93; P/E TTM 4.5 (TV)",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Robinhood equity quotes 2026-10-05 ~18:35Z",
+          "url": "robinhood:get_equity_quotes",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        },
+        {
+          "title": "work/screen.md (TradingView screen, single-source)",
+          "url": "work/screen.md",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": false,
+      "value": 224.93,
+      "unit": "USD"
+    },
+    {
+      "id": "ALL-9",
+      "text": "2026 YTD catastrophe losses",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [],
+      "material": true,
+      "value": "UNAVAILABLE",
+      "unit": null
+    }
+  ],
+  "data_gaps": [
+    "CIK 0000899051 appears as XBRL entity in filing (screen mark 899051*); not EDGAR-verified",
+    "Cat losses, PYD, combined ratio UNAVAILABLE",
+    "Q3 monthly cat releases not checked"
+  ]
+}

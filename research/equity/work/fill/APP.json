@@ -1,0 +1,60 @@
+{
+ "ticker": "APP",
+ "as_of": "2026-10-05",
+ "claims": [
+  {
+   "id": "APP-F1",
+   "text": "H1 2026 CFO $2,160.4M vs $1,603.9M (confirmed)",
+   "label": "VERIFIED_FACT",
+   "value": 2160.4,
+   "as_of": "2026-06-30",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "date": "2026-08-05",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": false
+  },
+  {
+   "id": "APP-F2",
+   "text": "No capex concept (PaymentsToAcquirePropertyPlantAndEquipment/ProductiveAssets/DevelopSoftware) tagged in Q2 2026 10-Q; only PaymentsForProceedsFromOtherInvestingActivities. FCF cannot be computed from feed.",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-06-30",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "7aa7ce18-ab1d-46fd-a598-1554eed113df",
+     "date": "2026-08-05",
+     "note": "via Robinhood SEC feed"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "APP-F3",
+   "text": "Bloomberg reported (2026-02-20) that the SEC said a probe involving AppLovin is 'still active and ongoing', citing an SEC response withholding records. No company filing or SEC release confirming the probe status was retrievable.",
+   "label": "VERIFIED_FACT",
+   "value": null,
+   "as_of": "2026-02-20",
+   "sources": [
+    {
+     "type": "secondary",
+     "url": "https://www.bloomberg.com/news/articles/2026-02-20/sec-says-probe-involving-applovin-is-still-active-and-ongoing",
+     "date": "2026-02-20"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "still_unavailable": [
+  "Capex and FCF",
+  "SEC probe status from a primary source (only a secondary Bloomberg report found; the 10-Q contingencies text is not served)",
+  "Company-confirmed Q3 2026 earnings date (Q3 2025 was reported 2025-11-05; no 2026 announcement found)",
+  "Form 4 direction"
+ ],
+ "corrections": []
+}

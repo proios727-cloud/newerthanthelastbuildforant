@@ -1,0 +1,166 @@
+{
+ "ticker": "PODD",
+ "company": "Insulet Corp (label from RH profile; 10-K name UNAVAILABLE)",
+ "cik": "UNAVAILABLE",
+ "sector": "Health Technology",
+ "as_of": "2026-10-05T16:00:00Z",
+ "bear_case": {
+  "summary": "Not performed in this bull pass; bear analyst file in work/bear/ governs.",
+  "risks": [],
+  "completed_before_bull": true
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [],
+  "issues": [
+   "Bull-pass draft; independent verification not yet run"
+  ],
+  "checked_at": "2026-10-05T16:00:00Z"
+ },
+ "gates": {},
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "identity": {
+  "company_name_source": "UNAVAILABLE - no XBRL facts served",
+  "latest_10K": {
+   "date": "2026-02-18",
+   "filing_id": "5caead4d-64eb-4dcc-8f42-d15652dbc521"
+  },
+  "latest_10Q": {
+   "date": "2026-08-05",
+   "filing_id": "cd81178a-3788-4102-8dbc-c700220a4943"
+  },
+  "nt_filings_last_12m": "None found",
+  "going_concern": "UNAVAILABLE",
+  "auditor_change": "UNAVAILABLE",
+  "note": "Three 8-Ks in Sept 2026 (09-10, 09-16, 09-21) not read - potentially material"
+ },
+ "claims": [
+  {
+   "id": "PODD-C1",
+   "text": "Revenue/OI/FCF/net debt UNAVAILABLE from filings",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [],
+   "material": true
+  },
+  {
+   "id": "PODD-C2",
+   "text": "Market cap $9.36B, P/E 26.11, 52w high $354.88 (2025-11-20), 52w low $126.40 (2026-08-05); implied price 9360.0/69.354 = $134.96, -62.0% vs high",
+   "label": "VERIFIED_FACT",
+   "value": 26.11,
+   "unit": "x",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals PODD market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PODD-C3",
+   "text": "Peer P/E: DXCM 33.69, MDT 21.27, TNDM negative (n/m). Avg DXCM/MDT = 27.48; PODD 26.11/27.48-1 = -5%",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -0.05,
+   "unit": "ratio",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals DXCM/MDT/TNDM market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PODD-C4",
+   "text": "Three 8-Ks filed 2026-09-10/16/21 after the August low; content unread",
+   "label": "VERIFIED_FACT",
+   "value": 3,
+   "unit": "count",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "PODD filing index via Robinhood SEC feed",
+     "url": "robinhood-sec:index:PODD",
+     "type": "8-K",
+     "published": "2026-09-21",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "fundamentals": {
+  "all": "UNAVAILABLE",
+  "claim_ids": [
+   "PODD-C1"
+  ]
+ },
+ "valuation": {
+  "method": "P/E vs DXCM, MDT, TNDM",
+  "claim_ids": [
+   "PODD-C2",
+   "PODD-C3"
+  ],
+  "notes": "Not cheap vs peers on P/E despite -62% drawdown; discount is vs own price history only."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 earnings (TradingView est. 2026-11-04)",
+   "date": "2026-11-04",
+   "date_confirmed": false,
+   "source": {
+    "title": "work/screen.md TradingView",
+    "url": "work/tv_raw_2026-10-05.json",
+    "type": "market_data",
+    "published": "2026-10-05",
+    "accessed": "2026-10-05T16:00:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "UNAVAILABLE",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "PODD-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "thesis": {
+  "mispricing": "SPECULATION: 62% drawdown may over-discount a competitive/pricing reset; but P/E is roughly in line with peers, so the mispricing case is weak without filing data.",
+  "what_changes_it": [
+   "Content of Sept 2026 8-Ks (guidance, leadership, recall)",
+   "Q3 new-patient starts",
+   "Pharmacy-channel pricing pressure"
+  ],
+  "supporting_claim_ids": [
+   "PODD-C2",
+   "PODD-C3"
+  ]
+ },
+ "data_gaps": [
+  "All filing fundamentals UNAVAILABLE",
+  "Sept 2026 8-Ks unread",
+  "Form 4/13F/short interest UNAVAILABLE",
+  "Earnings date unconfirmed"
+ ]
+}

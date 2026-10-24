@@ -1,0 +1,171 @@
+{
+ "ticker": "BKNG",
+ "as_of": "2026-10-05T00:00:00Z",
+ "bear_case": {
+  "summary": "Booking is a high-quality compounder, but its growth is increasingly balance-sheet-heavy merchant revenue (+15% YoY) while agency revenue shrinks (-7% YoY in Q2 2026). Debt rose about $1.4B in H1 2026 to ~$20.2B. Its travel demand is exposed to a late-cycle consumer (+29k payrolls, the Fed hiking). The stock is down 28.5% from its high, and the screen's P/E could be flattered by Q2 2026 net income that more than doubled YoY (cause not isolated).",
+  "risks": [
+   {
+    "risk": "Consumer/travel demand slowdown in a hiking-Fed, weak-labor regime",
+    "evidence": "Regime memo: Sept NFP +29k, FOMC hike to 3.75-4.00%, XLY -6.9% 3M",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Room-night growth deceleration in Q3 print 2026-11-04; Q4 guide",
+    "claim_ids": [
+     "B5"
+    ]
+   },
+   {
+    "risk": "Merchant mix shift lowers margins and adds working-capital and FX risk",
+    "evidence": "Merchant revenue +15% vs agency -7% YoY Q2 2026",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Merchant share of revenue; payment/processing costs as % of revenue",
+    "claim_ids": [
+     "B1",
+     "B2"
+    ]
+   },
+   {
+    "risk": "Rising leverage while rates are high",
+    "evidence": "LTD noncurrent 18.18B plus current 2.0B at 6/30/26 vs 16.86B plus 1.88B at 12/31/25",
+    "likelihood": "Low-Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "New issuance coupons; current maturities of 2.0B within 12 months",
+    "claim_ids": [
+     "B3"
+    ]
+   },
+   {
+    "risk": "Disintermediation by AI agents/Google, plus EU DMA gatekeeper regulation",
+    "evidence": "Not sourced in this run",
+    "likelihood": "Medium",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Share of direct/unpaid traffic; regulatory actions (UNAVAILABLE this run)",
+    "claim_ids": []
+   },
+   {
+    "risk": "Earnings quality: Q2 2026 net income 1.95B vs 0.895B YoY on revenue +8%",
+    "evidence": "Gap likely driven by non-operating items (cause UNAVAILABLE)",
+    "likelihood": "Medium that the screen P/E overstates run-rate",
+    "likelihood_label": "ANALYTICAL_INFERENCE",
+    "early_warning_signal": "Q3 non-GAAP reconciliation",
+    "claim_ids": [
+     "B4"
+    ]
+   }
+  ],
+  "completed_before_bull": true
+ },
+ "accounting_red_flags": {
+  "receivables_vs_revenue": "UNAVAILABLE (AR concept not returned)",
+  "inventory": "N/A",
+  "sbc_share_of_fcf": "SBC 281M vs OCF 6.93B in H1 2026 (~4% of OCF; capex UNAVAILABLE)",
+  "one_time_items": "NI growth far outpaces revenue growth; driver UNAVAILABLE",
+  "customer_concentration": "Low (consumer marketplace) \u2013 inference",
+  "debt_maturities": "2.0B current portion at 2026-06-30"
+ },
+ "value_trap": "P/E of 17.5 may reflect peak travel demand and inflated GAAP earnings. The multiple can de-rate further if room nights slow and the merchant mix compresses take-rates.",
+ "completed_before_bull": true,
+ "completed_at": "2026-10-05T16:00:00Z",
+ "claims": [
+  {
+   "id": "B1",
+   "text": "Q2 2026 merchant revenue 5.127B vs 4.457B in Q2 2025",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-08-04"
+    }
+   ],
+   "material": true,
+   "value": 5127000000
+  },
+  {
+   "id": "B2",
+   "text": "Q2 2026 agency revenue 1.903B vs 2.044B in Q2 2025",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-08-04"
+    }
+   ],
+   "material": true,
+   "value": 1903000000
+  },
+  {
+   "id": "B3",
+   "text": "Long-term debt noncurrent 18.18B and current 2.0B at 2026-06-30",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-08-04"
+    }
+   ],
+   "material": true,
+   "value": 20180000000
+  },
+  {
+   "id": "B4",
+   "text": "Q2 2026 net income 1.950B vs 0.895B; total revenue 7.352B vs 6.798B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-08-04"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "B5",
+   "text": "Macro regime: Fed hiking, payrolls weak",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "secondary",
+     "url": "work/regime_memo.md",
+     "title": "Regime memo 2026-10-05",
+     "published": "2026-10-05"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "B6",
+   "text": "H1 2026 SBC 281M; OCF 6.934B",
+   "label": "VERIFIED_FACT",
+   "as_of": "2026-10-05T00:00:00Z",
+   "sources": [
+    {
+     "type": "10-Q",
+     "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "published": "2026-08-04"
+    }
+   ],
+   "material": false
+  }
+ ],
+ "notes": "Bull folder not read. CIK UNAVAILABLE per SOURCES.md. Capex/FCF not pulled; OCF used as proxy where noted."
+}

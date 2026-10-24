@@ -1,0 +1,135 @@
+{
+  "ticker": "ZTS",
+  "as_of": "2026-10-05",
+  "claims": [
+    {
+      "id": "ZTS-F1",
+      "text": "Q2 2026 revenue $2.5B, flat YoY (-1% organic operational); net income $691M ($1.65/dil); adjusted net income $781M (adj. EPS $1.87)",
+      "label": "VERIFIED_FACT",
+      "value": 2500,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/0001555280/000155528026000038/exhibit99q22026.htm",
+          "date": "2026-08-06",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "56913282-2872-465c-95b7-7daac8fddffa"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ZTS-F2",
+      "text": "Q2 2026 US segment revenue $1.3B (-7%); US companion animal -11%; US livestock +23%",
+      "label": "VERIFIED_FACT",
+      "value": -7,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/0001555280/000155528026000038/exhibit99q22026.htm",
+          "date": "2026-08-06",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "56913282-2872-465c-95b7-7daac8fddffa"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ZTS-F3",
+      "text": "Lower Librela sales contributed to the US companion-animal decline (Q2 Librela $ not obtained)",
+      "label": "VERIFIED_FACT",
+      "value": null,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/0001555280/000155528026000038/exhibit99q22026.htm",
+          "date": "2026-08-06",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "56913282-2872-465c-95b7-7daac8fddffa"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ZTS-F4",
+      "text": "FY2026 guidance revised 2026-08-06: revenue $9.120-$9.320B (organic op. (3)% to (1)%); adj. net income organic op. (9)% to (5)%; adj. diluted EPS $6.15-$6.25",
+      "label": "VERIFIED_FACT",
+      "value": "6.15-6.25",
+      "as_of": "2026-08-06",
+      "sources": [
+        {
+          "type": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/0001555280/000155528026000038/exhibit99q22026.htm",
+          "date": "2026-08-06",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "56913282-2872-465c-95b7-7daac8fddffa"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ZTS-F5",
+      "text": "Q3 2026 webcast/call 08:30 ET Thu 2026-11-05 (company release 2026-09-24)",
+      "label": "VERIFIED_FACT",
+      "value": "2026-11-05",
+      "as_of": "2026-09-24",
+      "sources": [
+        {
+          "type": "company_announcement",
+          "url": "https://secure.businesswire.com/news/home/20260924119056/en/Zoetis-to-Host-Webcast-and-Conference-Call-on-Third-Quarter-2026-Financial-Results",
+          "date": "2026-09-24",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible."
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ZTS-F4",
+      "text": "29 Form 4 filings since 2026-04-05 (latest 2026-10-02) are listed in the Robinhood SEC feed, but filing content returns 404, so buy/sell direction can't be determined.",
+      "label": "VERIFIED_FACT",
+      "value": "UNAVAILABLE",
+      "as_of": "2026-10-05",
+      "sources": [
+        {
+          "type": "Form4",
+          "filing_id": "index via Robinhood SEC feed",
+          "date": "2026-10-02"
+        }
+      ],
+      "material": false
+    }
+  ],
+  "still_unavailable": [
+    "Robinhood SEC feed: 8-K/10-Q/10-K text returns 404 and the XBRL facts catalog is empty; EX-99.1 not read directly",
+    "CIK",
+    "Q2 operating income, FCF, net debt",
+    "Q2 2026 Librela revenue figure",
+    "Reported-EPS guidance"
+  ],
+  "corrections": [
+    {
+      "claim_id": "ZTS-1",
+      "file": "work/bear/ZTS.json",
+      "issue": "Guidance stale (May)",
+      "correct_value": "Adj. EPS $6.15-$6.25; revenue $9.120-$9.320B (revised 2026-08-06)",
+      "source": "https://www.sec.gov/Archives/edgar/data/0001555280/000155528026000038/exhibit99q22026.htm"
+    },
+    {
+      "claim_id": "ZTS-2",
+      "file": "work/bear/ZTS.json",
+      "issue": "US revenue $1.09B, -8%",
+      "correct_value": "Q2 2026 US segment $1.3B, -7%; companion animal -11%",
+      "source": "https://www.sec.gov/Archives/edgar/data/0001555280/000155528026000038/exhibit99q22026.htm"
+    },
+    {
+      "claim_id": "ZTS-7",
+      "file": "work/bear/ZTS.json",
+      "issue": "Q2 content was marked UNAVAILABLE",
+      "correct_value": "See ZTS-F1 to F4",
+      "source": "https://www.sec.gov/Archives/edgar/data/0001555280/000155528026000038/exhibit99q22026.htm"
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+ "ticker": "PODD",
+ "as_of": "2026-10-05T18:00:00Z",
+ "claims": [
+  {
+   "id": "PODD-F1",
+   "text": "Q2 2026 revenue $801.7M, +23.5% (+22.7% cc); Omnipod $795.9M; US Omnipod $544.1M (+20.1%); Intl $251.8M. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 801700000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+     "filing_id": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+     "published": "2026-08-05",
+     "title": "Insulet Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "PODD-F2",
+   "text": "Q2 2026 GAAP operating income $129.7M (16.2% margin, -250 bps); adjusted OI $154.5M (19.3%). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 129700000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+     "filing_id": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+     "published": "2026-08-05",
+     "title": "Insulet Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "PODD-F3",
+   "text": "H1 2026 free cash flow $145.4M vs $229.4M H1 2025 (company-defined). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 145400000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+     "filing_id": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+     "published": "2026-08-05",
+     "title": "Insulet Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "PODD-F4",
+   "text": "Cash and investments $535M at 2026-06-30, plus $500M undrawn revolver. Debt carrying amount not retrieved (only senior notes fair value $456.5M, which is not a carrying value) -> net debt UNAVAILABLE. Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": 535000000,
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "earnings_release",
+     "url": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+     "filing_id": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+     "published": "2026-08-05",
+     "title": "Insulet Reports Second Quarter 2026 Results",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "PODD-F5",
+   "text": "Q3 2026 results on Wednesday 2026-11-04 before market open; call 8:00 a.m. ET (company press release). Retrieved as web-search excerpt of the company document; direct fetch blocked by egress proxy (sec.gov and IR domains).",
+   "label": "VERIFIED_FACT",
+   "value": "2026-11-04",
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "company_announcement",
+     "url": "https://investors.insulet.com/news/news-details/2026/Insulet-to-Announce-Third-Quarter-2026-Financial-Results-on-November-4-2026/default.aspx",
+     "filing_id": "https://investors.insulet.com/news/news-details/2026/Insulet-to-Announce-Third-Quarter-2026-Financial-Results-on-November-4-2026/default.aspx",
+     "published": "2026",
+     "title": "Insulet to Announce Third Quarter 2026 Financial Results on November 4, 2026",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "PODD-F6",
+   "text": "September 2026 8-Ks (2026-09-10 bbd03297..., 09-16 38ce792e..., 09-21 4e584e3f...) could not be read: feed returned 404; no company press release matching them found. Only known Sept IR item: Wells Fargo Healthcare Conference presentation 2026-09-09 (not confirmed as the 09-10 8-K subject).",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:00:00Z",
+   "sources": [
+    {
+     "type": "8-K",
+     "url": "bbd03297-79f6-43b5-8427-a275aac59d3b",
+     "filing_id": "bbd03297-79f6-43b5-8427-a275aac59d3b",
+     "published": "2026-09-10",
+     "title": "PODD 8-K via Robinhood SEC feed (content unavailable)",
+     "accessed": "2026-10-05T18:00:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "still_unavailable": [
+  "Contents of 8-Ks filed 2026-09-10, 09-16, 09-21",
+  "Debt carrying amount / net debt",
+  "Backlog (not a relevant metric for PODD)",
+  "FY2025 10-K fundamentals",
+  "Reconciliation of FY2026 guidance: excerpt showed 20-22% cc growth (may be pre-cut); bear's cut to $3.2-3.3B not confirmed from company text",
+  "Form 4 direction (filings 07-02, 08-04, 08-24, 10-02 x2; text not served)",
+  "Robinhood SEC feed: get_sec_filing returned 404 'Filing content is not available' and get_sec_filing_facts/catalog returned empty for the filings tried (2026-10-05)."
+ ],
+ "corrections": [
+  {
+   "claim_id": "PODD-C1",
+   "file": "work/bull/PODD.json",
+   "issue": "Fundamentals marked UNAVAILABLE",
+   "correct_value": "Q2 rev $801.7M, GAAP OI $129.7M, H1 FCF $145.4M, cash+inv $535M",
+   "source": {
+    "type": "earnings_release",
+    "url": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+    "filing_id": "https://investor.insulet.com/news/news-details/2026/Insulet-Reports-Second-Quarter-2026-Results/default.aspx (8-K EX-99.1 podd2026-06x30ex991.htm, filed 2026-08-05)",
+    "published": "2026-08-05",
+    "title": "Insulet Reports Second Quarter 2026 Results",
+    "accessed": "2026-10-05T18:00:00Z"
+   }
+  },
+  {
+   "claim_id": "catalysts[0]",
+   "file": "work/bull/PODD.json",
+   "issue": "date_confirmed false",
+   "correct_value": "2026-11-04 confirmed by company",
+   "source": {
+    "type": "company_announcement",
+    "url": "https://investors.insulet.com/news/news-details/2026/Insulet-to-Announce-Third-Quarter-2026-Financial-Results-on-November-4-2026/default.aspx",
+    "filing_id": "https://investors.insulet.com/news/news-details/2026/Insulet-to-Announce-Third-Quarter-2026-Financial-Results-on-November-4-2026/default.aspx",
+    "published": "2026",
+    "title": "Insulet to Announce Third Quarter 2026 Financial Results on November 4, 2026",
+    "accessed": "2026-10-05T18:00:00Z"
+   }
+  }
+ ]
+}

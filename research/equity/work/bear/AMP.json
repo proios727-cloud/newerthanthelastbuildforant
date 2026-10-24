@@ -1,0 +1,188 @@
+{
+  "ticker": "AMP",
+  "company": "Ameriprise Financial",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T18:45:00Z",
+  "bear_case": {
+    "summary": "AMP's earnings are a levered bet on equity markets near highs (S&P ~7,776): client assets $1.2T up 15% largely from appreciation, record EPS. Asset management still bleeds ($5.9B outflows Q2), advisor attrition (Comerica) continues, and cash sweep economics are rate-sensitive. A market drawdown hits fees, spread and buyback capacity at once.",
+    "risks": [
+      "Equity market drawdown cuts asset-based fees",
+      "Persistent Columbia Threadneedle outflows",
+      "Advisor attrition/recruiting competition",
+      "Cash sweep / certificate spread compression and regulatory scrutiny of sweep rates",
+      "Retirement & Protection (annuity/LTC) reserve assumption charges"
+    ],
+    "completed_before_bull": true
+  },
+  "risks_detail": [
+    {
+      "risk": "Equity market drawdown cuts asset-based fees",
+      "evidence": [
+        "Client assets +15% to $1.2T driven by organic + market appreciation (ampr)"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "S&P breaks 50d/200d; wrap asset QoQ decline"
+    },
+    {
+      "risk": "Persistent Columbia Threadneedle outflows",
+      "evidence": [
+        "Q2 net outflows $5.9B (vs $18.3B prior yr) (ampr)"
+      ],
+      "likelihood": "HIGH (that outflows persist)",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Monthly AUM releases"
+    },
+    {
+      "risk": "Advisor attrition/recruiting competition",
+      "evidence": [
+        "Departures incl. Comerica terminations offset flows (wm)"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Advisor count, recruiting deals in trade press"
+    },
+    {
+      "risk": "Cash sweep / certificate spread compression and regulatory scrutiny of sweep rates",
+      "evidence": [
+        "Sweep detail UNAVAILABLE in this pass"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Brokerage cash balances; industry sweep litigation/SEC actions"
+    },
+    {
+      "risk": "Retirement & Protection (annuity/LTC) reserve assumption charges",
+      "evidence": [
+        "Annual Q3 assumption review; size UNAVAILABLE"
+      ],
+      "likelihood": "LOW-MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Q3 2026 print 2026-10-29 unlocking charge"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "Adjusted operating EPS excludes market-impact items on VA hedges \u2014 GAAP vs adjusted gap should be checked",
+    "LTC/annuity legacy book assumption risk",
+    "Heavy buybacks flatter EPS growth vs net income growth"
+  ],
+  "value_trap_assessment": "Partly cheap for a reason: P/E ~11.9 reflects market-beta earnings at a cyclical high and structurally shrinking asset management. Less of a classic value trap than others, but downside is market-driven.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:45:00Z",
+  "claims": [
+    {
+      "id": "AMP-1",
+      "text": "Q2 2026 adjusted operating EPS $11.07, +22%; revenue ~$5B +13%",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Ameriprise Q2 2026 earnings release",
+          "url": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf",
+          "type": "earnings_release",
+          "published": "2026-07-23",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 11.07,
+      "unit": "USD"
+    },
+    {
+      "id": "AMP-2",
+      "text": "Client assets $1.2T, +15%; wrap assets $732B",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Ameriprise Q2 2026 earnings release",
+          "url": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf",
+          "type": "earnings_release",
+          "published": "2026-07-23",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "AMP-3",
+      "text": "Asset management net outflows $5.9B in Q2 2026",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Ameriprise Q2 2026 earnings release",
+          "url": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf",
+          "type": "earnings_release",
+          "published": "2026-07-23",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": -5.9,
+      "unit": "USD billions"
+    },
+    {
+      "id": "AMP-4",
+      "text": "Advisor departures including Comerica terminations partially offset flows",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "WealthManagement.com: Ameriprise advisor attrition amid Comerica transition",
+          "url": "https://www.wealthmanagement.com/ibd-news/ameriprise-cuts-net-outflows-but-faces-further-advisor-attrition-amid-comerica-transition-competition",
+          "type": "secondary",
+          "published": "2026-07-24",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "AMP-5",
+      "text": "Earnings highly sensitive to equity market level",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Ameriprise Q2 2026 earnings release",
+          "url": "https://s205.q4cdn.com/618704162/files/doc_financials/2026/q2/AMP-Q2-2026-Earnings-Release.pdf",
+          "type": "earnings_release",
+          "published": "2026-07-23",
+          "accessed": "2026-10-05T18:45:00Z"
+        },
+        {
+          "title": "work/regime_memo.md",
+          "url": "work/regime_memo.md",
+          "type": "secondary",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "AMP-6",
+      "text": "Price 496.27",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Robinhood equity quotes 2026-10-05 ~18:35Z",
+          "url": "robinhood:get_equity_quotes",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": false,
+      "value": 496.265,
+      "unit": "USD"
+    }
+  ],
+  "data_gaps": [
+    "CIK UNAVAILABLE",
+    "10-Q XBRL facts returned empty; figures from release via WebSearch snippet (PDF not fetched)",
+    "Sweep cash, LTC reserves, buyback pace UNAVAILABLE"
+  ]
+}

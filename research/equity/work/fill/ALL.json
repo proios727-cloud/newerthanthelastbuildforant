@@ -1,0 +1,113 @@
+{
+  "ticker": "ALL",
+  "as_of": "2026-10-05",
+  "claims": [
+    {
+      "id": "ALL-F1",
+      "text": "Q2 2026 Property-Liability recorded combined ratio 86.6 vs 91.1 in Q2 2025",
+      "label": "VERIFIED_FACT",
+      "value": 86.6,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000899051/000089905126000118/all-20260630.htm",
+          "date": "2026-08-05",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "8cbfb0a7-440e-4a0b-aa3b-217f51852533"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ALL-F2",
+      "text": "Q2 2026 favorable prior-year reserve reestimates in personal auto $634M (6.6 pts on segment combined ratio)",
+      "label": "VERIFIED_FACT",
+      "value": 634,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000899051/000089905126000118/all-20260630.htm",
+          "date": "2026-08-05",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible."
+        }
+      ],
+      "material": true,
+      "confidence": "medium; total P-L PYD not obtained"
+    },
+    {
+      "id": "ALL-F3",
+      "text": "Q2 2026 catastrophe losses $1.72B pre-tax ($1.36B after-tax) vs $1.99B in Q2 2025",
+      "label": "VERIFIED_FACT",
+      "value": 1720,
+      "as_of": "2026-06-30",
+      "sources": [
+        {
+          "type": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/0000899051/000089905126000118/all-20260630.htm",
+          "date": "2026-08-05",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible."
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "ALL-F4",
+      "text": "July 2026 cat losses $682M pre-tax ($539M after-tax); August $748M ($591M after-tax); Jul+Aug $1.43B pre-tax",
+      "label": "VERIFIED_FACT",
+      "value": 1430,
+      "as_of": "2026-08-31",
+      "sources": [
+        {
+          "type": "8-K",
+          "url": "https://www.allstatenewsroom.com/?p=8149",
+          "date": "2026-08-20",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "47ad47db-e45e-4369-82ae-e8f03966ef3b"
+        },
+        {
+          "type": "8-K",
+          "url": "https://finviz.com/news/393034/august-2026-monthly-release",
+          "date": "2026-09-17",
+          "note": "Page fetch blocked by egress proxy; value taken from search-index excerpt of this primary URL. Re-verify by fetch when possible.",
+          "filing_id": "0c2da9e5-fb13-4b5f-b6aa-05f243286352"
+        }
+      ],
+      "material": true
+    }
+  ],
+  "still_unavailable": [
+    "Robinhood SEC feed: 8-K/10-Q/10-K text returns 404 and the XBRL facts catalog is empty; EX-99.1 not read directly",
+    "CIK",
+    "Company-confirmed Q3 2026 date (no announcement found; the Q3 2025 notice came out Oct 6)",
+    "Company YTD 2026 cat total (Artemis $3.15B is secondary)",
+    "Total P-L prior-year reserve development",
+    "September 2026 cat losses",
+    "FCF (capex)",
+    "Form 4 direction"
+  ],
+  "corrections": [
+    {
+      "claim_id": "ALL-11",
+      "file": "work/bull/ALL.json",
+      "issue": "Combined ratio was UNAVAILABLE",
+      "correct_value": "86.6 (Q2 2026)",
+      "source": "https://www.sec.gov/Archives/edgar/data/0000899051/000089905126000118/all-20260630.htm"
+    },
+    {
+      "claim_id": "ALL-9",
+      "file": "work/bear/ALL.json",
+      "issue": "Cat losses were UNAVAILABLE",
+      "correct_value": "Q2 $1.72B; Jul $682M; Aug $748M",
+      "source": "Allstate 8-Ks 2026-08-05/08-20/09-17"
+    },
+    {
+      "claim_id": "ALL-12",
+      "file": "work/bull/ALL.json",
+      "issue": "2026-11-04 is not company-confirmed",
+      "correct_value": "UNAVAILABLE (keep as ESTIMATE)",
+      "source": "none found"
+    }
+  ]
+}

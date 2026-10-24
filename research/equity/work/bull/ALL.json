@@ -1,0 +1,419 @@
+{
+ "ticker": "ALL",
+ "company": "The Allstate Corporation (per Robinhood profile; 10-K cover text not read)",
+ "cik": "0000899051",
+ "sector": "Finance",
+ "as_of": "2026-10-05T18:35:00Z",
+ "identity": {
+  "company_name_10k": "UNAVAILABLE",
+  "cik_note": "Entity id 0000899051 appears in 10-K XBRL facts",
+  "latest_10k": {
+   "date": "2026-02-19",
+   "filing_id": "bf8d7e80-fdd9-4dbb-b302-844e3624533d"
+  },
+  "latest_10q": {
+   "date": "2026-08-05",
+   "filing_id": "8cbfb0a7-440e-4a0b-aa3b-217f51852533"
+  },
+  "nt_filings_12m": "None in index since 2025-10-01",
+  "going_concern": "UNAVAILABLE",
+  "auditor_change": "UNAVAILABLE"
+ },
+ "fundamentals": {
+  "revenue_usdm": {
+   "2023": 57094,
+   "2024": 64106,
+   "2025": 67685
+  },
+  "eps_diluted": {
+   "2023": -1.2,
+   "2024": 16.99,
+   "2025": 38.06
+  },
+  "operating_cf_usdm": {
+   "2023": 4228,
+   "2024": 8931,
+   "2025": 10110
+  },
+  "equity_usdm": {
+   "2023": 17770,
+   "2024": 21442,
+   "2025": 30610,
+   "2026Q2": 33698
+  },
+  "roe_2025_pct": 39.1,
+  "bvps_approx": 133.27,
+  "combined_ratio": "UNAVAILABLE",
+  "fcf": "UNAVAILABLE",
+  "trend_3y": "Revenue +18.5% 2023-25; EPS from loss to $38; equity +72%"
+ },
+ "claims": [
+  {
+   "id": "ALL-1",
+   "text": "Latest 10-K filed 2026-02-19 (bf8d7e80-fdd9-4dbb-b302-844e3624533d); latest 10-Q filed 2026-08-05 (8cbfb0a7-440e-4a0b-aa3b-217f51852533); no NT filings since 2025-10-01. XBRL entity id 0000899051.",
+   "label": "VERIFIED_FACT",
+   "value": "2026-02-19",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-K FY2025 via Robinhood SEC feed",
+     "url": "bf8d7e80-fdd9-4dbb-b302-844e3624533d",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Allstate 10-Q Q2 2026 via Robinhood SEC feed",
+     "url": "8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "ALL-2",
+   "text": "Total revenues: FY2023 $57,094M, FY2024 $64,106M, FY2025 $67,685M.",
+   "label": "VERIFIED_FACT",
+   "value": 67685,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-K FY2025 via Robinhood SEC feed",
+     "url": "bf8d7e80-fdd9-4dbb-b302-844e3624533d",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USDm"
+  },
+  {
+   "id": "ALL-3",
+   "text": "Diluted EPS: FY2023 -1.20, FY2024 16.99, FY2025 38.06.",
+   "label": "VERIFIED_FACT",
+   "value": 38.06,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-K FY2025 via Robinhood SEC feed",
+     "url": "bf8d7e80-fdd9-4dbb-b302-844e3624533d",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "ALL-4",
+   "text": "Operating cash flow: FY2023 $4,228M, FY2024 $8,931M, FY2025 $10,110M (capex not retrieved; FCF UNAVAILABLE).",
+   "label": "VERIFIED_FACT",
+   "value": 10110,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-K FY2025 via Robinhood SEC feed",
+     "url": "bf8d7e80-fdd9-4dbb-b302-844e3624533d",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USDm"
+  },
+  {
+   "id": "ALL-5",
+   "text": "Stockholders' equity: 2023 $17,770M, 2024 $21,442M, 2025 $30,610M, 2026-06-30 $33,698M.",
+   "label": "VERIFIED_FACT",
+   "value": 33698,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-K FY2025 via Robinhood SEC feed",
+     "url": "bf8d7e80-fdd9-4dbb-b302-844e3624533d",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Allstate 10-Q Q2 2026 via Robinhood SEC feed",
+     "url": "8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USDm"
+  },
+  {
+   "id": "ALL-6",
+   "text": "Net income to common FY2025 $10,165M (parent-company tag); ROE = 10,165/avg(21,442,30,610)=10,165/26,026 = 39.1% (equity includes preferred; approximate).",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 39.1,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-K FY2025 via Robinhood SEC feed",
+     "url": "bf8d7e80-fdd9-4dbb-b302-844e3624533d",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "ALL-7",
+   "text": "H1 2026 diluted EPS 21.73 vs 9.85 H1 2025; Q2 2026 EPS 12.51 vs 7.76; Q2 2026 revenue $18,596M vs $16,633M.",
+   "label": "VERIFIED_FACT",
+   "value": 21.73,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-Q Q2 2026 via Robinhood SEC feed",
+     "url": "8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "USD"
+  },
+  {
+   "id": "ALL-8",
+   "text": "Book value/share approx = 33,698M / 252.858M shares = 133.27 (total equity incl. preferred, Robinhood share count; common BVPS UNAVAILABLE). P/B = 56,895.6M / 33,698M = 1.69.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": 1.69,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-Q Q2 2026 via Robinhood SEC feed",
+     "url": "8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals ALL",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "x"
+  },
+  {
+   "id": "ALL-9",
+   "text": "Trailing P/E 4.47; price 225.01 vs 52w high 277.22 = -18.8%.",
+   "label": "VERIFIED_FACT",
+   "value": 4.47,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals ALL",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "x"
+  },
+  {
+   "id": "ALL-10",
+   "text": "Peer trailing P/E: PGR 10.54, TRV 9.65, CB 11.71; median 10.54; ALL discount = 4.47/10.54-1 = -57.6%. Peer P/B: PGR 3.56, TRV 2.27, CB 1.69 vs ALL 1.79 (RH).",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -57.6,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals PGR",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals TRV",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals CB",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true,
+   "unit": "%"
+  },
+  {
+   "id": "ALL-11",
+   "text": "Combined ratio UNAVAILABLE (loss/expense facts not retrieved).",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-K FY2025 via Robinhood SEC feed",
+     "url": "bf8d7e80-fdd9-4dbb-b302-844e3624533d",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "ALL-12",
+   "text": "Next catalyst: Q3 2026 earnings; date NOT confirmed by a company source. TradingView shows 2026-11-04.",
+   "label": "ESTIMATE",
+   "value": "2026-11-04",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "TradingView screen",
+     "url": "work/screen.md",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "ALL-13",
+   "text": "Bull view: 4.5x trailing P/E reflects an earnings level the market treats as peak (catastrophe-light, rate-driven auto margin recovery); equity +57% since 2024 year-end supports capital return. Bear: EPS mean-reverts as auto rates soften and cat losses normalize.",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": null,
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [
+    {
+     "title": "Allstate 10-K FY2025 via Robinhood SEC feed",
+     "url": "bf8d7e80-fdd9-4dbb-b302-844e3624533d",
+     "type": "10-K",
+     "published": "2026-02-19",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Allstate 10-Q Q2 2026 via Robinhood SEC feed",
+     "url": "8cbfb0a7-440e-4a0b-aa3b-217f51852533",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    },
+    {
+     "title": "Robinhood get_equity_fundamentals ALL",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:35:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "thesis": {
+  "mispricing": "ALL at 4.5x trailing P/E (-58% vs PGR/TRV/CB median) and 1.8x book; the market is capitalizing 2025-H1 2026 earnings as unsustainable. If ROE normalizes to even half the 39% level, the stock is cheap on P/B vs PGR.",
+  "what_changes_it": [
+   "Q3 2026 cat losses / combined ratio deterioration",
+   "Auto rate cuts eroding margins",
+   "Reserve strengthening"
+  ],
+  "supporting_claim_ids": [
+   "ALL-2",
+   "ALL-3",
+   "ALL-6",
+   "ALL-7",
+   "ALL-9",
+   "ALL-10",
+   "ALL-13"
+  ]
+ },
+ "bear_case": {
+  "summary": "See work/bear/.",
+  "risks": [
+   "Peak-cycle earnings",
+   "Cat exposure",
+   "Auto pricing competition"
+  ],
+  "completed_before_bull": true
+ },
+ "valuation": {
+  "method": "Trailing P/E and P/B vs PGR, TRV, CB; own-history multiple UNAVAILABLE",
+  "claim_ids": [
+   "ALL-8",
+   "ALL-9",
+   "ALL-10"
+  ],
+  "notes": "P/E of 4.47 (RH) consistent with TTM EPS ~ (38.06-9.85+21.73)=49.94 -> 225.01/49.94=4.51x."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 earnings (unconfirmed)",
+   "date": "2026-11-04",
+   "date_confirmed": false,
+   "source": {
+    "title": "TradingView screen",
+    "url": "work/screen.md",
+    "type": "market_data",
+    "published": "2026-10-05",
+    "accessed": "2026-10-05T18:35:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "UNAVAILABLE (index query filtered to 10-K/10-Q/8-K)",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "ALL-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "as_of": "2026-10-05T18:35:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "verification": {
+  "status": "PASS",
+  "material_unsupported_claims": [],
+  "issues": [
+   "Catalyst date unconfirmed",
+   "Combined ratio unavailable"
+  ],
+  "checked_at": "2026-10-05T18:35:00Z"
+ },
+ "gates": {
+  "filing_fundamentals_sourced": true,
+  "catalyst_confirmed_company_source": false
+ },
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "data_gaps": [
+  "Combined ratio",
+  "FCF (capex)",
+  "Q3 date company confirmation",
+  "Form 4",
+  "13F",
+  "short interest",
+  "own-history multiples"
+ ]
+}

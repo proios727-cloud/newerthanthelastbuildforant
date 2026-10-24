@@ -1,0 +1,54 @@
+{
+  "ticker": "EXPE",
+  "status": "PASS_WITH_CAVEATS",
+  "checked_at": "2026-10-05T22:07:05Z",
+  "material_unsupported_claims": [],
+  "downgrades": [
+    "EXPE-F1 (Q2 FCF $1,279M) VERIFIED_FACT -> Tier 2 company-attributed search excerpt; not opened",
+    "EXPE-F2 (H1 capex $383M) VERIFIED_FACT -> Tier 2; consequently EXPE-F3 H1 FCF $5,026M rests on Tier 2 capex",
+    "EXPE-F4 (GBTG ~$125M gain / Other,net) VERIFIED_FACT -> Tier 2",
+    "EXPE-B4 (fell 7.72% on 2026-09-23 after Meta Muse) VERIFIED_FACT -> Tier 3 only (TIKR); bear-side, not thesis-load-bearing",
+    "EXPE-C7 earnings date 2026-11-04 is Tier 3 (earningswhispers); conflicts with screen/bear 2026-10-29; no company source"
+  ],
+  "arithmetic_errors": [
+    "EXPE-C3: value field -1,223,000,000 has wrong sign; 6,682-5,459 = +1,223M net cash (fill correction confirmed)",
+    "EXPE-F5: says current maturities $1,692M 'at 2025-06-30'; XBRL re-pull shows LongTermDebtCurrent $1,692M at 2025-12-31 (date error)"
+  ],
+  "applied_corrections": [
+    "EXPE-C3: net cash +$1,223M; current maturities $0 now Tier 1 confirmed (LongTermDebtCurrent=0 at 2026-06-30 in 10-Q fc519e82)",
+    "EXPE-B6: earnings jump partly non-operating (Other,net swing; ~$125M GBTG gain) - Tier 2; label stays SPECULATION->partially resolved; OI +$636M H1 is Tier 1 and operating",
+    "Bear EXPE-B2 checked: LongTermDebt total $6,161M at 2025-12-31 incl. $1,692M current (noncurrent $4,469M) - bear statement correct on total-debt basis"
+  ],
+  "spot_checks_tier1": [
+    "Q2 rev 4,315M vs 3,786M (RevenueFromContract..., 10-Q fc519e82) MATCH; +14.0% MATCH",
+    "Q2 OI 800/485, H1 OI 1,051/415 MATCH",
+    "Cash 6,682M; LTD noncurrent 5,459M MATCH",
+    "H1 OCF 5,409/4,073 MATCH",
+    "Q2 NI 878/330, H1 872/130 MATCH (bear B1)"
+  ],
+  "arithmetic_rechecked": [
+    "C1 4315/3786-1=13.97% OK",
+    "C5 31485.8/120.019=$262.34; /342-1=-23.3% OK",
+    "C6 (17.59+36.92)/2=27.255; 16.53/27.255-1=-39.4% OK (n=2 peer 'median' is thin; ABNB 36.9x skews)"
+  ],
+  "gates": {
+    "1_verifier": "PASS_WITH_CAVEATS",
+    "2_identity": "PASS: filing index for EXPE; XBRL entity 0001324424 = EXPEDIA GROUP (EntityRegistrantName per bull)",
+    "3_filings_current": "PASS: 10-K 2026-02-12, 10-Q 2026-08-05 (re-pulled index); no NT 10-K/NT 10-Q since 2025-10-01",
+    "4_going_concern_auditor": "UNVERIFIABLE: filing text (10-K audit opinion, 8-K Item 4.01) not served by Robinhood SEC feed; EDGAR blocked",
+    "5_catalyst": "FAIL: no company-confirmed Q3 date; only Tier 3 (11-04) vs TradingView (10-29) conflict",
+    "6_bear_independent": "PASS (caveat): bear completed_at 2026-10-05T18:37:28Z is after 18:10Z threshold. But all 15 bear files carry the identical stamp, bear as_of is 00:00Z, and the fill file (as_of 18:00Z) already corrects bear content, so bear content existed before its completed_at; 'completed_before_bull: true' is self-asserted and chronologically inconsistent with bull as_of 16:00Z. Independence cannot be proven from artifacts.",
+    "7_liquidity": "PASS (presumed): S&P 500 constituent per screen; ADV not re-pulled by verifier"
+  },
+  "tier_counts": {
+    "tier1": 9,
+    "tier2": 5,
+    "tier3": 4,
+    "market_data": 3,
+    "notes": "material claims across bull/bear/fill"
+  },
+  "notes": [
+    "Thesis claims C1/C2/C6 rest on Tier 1 + as-of market data; FCF figures Tier 2",
+    "Peer P/Es (RH fundamentals) not re-pulled by verifier"
+  ]
+}

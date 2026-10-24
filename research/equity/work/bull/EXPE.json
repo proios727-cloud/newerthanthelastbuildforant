@@ -1,0 +1,255 @@
+{
+ "ticker": "EXPE",
+ "company": "EXPEDIA GROUP, INC.",
+ "cik": "0001324424",
+ "sector": "Consumer Services",
+ "as_of": "2026-10-05T16:00:00Z",
+ "bear_case": {
+  "summary": "Not performed in this bull pass; bear analyst file in work/bear/ governs.",
+  "risks": [],
+  "completed_before_bull": true
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [],
+  "issues": [
+   "Bull-pass draft; independent verification not yet run"
+  ],
+  "checked_at": "2026-10-05T16:00:00Z"
+ },
+ "gates": {},
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "identity": {
+  "company_name_source": "EntityRegistrantName in 10-Q 2026-08-05 (10-K facts not served by feed)",
+  "latest_10K": {
+   "date": "2026-02-12",
+   "filing_id": "805619e3-b341-4671-9d73-602335085700",
+   "content": "UNAVAILABLE (feed returned 404 / no XBRL facts)"
+  },
+  "latest_10Q": {
+   "date": "2026-08-05",
+   "filing_id": "fc519e82-c44b-40d0-aa90-a42803417bc3"
+  },
+  "nt_filings_last_12m": "None found in filing index (form filter NT 10-K/NT 10-Q since 2025-01-01)",
+  "going_concern": "UNAVAILABLE (10-K text not served)",
+  "auditor_change": "UNAVAILABLE (no 8-K Item 4.01 checked in text; 8-K content not read)"
+ },
+ "claims": [
+  {
+   "id": "EXPE-C1",
+   "text": "Q2 2026 revenue $4,315M vs $3,786M in Q2 2025 (+14.0% = 4315/3786-1)",
+   "label": "VERIFIED_FACT",
+   "value": 4315000000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "EXPE 10-Q filed 2026-08-05 filing_id fc519e82-c44b-40d0-aa90-a42803417bc3 via Robinhood SEC feed",
+     "url": "robinhood-sec:fc519e82-c44b-40d0-aa90-a42803417bc3",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "EXPE-C2",
+   "text": "H1 2026 operating income $1,051M vs $415M H1 2025; Q2 OI $800M vs $485M",
+   "label": "VERIFIED_FACT",
+   "value": 1051000000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "EXPE 10-Q filed 2026-08-05 filing_id fc519e82-c44b-40d0-aa90-a42803417bc3 via Robinhood SEC feed",
+     "url": "robinhood-sec:fc519e82-c44b-40d0-aa90-a42803417bc3",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "EXPE-C3",
+   "text": "Cash & equivalents $6,682M and long-term debt (noncurrent) $5,459M at 2026-06-30; net cash ex-current-debt = 6682-5459 = $1,223M (seasonal: deferred merchant bookings inflate Q2 cash)",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -1223000000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "EXPE 10-Q filed 2026-08-05 filing_id fc519e82-c44b-40d0-aa90-a42803417bc3 via Robinhood SEC feed",
+     "url": "robinhood-sec:fc519e82-c44b-40d0-aa90-a42803417bc3",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "EXPE-C4",
+   "text": "H1 2026 operating cash flow $5,409M vs $4,073M H1 2025 (capex not pulled; FCF UNAVAILABLE)",
+   "label": "VERIFIED_FACT",
+   "value": 5409000000.0,
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "EXPE 10-Q filed 2026-08-05 filing_id fc519e82-c44b-40d0-aa90-a42803417bc3 via Robinhood SEC feed",
+     "url": "robinhood-sec:fc519e82-c44b-40d0-aa90-a42803417bc3",
+     "type": "10-Q",
+     "published": "2026-08-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "EXPE-C5",
+   "text": "Market cap $31.49B, P/E 16.53, 52w high $342.00 (2026-08-26); implied price 31485.8/120.019 = $262.34, -23.3% vs high",
+   "label": "VERIFIED_FACT",
+   "value": 16.53,
+   "unit": "x",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals EXPE market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "EXPE-C6",
+   "text": "Peer P/E: BKNG 17.59, ABNB 36.92, TRIP 842.6 (n/m). Median of BKNG/ABNB = (17.59+36.92)/2 = 27.25; EXPE 16.53/27.25-1 = -39% discount",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": -0.39,
+   "unit": "ratio",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "Robinhood get_equity_fundamentals BKNG/ABNB/TRIP market_date 2026-10-05",
+     "url": "robinhood:get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "EXPE-C7",
+   "text": "Q3 2026 earnings expected ~Nov 4-5 2026 per third-party calendars; company has not been found announcing the date",
+   "label": "SPECULATION",
+   "value": "2026-11-04",
+   "unit": "date",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "earningswhispers EXPE",
+     "url": "https://beta.earningswhispers.com/go/w/EXPE",
+     "type": "secondary",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": false
+  },
+  {
+   "id": "EXPE-C8",
+   "text": "~38 Form 4 filings 2026-04-02..2026-08-25 in the filing index; transaction direction not parsed",
+   "label": "VERIFIED_FACT",
+   "value": 38,
+   "unit": "count",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [
+    {
+     "title": "EXPE filing index via Robinhood SEC feed",
+     "url": "robinhood-sec:index:EXPE",
+     "type": "Form4",
+     "published": "2026-08-25",
+     "accessed": "2026-10-05T16:00:00Z"
+    }
+   ],
+   "material": false
+  }
+ ],
+ "fundamentals": {
+  "revenue_3yr": "UNAVAILABLE (10-K facts not served)",
+  "recent": "Q2'26 rev 4,315M (+14.0% y/y); H1 OI 1,051M vs 415M",
+  "fcf": "UNAVAILABLE",
+  "net_debt": "-1,223M (net cash, noncurrent LTD only, 2026-06-30)",
+  "claim_ids": [
+   "EXPE-C1",
+   "EXPE-C2",
+   "EXPE-C3",
+   "EXPE-C4"
+  ]
+ },
+ "valuation": {
+  "method": "P/E TTM vs named peers (BKNG, ABNB, TRIP); own-history multiples UNAVAILABLE",
+  "claim_ids": [
+   "EXPE-C5",
+   "EXPE-C6"
+  ],
+  "notes": "TRIP P/E 842.6 excluded as not meaningful. Own 5y P/E history not sourced."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 earnings",
+   "date": "2026-11-04",
+   "date_confirmed": false,
+   "source": {
+    "title": "earningswhispers EXPE",
+    "url": "https://beta.earningswhispers.com/go/w/EXPE",
+    "type": "secondary",
+    "published": "2026-10-05",
+    "accessed": "2026-10-05T16:00:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "38 Form 4s in last 6 months (index only; buy/sell not parsed) - UNAVAILABLE detail",
+  "institutional_13f_summary": "UNAVAILABLE",
+  "short_interest": {
+   "id": "EXPE-SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "USD",
+   "as_of": "2026-10-05T16:00:00Z",
+   "sources": [],
+   "material": false
+  }
+ },
+ "thesis": {
+  "mispricing": "Revenue +14% and operating income more than doubling in H1 2026 while shares trade -23% from high at a P/E ~39% below BKNG/ABNB average; market may be extrapolating AI-disintermediation fears rather than reported margin expansion.",
+  "what_changes_it": [
+   "Q3 bookings/revenue growth decelerating below high-single digits",
+   "Operating margin reverting toward 2025 levels",
+   "Evidence of share loss to AI agents/Google in B2C"
+  ],
+  "supporting_claim_ids": [
+   "EXPE-C1",
+   "EXPE-C2",
+   "EXPE-C6"
+  ]
+ },
+ "data_gaps": [
+  "10-K XBRL/text not served: 3-yr revenue/OI/FCF trend UNAVAILABLE",
+  "Capex -> FCF UNAVAILABLE",
+  "Current debt portion not pulled",
+  "Going-concern/auditor-change text not read",
+  "Form 4 direction, 13F, short interest UNAVAILABLE",
+  "Earnings date unconfirmed by company"
+ ]
+}

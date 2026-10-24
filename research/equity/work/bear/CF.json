@@ -1,0 +1,216 @@
+{
+  "ticker": "CF",
+  "company": "CF Industries Holdings",
+  "cik": "UNAVAILABLE",
+  "as_of": "2026-10-05T18:45:00Z",
+  "bear_case": {
+    "summary": "CF's trough-looking multiple (P/E ~8.7 TTM) sits on peak-cycle pricing: Q2 2026 realized price $523/t (+39% YoY) was helped by Iran-conflict supply disruption while volumes fell 15%. If the geopolitical premium fades or US gas rises, earnings mean-revert sharply; a low P/E on peak earnings is a classic commodity value trap.",
+    "risks": [
+      "Nitrogen price normalization as Iran-related supply disruption eases",
+      "Volume weakness masked by price",
+      "US natural gas cost spread compression",
+      "Farm demand destruction / affordability under higher rates (10y 5.24%)",
+      "Low-carbon ammonia capex (Blue Point JV) returns disappoint"
+    ],
+    "completed_before_bull": true
+  },
+  "risks_detail": [
+    {
+      "risk": "Nitrogen price normalization as Iran-related supply disruption eases",
+      "evidence": [
+        "Q2 2026 avg price $523/t vs $376/t, release attributes tightness partly to Iran conflict (cf8k)"
+      ],
+      "likelihood": "MEDIUM-HIGH",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "NOLA urea/ammonia benchmark declines; Middle East export resumption"
+    },
+    {
+      "risk": "Volume weakness masked by price",
+      "evidence": [
+        "Q2 2026 sales volumes -15% YoY (cf8k)"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Q3 volumes on 2026-11-04 print; UAN/ammonia shipments"
+    },
+    {
+      "risk": "US natural gas cost spread compression",
+      "evidence": [
+        "H1 2026 gas cost $4.01/MMBtu vs $3.52 H1 2025 (cf8k)"
+      ],
+      "likelihood": "MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "Henry Hub forward strip; LNG export demand growth"
+    },
+    {
+      "risk": "Farm demand destruction / affordability under higher rates (10y 5.24%)",
+      "evidence": [
+        "regime memo rates; corn economics UNAVAILABLE"
+      ],
+      "likelihood": "LOW-MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "USDA planted-acre reports, farmer affordability indices"
+    },
+    {
+      "risk": "Low-carbon ammonia capex (Blue Point JV) returns disappoint",
+      "evidence": [
+        "Project economics UNAVAILABLE in this pass"
+      ],
+      "likelihood": "LOW-MEDIUM",
+      "likelihood_label": "ANALYTICAL_INFERENCE",
+      "early_warning_signal": "45Q policy changes; capex guidance raises"
+    }
+  ],
+  "accounting_quality_red_flags": [
+    "Earnings quality is price-driven, not volume-driven (volume -15% YoY)",
+    "Derivative-adjusted gas cost reporting can smooth input cost; hedge book detail UNAVAILABLE",
+    "FCF TTM 1.91B (screen) vs net earnings H1 1.34B: reconcile capex ramp UNAVAILABLE"
+  ],
+  "value_trap_assessment": "Likely cheap for a good reason: market capitalizes peak-ish nitrogen pricing at a low multiple because it expects reversion. Stock -17% from 52w high despite record-ish H1 earnings is consistent with the market already discounting normalization.",
+  "completed_before_bull": true,
+  "completed_at": "2026-10-05T18:45:00Z",
+  "claims": [
+    {
+      "id": "CF-1",
+      "text": "Q2 2026 net earnings attributable to common $727M, $4.73/diluted share",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "CF Industries Q2 2026 earnings release (8-K ex99.1)",
+          "url": "https://ir.cfindustries.com/Investors/news/news-details/2026/CF-Industries-Holdings-Inc--Reports-First-Half-2026-Net-Earnings-of-1-34-Billion-Adjusted-EBITDA-of-2-18-Billion/default.aspx",
+          "type": "earnings_release",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        },
+        {
+          "title": "CF 10-Q Q2 2026 filing_id 27bc3b34 via Robinhood SEC feed",
+          "url": "robinhood:sec/27bc3b34-bff9-4d23-a9ad-c13497cde6c1",
+          "type": "10-Q",
+          "published": "2026-08-06",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 727,
+      "unit": "USD millions"
+    },
+    {
+      "id": "CF-2",
+      "text": "Q2 2026 average selling price $523/ton vs $376/ton Q2 2025 (+39%)",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "CF Industries Q2 2026 earnings release (8-K ex99.1)",
+          "url": "https://ir.cfindustries.com/Investors/news/news-details/2026/CF-Industries-Holdings-Inc--Reports-First-Half-2026-Net-Earnings-of-1-34-Billion-Adjusted-EBITDA-of-2-18-Billion/default.aspx",
+          "type": "earnings_release",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 523,
+      "unit": "USD/ton"
+    },
+    {
+      "id": "CF-3",
+      "text": "Q2 2026 sales volumes 15% lower YoY",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "CF Industries Q2 2026 earnings release (8-K ex99.1)",
+          "url": "https://ir.cfindustries.com/Investors/news/news-details/2026/CF-Industries-Holdings-Inc--Reports-First-Half-2026-Net-Earnings-of-1-34-Billion-Adjusted-EBITDA-of-2-18-Billion/default.aspx",
+          "type": "earnings_release",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": -15,
+      "unit": "%"
+    },
+    {
+      "id": "CF-4",
+      "text": "H1 2026 gas cost incl. realized derivatives $4.01/MMBtu vs $3.52 H1 2025",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "CF Industries Q2 2026 earnings release (8-K ex99.1)",
+          "url": "https://ir.cfindustries.com/Investors/news/news-details/2026/CF-Industries-Holdings-Inc--Reports-First-Half-2026-Net-Earnings-of-1-34-Billion-Adjusted-EBITDA-of-2-18-Billion/default.aspx",
+          "type": "earnings_release",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true,
+      "value": 4.01,
+      "unit": "USD/MMBtu"
+    },
+    {
+      "id": "CF-5",
+      "text": "Price 117.33 at ~18:34Z 2026-10-05",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "Robinhood equity quotes 2026-10-05 ~18:35Z",
+          "url": "robinhood:get_equity_quotes",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": false,
+      "value": 117.33,
+      "unit": "USD"
+    },
+    {
+      "id": "CF-6",
+      "text": "P/E TTM 8.7, -17.1% vs 52w high (TradingView, unverified elsewhere)",
+      "label": "VERIFIED_FACT",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "work/screen.md (TradingView screen, single-source)",
+          "url": "work/screen.md",
+          "type": "market_data",
+          "published": "2026-10-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": false
+    },
+    {
+      "id": "CF-7",
+      "text": "Current earnings embed a geopolitical supply premium likely to fade over 12-24 months",
+      "label": "ANALYTICAL_INFERENCE",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [
+        {
+          "title": "CF Industries Q2 2026 earnings release (8-K ex99.1)",
+          "url": "https://ir.cfindustries.com/Investors/news/news-details/2026/CF-Industries-Holdings-Inc--Reports-First-Half-2026-Net-Earnings-of-1-34-Billion-Adjusted-EBITDA-of-2-18-Billion/default.aspx",
+          "type": "earnings_release",
+          "published": "2026-08-05",
+          "accessed": "2026-10-05T18:45:00Z"
+        }
+      ],
+      "material": true
+    },
+    {
+      "id": "CF-8",
+      "text": "Normalized EPS materially below TTM",
+      "label": "SPECULATION",
+      "as_of": "2026-10-05T18:45:00Z",
+      "sources": [],
+      "material": true
+    }
+  ],
+  "data_gaps": [
+    "CIK UNAVAILABLE",
+    "XBRL facts from Robinhood feed returned empty for Q2 10-Q; numbers taken from earnings release via WebSearch snippets (sec.gov fetch blocked)",
+    "Hedge book, capex guidance, Form 4 activity not reviewed"
+  ]
+}

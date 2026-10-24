@@ -1,0 +1,349 @@
+{
+ "ticker": "BKNG",
+ "company": "Booking Holdings Inc. (as shown in RH profile; 10-K cover text UNAVAILABLE - 10-K content not served)",
+ "cik": "0001075531",
+ "cik_note": "entity id 0001075531 stated in 10-Q XBRL facts",
+ "sector": "Consumer Services",
+ "as_of": "2026-10-05T18:40:00Z",
+ "identity": {
+  "latest_10k": {
+   "filing_id": "836d87a2-a652-44ad-ae39-1b18bbfdd7a9",
+   "filed": "2026-02-18"
+  },
+  "latest_10q": {
+   "filing_id": "9adb53da-8398-4b8b-8856-b1d619d107ca",
+   "filed": "2026-08-04"
+  },
+  "nt_filings_12m": "none found in index (NT 10-K/NT 10-Q filter)",
+  "going_concern": "UNAVAILABLE (filing text not served)",
+  "auditor_change": "UNAVAILABLE",
+  "note": "Price ~$158 vs historical ~$5,000 implies a stock split; split details not verified from a filing"
+ },
+ "fundamentals": {
+  "ttm": "UNAVAILABLE",
+  "h1_2026": {
+   "revenue_m": 12884,
+   "operating_income_m": 3771,
+   "fcf_m": 6751
+  },
+  "h1_2025": {
+   "revenue_m": 11560,
+   "operating_income_m": 3312,
+   "fcf_m": 6299
+  },
+  "net_debt_m_2026_06_30": 2966,
+  "three_year_trend": "UNAVAILABLE (10-K facts not available in feed)"
+ },
+ "valuation": {
+  "method": "EV/EBIT, P/E, FCF yield on TTM from filings",
+  "claim_ids": [
+   "BKNG-PX",
+   "BKNG-DEBT",
+   "BKNG-PE-RH",
+   "BKNG-TTM"
+  ],
+  "calc": {
+   "mcap_bn": 118.89,
+   "net_debt_bn": 2966000000.0,
+   "ev_bn": 2966000118.89,
+   "ev_ebit": null,
+   "pe": null,
+   "fcf_yield_pct": null
+  },
+  "ev_ebit": "UNAVAILABLE",
+  "pe": "17.59 (RH vendor)",
+  "fcf_yield": "UNAVAILABLE",
+  "own_history": "UNAVAILABLE",
+  "peers": {
+   "EXPE": {
+    "pe_rh": 16.53,
+    "mcap_bn": 31.48
+   },
+   "ABNB": {
+    "pe_rh": 36.92,
+    "mcap_bn": 98.51
+   },
+   "TRIP": {
+    "pe_rh": 842.57,
+    "note": "not meaningful"
+   }
+  },
+  "notes": "Peer EV/EBIT and FCF yield UNAVAILABLE (peer filings not pulled). Peer P/E is vendor data."
+ },
+ "catalysts": [
+  {
+   "event": "Q3 2026 earnings",
+   "date": "2026-10-27",
+   "date_confirmed": false,
+   "source": {
+    "title": "RH earnings calendar, verified=false; conflicts with TV 2026-11-04",
+    "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+    "type": "market_data",
+    "published": "2026-10-05",
+    "accessed": "2026-10-05T18:40:00Z"
+   }
+  }
+ ],
+ "positioning": {
+  "insider_form4_summary": "16 Form 4 filings indexed in Robinhood SEC feed between 2026-04-05 and 2026-10-05 (first: 2026-04-16). Transaction codes/direction (buy vs sell vs RSU withholding) NOT parsed - UNAVAILABLE; counts alone are not evidence of net buying or selling.",
+  "institutional_13f_summary": "UNAVAILABLE - no 13F source accessible (EDGAR blocked).",
+  "short_interest": {
+   "id": "SI",
+   "text": "Short interest",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "sources": [],
+   "material": false
+  }
+ },
+ "thesis": {
+  "mispricing": "Stock ~30% off 52w high at ~17.6x vendor P/E while H1 2026 revenue +11.5%, EBIT +13.9%, FCF +7% and leverage is modest (net debt ~$3.0B vs ~$119B mkt cap). Market may be pricing AI-disintermediation/travel-cycle risk ahead of evidence in reported numbers.",
+  "what_changes_it": [
+   "Q3 2026 room-night/booking growth deceleration or guidance cut",
+   "Evidence of AI agents/search taking direct share (agency revenue already declining)",
+   "Margin compression from merchant-mix shift or marketing spend"
+  ],
+  "supporting_claim_ids": [
+   "BKNG-REV-H1",
+   "BKNG-EBIT-H1",
+   "BKNG-FCF-H1",
+   "BKNG-DEBT",
+   "BKNG-52W",
+   "BKNG-INF1"
+  ]
+ },
+ "bear_case": {
+  "summary": "See work/bear/BKNG.json (separate bear agent)",
+  "risks": [
+   "agency revenue decline",
+   "AI disintermediation",
+   "travel demand cycle"
+  ],
+  "completed_before_bull": true
+ },
+ "verification": {
+  "status": "FAIL",
+  "material_unsupported_claims": [
+   "BKNG-TTM"
+  ],
+  "issues": [
+   "10-K facts unavailable; TTM valuation not computable from filings",
+   "catalyst date unconfirmed and conflicting"
+  ],
+  "checked_at": "2026-10-05T18:40:00Z"
+ },
+ "gates": {
+  "identity_confirmed_via_filing_index": true,
+  "no_nt_filings_12m": true,
+  "going_concern_checked": false,
+  "auditor_change_checked": false,
+  "catalyst_company_confirmed": false
+ },
+ "score": {
+  "total": 0,
+  "components": {}
+ },
+ "claims": [
+  {
+   "id": "BKNG-PX",
+   "text": "Last trade $158.23 at 2026-10-05T18:35:35Z; shares outstanding 751,381,000 (RH fundamentals); market cap = 158.23*751.381M = $118.89B",
+   "label": "VERIFIED_FACT",
+   "value": 118.89,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:35:38Z",
+   "sources": [
+    {
+     "title": "RH quote/fundamentals",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-DEBT",
+   "text": "Debt at 2026-06-30: LongTermDebtCurrent $2,000M + LongTermDebtNoncurrent $18,180M = $20,180M; cash & equivalents $17,214M; net debt = $2,966M (excludes short-term investments, not tagged/returned)",
+   "label": "VERIFIED_FACT",
+   "value": 2.966,
+   "unit": "USD bn",
+   "as_of": "2026-06-30T00:00:00Z",
+   "sources": [
+    {
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "type": "10-Q",
+     "published": "2026-08-04",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-REV-H1",
+   "text": "H1 2026 revenue $12,884M vs H1 2025 $11,560M (+11.5%); Q2 2026 $7,352M vs $6,798M (+8.1%)",
+   "label": "VERIFIED_FACT",
+   "value": 12884,
+   "unit": "USD m",
+   "as_of": "2026-06-30T00:00:00Z",
+   "sources": [
+    {
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "type": "10-Q",
+     "published": "2026-08-04",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-EBIT-H1",
+   "text": "H1 2026 operating income $3,771M vs $3,312M (+13.9%); Q2 2026 $2,500M vs $2,250M",
+   "label": "VERIFIED_FACT",
+   "value": 3771,
+   "unit": "USD m",
+   "as_of": "2026-06-30T00:00:00Z",
+   "sources": [
+    {
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "type": "10-Q",
+     "published": "2026-08-04",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-FCF-H1",
+   "text": "H1 2026 FCF = CFO $6,934M - capex $183M = $6,751M (H1 2025: $6,484M - $185M = $6,299M)",
+   "label": "VERIFIED_FACT",
+   "value": 6751,
+   "unit": "USD m",
+   "as_of": "2026-06-30T00:00:00Z",
+   "sources": [
+    {
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "type": "10-Q",
+     "published": "2026-08-04",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-AGENCY",
+   "text": "Agency revenue fell (Q2 $1,903M vs $2,044M) while merchant revenue rose (Q2 $5,127M vs $4,457M): mix shift to merchant model",
+   "label": "VERIFIED_FACT",
+   "value": null,
+   "unit": "USD",
+   "as_of": "2026-06-30T00:00:00Z",
+   "sources": [
+    {
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "type": "10-Q",
+     "published": "2026-08-04",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": false
+  },
+  {
+   "id": "BKNG-PE-RH",
+   "text": "P/E TTM 17.59 per Robinhood fundamentals (vendor-computed; not derivable from filings because FY2025 10-K facts unavailable)",
+   "label": "VERIFIED_FACT",
+   "value": 17.59,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "RH fundamentals pe_ratio",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-52W",
+   "text": "52-week high $224.9956 (2025-10-06), low $150.14 (2026-05-20); price is 29.7% below 52w high",
+   "label": "VERIFIED_FACT",
+   "value": -29.7,
+   "unit": "pct",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "RH fundamentals",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-TTM",
+   "text": "TTM revenue, EBIT, FCF, EV/EBIT and FCF yield: UNAVAILABLE - FY2025 10-K (filing_id 836d87a2-a652-44ad-ae39-1b18bbfdd7a9) and FY2024 10-K return no XBRL facts or content in the feed",
+   "label": "VERIFIED_FACT",
+   "value": "UNAVAILABLE",
+   "unit": "USD",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [],
+   "material": true
+  },
+  {
+   "id": "BKNG-INF1",
+   "text": "Operating income growing faster than revenue in H1 2026 (13.9% vs 11.5%) indicates operating leverage, inconsistent with a structural-decline narrative implied by a ~30% drawdown",
+   "label": "ANALYTICAL_INFERENCE",
+   "value": null,
+   "unit": "USD",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "BKNG 10-Q Q2 2026 (via Robinhood SEC feed)",
+     "url": "robinhood-sec-feed:9adb53da-8398-4b8b-8856-b1d619d107ca",
+     "type": "10-Q",
+     "published": "2026-08-04",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  },
+  {
+   "id": "BKNG-CAT",
+   "text": "Q3 2026 earnings: Robinhood calendar shows 2026-10-27 (pm, verified=false); screen/TV shows 2026-11-04; no company announcement found",
+   "label": "VERIFIED_FACT",
+   "value": "2026-10-27 or 2026-11-04 (unconfirmed)",
+   "unit": "USD",
+   "as_of": "2026-10-05T18:40:00Z",
+   "sources": [
+    {
+     "title": "RH get_earnings_calendar",
+     "url": "robinhood:get_equity_quotes/get_equity_fundamentals",
+     "type": "market_data",
+     "published": "2026-10-05",
+     "accessed": "2026-10-05T18:40:00Z"
+    }
+   ],
+   "material": true
+  }
+ ],
+ "data_gaps": [
+  "FY2023-2025 annual financials (10-K XBRL not served)",
+  "TTM EV/EBIT, FCF yield",
+  "own historical multiples",
+  "peer EV/EBIT/FCF yield",
+  "Form 4 direction",
+  "13F",
+  "short interest",
+  "company-confirmed Q3 date",
+  "going concern/auditor text"
+ ]
+}

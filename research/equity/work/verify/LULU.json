@@ -1,0 +1,55 @@
+{
+  "ticker": "LULU",
+  "status": "PASS_WITH_CAVEATS",
+  "checked_at": "2026-10-05T22:07:05Z",
+  "material_unsupported_claims": [],
+  "downgrades": [
+    "LULU-C10 (Q3 guide $2.29-2.32B) VERIFIED_FACT on Tier 3 (RTTNews) -> upgraded by fill to Tier 2 (8-K EX-99.1 via search); still not Tier 1",
+    "LULU-F1..F4 VERIFIED_FACT -> Tier 2 (search excerpts)",
+    "LULU-B5 (Americas comps -12%, FY guide $10.35-10.50B, EPS $9.48-9.73) VERIFIED_FACT -> Tier 3 only",
+    "LULU-B6 (tariff refund $134.5M/$0.86) VERIFIED_FACT on Tier 3 -> Tier 2 via fill F2"
+  ],
+  "arithmetic_errors": [
+    "None found in bull. Bear Q2 gross margin '60.5% vs 58.5% (computed)' not re-derivable (cost of goods not pulled)"
+  ],
+  "applied_corrections": [
+    "LULU-C10: confirmed Q3 guide rev $2.290-2.320B, EPS $0.93-0.98 (Tier 2)",
+    "LULU-C4/C5: Q2 includes one-time $134.5M IEEPA tariff refund (+$4.1M interest; +560bp GM; $0.86/sh). Ex-refund H1 OI ~= 730.6-134.5 = ~$596M (-38% y/y vs 962.4), not -24%. Trailing P/E 7.74 is flattered by the refund"
+  ],
+  "spot_checks_tier1": [
+    "FY rev 9,619.3/10,588.1/11,102.6 MATCH (10-K 95348e5b)",
+    "FY OI 2,132.7/2,505.7/2,210.6; CFO and capex x3 MATCH",
+    "H1 rev 4,887.2/4,895.9, H1 OI 730.6/962.4, H1 CFO 589.3/209.7, capex 277.1/330.2 MATCH (10-Q 7159d6a4)",
+    "China Mainland 1,361.3->1,754.8; Americas 7,928.2->7,847.0 MATCH",
+    "Bear: US Q2 1,302.1/1,415.0; H1 NI 524.3/685.5; inventory 1,711.5/1,700.8; accessories 306/353 MATCH"
+  ],
+  "arithmetic_rechecked": [
+    "C1 +10.07%/+4.86% OK",
+    "C2 margins 22.2/23.7/19.9% OK",
+    "C3 FCF 1,644.3/1,583.5/921.7 OK",
+    "C4 -0.18%, -4.34%, -24.1% OK",
+    "C5 312.2 / -120.4 OK",
+    "C8 7.74/16.23-1=-52.3% OK",
+    "C9 921.7/10,693=8.6% OK",
+    "C11 +28.9%, -1.0% OK"
+  ],
+  "gates": {
+    "1_verifier": "PASS_WITH_CAVEATS",
+    "2_identity": "PASS: 10-K XBRL EntityRegistrantName/EntityCentralIndexKey 0001397187 lululemon athletica inc.",
+    "3_filings_current": "PASS: 10-K 2026-03-17, 10-Q 2026-09-03; no NT forms since 2025-10-01 (re-pulled)",
+    "4_going_concern_auditor": "UNVERIFIABLE: filing text (10-K audit opinion, 8-K Item 4.01) not served by Robinhood SEC feed; EDGAR blocked; note unread 8-K filed 2026-09-14 (5db82e04)",
+    "5_catalyst": "FAIL: Q3 date 2026-12-03 is TradingView estimate only; no company confirmation",
+    "6_bear_independent": "PASS (caveat): bear completed_at 2026-10-05T18:37:28Z is after 18:10Z threshold. But all 15 bear files carry the identical stamp, bear as_of is 00:00Z, and the fill file (as_of 18:00Z) already corrects bear content, so bear content existed before its completed_at; 'completed_before_bull: true' is self-asserted and chronologically inconsistent with bull as_of 16:00Z. Independence cannot be proven from artifacts.",
+    "7_liquidity": "PASS (presumed): S&P 500 constituent per screen; ADV not re-pulled by verifier"
+  },
+  "tier_counts": {
+    "tier1": 11,
+    "tier2": 5,
+    "tier3": 3,
+    "market_data": 2
+  },
+  "notes": [
+    "ADVERSARIAL: thesis cites 'H1 FCF improved y/y' and 7.7x P/E; both are inflated by one-time tariff refund; FY2025 FCF already fell 42% (1,583.5->921.7). Q3 guide -10/-11% contradicts 'H1 flat' framing going forward.",
+    "Unread 8-K 2026-09-14 should be checked."
+  ]
+}
