@@ -16,6 +16,8 @@ CORRECTIONS = {
     ("NVDA", "2024-06-10"): {"high": "body",
                              "why": "ThetaData high 195.95 on a 120.45 → 121.79 day is a bad print; "
                                     "intraday bars to confirm the true high need a paid plan"},
+    ("SPY", "2026-02-02"): {"low": "body",
+                            "why": "ThetaData low 69.005 on a ~690 day is a dropped digit; re-fetch returned the same value"},
 }
 
 
