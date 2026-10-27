@@ -1,8 +1,24 @@
-"""python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1"""
+"""python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1
+python3 -m chart walkforward data/SPY.csv --strategy rsi_revert --train 0.7
+python3 -m chart scan data --out ledger/signals.json
+"""
 import argparse
 import json
+import pathlib
 
 from . import STRATEGIES, backtest, load_csv
+from .scan import scan
+from .sweep import walk_forward
+
+
+def _round(x):
+    if isinstance(x, float):
+        return round(x, 6)
+    if isinstance(x, dict):
+        return {k: _round(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_round(v) for v in x]
+    return x
 
 
 def main(argv=None):
@@ -19,7 +35,34 @@ def main(argv=None):
     b.add_argument("--fee-bps", type=float, default=0.0)
     b.add_argument("--slippage-bps", type=float, default=0.0)
     b.add_argument("--periods-per-year", type=int, default=252)
+    w = sub.add_parser("walkforward", help="choose params on the train slice, score them on the test slice")
+    w.add_argument("csv")
+    w.add_argument("--strategy", choices=sorted(STRATEGIES), default="sma_cross")
+    w.add_argument("--train", type=float, default=0.7)
+    w.add_argument("--fee-bps", type=float, default=0.0)
+    w.add_argument("--slippage-bps", type=float, default=0.0)
+    s = sub.add_parser("scan", help="walk-forward every universe CSV in a folder and print the desk signal_list")
+    s.add_argument("folder", nargs="?", default="data")
+    s.add_argument("--train", type=float, default=0.7)
+    s.add_argument("--fee-bps", type=float, default=1.0)
+    s.add_argument("--slippage-bps", type=float, default=2.0)
+    s.add_argument("--out", help="also write the JSON here")
     a = p.parse_args(argv)
+    if a.cmd == "walkforward":
+        wf = walk_forward(load_csv(a.csv), a.strategy, train_frac=a.train,
+                          fee_bps=a.fee_bps, slippage_bps=a.slippage_bps)
+        wf.pop("signals")
+        print(json.dumps(_round(wf), indent=2))
+        return
+    if a.cmd == "scan":
+        from fund import config
+        res = scan(pathlib.Path(a.folder).glob("*.csv"), config.load().universe, train_frac=a.train,
+                   fee_bps=a.fee_bps, slippage_bps=a.slippage_bps)
+        text = json.dumps(res, indent=2)
+        if a.out:
+            pathlib.Path(a.out).write_text(text + "\n")
+        print(text)
+        return
 
     bars = load_csv(a.csv)
     close = [x.close for x in bars]

@@ -54,3 +54,19 @@ Each indicator returns a list the same length as its input, with `None` until it
 5. A losing round trip gives a negative pnl and max_drawdown < 0.
 6. Shorts are ignored unless `allow_short`.
 7. **Test-the-test:** a deliberately wrong expected value must make the comparison fail.
+
+## Walk-forward (chart/sweep.py)
+
+- `GRIDS`: sma_cross fast ∈ {3,5,8,10}, slow ∈ {15,20,30} (fast < slow); rsi_revert n ∈ {7,14}, lo ∈ {25,30,35}, hi ∈ {60,70}.
+- `sweep(bars, strategy)` ranks every combo by Sharpe, breaking ties on total return.
+- `walk_forward(bars, strategy, train_frac=0.7)` picks the best combo on `bars[:cut]` and reports it on `bars[cut:]`
+  next to buy-and-hold on the same slice. Signals are computed on the full series because the indicators
+  are causal. The test backtest starts flat at the first test bar, even if the train run ended long.
+- Oracles: the chosen params equal `sweep(train)[0]`, and wrecking the test slice never changes the chosen params.
+
+## Desk bridge (chart/scan.py)
+
+`scan(paths, universe)` maps `data/<SYMBOL>.csv` to a universe symbol (with `-` or `_` → `/` for crypto), runs walk-forward
+per strategy, and returns the Quant seat's `signal_list`. An entry is a **candidate** only when all of these hold:
+the latest signal is long, the out-of-sample Sharpe is > 0, it beat buy-and-hold out of sample, and it made at least 2 out-of-sample trades.
+Each rejection is listed in `why_not`. The scan never builds a preview or touches the ledger.

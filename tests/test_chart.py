@@ -124,3 +124,73 @@ class CsvTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SweepTests(unittest.TestCase):
+    def setUp(self):
+        import math
+        closes = [100 + 10 * math.sin(i / 6) + i * 0.1 for i in range(120)]
+        self.bars = bars_from(closes)
+
+    def test_combos_skip_invalid(self):
+        from chart.sweep import combos
+        self.assertTrue(all(p["fast"] < p["slow"] for p in combos("sma_cross")))
+        self.assertTrue(all(p["lo"] < p["hi"] for p in combos("rsi_revert")))
+
+    def test_sweep_ranked_by_sharpe(self):
+        from chart.sweep import sweep
+        rows = sweep(self.bars, "sma_cross")
+        sharpes = [s["sharpe"] for _, s in rows]
+        self.assertEqual(sharpes, sorted(sharpes, reverse=True))
+
+    def test_walk_forward_picks_on_train_only(self):
+        from chart.sweep import sweep, walk_forward
+        wf = walk_forward(self.bars, "sma_cross", train_frac=0.7)
+        self.assertEqual(wf["params"], sweep(self.bars[:84], "sma_cross")[0][0])
+        self.assertEqual(wf["test"]["bars"], 36)
+        self.assertAlmostEqual(wf["edge_vs_hold"], wf["test"]["total_return"] - wf["buy_hold_test"]["total_return"])
+
+    def test_walk_forward_ignores_test_slice_when_choosing(self):
+        from chart.sweep import walk_forward
+        changed = list(self.bars)
+        for i in range(84, 120):          # wreck the test slice
+            b = changed[i]
+            changed[i] = Bar(b.ts, b.open * 3, b.high * 3, b.low * 3, b.close * 3)
+        self.assertEqual(walk_forward(self.bars, "sma_cross")["params"],
+                         walk_forward(changed, "sma_cross")["params"])
+
+    def test_walk_forward_needs_test_bars(self):
+        from chart.sweep import walk_forward
+        with self.assertRaises(ValueError):
+            walk_forward(self.bars[:20], "sma_cross", train_frac=0.9)
+
+
+class ScanTests(unittest.TestCase):
+    UNIVERSE = {"SPY": {}, "BTC/USD": {}}
+
+    def test_symbol_mapping(self):
+        from chart.scan import symbol_for
+        self.assertEqual(symbol_for("data/spy.csv", self.UNIVERSE), "SPY")
+        self.assertEqual(symbol_for("data/BTC-USD.csv", self.UNIVERSE), "BTC/USD")
+        self.assertIsNone(symbol_for("data/DOGE.csv", self.UNIVERSE))
+
+    def test_scan_skips_unknown_and_explains_rejections(self):
+        import math
+        from chart.scan import scan
+        d = tempfile.mkdtemp()
+        self.addCleanup(lambda: __import__("shutil").rmtree(d))
+        rows = "\n".join(f"2026-{1 + i // 28:02d}-{1 + i % 28:02d},{c},{c + 1},{c - 1},{c},1"
+                         for i, c in enumerate(100 + 5 * math.sin(i / 5) for i in range(100)))
+        for name in ("SPY", "DOGE"):
+            with open(os.path.join(d, f"{name}.csv"), "w") as f:
+                f.write("date,open,high,low,close,volume\n" + rows + "\n")
+        res = scan([os.path.join(d, n) for n in os.listdir(d)], self.UNIVERSE)
+        self.assertEqual({e["symbol"] for e in res["signal_list"]}, {"SPY"})
+        self.assertEqual(res["skipped"][0]["reason"], "not in desk.json universe")
+        for e in res["signal_list"]:
+            self.assertEqual(e["candidate"], not e["why_not"])
+
+    def test_real_data_files_load(self):
+        for sym in ("SPY", "QQQ"):
+            bs = chart.load_csv(os.path.join(os.path.dirname(__file__), "..", "data", f"{sym}.csv"))
+            self.assertEqual(len(bs), 100)
