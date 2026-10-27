@@ -108,7 +108,7 @@ test blocks, and it made at least 3 out-of-sample trades.
 ## Data validation (chart/validate.py)
 
 `python3 -m chart validate FILE... [--ref REF]` fails on: dates not strictly ascending, a non-positive price, low > min(open, close),
-high < max(open, close), a close moving more than 25% in a day, or, with `--ref`, an overlapping close more than $0.02 away
+high < max(open, close), a high/low more than 15% beyond the open/close (a bad print), a close moving more than 25% in a day, or, with `--ref`, an overlapping close more than $0.02 away
 from the reference vendor's close.
 
 ## Forward paper test (chart/forward.py, chart/update.py)
