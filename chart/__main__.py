@@ -2,6 +2,9 @@
 python3 -m chart walkforward chart/data/SPY.csv --strategy rsi_revert --train 0.7
 python3 -m chart walkforward chart/data/SPY.csv --strategy bollinger_revert --rolling
 python3 -m chart scan --out ledger/signals.json
+python3 -m chart forward record      # once a day, after the close and before the next open
+python3 -m chart forward report
+python3 -m chart validate chart/data/SPY.csv
 """
 import argparse
 import json
@@ -52,7 +55,37 @@ def main(argv=None):
     s.add_argument("--fee-bps", type=float, default=1.0)
     s.add_argument("--slippage-bps", type=float, default=2.0)
     s.add_argument("--out", help="also write the JSON here")
+    f = sub.add_parser("forward", help="log today's scan before the open, or score logged signals")
+    f.add_argument("action", choices=("record", "report"))
+    f.add_argument("folder", nargs="?", default="chart/data")
+    f.add_argument("--log", help="signal log path (default ledger/signals.jsonl)")
+    u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
+    u.add_argument("folder", nargs="?", default="chart/data")
+    v = sub.add_parser("validate", help="sanity-check OHLC CSVs, optionally against an overlapping reference")
+    v.add_argument("csv", nargs="+")
+    v.add_argument("--ref", help="reference CSV whose overlapping closes must match")
     a = p.parse_args(argv)
+    if a.cmd == "forward":
+        from fund import config
+        from . import forward
+        uni = config.load().universe
+        log = a.log or forward.LOG
+        if a.action == "record":
+            row = forward.record(scan(pathlib.Path(a.folder).glob("*.csv"), uni, fee_bps=1, slippage_bps=2), log)
+            print(json.dumps(row, indent=2) if row else "already recorded for this as-of date")
+        else:
+            print(json.dumps(forward.report(log, folder=a.folder, universe=uni), indent=2))
+        return
+    if a.cmd == "update":
+        from fund import config
+        from .update import update
+        print(json.dumps(update(a.folder, config.load().universe), indent=2))
+        return
+    if a.cmd == "validate":
+        from .validate import check
+        res = [check(c, a.ref) for c in a.csv]
+        print(json.dumps(res, indent=2))
+        raise SystemExit(0 if all(r["ok"] for r in res) else 1)
     if a.cmd == "walkforward":
         costs = {"fee_bps": a.fee_bps, "slippage_bps": a.slippage_bps}
         if a.rolling:

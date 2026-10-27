@@ -103,3 +103,19 @@ Each rejection is listed in `why_not`. The scan never builds a preview or touche
 An entry is a candidate only when **all** of these hold: the latest signal is long (or holds a symbol, for the basket), the
 stitched out-of-sample Sharpe is > 0, it beat buy-and-hold over the whole out-of-sample span, it beat buy-and-hold in at least
 half the test blocks, and it made at least 3 out-of-sample trades.
+
+## Data validation (chart/validate.py)
+
+`python3 -m chart validate FILE... [--ref REF]` fails on: dates not strictly ascending, a non-positive price, low > min(open, close),
+high < max(open, close), a close moving more than 25% in a day, or, with `--ref`, an overlapping close more than $0.02 away
+from the reference vendor's close.
+
+## Forward paper test (chart/forward.py, chart/update.py)
+
+- `chart update` appends Alpha Vantage daily bars dated after each file's last row. It never rewrites history and skips crypto.
+- `chart forward record` scans and appends one JSON line per as-of date to `ledger/signals.jsonl` (or `--log`). It runs after
+  the close, before the next open, so the signal is fixed before the market can grade it. Re-running the same day is a no-op.
+- `chart forward report` scores every logged long signal from the **next open** to the close 1, 5 and 10 sessions later, with
+  the number of signals and the hit rate. Horizons that haven't elapsed are not counted.
+- `.github/workflows/chart-forward.yml` runs this every weekday at 21:37 UTC and keeps the data, log and report on the `shadow-data`
+  branch under `chart-forward/`. It needs the `ALPHAVANTAGE_API_KEY` repository secret.
