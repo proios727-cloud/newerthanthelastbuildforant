@@ -112,3 +112,19 @@ Three desks share one TypeSafe judgment layer. Everything runs in paper or shado
 | `sportsbook/` | Sportsbook line tracker (ported from 456CASH) | `sportsbook/cause.py`: why the line moved (Choice) | A move counts as sharp only when no news explains it |
 
 `judge/` holds the questions and clients. Without credentials, `judge.from_env()` returns a stub whose answers never count as confident, so every desk behaves as it did before. To go live, set `TYPESAFE_API_KEY`, `TYPESAFE_API_URL` and `TYPESAFE_LIVE=1`, and allow the API host in the network policy. Before that, check `judge.HttpClient` against the [TypeSafe API docs](https://docs.typesafe.ai/api.md); its request format has not been verified.
+
+## Charting engine and RE Studio
+
+| Path | What it is |
+|---|---|
+| `chart/` | Indicator engine (SMA, EMA, Wilder RMA, RSI, MACD, Bollinger, ATR) and a bar backtester that fills on the next bar's open, so it never looks ahead. Pure stdlib. Built from published definitions; see `chart/SPEC.md`. |
+| `tests/test_chart.py` | Oracle cases from the spec, including a test that checks the tests can fail. |
+| `docs/re-studio.md` | Reference for the AI reverse-engineering stack (REA, Ghidra, jadx, Frida…): install, engines, workflows, prompts, legal guardrails. |
+| `.claude/skills/re-studio/` | Project skill: scope gate → evidence → SPEC.md → clean-room build → oracle loop. |
+
+```bash
+python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1
+python3 -m chart backtest prices.csv --strategy rsi_revert --rsi-n 14 --lo 30 --hi 70
+```
+
+The CSV needs `date, open, high, low, close[, volume]` in ascending order. Backtest results are research output, not investment advice.
