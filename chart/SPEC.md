@@ -129,3 +129,13 @@ over the same span, its Calmar ratio (CAGR ÷ |max drawdown|) is at least buy-an
 time (so sitting in cash doesn't count as risk control), Sharpe > 0, and at least 3 out-of-sample trades. Rejections are listed in
 `risk_why_not`. Stats now include `cagr` and `calmar`; each entry carries a `hold` block with the same fields for buy-and-hold.
 `chart scan --all` scans every CSV in a folder (research mode), not only the desk universe.
+
+## Rotation stress tests (chart/robust.py, `chart stress`)
+
+- `picks_top(lookback, hold, top, offset)` holds the `top` strongest symbols with positive momentum in equal weight (empty =
+  cash), deciding every `hold` bars, starting `offset` bars later. `run_multi` executes it with next-open fills. With
+  `trade_changes_only=True` it sells only the names leaving and buys only the names joining. With top=1 both modes
+  reproduce `rotate.run` exactly (a test checks this).
+- `rolling_multi` repeats `rotate.rolling`'s re-pick-and-stitch protocol for top-N holdings.
+- `day_sweep` runs one fixed rule from **every** possible rebalance day and reports min/median/max, so no single lucky day
+  is reported. `stress` repeats that at 1+2, 10+10 and 25+25 bp and with GLD, TLT and XLK each removed.

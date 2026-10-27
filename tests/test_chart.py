@@ -527,3 +527,48 @@ class EtfDataTests(unittest.TestCase):
             self.assertTrue(r["ok"], (f, r["problems"]))
         xlk = {b.ts: b.close for b in chart.load_csv(os.path.join(self.D, "XLK.csv"))}
         self.assertLess(abs(xlk["2025-12-05"] / xlk["2025-12-04"] - 1), 0.1)   # no fake -50% split day
+
+
+class RobustTests(unittest.TestCase):
+    def basket(self):
+        import math
+        mk = lambda f: bars_from([100 + f(i) for i in range(320)])
+        return {"A": mk(lambda i: i * 0.3), "B": mk(lambda i: 10 * math.sin(i / 9)), "C": mk(lambda i: -i * 0.05),
+                "D": mk(lambda i: 5 * math.sin(i / 4) + i * 0.1)}
+
+    def test_top1_reproduces_rotate(self):
+        from chart import robust, rotate
+        al = rotate.align(self.basket())
+        a = rotate.rolling(al, min_train=120, test=20, fee_bps=1, slippage_bps=2)
+        b = robust.rolling_multi(al, min_train=120, test=20, top=1, fee_bps=1, slippage_bps=2)
+        self.assertAlmostEqual(a["oos"]["total_return"], b["oos"]["total_return"], places=10)
+        self.assertEqual(a["windows_beat_hold"], b["beat"])
+
+    def test_picks_top_offsets_and_cash(self):
+        from chart import robust, rotate
+        al = rotate.align(self.basket())
+        p = robust.picks_top(al, lookback=20, hold=10, top=2, offset=3)
+        days = [i for i, t in enumerate(p) if t is not None]
+        self.assertEqual(days[0], 23)
+        self.assertTrue(all((d - 23) % 10 == 0 for d in days))
+        self.assertTrue(all(len(t) <= 2 for t in p if t is not None))
+        down = rotate.align({"X": bars_from([100.0 - i for i in range(40)]), "Y": bars_from([50.0 - i * 0.1 for i in range(40)])})
+        self.assertEqual(robust.picks_top(down, lookback=5, top=2)[-1], ())
+
+    def test_changes_only_trades_less_and_matches_top1(self):
+        from chart import robust, rotate
+        al = rotate.align(self.basket())
+        t3 = robust.picks_top(al, lookback=20, hold=5, top=3)
+        full = robust.run_multi(al, t3, 0, None, fee_bps=10, slippage_bps=10)
+        diff = robust.run_multi(al, t3, 0, None, fee_bps=10, slippage_bps=10, trade_changes_only=True)
+        self.assertLess(len(diff.trades), len(full.trades))
+        t1 = robust.picks_top(al, lookback=20, hold=5, top=1)
+        self.assertAlmostEqual(robust.run_multi(al, t1, 0, None, fee_bps=5).equity[-1],
+                               robust.run_multi(al, t1, 0, None, fee_bps=5, trade_changes_only=True).equity[-1])
+
+    def test_day_sweep_covers_every_day(self):
+        from chart import robust, rotate
+        r = robust.day_sweep(rotate.align(self.basket()), lookback=20, hold=7, top=2, min_train=120)
+        self.assertEqual(r["days"], 7)
+        self.assertLessEqual(r["cagr"]["min"], r["cagr"]["median"])
+        self.assertLessEqual(r["cagr"]["median"], r["cagr"]["max"])

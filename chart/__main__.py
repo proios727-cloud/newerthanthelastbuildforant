@@ -66,6 +66,11 @@ def main(argv=None):
     r = sub.add_parser("report", help="write the visual scorecard (.html) or its data (.json)")
     r.add_argument("folders", nargs="+", help="NAME=FOLDER pairs, e.g. Stocks=chart/data")
     r.add_argument("--out", required=True)
+    st = sub.add_parser("stress", help="stress-test a basket rotation rule across rebalance days, costs and universes")
+    st.add_argument("folder", nargs="?", default="chart/data/etf")
+    st.add_argument("--lookback", type=int, default=60)
+    st.add_argument("--hold", type=int, default=21)
+    st.add_argument("--top", type=int, default=3)
     v = sub.add_parser("validate", help="sanity-check OHLC CSVs, optionally against an overlapping reference")
     v.add_argument("csv", nargs="+")
     v.add_argument("--ref", help="reference CSV whose overlapping closes must match")
@@ -94,6 +99,11 @@ def main(argv=None):
         text = render_html(data) if a.out.endswith(".html") else json.dumps(data, separators=(",", ":"))
         pathlib.Path(a.out).write_text(text, encoding="utf-8")
         print(f"wrote {a.out}")
+        return
+    if a.cmd == "stress":
+        from .robust import stress
+        bars = {f.stem.upper(): load_csv(f) for f in sorted(pathlib.Path(a.folder).glob("*.csv"))}
+        print(json.dumps(_round(stress(bars, {"lookback": a.lookback, "hold": a.hold, "top": a.top})), indent=2))
         return
     if a.cmd == "validate":
         from .validate import check
