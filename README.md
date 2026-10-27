@@ -181,7 +181,7 @@ python3 -m chart forward record && python3 -m chart forward report
 **Rolling scan, 25 out-of-sample months (Oct 2024 → Oct 2026), 128 tests across both universes.** A strategy is judged two ways: as a *return candidate* (beats holding on return and Sharpe, and wins at least half the months) and as a *risk filter* (a drawdown at least a third shallower than holding, with an equal or better Calmar ratio).
 
 - **ETF momentum rotation is the only strong return candidate.** It made +28.8% a year vs +9.7% for an equal-weight basket of the 13 ETFs and +15.6% for SPY, with a −13% max drawdown vs −13.5% and −19%. It won 16 of 25 months, used only 2 parameter sets, and its gains came from several sectors. Without GLD it still beats the basket on return (+16.7% vs +8.6%) but its drawdown deepens to −26%, so gold's diversification is part of the result.
-- **The SMA cross keeps working as a risk filter:** IWM, XLC, XLI and XLB all cut their drawdown by 40–50% for a similar or better Calmar ratio.
+- **The SMA cross keeps working as a risk filter:** IWM, XLC, XLI and XLB all cut their drawdown by 40–57% for a similar or better Calmar ratio.
 - **The earlier MACD-trend risk filters on TSLA and AMD didn't hold up on the ETFs.** MACD-trend matched holding's Calmar on only 1 of 13, so treat those two as likely luck.
 - **On the 8 desk stocks, nothing beats holding.** They were picked with hindsight in a strong bull market.
 
