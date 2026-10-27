@@ -1,5 +1,6 @@
 """python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1
 python3 -m chart walkforward chart/data/SPY.csv --strategy rsi_revert --train 0.7
+python3 -m chart walkforward chart/data/SPY.csv --strategy bollinger_revert --rolling
 python3 -m chart scan --out ledger/signals.json
 """
 import argparse
@@ -8,7 +9,7 @@ import pathlib
 
 from . import STRATEGIES, backtest, load_csv
 from .scan import scan
-from .sweep import walk_forward
+from .sweep import GRIDS, rolling_walk_forward, walk_forward
 
 
 def _round(x):
@@ -37,26 +38,33 @@ def main(argv=None):
     b.add_argument("--periods-per-year", type=int, default=252)
     w = sub.add_parser("walkforward", help="choose params on the train slice, score them on the test slice")
     w.add_argument("csv")
-    w.add_argument("--strategy", choices=sorted(STRATEGIES), default="sma_cross")
-    w.add_argument("--train", type=float, default=0.7)
+    w.add_argument("--strategy", choices=sorted(GRIDS), default="sma_cross")
+    w.add_argument("--train", type=float, default=0.7, help="single split: fraction of bars to train on")
+    w.add_argument("--rolling", action="store_true", help="re-pick params before every test block instead")
+    w.add_argument("--min-train", type=int, default=40)
+    w.add_argument("--test", type=int, default=10)
     w.add_argument("--fee-bps", type=float, default=0.0)
     w.add_argument("--slippage-bps", type=float, default=0.0)
     s = sub.add_parser("scan", help="walk-forward every universe CSV in a folder and print the desk signal_list")
     s.add_argument("folder", nargs="?", default="chart/data")
-    s.add_argument("--train", type=float, default=0.7)
+    s.add_argument("--min-train", type=int, default=40)
+    s.add_argument("--test", type=int, default=10)
     s.add_argument("--fee-bps", type=float, default=1.0)
     s.add_argument("--slippage-bps", type=float, default=2.0)
     s.add_argument("--out", help="also write the JSON here")
     a = p.parse_args(argv)
     if a.cmd == "walkforward":
-        wf = walk_forward(load_csv(a.csv), a.strategy, train_frac=a.train,
-                          fee_bps=a.fee_bps, slippage_bps=a.slippage_bps)
-        wf.pop("signals")
+        costs = {"fee_bps": a.fee_bps, "slippage_bps": a.slippage_bps}
+        if a.rolling:
+            wf = rolling_walk_forward(load_csv(a.csv), a.strategy, min_train=a.min_train, test=a.test, **costs)
+        else:
+            wf = walk_forward(load_csv(a.csv), a.strategy, train_frac=a.train, **costs)
+            wf.pop("signals")
         print(json.dumps(_round(wf), indent=2))
         return
     if a.cmd == "scan":
         from fund import config
-        res = scan(pathlib.Path(a.folder).glob("*.csv"), config.load().universe, train_frac=a.train,
+        res = scan(pathlib.Path(a.folder).glob("*.csv"), config.load().universe, min_train=a.min_train, test=a.test,
                    fee_bps=a.fee_bps, slippage_bps=a.slippage_bps)
         text = json.dumps(res, indent=2)
         if a.out:
