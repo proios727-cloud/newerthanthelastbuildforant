@@ -10,7 +10,7 @@ from .sweep import walk_forward
 
 
 def symbol_for(path, universe):
-    """data/SPY.csv → SPY; data/BTC-USD.csv → BTC/USD. None when it isn't in the pinned universe."""
+    """chart/data/SPY.csv → SPY; chart/data/BTC-USD.csv → BTC/USD. None when it isn't in the pinned universe."""
     stem = pathlib.Path(path).stem.upper()
     for cand in (stem, stem.replace("-", "/"), stem.replace("_", "/")):
         if cand in universe:

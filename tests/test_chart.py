@@ -192,5 +192,5 @@ class ScanTests(unittest.TestCase):
 
     def test_real_data_files_load(self):
         for sym in ("SPY", "QQQ"):
-            bs = chart.load_csv(os.path.join(os.path.dirname(__file__), "..", "data", f"{sym}.csv"))
+            bs = chart.load_csv(os.path.join(os.path.dirname(__file__), "..", "chart", "data", f"{sym}.csv"))
             self.assertEqual(len(bs), 100)

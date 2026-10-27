@@ -66,7 +66,7 @@ Each indicator returns a list the same length as its input, with `None` until it
 
 ## Desk bridge (chart/scan.py)
 
-`scan(paths, universe)` maps `data/<SYMBOL>.csv` to a universe symbol (with `-` or `_` → `/` for crypto), runs walk-forward
+`scan(paths, universe)` maps `chart/data/<SYMBOL>.csv` to a universe symbol (with `-` or `_` → `/` for crypto), runs walk-forward
 per strategy, and returns the Quant seat's `signal_list`. An entry is a **candidate** only when all of these hold:
 the latest signal is long, the out-of-sample Sharpe is > 0, it beat buy-and-hold out of sample, and it made at least 2 out-of-sample trades.
 Each rejection is listed in `why_not`. The scan never builds a preview or touches the ledger.

@@ -1,0 +1,2 @@
+# Keep CRLF bytes in the repo so a raw download runs cleanly in cmd.exe
+*.bat -text

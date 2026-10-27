@@ -1,6 +1,6 @@
 """python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1
-python3 -m chart walkforward data/SPY.csv --strategy rsi_revert --train 0.7
-python3 -m chart scan data --out ledger/signals.json
+python3 -m chart walkforward chart/data/SPY.csv --strategy rsi_revert --train 0.7
+python3 -m chart scan --out ledger/signals.json
 """
 import argparse
 import json
@@ -42,7 +42,7 @@ def main(argv=None):
     w.add_argument("--fee-bps", type=float, default=0.0)
     w.add_argument("--slippage-bps", type=float, default=0.0)
     s = sub.add_parser("scan", help="walk-forward every universe CSV in a folder and print the desk signal_list")
-    s.add_argument("folder", nargs="?", default="data")
+    s.add_argument("folder", nargs="?", default="chart/data")
     s.add_argument("--train", type=float, default=0.7)
     s.add_argument("--fee-bps", type=float, default=1.0)
     s.add_argument("--slippage-bps", type=float, default=2.0)

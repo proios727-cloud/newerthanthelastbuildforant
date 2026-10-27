@@ -10,3 +10,4 @@ jobs:
           python-version: "3.11"
       - run: python -m unittest -v
       - run: python scripts/build_board.py desk.json
+      - run: python scripts/build_dashboard.py --out /tmp/dashboard.html

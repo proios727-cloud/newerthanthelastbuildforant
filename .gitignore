@@ -1,5 +1,8 @@
 __pycache__/
 *.pyc
 .DS_Store
+data/
+*.log
 re/*/original/
 re/*/decompiled/
+!chart/data/

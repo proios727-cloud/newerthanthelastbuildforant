@@ -18,7 +18,7 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `fund/risk.py` | The Risk Officer's rules as pure functions. PASS comes with a max size; VETO names the rule. |
 | `fund/preview.py` | Order preview → `EXECUTE` gate → paper fill. There is no live execution path. |
 | `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
-| `tests/` | 32 unit tests: `python3 -m unittest -v` |
+| `tests/` | unit tests: `python3 -m unittest -v` |
 
 ```bash
 python3 scripts/build_board.py desk.json --out board.html
@@ -101,17 +101,54 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 
 This desk supports decisions. It is not investment advice, and nothing in it executes trades.
 
+## Dashboard
+
+`python scripts/build_dashboard.py` writes `dashboard.html`: one page showing all four desks (fund limits, SPY gamma map, Kalshi quotes and fill scenarios, sportsbook signals), computed by the desks' own code. CI builds it on every push.
+
+## Live Kalshi scan (read-only)
+
+`python -m kalshi.feed --series KXBTC15M KXETH15M [--log shadow.jsonl]` reads open markets from Kalshi's public API (no key), shows the top of book and the maker pair the desk would rest, and logs it. It only sends GET requests. Markets stay unquoted until TypeSafe verifies their settlement rules. Needs `api.elections.kalshi.com` allowed in the network policy.
+
 ## Desks in this repo
 
-Three desks share one TypeSafe judgment layer. Everything runs in paper or shadow mode; nothing places a bet or an order.
+Four desks share one TypeSafe judgment layer. Strategy notes and the Heatseeker signal ledger from 456CASH are in `docs/`. Everything runs in paper or shadow mode; nothing places a bet or an order.
 
 | Path | Desk | TypeSafe judgment | Policy in code |
 |---|---|---|---|
 | `fund/` | Trading (equities + crypto) | `fund/catalyst.py`: material headline risk (Noul) and direction (Choice) | A live answer with p ≥ 0.80 blocks opening size; exits are never blocked |
+| `options/` | Options Greeks and GEX map (ported from 456CASH) | none yet | Black-Scholes Greeks, implied vol, dealer-gamma walls, king node and flip from recorded SPY chains in `options/data/chains/` |
 | `kalshi/` | Kalshi 15-min BTC/ETH maker | `kalshi/settlement.py`: the rules settle on CF Benchmarks for the stated window (Noul) | Quote a market only after a live yes with p ≥ 0.90; LIVE mode is refused |
 | `sportsbook/` | Sportsbook line tracker (ported from 456CASH) | `sportsbook/cause.py`: why the line moved (Choice) | A move counts as sharp only when no news explains it |
 
 `judge/` holds the questions and clients. Without credentials, `judge.from_env()` returns a stub whose answers never count as confident, so every desk behaves as it did before. To go live, set `TYPESAFE_API_KEY`, `TYPESAFE_API_URL` and `TYPESAFE_LIVE=1`, and allow the API host in the network policy. Before that, check `judge.HttpClient` against the [TypeSafe API docs](https://docs.typesafe.ai/api.md); its request format has not been verified.
+
+## GM toxicity desk (`gmdesk/`)
+
+Glosten-Milgrom × Avellaneda-Stoikov market-making research on Kalshi 15-minute BTC/ETH markets, built
+from the `skills/gm-toxicity-mm` skill. Read-only: it records public trades, calibrates a VPIN toxicity
+signal out of sample, replays both quoters with fees, and runs a live shadow. **It places no orders.**
+
+```bash
+python3 -m gmdesk.record backfill --series KXETH15M --markets 120   # stage 1 (data/ is git-ignored)
+python3 -m gmdesk.analyze --series KXETH15M                         # stage 2 gate
+python3 -m gmdesk.replay  --series KXETH15M                         # stage 3 gate
+python3 -m gmdesk.shadow run --series KXETH15M --minutes 240        # stage 4 (live, no orders)
+python3 -m gmdesk.shadow report data/gm/shadow_KXETH15M.jsonl --replay data/gm/replay_KXETH15M.json
+python3 -m gmdesk.board_data                                        # board Real-tape data
+```
+
+## Router doctor (`skills/router-doctor/`)
+
+Read-only home Wi-Fi diagnosis, plus an agent workflow for tuning the router one approved change at a time. It's the safe version of the viral "Claude Code fixed my router" post. Run it on a machine on your home network; a cloud session can't reach your router.
+
+```bash
+python3 skills/router-doctor/scripts/router_doctor.py diagnose --out router_report.json  # verdict + channel congestion
+python3 skills/router-doctor/scripts/router_doctor.py diagnose --router eero              # eero: advice as eero app steps
+python3 skills/router-doctor/scripts/router_doctor.py watch --minutes 10                  # catch on-and-off drops
+python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin          # store router password in the OS keychain
+```
+
+**Windows, no install:** double-click `skills/router-doctor/windows/Check-WiFi.bat`. It watches the router and the internet for a few minutes, tracks the Wi-Fi band and signal, then saves a verdict report (`WiFi-Check-*.txt` plus a CSV) to the Desktop.
 
 ## Charting engine and RE Studio
 
@@ -119,8 +156,8 @@ Three desks share one TypeSafe judgment layer. Everything runs in paper or shado
 |---|---|
 | `chart/` | Indicator engine (SMA, EMA, Wilder RMA, RSI, MACD, Bollinger, ATR) and a bar backtester that fills on the next bar's open, so it never looks ahead. Pure stdlib. Built from published definitions; see `chart/SPEC.md`. |
 | `chart/sweep.py` | Parameter sweep and walk-forward test: settings are chosen on the first 70% of bars and scored only on the last 30%, against buy-and-hold. |
-| `chart/scan.py` | Quant-seat bridge: walk-forward each `data/<SYMBOL>.csv` in the desk universe and emit a `signal_list` with a candidate flag and the reasons it was rejected. Research only. |
-| `data/` | Daily bars from Alpha Vantage (SPY, QQQ: 100 sessions, 2026-06-05 → 2026-10-27; the free key only returns 100 bars). |
+| `chart/scan.py` | Quant-seat bridge: walk-forward each `chart/data/<SYMBOL>.csv` in the desk universe and emit a `signal_list` with a candidate flag and the reasons it was rejected. Research only. |
+| `chart/data/` | Daily bars from Alpha Vantage (SPY, QQQ: 100 sessions, 2026-06-05 → 2026-10-27; the free key only returns 100 bars). |
 | `tests/test_chart.py` | Oracle cases from the spec, including a test that checks the tests can fail and a check that the test slice can't influence parameter choice. |
 | `docs/re-studio.md` | Reference for the AI reverse-engineering stack (REA, Ghidra, jadx, Frida…): install, engines, workflows, prompts, legal guardrails. |
 | `.claude/skills/re-studio/` | Project skill: scope gate → evidence → SPEC.md → clean-room build → oracle loop. |
@@ -128,8 +165,8 @@ Three desks share one TypeSafe judgment layer. Everything runs in paper or shado
 ```bash
 python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1
 python3 -m chart backtest prices.csv --strategy rsi_revert --rsi-n 14 --lo 30 --hi 70
-python3 -m chart walkforward data/SPY.csv --strategy sma_cross --train 0.7
-python3 -m chart scan data --out ledger/signals.json      # 1 bp fee + 2 bp slippage by default
+python3 -m chart walkforward chart/data/SPY.csv --strategy sma_cross --train 0.7
+python3 -m chart scan --out ledger/signals.json      # 1 bp fee + 2 bp slippage by default
 ```
 
 **First scan on real data (2026-10-27): no candidates.** None of the 4 symbol/strategy pairs beat buy-and-hold over the held-out 30 sessions, so the Quant seat has nothing to pass on. With 100 bars this is a smoke test, not evidence either way. A premium key (`outputsize=full`) would give 20+ years.
