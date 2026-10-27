@@ -55,6 +55,8 @@ def main(argv=None):
     s.add_argument("--fee-bps", type=float, default=1.0)
     s.add_argument("--slippage-bps", type=float, default=2.0)
     s.add_argument("--out", help="also write the JSON here")
+    s.add_argument("--all", action="store_true",
+                   help="research mode: scan every CSV in the folder, not only symbols in desk.json's universe")
     f = sub.add_parser("forward", help="log today's scan before the open, or score logged signals")
     f.add_argument("action", choices=("record", "report"))
     f.add_argument("folder", nargs="?", default="chart/data")
@@ -98,7 +100,9 @@ def main(argv=None):
         return
     if a.cmd == "scan":
         from fund import config
-        res = scan(pathlib.Path(a.folder).glob("*.csv"), config.load().universe, min_train=a.min_train, test=a.test,
+        files = sorted(pathlib.Path(a.folder).glob("*.csv"))
+        uni = {f.stem.upper(): {"asset": "equity"} for f in files} if a.all else config.load().universe
+        res = scan(files, uni, min_train=a.min_train, test=a.test,
                    fee_bps=a.fee_bps, slippage_bps=a.slippage_bps)
         text = json.dumps(res, indent=2)
         if a.out:

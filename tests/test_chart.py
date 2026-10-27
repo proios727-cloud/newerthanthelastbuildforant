@@ -473,3 +473,36 @@ class AdjustTests(unittest.TestCase):
         with open(p, "w") as f:
             f.write("date,open,high,low,close\n2026-02-02,690,696.9,69.005,694\n")
         self.assertIn("wick", " ".join(check(p)["problems"]))
+
+
+class RiskFilterTests(unittest.TestCase):
+    HOLD = {"max_drawdown": -0.54, "calmar": 0.48, "sharpe": 0.7}
+
+    def oos(self, **kw):
+        base = {"max_drawdown": -0.23, "calmar": 1.14, "exposure": 0.38, "sharpe": 0.9, "n_trades": 26}
+        base.update(kw)
+        return base
+
+    def test_much_shallower_drawdown_passes(self):
+        from chart.scan import _risk_verdict
+        self.assertEqual(_risk_verdict(self.oos(), self.HOLD), [])
+
+    def test_barely_shallower_drawdown_fails(self):
+        from chart.scan import _risk_verdict
+        r = _risk_verdict(self.oos(max_drawdown=-0.50), self.HOLD)     # only 7% shallower
+        self.assertTrue(any("drawdown" in x for x in r))
+
+    def test_needs_calmar_exposure_and_trades(self):
+        from chart.scan import _risk_verdict
+        r = " ".join(_risk_verdict(self.oos(calmar=0.3, exposure=0.1, n_trades=1), self.HOLD))
+        self.assertIn("Calmar", r)
+        self.assertIn("invested only 10%", r)
+        self.assertIn("fewer than 3", r)
+
+    def test_cagr_and_calmar_in_stats(self):
+        from chart.backtest import _stats
+        eq = [100.0, 120.0, 90.0, 121.0]
+        s = _stats(eq, [], 4, 100.0, 4)                                 # 4 bars = 1 year
+        self.assertAlmostEqual(s["cagr"], 0.21)
+        self.assertAlmostEqual(s["max_drawdown"], -0.25)
+        self.assertAlmostEqual(s["calmar"], 0.84)
