@@ -194,3 +194,122 @@ class ScanTests(unittest.TestCase):
         for sym in ("SPY", "QQQ"):
             bs = chart.load_csv(os.path.join(os.path.dirname(__file__), "..", "chart", "data", f"{sym}.csv"))
             self.assertEqual(len(bs), 100)
+
+
+def wave(n=120, amp=10.0, period=6.0, drift=0.1):
+    import math
+    return bars_from([100 + amp * math.sin(i / period) + i * drift for i in range(n)])
+
+
+class StrategyTests(unittest.TestCase):
+    def test_regime(self):
+        from chart.strategies import regime
+        self.assertEqual(regime([1.0, 2, 3, 2.5], 2), [None, True, True, False])
+
+    def test_rsi_dip_trend_exits_when_trend_breaks(self):
+        from chart.strategies import rsi_dip_trend
+        down = [float(100 - i) for i in range(40)]
+        sig = rsi_dip_trend(down, n=3, lo=30, hi=60, trend=10)
+        self.assertTrue(all(s in (0, None) for s in sig))      # never buys a dip in a downtrend
+        self.assertEqual(sig[-1], 0)
+
+    def test_bollinger_revert(self):
+        from chart.strategies import bollinger_revert
+        x = [100.0] * 20 + [90.0, 100.0]
+        sig = bollinger_revert(x, n=20, k=2.0)
+        self.assertEqual(sig[20], 1)                           # well below the lower band
+        self.assertEqual(sig[21], 0)                           # back at the middle band
+
+    def test_donchian_uses_prior_bars_only(self):
+        from chart.strategies import donchian_breakout
+        bs = [Bar(str(i), 10, 11, 9, 10) for i in range(5)] + [Bar("5", 10, 13, 10, 12), Bar("6", 9, 9, 7, 8)]
+        sig = donchian_breakout(bs, n=5, exit_n=3)
+        self.assertEqual(sig[5], 1)                            # close 12 > prior 5-bar high 11
+        self.assertEqual(sig[6], 0)                            # close 8 < prior 3-bar low 9
+
+    def test_macd_trend_flat_in_downtrend(self):
+        from chart.strategies import macd_trend
+        sig = macd_trend([float(200 - i) for i in range(80)], 8, 17, 9, 20)
+        self.assertEqual(sig[-1], 0)
+
+    def test_every_grid_combo_runs(self):
+        from chart.sweep import GRIDS, combos, signals
+        bars = wave(80)
+        for s in GRIDS:
+            for p in combos(s):
+                self.assertEqual(len(signals(s, bars, p)), 80)
+
+
+class RollingTests(unittest.TestCase):
+    def test_blocks_cover_the_test_span(self):
+        from chart.sweep import rolling_walk_forward
+        r = rolling_walk_forward(wave(120), "sma_cross", min_train=40, test=10)
+        self.assertEqual(len(r["windows"]), 8)
+        self.assertEqual(r["oos"]["bars"], 80)
+        self.assertLessEqual(r["windows_beat_hold"], 8)
+
+    def test_future_blocks_cannot_change_past_choices(self):
+        from chart.sweep import rolling_walk_forward
+        a = wave(120)
+        b = list(a)
+        for i in range(90, 120):
+            x = b[i]
+            b[i] = Bar(x.ts, x.open * 2, x.high * 2, x.low * 2, x.close * 2)
+        wa = rolling_walk_forward(a, "rsi_revert")["windows"]
+        wb = rolling_walk_forward(b, "rsi_revert")["windows"]
+        self.assertEqual([w["params"] for w in wa[:5]], [w["params"] for w in wb[:5]])
+        self.assertEqual([w["return"] for w in wa[:5]], [w["return"] for w in wb[:5]])
+        self.assertNotEqual([w["return"] for w in wa[5:]], [w["return"] for w in wb[5:]])   # the change did bite
+
+    def test_rolling_mode_and_size_check(self):
+        from chart.sweep import rolling_walk_forward
+        self.assertEqual(rolling_walk_forward(wave(80), "sma_cross", anchored=False)["mode"], "rolling")
+        with self.assertRaises(ValueError):
+            rolling_walk_forward(wave(45), "sma_cross")
+
+
+class RotationTests(unittest.TestCase):
+    def basket(self):
+        up = bars_from([100.0 + i for i in range(60)])
+        flat = bars_from([100.0] * 60)
+        return {"UP": up, "FLAT": flat}
+
+    def test_align_keeps_common_dates(self):
+        from chart import rotate
+        b = self.basket()
+        b["FLAT"] = b["FLAT"][5:]
+        syms, dates, aligned = rotate.align(b)
+        self.assertEqual(len(dates), 55)
+        self.assertEqual(aligned["UP"][0].ts, dates[0])
+
+    def test_picks_leader_or_cash(self):
+        from chart import rotate
+        al = rotate.align(self.basket())
+        self.assertEqual(rotate.picks(al, lookback=5)[-1], "UP")
+        down = {"A": bars_from([100.0 - i * 0.5 for i in range(30)]), "B": bars_from([50.0 - i * 0.1 for i in range(30)])}
+        self.assertEqual(rotate.picks(rotate.align(down), lookback=5)[-1], "CASH")
+
+    def test_run_fills_next_open(self):
+        from chart import rotate
+        al = rotate.align(self.basket())
+        t = [None] * 60
+        t[10] = "UP"
+        r = rotate.run(al, t, start_cash=1000)
+        self.assertEqual(r.trades[0][0], al[1][11])
+        self.assertAlmostEqual(r.equity[-1], 1000 * 159 / 111)
+
+    def test_rolling_scores_blocks(self):
+        from chart import rotate
+        r = rotate.rolling(rotate.align(self.basket()), min_train=30, test=10)
+        self.assertEqual(len(r["windows"]), 3)
+        self.assertEqual(r["latest_target"], "UP")
+        self.assertIn("windows_beat_hold", r)
+
+    def test_scan_includes_basket(self):
+        from chart.scan import scan
+        d = os.path.join(os.path.dirname(__file__), "..", "chart", "data")
+        res = scan([os.path.join(d, f) for f in os.listdir(d) if f.endswith(".csv")],
+                   {"SPY": {}, "QQQ": {}, "NVDA": {}}, strategies=("sma_cross",))
+        self.assertTrue(any(e["strategy"] == "momentum_rotation" for e in res["signal_list"]))
+        for e in res["signal_list"]:
+            self.assertEqual(e["candidate"], not e["why_not"])

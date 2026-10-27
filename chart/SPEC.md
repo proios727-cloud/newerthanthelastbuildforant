@@ -70,3 +70,36 @@ Each indicator returns a list the same length as its input, with `None` until it
 per strategy, and returns the Quant seat's `signal_list`. An entry is a **candidate** only when all of these hold:
 the latest signal is long, the out-of-sample Sharpe is > 0, it beat buy-and-hold out of sample, and it made at least 2 out-of-sample trades.
 Each rejection is listed in `why_not`. The scan never builds a preview or touches the ledger.
+
+## Rolling walk-forward (chart/sweep.py `rolling_walk_forward`)
+
+- After `min_train` bars (default 40), the remaining bars are cut into `test`-bar blocks (default 10). Before each block,
+  parameters are re-picked on bars [0, t0) (anchored) or on the last `min_train` bars (`anchored=False`).
+- Indicators warm up on all history up to the bar being scored. Parameters are scored only inside their training range.
+- Every block's out-of-sample signals are stitched into **one continuous backtest**, so positions carry across block
+  boundaries. The first block is seeded with the position its parameters already held.
+- Reported: the stitched stats, buy-and-hold over the same span, per-block return vs hold, `windows_beat_hold`,
+  `param_sets_used` (a lower count means steadier choices), and the latest signal and parameters.
+- Oracle: changing bars after block k leaves the parameters **and returns** of blocks before k unchanged, and does change later results.
+
+## More strategies (chart/strategies.py)
+
+| Name | Rule (decided at close, filled next open) |
+|---|---|
+| `rsi_dip_trend` | Long when RSI(n) < lo **and** close > SMA(trend); flat when RSI > hi or the trend breaks |
+| `macd_trend` | Long while MACD line > signal **and** close > SMA(trend) |
+| `bollinger_revert` | Long on a close below the lower band; flat at the middle band |
+| `donchian_breakout` | Long on a close above the prior n-bar high; flat on a close below the prior exit_n-bar low |
+
+## Basket rotation (chart/rotate.py)
+
+- Align symbols on their common dates. Every `hold` bars, rank the symbols by `lookback`-bar return. Hold the leader if its
+  return is > 0, else hold cash. Switches fill at the next open with fees and slippage on both legs.
+- Benchmark: equal-weight buy-and-hold of the basket from the first test bar's next open.
+- `rotate.rolling` uses the same block protocol and per-block scoring as the single-symbol rolling walk-forward.
+
+## Candidate rule (chart/scan.py)
+
+An entry is a candidate only when **all** of these hold: the latest signal is long (or holds a symbol, for the basket), the
+stitched out-of-sample Sharpe is > 0, it beat buy-and-hold over the whole out-of-sample span, it beat buy-and-hold in at least
+half the test blocks, and it made at least 3 out-of-sample trades.

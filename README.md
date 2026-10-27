@@ -155,9 +155,11 @@ python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin 
 | Path | What it is |
 |---|---|
 | `chart/` | Indicator engine (SMA, EMA, Wilder RMA, RSI, MACD, Bollinger, ATR) and a bar backtester that fills on the next bar's open, so it never looks ahead. Pure stdlib. Built from published definitions; see `chart/SPEC.md`. |
-| `chart/sweep.py` | Parameter sweep and walk-forward test: settings are chosen on the first 70% of bars and scored only on the last 30%, against buy-and-hold. |
-| `chart/scan.py` | Quant-seat bridge: walk-forward each `chart/data/<SYMBOL>.csv` in the desk universe and emit a `signal_list` with a candidate flag and the reasons it was rejected. Research only. |
-| `chart/data/` | Daily bars from Alpha Vantage (SPY, QQQ: 100 sessions, 2026-06-05 → 2026-10-27; the free key only returns 100 bars). |
+| `chart/sweep.py` | Parameter sweep, single-split walk-forward, and **rolling walk-forward**: settings are re-picked before every 10-bar test block using only earlier bars, and the blocks are stitched into one continuous out-of-sample run against buy-and-hold. |
+| `chart/strategies.py` | Trend-filtered RSI dips, MACD with a trend filter, Bollinger reversion, Donchian breakout. |
+| `chart/rotate.py` | Basket momentum rotation (hold the strongest symbol, or cash), scored against an equal-weight basket. |
+| `chart/scan.py` | Quant-seat bridge: rolling walk-forward of all 6 strategies on each `chart/data/<SYMBOL>.csv` in the desk universe, plus the basket rotation, emitted as a `signal_list` with a candidate flag and the reasons it was rejected. Research only. |
+| `chart/data/` | Daily bars from Alpha Vantage (SPY, QQQ, NVDA: 100 sessions, 2026-06-05 → 2026-10-27; the free key only returns 100 bars). |
 | `tests/test_chart.py` | Oracle cases from the spec, including a test that checks the tests can fail and a check that the test slice can't influence parameter choice. |
 | `docs/re-studio.md` | Reference for the AI reverse-engineering stack (REA, Ghidra, jadx, Frida…): install, engines, workflows, prompts, legal guardrails. |
 | `.claude/skills/re-studio/` | Project skill: scope gate → evidence → SPEC.md → clean-room build → oracle loop. |
@@ -166,9 +168,10 @@ python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin 
 python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1
 python3 -m chart backtest prices.csv --strategy rsi_revert --rsi-n 14 --lo 30 --hi 70
 python3 -m chart walkforward chart/data/SPY.csv --strategy sma_cross --train 0.7
+python3 -m chart walkforward chart/data/SPY.csv --strategy bollinger_revert --rolling
 python3 -m chart scan --out ledger/signals.json      # 1 bp fee + 2 bp slippage by default
 ```
 
-**First scan on real data (2026-10-27): no candidates.** None of the 4 symbol/strategy pairs beat buy-and-hold over the held-out 30 sessions, so the Quant seat has nothing to pass on. With 100 bars this is a smoke test, not evidence either way. A premium key (`outputsize=full`) would give 20+ years.
+**Rolling scan on real data (2026-10-27): 0 candidates out of 19.** The scan covers 6 strategies × 3 symbols plus the SPY/QQQ/NVDA rotation, with 6 test blocks (4 Aug → 27 Oct). Best on paper: Bollinger reversion on SPY (+1.4% vs −0.8% hold, 5 of 6 blocks), but from 1 trade. The rotation made +1.3% vs −0.4% for the equal-weight basket, but won only 2 of 6 blocks and had a deeper drawdown (−10.5% vs −7.3%). Trend and breakout rules lost money in this choppy stretch. Too few trades to call anything an edge. A premium data key (`outputsize=full`, 20+ years) is the next real unlock. The options gamma map can't be backtested yet: `options/data/chains/` holds only 4 snapshots.
 
 The CSV needs `date, open, high, low, close[, volume]` in ascending order. Backtest results are research output, not investment advice.
