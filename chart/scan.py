@@ -23,7 +23,7 @@ def symbol_for(path, universe):
 MIN_TRADES = 3
 
 
-def _verdict(latest_long, oos, edge, beat, n_windows):
+def _verdict(latest_long, oos, edge, beat, n_windows, hold):
     reasons = []
     if not latest_long:
         reasons.append("signal is flat")
@@ -31,6 +31,8 @@ def _verdict(latest_long, oos, edge, beat, n_windows):
         reasons.append("out-of-sample Sharpe ≤ 0")
     if edge <= 0:
         reasons.append("did not beat buy-and-hold out of sample")
+    if oos["sharpe"] < hold["sharpe"]:
+        reasons.append(f"risk-adjusted worse than buy-and-hold (Sharpe {oos['sharpe']:.2f} vs {hold['sharpe']:.2f})")
     if beat * 2 < n_windows:
         reasons.append(f"beat buy-and-hold in only {beat} of {n_windows} test blocks")
     if oos["n_trades"] < MIN_TRADES:
@@ -45,7 +47,8 @@ def _oos(stats):
 def entry(symbol, bars, strategy, min_train=40, test=10, **kw):
     wf = rolling_walk_forward(bars, strategy, min_train=min_train, test=test, **kw)
     oos, n = wf["oos"], len(wf["windows"])
-    reasons = _verdict(wf["latest_signal"] == 1, oos, wf["edge_vs_hold"], wf["windows_beat_hold"], n)
+    reasons = _verdict(wf["latest_signal"] == 1, oos, wf["edge_vs_hold"], wf["windows_beat_hold"], n,
+                       wf["buy_hold_oos"])
     return {
         "symbol": symbol,
         "strategy": strategy,
@@ -58,6 +61,8 @@ def entry(symbol, bars, strategy, min_train=40, test=10, **kw):
         "oos_window": [oos["from"], oos["to"], oos["bars"]],
         "test_blocks_beat_hold": f"{wf['windows_beat_hold']}/{n}",
         "buy_hold_oos_return": round(wf["buy_hold_oos"]["total_return"], 4),
+        "buy_hold_oos_sharpe": round(wf["buy_hold_oos"]["sharpe"], 4),
+        "buy_hold_oos_max_drawdown": round(wf["buy_hold_oos"]["max_drawdown"], 4),
         "edge_vs_hold": round(wf["edge_vs_hold"], 4),
         "candidate": not reasons,
         "why_not": reasons,
@@ -69,7 +74,8 @@ def basket_entry(bars_by_symbol, min_train=40, test=10, **kw):
     r = rotate.rolling(al, min_train=min_train, test=test, **kw)
     oos = r["oos"]
     n = len(r["windows"])
-    reasons = _verdict(r["latest_target"] not in (None, "CASH"), oos, r["edge_vs_hold"], r["windows_beat_hold"], n)
+    reasons = _verdict(r["latest_target"] not in (None, "CASH"), oos, r["edge_vs_hold"], r["windows_beat_hold"], n,
+                       r["equal_weight_hold_oos"])
     return {
         "symbol": "+".join(r["basket"]),
         "strategy": "momentum_rotation",
@@ -81,6 +87,8 @@ def basket_entry(bars_by_symbol, min_train=40, test=10, **kw):
         "oos_window": [oos["from"], oos["to"], oos["bars"]],
         "test_blocks_beat_hold": f"{r['windows_beat_hold']}/{n}",
         "buy_hold_oos_return": round(r["equal_weight_hold_oos"]["total_return"], 4),
+        "buy_hold_oos_sharpe": round(r["equal_weight_hold_oos"]["sharpe"], 4),
+        "buy_hold_oos_max_drawdown": round(r["equal_weight_hold_oos"]["max_drawdown"], 4),
         "edge_vs_hold": round(r["edge_vs_hold"], 4),
         "candidate": not reasons,
         "why_not": reasons,

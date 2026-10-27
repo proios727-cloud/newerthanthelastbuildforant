@@ -44,14 +44,14 @@ def main(argv=None):
     w.add_argument("--strategy", choices=sorted(GRIDS), default="sma_cross")
     w.add_argument("--train", type=float, default=0.7, help="single split: fraction of bars to train on")
     w.add_argument("--rolling", action="store_true", help="re-pick params before every test block instead")
-    w.add_argument("--min-train", type=int, default=40)
-    w.add_argument("--test", type=int, default=10)
+    w.add_argument("--min-train", type=int, default=252)
+    w.add_argument("--test", type=int, default=21)
     w.add_argument("--fee-bps", type=float, default=0.0)
     w.add_argument("--slippage-bps", type=float, default=0.0)
     s = sub.add_parser("scan", help="walk-forward every universe CSV in a folder and print the desk signal_list")
     s.add_argument("folder", nargs="?", default="chart/data")
-    s.add_argument("--min-train", type=int, default=40)
-    s.add_argument("--test", type=int, default=10)
+    s.add_argument("--min-train", type=int, default=252, help="bars before the first test block (default: 1 year)")
+    s.add_argument("--test", type=int, default=21, help="bars per test block (default: 1 month)")
     s.add_argument("--fee-bps", type=float, default=1.0)
     s.add_argument("--slippage-bps", type=float, default=2.0)
     s.add_argument("--out", help="also write the JSON here")
@@ -71,7 +71,8 @@ def main(argv=None):
         uni = config.load().universe
         log = a.log or forward.LOG
         if a.action == "record":
-            row = forward.record(scan(pathlib.Path(a.folder).glob("*.csv"), uni, fee_bps=1, slippage_bps=2), log)
+            row = forward.record(scan(pathlib.Path(a.folder).glob("*.csv"), uni, min_train=252, test=21,
+                                     fee_bps=1, slippage_bps=2), log)
             print(json.dumps(row, indent=2) if row else "already recorded for this as-of date")
         else:
             print(json.dumps(forward.report(log, folder=a.folder, universe=uni), indent=2))

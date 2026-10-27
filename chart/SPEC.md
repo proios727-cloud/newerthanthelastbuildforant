@@ -101,8 +101,9 @@ Each rejection is listed in `why_not`. The scan never builds a preview or touche
 ## Candidate rule (chart/scan.py)
 
 An entry is a candidate only when **all** of these hold: the latest signal is long (or holds a symbol, for the basket), the
-stitched out-of-sample Sharpe is > 0, it beat buy-and-hold over the whole out-of-sample span, it beat buy-and-hold in at least
-half the test blocks, and it made at least 3 out-of-sample trades.
+stitched out-of-sample Sharpe is > 0 **and at least buy-and-hold's Sharpe over the same span** (so a higher return bought with
+more risk doesn't count), it beat buy-and-hold over the whole out-of-sample span, it beat buy-and-hold in at least half the
+test blocks, and it made at least 3 out-of-sample trades.
 
 ## Data validation (chart/validate.py)
 

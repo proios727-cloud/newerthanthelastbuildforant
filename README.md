@@ -159,7 +159,9 @@ python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin 
 | `chart/strategies.py` | Trend-filtered RSI dips, MACD with a trend filter, Bollinger reversion, Donchian breakout. |
 | `chart/rotate.py` | Basket momentum rotation (hold the strongest symbol, or cash), scored against an equal-weight basket. |
 | `chart/scan.py` | Quant-seat bridge: rolling walk-forward of all 6 strategies on each `chart/data/<SYMBOL>.csv` in the desk universe, plus the basket rotation, emitted as a `signal_list` with a candidate flag and the reasons it was rejected. Research only. |
-| `chart/data/` | Daily bars from Alpha Vantage (SPY, QQQ, NVDA: 100 sessions, 2026-06-05 → 2026-10-27; the free key only returns 100 bars). |
+| `chart/data/` | Daily bars for the desk's 8 equities, 2023-10-02 → 2026-10-26 (770 sessions each), mostly from ThetaData. Sources, the NVDA split adjustment and the two recorded bad-print fixes are in `chart/data/SOURCES.md`. |
+| `chart/validate.py`, `chart/adjust.py` | Data checks (order, bad prints, one-day jumps, cross-vendor closes) and split/correction handling. |
+| `chart/forward.py`, `chart/update.py` | Forward paper test: log each day's signals before the open, score them as bars arrive. `.github/workflows/chart-forward.yml` runs it every weekday on the `shadow-data` branch (needs the `ALPHAVANTAGE_API_KEY` secret). |
 | `tests/test_chart.py` | Oracle cases from the spec, including a test that checks the tests can fail and a check that the test slice can't influence parameter choice. |
 | `docs/re-studio.md` | Reference for the AI reverse-engineering stack (REA, Ghidra, jadx, Frida…): install, engines, workflows, prompts, legal guardrails. |
 | `.claude/skills/re-studio/` | Project skill: scope gate → evidence → SPEC.md → clean-room build → oracle loop. |
@@ -169,9 +171,11 @@ python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --
 python3 -m chart backtest prices.csv --strategy rsi_revert --rsi-n 14 --lo 30 --hi 70
 python3 -m chart walkforward chart/data/SPY.csv --strategy sma_cross --train 0.7
 python3 -m chart walkforward chart/data/SPY.csv --strategy bollinger_revert --rolling
-python3 -m chart scan --out ledger/signals.json      # 1 bp fee + 2 bp slippage by default
+python3 -m chart scan --out ledger/signals.json      # 1-year train, monthly blocks, 1 bp fee + 2 bp slippage
+python3 -m chart validate chart/data/*.csv
+python3 -m chart forward record && python3 -m chart forward report
 ```
 
-**Rolling scan on real data (2026-10-27): 0 candidates out of 19.** The scan covers 6 strategies × 3 symbols plus the SPY/QQQ/NVDA rotation, with 6 test blocks (4 Aug → 27 Oct). Best on paper: Bollinger reversion on SPY (+1.4% vs −0.8% hold, 5 of 6 blocks), but from 1 trade. The rotation made +1.3% vs −0.4% for the equal-weight basket, but won only 2 of 6 blocks and had a deeper drawdown (−10.5% vs −7.3%). Trend and breakout rules lost money in this choppy stretch. Too few trades to call anything an edge. A premium data key (`outputsize=full`, 20+ years) is the next real unlock. The options gamma map can't be backtested yet: `options/data/chains/` holds only 4 snapshots.
+**3-year rolling scan (train 1 year, re-pick monthly, 25 test months: Oct 2024 → Oct 2026): 0 candidates out of 49.** In a strong bull run almost nothing beat simply holding: SPY +35%, AMD +233%. The rotation across all 8 made +100% vs +70% for an equal-weight basket, but with a lower Sharpe (0.88 vs 1.06) and a −49% drawdown vs −32%, so it took more risk for that return. Five pairs beat their stock's Sharpe ratio, among them MACD-trend on AMD and TSLA, Bollinger and RSI reversion on NVDA, and trend-filtered RSI dips on IWM. All of them trailed buy-and-hold on return or won fewer than half the months. The 8 symbols were picked in hindsight, so even these numbers flatter the strategies. The forward paper test is the next real evidence.
 
 The CSV needs `date, open, high, low, close[, volume]` in ascending order. Backtest results are research output, not investment advice.

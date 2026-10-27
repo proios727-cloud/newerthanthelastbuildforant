@@ -191,9 +191,15 @@ class ScanTests(unittest.TestCase):
             self.assertEqual(e["candidate"], not e["why_not"])
 
     def test_real_data_files_load(self):
-        for sym in ("SPY", "QQQ"):
-            bs = chart.load_csv(os.path.join(os.path.dirname(__file__), "..", "chart", "data", f"{sym}.csv"))
-            self.assertEqual(len(bs), 100)
+        from chart.validate import check
+        d = os.path.join(os.path.dirname(__file__), "..", "chart", "data")
+        dates = set()
+        for sym in ("SPY", "QQQ", "IWM", "NVDA", "AMD", "AAPL", "MSFT", "TSLA"):
+            r = check(os.path.join(d, f"{sym}.csv"))
+            self.assertTrue(r["ok"], (sym, r["problems"]))
+            self.assertGreaterEqual(r["bars"], 750)
+            dates.add(tuple(b.ts for b in chart.load_csv(os.path.join(d, f"{sym}.csv"))))
+        self.assertEqual(len(dates), 1)                                    # every file covers the same sessions
 
 
 def wave(n=120, amp=10.0, period=6.0, drift=0.1):
