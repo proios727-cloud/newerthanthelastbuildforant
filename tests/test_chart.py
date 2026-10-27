@@ -191,9 +191,15 @@ class ScanTests(unittest.TestCase):
             self.assertEqual(e["candidate"], not e["why_not"])
 
     def test_real_data_files_load(self):
-        for sym in ("SPY", "QQQ"):
-            bs = chart.load_csv(os.path.join(os.path.dirname(__file__), "..", "chart", "data", f"{sym}.csv"))
-            self.assertEqual(len(bs), 100)
+        from chart.validate import check
+        d = os.path.join(os.path.dirname(__file__), "..", "chart", "data")
+        dates = set()
+        for sym in ("SPY", "QQQ", "IWM", "NVDA", "AMD", "AAPL", "MSFT", "TSLA"):
+            r = check(os.path.join(d, f"{sym}.csv"))
+            self.assertTrue(r["ok"], (sym, r["problems"]))
+            self.assertGreaterEqual(r["bars"], 750)
+            dates.add(tuple(b.ts for b in chart.load_csv(os.path.join(d, f"{sym}.csv"))))
+        self.assertEqual(len(dates), 1)                                    # every file covers the same sessions
 
 
 def wave(n=120, amp=10.0, period=6.0, drift=0.1):
@@ -313,3 +319,157 @@ class RotationTests(unittest.TestCase):
         self.assertTrue(any(e["strategy"] == "momentum_rotation" for e in res["signal_list"]))
         for e in res["signal_list"]:
             self.assertEqual(e["candidate"], not e["why_not"])
+
+
+class ValidateTests(unittest.TestCase):
+    def write(self, text):
+        fd, path = tempfile.mkstemp(suffix=".csv")
+        with os.fdopen(fd, "w") as f:
+            f.write(text)
+        self.addCleanup(os.remove, path)
+        return path
+
+    def test_clean_file_passes_and_matches_reference(self):
+        from chart.validate import check
+        a = self.write("date,open,high,low,close\n2026-01-01,10,11,9,10.5\n2026-01-02,10.5,11,10,10.8\n")
+        ref = self.write("date,open,high,low,close\n2026-01-02,1,1,1,10.8\n")
+        r = check(a, ref)
+        self.assertTrue(r["ok"])
+        self.assertEqual((r["reference_overlap"], r["reference_matched"]), (1, 1))
+
+    def test_catches_bad_rows(self):
+        from chart.validate import check
+        bad = self.write("date,open,high,low,close\n2026-01-01,10,9,8,10\n2026-01-02,10,30,10,25\n")
+        probs = " ".join(check(bad)["problems"])
+        self.assertIn("OHLC out of order", probs)
+        self.assertIn("in one day", probs)
+        ref = self.write("date,open,high,low,close\n2026-01-02,1,1,1,24\n")
+        self.assertIn("vs reference", " ".join(check(bad, ref)["problems"]))
+        self.assertFalse(check(self.write("date,open,high,low,close\n2026-01-02,1,1,1,1\n2026-01-01,1,1,1,1\n"))["ok"])
+
+
+class ForwardTests(unittest.TestCase):
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.addCleanup(lambda: __import__("shutil").rmtree(self.dir))
+        self.log = os.path.join(self.dir, "signals.jsonl")
+        self.data = os.path.join(self.dir, "data")
+        os.mkdir(self.data)
+
+    def scan_result(self, as_of, signal="long"):
+        return {"signal_list": [
+            {"symbol": "SPY", "strategy": "bollinger_revert", "params": {}, "as_of": as_of, "signal": signal, "candidate": False},
+            {"symbol": "QQQ+SPY", "strategy": "momentum_rotation", "params": {}, "as_of": as_of, "signal": "hold CASH", "candidate": False},
+        ]}
+
+    def test_record_is_once_per_as_of(self):
+        from chart import forward
+        self.assertIsNotNone(forward.record(self.scan_result("2026-01-05"), self.log))
+        self.assertIsNone(forward.record(self.scan_result("2026-01-05"), self.log))
+        self.assertIsNotNone(forward.record(self.scan_result("2026-01-06"), self.log))
+        rows = open(self.log).read().splitlines()
+        self.assertEqual(len(rows), 2)
+        import json
+        self.assertIsNone(json.loads(rows[0])["entries"][1]["long"])   # basket in cash is not long
+
+    def test_report_scores_from_next_open_and_waits_for_data(self):
+        from chart import forward
+        with open(os.path.join(self.data, "SPY.csv"), "w") as f:
+            f.write("date,open,high,low,close\n2026-01-05,100,101,99,100\n2026-01-06,100,111,100,110\n"
+                    "2026-01-07,110,111,104,105\n")
+        forward.record(self.scan_result("2026-01-05"), self.log)
+        forward.record(self.scan_result("2026-01-07"), self.log)            # no bar after this yet
+        r = forward.report(self.log, self.data, horizons=(1, 2, 5))
+        s = r["by_strategy"]["bollinger_revert"]
+        self.assertAlmostEqual(s["1d"]["mean"], 0.10)                      # 2026-01-06 open 100 → close 110
+        self.assertAlmostEqual(s["2d"]["mean"], 0.05)                      # → 2026-01-07 close 105
+        self.assertEqual(s["5d"]["n"], 0)                                  # horizon not elapsed
+        self.assertEqual(r["signals_waiting_for_next_bar"], 1)
+        self.assertEqual(r["scans_logged"], 2)
+
+
+class UpdateTests(unittest.TestCase):
+    AV = "timestamp,open,high,low,close,volume\r\n2026-01-07,12,13,11,12.5,300\r\n2026-01-06,11,12,10,11.5,200\r\n2026-01-05,10,11,9,10.5,100\r\n"
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self):
+            return self.text.encode()
+
+    def test_merge_appends_only_newer_rows(self):
+        from chart.update import merge, parse_av_csv
+        d = tempfile.mkdtemp()
+        self.addCleanup(lambda: __import__("shutil").rmtree(d))
+        p = os.path.join(d, "SPY.csv")
+        with open(p, "w") as f:
+            f.write("date,open,high,low,close,volume\n2026-01-05,10,11,9,10.5,100\n")
+        rows = parse_av_csv(self.AV)
+        self.assertEqual([r[0] for r in rows], ["2026-01-05", "2026-01-06", "2026-01-07"])
+        self.assertEqual(merge(p, rows), 2)
+        self.assertEqual(merge(p, rows), 0)
+        bars = chart.load_csv(p)
+        self.assertEqual([b.close for b in bars], [10.5, 11.5, 12.5])
+
+    def test_update_skips_crypto_and_reports_errors(self):
+        from chart.update import update
+        d = tempfile.mkdtemp()
+        self.addCleanup(lambda: __import__("shutil").rmtree(d))
+        calls = []
+
+        def opener(url, timeout=None):
+            calls.append(url)
+            if "symbol=BAD" in url:
+                return self.Resp('{"Information": "rate limit"}')
+            return self.Resp(self.AV)
+
+        uni = {"SPY": {"asset": "equity"}, "BAD": {"asset": "equity"}, "BTC/USD": {"asset": "crypto"}}
+        rep = update(d, uni, key="k", pause=0, opener=opener)
+        self.assertEqual(rep["SPY"], 3)
+        self.assertTrue(rep["BAD"].startswith("error: rate limit"))
+        self.assertNotIn("BTC/USD", rep)
+        self.assertEqual(len(calls), 2)
+
+
+class AdjustTests(unittest.TestCase):
+    def test_split_adjust_divides_only_earlier_bars(self):
+        from chart.adjust import split_adjust
+        bs = [Bar("2024-06-07", 1200, 1210, 1190, 1208.8, 100), Bar("2024-06-10", 120, 123, 117, 121.8, 1000)]
+        out = split_adjust(bs, [("2024-06-10", 10.0)])
+        self.assertAlmostEqual(out[0].close, 120.88)
+        self.assertAlmostEqual(out[0].volume, 1000)
+        self.assertEqual(out[1], bs[1])
+
+    def test_correction_caps_bad_high_and_is_reported(self):
+        from chart.adjust import correct
+        bs = [Bar("2024-06-10", 120.45, 195.95, 117.01, 121.79, 1)]
+        fixed, applied = correct(bs, "NVDA")
+        self.assertEqual(fixed[0].high, 121.79)
+        self.assertEqual(applied[0]["high"], [195.95, 121.79])
+        self.assertEqual(correct(bs, "AMD")[1], [])
+
+    def test_prepare_passes_validator_on_split_day(self):
+        from chart.adjust import prepare, write_csv
+        from chart.validate import check
+        bs = [Bar("2024-06-07", 1200, 1210, 1190, 1208.8, 100), Bar("2024-06-10", 120.45, 195.95, 117.01, 121.79, 1000)]
+        raw = os.path.join(tempfile.mkdtemp(), "NVDA.csv")
+        write_csv(raw, bs)
+        self.assertFalse(check(raw)["ok"])
+        out, applied = prepare(bs, "NVDA")
+        write_csv(raw, out)
+        self.assertTrue(check(raw)["ok"], check(raw)["problems"])
+        self.assertEqual(len(applied), 1)
+
+    def test_wick_check(self):
+        from chart.validate import check
+        p = os.path.join(tempfile.mkdtemp(), "X.csv")
+        with open(p, "w") as f:
+            f.write("date,open,high,low,close\n2026-02-02,690,696.9,69.005,694\n")
+        self.assertIn("wick", " ".join(check(p)["problems"]))

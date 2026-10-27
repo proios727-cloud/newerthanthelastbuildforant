@@ -1,0 +1,57 @@
+name: chart-forward
+# Forward paper test for the chart scan. Research only: it never previews, fills or places an order.
+# Weekdays after the close: append the day's bars (Alpha Vantage, needs the ALPHAVANTAGE_API_KEY secret),
+# log the scan's signals before the next open, and keep both on the `shadow-data` branch under chart-forward/.
+on:
+  schedule:
+    - cron: "37 21 * * 1-5"
+  workflow_dispatch:
+concurrency:
+  group: shadow-data-writer
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  forward:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check out shadow-data
+        run: |
+          git config user.name "chart-forward"
+          git config user.email "chart-forward@users.noreply.github.com"
+          if git fetch origin shadow-data; then
+            git worktree add --detach /tmp/data FETCH_HEAD
+          else
+            git worktree add --detach /tmp/data
+            git -C /tmp/data checkout -q --orphan shadow-data
+            git -C /tmp/data rm -rfq .
+          fi
+          mkdir -p /tmp/data/chart-forward/data
+          for f in chart/data/*.csv; do
+            [ -e "/tmp/data/chart-forward/data/$(basename "$f")" ] || cp "$f" /tmp/data/chart-forward/data/
+          done
+      - name: Update bars, record signals, report
+        env:
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+        run: |
+          D=/tmp/data/chart-forward
+          python -m chart update "$D/data"
+          python -m chart validate "$D"/data/*.csv > "$D/VALIDATE.json" || echo "validation problems: see VALIDATE.json"
+          python -m chart forward record "$D/data" --log "$D/signals.jsonl"
+          python -m chart forward report "$D/data" --log "$D/signals.jsonl" > "$D/REPORT.json"
+      - name: Push to shadow-data
+        run: |
+          cd /tmp/data
+          git add chart-forward
+          git diff --cached --quiet && { echo "nothing new"; exit 0; }
+          git commit -qm "chart forward $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git push origin HEAD:shadow-data && exit 0
+            git pull -q --rebase origin shadow-data
+          done
+          exit 1

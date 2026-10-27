@@ -7,7 +7,7 @@ from itertools import product
 
 from .backtest import Result, _stats
 
-GRID = {"lookback": (5, 10, 20), "hold": (1, 5)}
+GRID = {"lookback": (5, 10, 20, 60), "hold": (1, 5, 21)}
 
 
 def align(bars_by_symbol):
