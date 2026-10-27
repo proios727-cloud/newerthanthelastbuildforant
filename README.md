@@ -160,6 +160,8 @@ python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin 
 | `chart/rotate.py` | Basket momentum rotation (hold the strongest symbol, or cash), scored against an equal-weight basket. |
 | `chart/scan.py` | Quant-seat bridge: rolling walk-forward of all 6 strategies on each `chart/data/<SYMBOL>.csv` in the desk universe, plus the basket rotation, emitted as a `signal_list` with a candidate flag and the reasons it was rejected. Research only. |
 | `chart/data/` | Daily bars for the desk's 8 equities, 2023-10-02 → 2026-10-26 (770 sessions each), mostly from ThetaData. Sources, the NVDA split adjustment and the two recorded bad-print fixes are in `chart/data/SOURCES.md`. |
+| `chart/data/etf/` | Research universe: 11 Select Sector SPDRs plus TLT and GLD, same span. Splits, dropped bad rows and vendor gaps are in `chart/data/SOURCES.md`. |
+| `chart/report.py`, `chart/report_page.html` | `python3 -m chart report Stocks=chart/data ETFs=chart/data/etf --out scorecard.html` writes a self-contained scorecard: verdicts, stats, and each strategy's out-of-sample curve against holding. |
 | `chart/validate.py`, `chart/adjust.py` | Data checks (order, bad prints, one-day jumps, cross-vendor closes) and split/correction handling. |
 | `chart/forward.py`, `chart/update.py` | Forward paper test: log each day's signals before the open, score them as bars arrive. `.github/workflows/chart-forward.yml` runs it every weekday on the `shadow-data` branch (needs the `ALPHAVANTAGE_API_KEY` secret). |
 | `tests/test_chart.py` | Oracle cases from the spec, including a test that checks the tests can fail and a check that the test slice can't influence parameter choice. |
@@ -176,6 +178,13 @@ python3 -m chart validate chart/data/*.csv
 python3 -m chart forward record && python3 -m chart forward report
 ```
 
-**3-year rolling scan (train 1 year, re-pick monthly, 25 test months: Oct 2024 → Oct 2026): 0 candidates out of 49.** In a strong bull run almost nothing beat simply holding: SPY +35%, AMD +233%. The rotation across all 8 made +100% vs +70% for an equal-weight basket, but with a lower Sharpe (0.88 vs 1.06) and a −49% drawdown vs −32%, so it took more risk for that return. Five pairs beat their stock's Sharpe ratio, among them MACD-trend on AMD and TSLA, Bollinger and RSI reversion on NVDA, and trend-filtered RSI dips on IWM. All of them trailed buy-and-hold on return or won fewer than half the months. The 8 symbols were picked in hindsight, so even these numbers flatter the strategies. The forward paper test is the next real evidence.
+**Rolling scan, 25 out-of-sample months (Oct 2024 → Oct 2026), 128 tests across both universes.** A strategy is judged two ways: as a *return candidate* (beats holding on return and Sharpe, and wins at least half the months) and as a *risk filter* (a drawdown at least a third shallower than holding, with an equal or better Calmar ratio).
+
+- **ETF momentum rotation is the only strong return candidate.** It made +28.8% a year vs +9.7% for an equal-weight basket of the 13 ETFs and +15.6% for SPY, with a −13% max drawdown vs −13.5% and −19%. It won 16 of 25 months, used only 2 parameter sets, and its gains came from several sectors. Without GLD it still beats the basket on return (+16.7% vs +8.6%) but its drawdown deepens to −26%, so gold's diversification is part of the result.
+- **The SMA cross keeps working as a risk filter:** IWM, XLC, XLI and XLB all cut their drawdown by 40–50% for a similar or better Calmar ratio.
+- **The earlier MACD-trend risk filters on TSLA and AMD didn't hold up on the ETFs.** MACD-trend matched holding's Calmar on only 1 of 13, so treat those two as likely luck.
+- **On the 8 desk stocks, nothing beats holding.** They were picked with hindsight in a strong bull market.
+
+Two years of one market regime is still a short test. The forward paper test is the evidence that counts next.
 
 The CSV needs `date, open, high, low, close[, volume]` in ascending order. Backtest results are research output, not investment advice.

@@ -9,6 +9,14 @@ from . import Bar
 
 SPLITS = {
     "NVDA": [("2024-06-10", 10.0)],     # 10-for-1, first split-adjusted session 2024-06-10
+    # Select Sector SPDRs, 2-for-1 effective 2025-12-05 (close halves, volume doubles; re-fetches identical)
+    **{s: [("2025-12-05", 2.0)] for s in ("XLK", "XLE", "XLU", "XLB", "XLY")},
+}
+
+# (symbol, date) → why. Bad vendor rows with no usable fix are removed rather than guessed.
+DROPS = {
+    ("XLF", "2026-10-06"): "ThetaData row prices every field at 0.0002 (created 00:02, not the usual 17:15)",
+    ("XLC", "2026-10-05"): "ThetaData row at ~76 on ~0.2M shares between ~111 days on ~5M shares; re-fetch identical",
 }
 
 # (symbol, date) → field fixes. "body" caps the high at max(open, close) / floors the low at min(open, close).
@@ -47,8 +55,11 @@ def correct(bars, symbol, corrections=CORRECTIONS):
 
 
 def prepare(bars, symbol):
-    """Corrections first (they are stated in raw vendor prices), then split adjustment."""
+    """Drops, then corrections (stated in raw vendor prices), then split adjustment."""
+    dropped = [b.ts for b in bars if (symbol, b.ts) in DROPS]
+    bars = [b for b in bars if (symbol, b.ts) not in DROPS]
     fixed, applied = correct(bars, symbol)
+    applied += [{"date": d, "dropped": True, "why": DROPS[(symbol, d)]} for d in dropped]
     return split_adjust(fixed, SPLITS.get(symbol, [])), applied
 
 

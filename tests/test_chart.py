@@ -506,3 +506,24 @@ class RiskFilterTests(unittest.TestCase):
         self.assertAlmostEqual(s["cagr"], 0.21)
         self.assertAlmostEqual(s["max_drawdown"], -0.25)
         self.assertAlmostEqual(s["calmar"], 0.84)
+
+
+class EtfDataTests(unittest.TestCase):
+    D = os.path.join(os.path.dirname(__file__), "..", "chart", "data", "etf")
+
+    def test_drops_remove_rows_and_are_reported(self):
+        from chart.adjust import prepare
+        bs = [Bar("2026-10-05", 50, 51, 49, 50), Bar("2026-10-06", 0.0002, 0.0002, 0.0002, 0.0002), Bar("2026-10-07", 50, 51, 49, 50.5)]
+        out, applied = prepare(bs, "XLF")
+        self.assertEqual([b.ts for b in out], ["2026-10-05", "2026-10-07"])
+        self.assertTrue(applied[0]["dropped"])
+
+    def test_etf_files_validate_and_splits_are_adjusted(self):
+        from chart.validate import check
+        files = sorted(f for f in os.listdir(self.D) if f.endswith(".csv"))
+        self.assertEqual(len(files), 13)
+        for f in files:
+            r = check(os.path.join(self.D, f))
+            self.assertTrue(r["ok"], (f, r["problems"]))
+        xlk = {b.ts: b.close for b in chart.load_csv(os.path.join(self.D, "XLK.csv"))}
+        self.assertLess(abs(xlk["2025-12-05"] / xlk["2025-12-04"] - 1), 0.1)   # no fake -50% split day
