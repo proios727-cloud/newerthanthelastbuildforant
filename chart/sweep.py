@@ -141,4 +141,5 @@ def rolling_walk_forward(bars, strategy, grid=None, min_train=40, test=10, ancho
         "param_sets_used": len(distinct),
         "latest_signal": latest,
         "latest_params": windows[-1]["params"],
+        "curve": {"dates": [b.ts for b in oos_bars], "strategy": res.equity, "hold": bh.equity},
     }

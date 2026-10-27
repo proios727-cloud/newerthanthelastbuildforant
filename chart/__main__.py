@@ -63,6 +63,9 @@ def main(argv=None):
     f.add_argument("--log", help="signal log path (default ledger/signals.jsonl)")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
+    r = sub.add_parser("report", help="write the visual scorecard (.html) or its data (.json)")
+    r.add_argument("folders", nargs="+", help="NAME=FOLDER pairs, e.g. Stocks=chart/data")
+    r.add_argument("--out", required=True)
     v = sub.add_parser("validate", help="sanity-check OHLC CSVs, optionally against an overlapping reference")
     v.add_argument("csv", nargs="+")
     v.add_argument("--ref", help="reference CSV whose overlapping closes must match")
@@ -83,6 +86,14 @@ def main(argv=None):
         from fund import config
         from .update import update
         print(json.dumps(update(a.folder, config.load().universe), indent=2))
+        return
+    if a.cmd == "report":
+        from .report import build, render_html
+        groups = dict(x.split("=", 1) for x in a.folders)
+        data = build(groups)
+        text = render_html(data) if a.out.endswith(".html") else json.dumps(data, separators=(",", ":"))
+        pathlib.Path(a.out).write_text(text, encoding="utf-8")
+        print(f"wrote {a.out}")
         return
     if a.cmd == "validate":
         from .validate import check
