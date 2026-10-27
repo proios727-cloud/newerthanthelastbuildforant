@@ -430,3 +430,40 @@ class UpdateTests(unittest.TestCase):
         self.assertTrue(rep["BAD"].startswith("error: rate limit"))
         self.assertNotIn("BTC/USD", rep)
         self.assertEqual(len(calls), 2)
+
+
+class AdjustTests(unittest.TestCase):
+    def test_split_adjust_divides_only_earlier_bars(self):
+        from chart.adjust import split_adjust
+        bs = [Bar("2024-06-07", 1200, 1210, 1190, 1208.8, 100), Bar("2024-06-10", 120, 123, 117, 121.8, 1000)]
+        out = split_adjust(bs, [("2024-06-10", 10.0)])
+        self.assertAlmostEqual(out[0].close, 120.88)
+        self.assertAlmostEqual(out[0].volume, 1000)
+        self.assertEqual(out[1], bs[1])
+
+    def test_correction_caps_bad_high_and_is_reported(self):
+        from chart.adjust import correct
+        bs = [Bar("2024-06-10", 120.45, 195.95, 117.01, 121.79, 1)]
+        fixed, applied = correct(bs, "NVDA")
+        self.assertEqual(fixed[0].high, 121.79)
+        self.assertEqual(applied[0]["high"], [195.95, 121.79])
+        self.assertEqual(correct(bs, "AMD")[1], [])
+
+    def test_prepare_passes_validator_on_split_day(self):
+        from chart.adjust import prepare, write_csv
+        from chart.validate import check
+        bs = [Bar("2024-06-07", 1200, 1210, 1190, 1208.8, 100), Bar("2024-06-10", 120.45, 195.95, 117.01, 121.79, 1000)]
+        raw = os.path.join(tempfile.mkdtemp(), "NVDA.csv")
+        write_csv(raw, bs)
+        self.assertFalse(check(raw)["ok"])
+        out, applied = prepare(bs, "NVDA")
+        write_csv(raw, out)
+        self.assertTrue(check(raw)["ok"], check(raw)["problems"])
+        self.assertEqual(len(applied), 1)
+
+    def test_wick_check(self):
+        from chart.validate import check
+        p = os.path.join(tempfile.mkdtemp(), "X.csv")
+        with open(p, "w") as f:
+            f.write("date,open,high,low,close\n2026-02-02,690,696.9,69.005,694\n")
+        self.assertIn("wick", " ".join(check(p)["problems"]))

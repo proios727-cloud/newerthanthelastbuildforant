@@ -1,12 +1,13 @@
 """Sanity checks for an OHLC CSV before anything is backtested on it.
 
-Checks: strictly ascending dates, low <= open/close <= high, positive prices, no day-over-day close
-move larger than `max_move`, and — when a reference file overlaps — closes that match it within `tol`.
+Checks: strictly ascending dates, low <= open/close <= high, positive prices, no high/low more than
+`max_wick` beyond the open/close (a bad print), no day-over-day close move larger than `max_move`,
+and — when a reference file overlaps — closes that match it within `tol`.
 """
 from . import load_csv
 
 
-def check(path, ref=None, max_move=0.25, tol=0.02):
+def check(path, ref=None, max_move=0.25, tol=0.02, max_wick=0.15):
     problems = []
     try:
         bars = load_csv(path)
@@ -17,6 +18,9 @@ def check(path, ref=None, max_move=0.25, tol=0.02):
             problems.append(f"{b.ts}: non-positive price")
         if not (b.low <= min(b.open, b.close) and max(b.open, b.close) <= b.high):
             problems.append(f"{b.ts}: OHLC out of order (o={b.open} h={b.high} l={b.low} c={b.close})")
+        body_hi, body_lo = max(b.open, b.close), min(b.open, b.close)
+        if b.high > body_hi * (1 + max_wick) or b.low < body_lo * (1 - max_wick):
+            problems.append(f"{b.ts}: wick beyond {max_wick:.0%} of the open/close (h={b.high} l={b.low})")
         if i and abs(b.close / bars[i - 1].close - 1) > max_move:
             problems.append(f"{b.ts}: close moved {b.close / bars[i - 1].close - 1:+.1%} in one day")
     overlap = matched = 0
