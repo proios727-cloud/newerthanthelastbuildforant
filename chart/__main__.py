@@ -55,12 +55,17 @@ def main(argv=None):
     s.add_argument("--fee-bps", type=float, default=1.0)
     s.add_argument("--slippage-bps", type=float, default=2.0)
     s.add_argument("--out", help="also write the JSON here")
+    s.add_argument("--all", action="store_true",
+                   help="research mode: scan every CSV in the folder, not only symbols in desk.json's universe")
     f = sub.add_parser("forward", help="log today's scan before the open, or score logged signals")
     f.add_argument("action", choices=("record", "report"))
     f.add_argument("folder", nargs="?", default="chart/data")
     f.add_argument("--log", help="signal log path (default ledger/signals.jsonl)")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
+    r = sub.add_parser("report", help="write the visual scorecard (.html) or its data (.json)")
+    r.add_argument("folders", nargs="+", help="NAME=FOLDER pairs, e.g. Stocks=chart/data")
+    r.add_argument("--out", required=True)
     v = sub.add_parser("validate", help="sanity-check OHLC CSVs, optionally against an overlapping reference")
     v.add_argument("csv", nargs="+")
     v.add_argument("--ref", help="reference CSV whose overlapping closes must match")
@@ -82,6 +87,14 @@ def main(argv=None):
         from .update import update
         print(json.dumps(update(a.folder, config.load().universe), indent=2))
         return
+    if a.cmd == "report":
+        from .report import build, render_html
+        groups = dict(x.split("=", 1) for x in a.folders)
+        data = build(groups)
+        text = render_html(data) if a.out.endswith(".html") else json.dumps(data, separators=(",", ":"))
+        pathlib.Path(a.out).write_text(text, encoding="utf-8")
+        print(f"wrote {a.out}")
+        return
     if a.cmd == "validate":
         from .validate import check
         res = [check(c, a.ref) for c in a.csv]
@@ -98,7 +111,9 @@ def main(argv=None):
         return
     if a.cmd == "scan":
         from fund import config
-        res = scan(pathlib.Path(a.folder).glob("*.csv"), config.load().universe, min_train=a.min_train, test=a.test,
+        files = sorted(pathlib.Path(a.folder).glob("*.csv"))
+        uni = {f.stem.upper(): {"asset": "equity"} for f in files} if a.all else config.load().universe
+        res = scan(files, uni, min_train=a.min_train, test=a.test,
                    fee_bps=a.fee_bps, slippage_bps=a.slippage_bps)
         text = json.dumps(res, indent=2)
         if a.out:

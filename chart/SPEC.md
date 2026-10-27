@@ -120,3 +120,12 @@ from the reference vendor's close.
   the number of signals and the hit rate. Horizons that haven't elapsed are not counted.
 - `.github/workflows/chart-forward.yml` runs this every weekday at 21:37 UTC and keeps the data, log and report on the `shadow-data`
   branch under `chart-forward/`. It needs the `ALPHAVANTAGE_API_KEY` repository secret.
+
+## Risk-filter rule (chart/scan.py `_risk_verdict`)
+
+A second, separate verdict per entry asks whether the strategy is worth running **on top of holding**, as a way to cut risk.
+`risk_filter` is true only when **all** hold: the out-of-sample max drawdown is at least a third shallower than buy-and-hold's
+over the same span, its Calmar ratio (CAGR ÷ |max drawdown|) is at least buy-and-hold's, it was invested at least 30% of the
+time (so sitting in cash doesn't count as risk control), Sharpe > 0, and at least 3 out-of-sample trades. Rejections are listed in
+`risk_why_not`. Stats now include `cagr` and `calmar`; each entry carries a `hold` block with the same fields for buy-and-hold.
+`chart scan --all` scans every CSV in a folder (research mode), not only the desk universe.

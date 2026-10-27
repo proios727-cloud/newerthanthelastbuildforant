@@ -1,0 +1,252 @@
+<title>Strategy Scorecard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: desk-style console — summary strip, filter bar, results table on the left, selected curve on the right */
+:root {
+  --bg: #f3f5f4; --panel: #ffffff; --fg: #18211e; --muted: #5d6b66; --line: #d9e0dd; --grid: #e8edeb;
+  --strat: #1d6b57; --hold: #8a96a3; --accent: #1d6b57; --accent-soft: #e2efe9;
+  --good: #1f7a4d; --good-soft: #e1f2e8; --warn: #9a6a00; --warn-soft: #f8eed3; --bad: #a33a2c; --bad-soft: #f7e3df;
+  --f-ui: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-num: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1513; --panel: #161e1b; --fg: #e3ebe8; --muted: #93a39d; --line: #26312d; --grid: #1e2825;
+  --strat: #5cc6a4; --hold: #7d8a96; --accent: #5cc6a4; --accent-soft: #1b2e28;
+  --good: #6fd3a0; --good-soft: #163026; --warn: #e8b85a; --warn-soft: #33290f; --bad: #f08a7c; --bad-soft: #3a1f1a;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1513; --panel: #161e1b; --fg: #e3ebe8; --muted: #93a39d; --line: #26312d; --grid: #1e2825;
+  --strat: #5cc6a4; --hold: #7d8a96; --accent: #5cc6a4; --accent-soft: #1b2e28;
+  --good: #6fd3a0; --good-soft: #163026; --warn: #e8b85a; --warn-soft: #33290f; --bad: #f08a7c; --bad-soft: #3a1f1a;
+  color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--f-ui); }
+.wrap { max-width: 1280px; margin: 0 auto; padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 18px; }
+h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.sub { color: var(--muted); margin: 2px 0 0; max-width: 75ch; }
+.num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+.label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 2px; }
+.tile .v { font: 600 24px var(--f-num); font-variant-numeric: tabular-nums; }
+.tile .v.good { color: var(--good); }
+.tile .v.small { font-size: 17px; line-height: 1.6; }
+
+.bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: var(--panel); }
+.seg button { font: 13px var(--f-ui); color: var(--muted); background: none; border: 0; padding: 6px 11px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.seg button:focus-visible, tr:focus-visible, th button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+.tbl { overflow-x: auto; max-height: 640px; overflow-y: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+th, td { padding: 7px 8px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th { position: sticky; top: 0; background: var(--panel); z-index: 1; font-weight: 400; }
+th button { all: unset; cursor: pointer; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+th button[data-dir]::after { content: attr(data-dir); margin-left: 3px; color: var(--accent); }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--grid); }
+tbody tr[aria-selected="true"] { background: var(--accent-soft); }
+td.pos { color: var(--good); } td.neg { color: var(--bad); }
+.chip { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; margin-left: 4px; }
+.chip.risk { background: var(--good-soft); color: var(--good); }
+.chip.cand { background: var(--warn-soft); color: var(--warn); }
+.sym { font-weight: 700; }
+.strat { color: var(--muted); }
+
+.detail { padding: 14px 16px; display: grid; gap: 12px; }
+.detail h2 { font-size: 17px; margin: 0; }
+.legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+svg.chart { width: 100%; height: auto; display: block; }
+.kv { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; }
+.kv div { display: grid; gap: 1px; }
+.kv .num { font-size: 15px; }
+.why { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13px; display: grid; gap: 3px; }
+.why.ok { list-style: none; padding-left: 0; color: var(--good); }
+.note { color: var(--muted); font-size: 12px; max-width: 90ch; }
+.empty { padding: 24px; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="label">Chart desk · rolling walk-forward</span>
+    <h1>Strategy Scorecard</h1>
+    <p class="sub" id="subtitle">Every strategy, picked monthly on past data only and scored on the month that followed, against simply holding.</p>
+  </header>
+
+  <section class="tiles" id="tiles" aria-label="Summary"></section>
+
+  <div class="bar">
+    <div class="seg" id="groupSeg" role="group" aria-label="Universe"></div>
+    <div class="seg" id="viewSeg" role="group" aria-label="Show">
+      <button type="button" data-v="all" aria-pressed="true">All</button>
+      <button type="button" data-v="risk" aria-pressed="false">Risk filters</button>
+      <button type="button" data-v="cand" aria-pressed="false">Return candidates</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="panel tbl">
+      <table>
+        <thead><tr id="head"></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden>Nothing in this view. A risk filter or return candidate appears here only when every rule passes.</div>
+    </div>
+    <div class="panel detail" id="detail" aria-live="polite"></div>
+  </div>
+
+  <p class="note" id="foot"></p>
+</div>
+
+<script id="report-data" type="application/json">__REPORT_JSON__</script>
+<script>
+const D = JSON.parse(document.getElementById("report-data").textContent);
+const pct = (x, d = 1) => (x >= 0 ? "+" : "") + (x * 100).toFixed(d) + "%";
+const fix = (x, d = 2) => x.toFixed(d);
+const ALL = D.groups.flatMap(g => g.entries);
+const COLS = [
+  ["symbol", "Symbol", e => e.symbol.length > 14 ? "Basket (" + e.symbol.split("+").length + ")" : e.symbol, null],
+  ["strategy", "Strategy", e => e.strategy.replace(/_/g, " "), null],
+  ["cagr", "CAGR", e => e.oos.cagr, v => pct(v)],
+  ["hcagr", "Hold", e => e.hold.cagr, v => pct(v)],
+  ["dd", "Max DD", e => e.oos.max_drawdown, v => pct(v)],
+  ["hdd", "Hold DD", e => e.hold.max_drawdown, v => pct(v)],
+  ["calmar", "Calmar", e => e.oos.calmar, v => fix(v)],
+  ["dcalmar", "vs hold", e => e.oos.calmar - e.hold.calmar, v => (v >= 0 ? "+" : "") + fix(v)],
+  ["trades", "Trades", e => e.oos.n_trades, v => String(v)],
+];
+let state = { group: "all", view: "all", sort: "verdict", dir: -1, sel: null };
+
+function tiles() {
+  const g = state.group === "all" ? ALL : D.groups.find(x => x.name === state.group).entries;
+  const risk = g.filter(e => e.risk_filter).length, cand = g.filter(e => e.candidate).length;
+  const through = D.groups.map(x => x.data_through).sort().pop();
+  const first = g[0] ? g[0].oos_window : ["", "", 0];
+  const items = [
+    ["Strategy tests", g.length, ""],
+    ["Risk filters", risk, risk ? "good" : ""],
+    ["Return candidates", cand, cand ? "good" : ""],
+    ["Out-of-sample span", first[0].slice(0, 7) + " → " + first[1].slice(0, 7), "small"],
+    ["Data through", through, "small"],
+  ];
+  document.getElementById("tiles").innerHTML = items.map(([k, v, c]) =>
+    `<div class="tile"><span class="label">${k}</span><span class="v ${c}">${v}</span></div>`).join("");
+}
+
+function segs() {
+  const names = ["all", ...D.groups.map(g => g.name)];
+  const el = document.getElementById("groupSeg");
+  el.innerHTML = names.map(n => `<button type="button" data-g="${n}" aria-pressed="${n === state.group}">${n === "all" ? "All universes" : n}</button>`).join("");
+  el.onclick = ev => { const b = ev.target.closest("button"); if (!b) return; state.group = b.dataset.g; state.sel = null; render(); };
+  document.getElementById("viewSeg").onclick = ev => {
+    const b = ev.target.closest("button"); if (!b) return; state.view = b.dataset.v; state.sel = null; render();
+  };
+}
+
+function rows() {
+  let r = ALL.filter(e => (state.group === "all" || e.group === state.group) &&
+    (state.view === "all" || (state.view === "risk" ? e.risk_filter : e.candidate)));
+  // Default order: verdicts first (return candidates, then risk filters), then calmar gain. A header click sorts by that column alone.
+  const key = state.sort === "verdict"
+    ? e => (e.candidate ? 2e6 : 0) + (e.risk_filter ? 1e6 : 0) + (e.oos.calmar - e.hold.calmar)
+    : COLS.find(c => c[0] === state.sort)[2];
+  r.sort((a, b) => { const x = key(a), y = key(b); return (x > y ? 1 : x < y ? -1 : 0) * state.dir; });
+  return r;
+}
+
+function render() {
+  tiles();
+  document.querySelectorAll("#groupSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.g === state.group));
+  document.querySelectorAll("#viewSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === state.view));
+  document.getElementById("head").innerHTML = COLS.map(([k, t]) =>
+    `<th scope="col"><button type="button" data-k="${k}" ${state.sort === k ? `data-dir="${state.dir > 0 ? "↑" : "↓"}"` : ""}>${t}</button></th>`).join("");
+  const r = rows();
+  if (!state.sel || !r.includes(state.sel)) state.sel = r[0] || null;
+  document.getElementById("empty").hidden = r.length > 0;
+  document.getElementById("rows").innerHTML = r.map((e, i) => {
+    const cells = COLS.map(([k, , get, fmt], j) => {
+      const v = get(e);
+      if (j === 0) return `<td><span class="sym">${v}</span>${e.risk_filter ? '<span class="chip risk">risk filter</span>' : ""}${e.candidate ? '<span class="chip cand">candidate</span>' : ""}</td>`;
+      if (j === 1) return `<td class="strat">${v}</td>`;
+      const cls = k === "dcalmar" ? (v >= 0 ? "pos" : "neg") : "";
+      return `<td class="num ${cls}">${fmt(v)}</td>`;
+    }).join("");
+    return `<tr tabindex="0" data-i="${i}" aria-selected="${e === state.sel}">${cells}</tr>`;
+  }).join("");
+  const body = document.getElementById("rows");
+  const pick = el => { const tr = el.closest("tr"); if (tr) { state.sel = r[+tr.dataset.i]; render(); } };
+  body.onclick = ev => pick(ev.target);
+  body.onkeydown = ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); pick(ev.target); } };
+  document.getElementById("head").onclick = ev => {
+    const b = ev.target.closest("button"); if (!b) return;
+    if (state.sort === b.dataset.k) state.dir *= -1; else { state.sort = b.dataset.k; state.dir = -1; }
+    render();
+  };
+  detail(state.sel);
+}
+
+function chart(c) {
+  const W = 560, H = 260, L = 46, R = 12, T = 12, B = 26;
+  const ys = c.strategy.concat(c.hold), lo = Math.min(...ys), hi = Math.max(...ys);
+  const pad = (hi - lo) * 0.06 || 0.05, y0 = lo - pad, y1 = hi + pad, n = c.dates.length - 1;
+  const X = i => L + (W - L - R) * i / n, Y = v => T + (H - T - B) * (1 - (v - y0) / (y1 - y0));
+  const path = a => a.map((v, i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1)).join("");
+  const ticks = [];
+  const step = (y1 - y0) / 4;
+  for (let k = 0; k <= 4; k++) ticks.push(y0 + step * k);
+  const xt = [0, Math.round(n / 2), n];
+  const last = c.strategy.length - 1;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Growth of 1 dollar: strategy vs buy-and-hold">
+    ${ticks.map(t => `<line x1="${L}" x2="${W - R}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--grid)"/>
+      <text x="${L - 6}" y="${Y(t) + 4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="var(--f-num)">${t.toFixed(2)}</text>`).join("")}
+    <line x1="${L}" x2="${W - R}" y1="${Y(1)}" y2="${Y(1)}" stroke="var(--muted)" stroke-dasharray="3 3" opacity=".6"/>
+    ${xt.map(i => `<text x="${X(i)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === n ? "end" : "middle"}" font-size="10" fill="var(--muted)" font-family="var(--f-num)">${c.dates[i].slice(0, 7)}</text>`).join("")}
+    <path d="${path(c.hold)}" fill="none" stroke="var(--hold)" stroke-width="1.6"/>
+    <path d="${path(c.strategy)}" fill="none" stroke="var(--strat)" stroke-width="2.2"/>
+    <circle cx="${X(last)}" cy="${Y(c.strategy[last])}" r="3.5" fill="var(--strat)"/>
+    <circle cx="${X(last)}" cy="${Y(c.hold[last])}" r="3" fill="var(--hold)"/>
+  </svg>`;
+}
+
+function detail(e) {
+  const el = document.getElementById("detail");
+  if (!e) { el.innerHTML = '<p class="empty">Select a row to see its curve.</p>'; return; }
+  const o = e.oos, h = e.hold;
+  const name = e.symbol.includes("+") ? "Basket rotation" : e.symbol;
+  const verdict = [];
+  if (e.risk_filter) verdict.push('<li>Passes every risk-filter rule: much shallower drawdown for an equal or better return per unit of drawdown.</li>');
+  const fails = (e.risk_why_not || []).map(w => `<li>Risk filter: ${w}</li>`).concat((e.why_not || []).filter(w => w !== "signal is flat").map(w => `<li>Return: ${w}</li>`));
+  el.innerHTML = `
+    <div><span class="label">${e.group} · ${e.strategy.replace(/_/g, " ")}${e.symbol.includes("+") ? " · " + e.symbol.split("+").join(", ") : ""}</span>
+      <h2>${name} <span class="strat">· now ${e.signal}</span></h2></div>
+    <div class="legend"><span><i style="background:var(--strat)"></i>Strategy</span><span><i style="background:var(--hold)"></i>Buy and hold</span><span>Growth of $1, out of sample</span></div>
+    ${chart(e.curve)}
+    <div class="kv">
+      <div><span class="label">CAGR</span><span class="num">${pct(o.cagr)} <span class="strat">vs ${pct(h.cagr)}</span></span></div>
+      <div><span class="label">Max drawdown</span><span class="num">${pct(o.max_drawdown)} <span class="strat">vs ${pct(h.max_drawdown)}</span></span></div>
+      <div><span class="label">Calmar</span><span class="num">${fix(o.calmar)} <span class="strat">vs ${fix(h.calmar)}</span></span></div>
+      <div><span class="label">Sharpe</span><span class="num">${fix(o.sharpe)} <span class="strat">vs ${fix(h.sharpe)}</span></span></div>
+      <div><span class="label">Invested</span><span class="num">${Math.round(o.exposure * 100)}%</span></div>
+      <div><span class="label">Trades · months won</span><span class="num">${o.n_trades} · ${e.test_blocks_beat_hold}</span></div>
+    </div>
+    ${verdict.length ? `<ul class="why ok">${verdict.join("")}</ul>` : ""}
+    ${fails.length ? `<ul class="why">${fails.join("")}</ul>` : ""}`;
+}
+
+document.getElementById("subtitle").textContent =
+  `Every strategy, re-picked each month on past data only (1-year minimum history) and scored on the month that followed, against simply holding. Costs: ${D.settings.fee_bps} bp fee + ${D.settings.slippage_bps} bp slippage per trade.`;
+document.getElementById("foot").textContent =
+  `Research only: nothing here places an order. A risk filter means a drawdown at least a third shallower than holding, a Calmar ratio at least holding's, at least 30% time invested and 3+ trades. Built ${D.generated_at.replace("T", " ").replace("+00:00", " UTC")}. Symbols in the Stocks universe were chosen with hindsight, which flatters every strategy on them.`;
+segs();
+render();
+</script>

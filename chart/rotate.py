@@ -116,5 +116,6 @@ def rolling(aligned, grid=None, min_train=40, test=10, **kw):
         "windows_beat_hold": beat,
         "param_sets_used": len({tuple(sorted(w["params"].items())) for w in windows}),
         "latest_target": latest,
+        "curve": {"dates": dates[min_train:], "strategy": res.equity, "hold": bh.equity},
         "trades": res.trades,
     }

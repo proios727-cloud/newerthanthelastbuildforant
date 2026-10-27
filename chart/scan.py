@@ -40,8 +40,34 @@ def _verdict(latest_long, oos, edge, beat, n_windows, hold):
     return reasons
 
 
+DD_CUT = 1 / 3        # a risk filter must take at least a third off buy-and-hold's worst drawdown
+MIN_EXPOSURE = 0.3    # ...while still being invested at least 30% of the time
+
+
+def _risk_verdict(oos, hold):
+    """Does the strategy work as a risk filter on top of holding: shallower drawdown, no worse return per unit of it?"""
+    reasons = []
+    if hold["max_drawdown"] >= 0 or oos["max_drawdown"] < hold["max_drawdown"] * (1 - DD_CUT):
+        reasons.append(f"drawdown {oos['max_drawdown']:.1%} not at least a third shallower than hold's "
+                       f"{hold['max_drawdown']:.1%}")
+    if oos["calmar"] < hold["calmar"]:
+        reasons.append(f"return per unit of drawdown below hold's (Calmar {oos['calmar']:.2f} vs {hold['calmar']:.2f})")
+    if oos["exposure"] < MIN_EXPOSURE:
+        reasons.append(f"invested only {oos['exposure']:.0%} of the time")
+    if oos["sharpe"] <= 0:
+        reasons.append("out-of-sample Sharpe ≤ 0")
+    if oos["n_trades"] < MIN_TRADES:
+        reasons.append(f"fewer than {MIN_TRADES} out-of-sample trades")
+    return reasons
+
+
 def _oos(stats):
-    return {k: round(stats[k], 4) for k in ("total_return", "max_drawdown", "sharpe", "n_trades", "win_rate")}
+    return {k: round(stats[k], 4) for k in ("total_return", "cagr", "max_drawdown", "calmar", "sharpe",
+                                             "n_trades", "win_rate", "exposure")}
+
+
+def _hold(stats):
+    return {k: round(stats[k], 4) for k in ("total_return", "cagr", "max_drawdown", "calmar", "sharpe")}
 
 
 def entry(symbol, bars, strategy, min_train=40, test=10, **kw):
@@ -60,12 +86,12 @@ def entry(symbol, bars, strategy, min_train=40, test=10, **kw):
         "oos": _oos(oos),
         "oos_window": [oos["from"], oos["to"], oos["bars"]],
         "test_blocks_beat_hold": f"{wf['windows_beat_hold']}/{n}",
-        "buy_hold_oos_return": round(wf["buy_hold_oos"]["total_return"], 4),
-        "buy_hold_oos_sharpe": round(wf["buy_hold_oos"]["sharpe"], 4),
-        "buy_hold_oos_max_drawdown": round(wf["buy_hold_oos"]["max_drawdown"], 4),
+        "hold": _hold(wf["buy_hold_oos"]),
         "edge_vs_hold": round(wf["edge_vs_hold"], 4),
         "candidate": not reasons,
         "why_not": reasons,
+        "risk_filter": not (risk := _risk_verdict(oos, wf["buy_hold_oos"])),
+        "risk_why_not": risk,
     }
 
 
@@ -86,12 +112,12 @@ def basket_entry(bars_by_symbol, min_train=40, test=10, **kw):
         "oos": _oos(oos),
         "oos_window": [oos["from"], oos["to"], oos["bars"]],
         "test_blocks_beat_hold": f"{r['windows_beat_hold']}/{n}",
-        "buy_hold_oos_return": round(r["equal_weight_hold_oos"]["total_return"], 4),
-        "buy_hold_oos_sharpe": round(r["equal_weight_hold_oos"]["sharpe"], 4),
-        "buy_hold_oos_max_drawdown": round(r["equal_weight_hold_oos"]["max_drawdown"], 4),
+        "hold": _hold(r["equal_weight_hold_oos"]),
         "edge_vs_hold": round(r["edge_vs_hold"], 4),
         "candidate": not reasons,
         "why_not": reasons,
+        "risk_filter": not (risk := _risk_verdict(oos, r["equal_weight_hold_oos"])),
+        "risk_why_not": risk,
     }
 
 
@@ -117,4 +143,5 @@ def scan(paths, universe, strategies=tuple(GRIDS), basket=True, **kw):
     out.sort(key=lambda e: (not e["candidate"], -e["oos"]["sharpe"]))
     return {"signal_list": out, "skipped": skipped,
             "candidates": sum(e["candidate"] for e in out),
+            "risk_filters": sum(e["risk_filter"] for e in out),
             "note": "Research only. Candidates still need a thesis, a Risk Officer PASS and EXECUTE."}

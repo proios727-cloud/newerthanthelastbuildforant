@@ -64,9 +64,15 @@ def _stats(equity, trades, held, start_cash, ppy):
         peak = max(peak, e)
         mdd = min(mdd, e / peak - 1)
     wins = sum(1 for t in trades if t[5] > 0)
+    total = equity[-1] / start_cash - 1 if equity else 0.0
+    years = len(equity) / ppy if equity else 0.0
+    cagr = (1 + total) ** (1 / years) - 1 if years > 0 and total > -1 else -1.0
+    calmar = cagr / -mdd if mdd < 0 else 0.0
     return {
-        "total_return": equity[-1] / start_cash - 1 if equity else 0.0,
+        "total_return": total,
+        "cagr": cagr,
         "max_drawdown": mdd,
+        "calmar": calmar,
         "sharpe": sharpe,
         "n_trades": len(trades),
         "win_rate": wins / len(trades) if trades else 0.0,
