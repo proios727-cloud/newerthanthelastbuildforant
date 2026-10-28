@@ -7,6 +7,8 @@ python3 -m chart forward report
 python3 -m chart validate chart/data/SPY.csv
 python3 -m chart doctor chart/data chart/data/etf   # preflight: API key, data freshness, next rotation decision
 python3 -m chart longrun                            # the rotation rule over 2004-2026 weekly bars, by regime
+python3 -m chart longrun chart/data/weekly_desk --strategies   # six strategies, 20+ years, weekly
+python3 -m chart dividends chart/data chart/data/tr  # total-return copies (dividends back-adjusted)
 """
 import argparse
 import json
@@ -79,6 +81,7 @@ def main(argv=None):
     r.add_argument("--rotation", help="ETF folder for the rotation-rule panel (stress spread + live-calendar replay)")
     r.add_argument("--longrun", help="weekly folder for the long-history panel, e.g. chart/data/weekly")
     r.add_argument("--forward", help="folder holding ROTATION.json / ROTATION_TREND200.json from shadow-data")
+    r.add_argument("--longrun-scan", nargs="*", default=(), help="weekly folders for the 20-year strategy panel")
     st = sub.add_parser("stress", help="stress-test a basket rotation rule across rebalance days, costs and universes")
     st.add_argument("folder", nargs="?", default="chart/data/etf")
     st.add_argument("--lookback", type=int, default=60)
@@ -89,6 +92,11 @@ def main(argv=None):
     lr = sub.add_parser("longrun", help="the rotation rule over two decades of weekly total-return bars, by regime")
     lr.add_argument("folder", nargs="?", default="chart/data/weekly")
     lr.add_argument("--out", help="also write the JSON here")
+    lr.add_argument("--strategies", action="store_true",
+                    help="instead: walk-forward the six single-asset strategies on the folder's weekly bars")
+    dv = sub.add_parser("dividends", help="write total-return (dividend back-adjusted) copies of a folder's CSVs")
+    dv.add_argument("src")
+    dv.add_argument("dst")
     dr = sub.add_parser("doctor", help="preflight for the forward job: API key, data freshness, next rotation decision")
     dr.add_argument("folders", nargs="*", default=["chart/data", "chart/data/etf"])
     dr.add_argument("--max-stale", type=int, default=3, help="weekdays the newest bar may lag today (default 3)")
@@ -139,7 +147,8 @@ def main(argv=None):
     if a.cmd == "report":
         from .report import build, render_html
         groups = dict(x.split("=", 1) for x in a.folders)
-        data = build(groups, rotation_folder=a.rotation, longrun_folder=a.longrun, forward_dir=a.forward)
+        data = build(groups, rotation_folder=a.rotation, longrun_folder=a.longrun, forward_dir=a.forward,
+                     longrun_scan=a.longrun_scan)
         text = render_html(data) if a.out.endswith(".html") else json.dumps(data, separators=(",", ":"))
         pathlib.Path(a.out).write_text(text, encoding="utf-8")
         print(f"wrote {a.out}")
@@ -151,11 +160,18 @@ def main(argv=None):
                                                    "buffer": a.buffer, "trend": a.trend})), indent=2))
         return
     if a.cmd == "longrun":
-        from .longrun import run
-        text = json.dumps(run(a.folder), indent=2, ensure_ascii=False)
+        from .longrun import run, strategy_scan
+        res = strategy_scan(a.folder) if a.strategies else run(a.folder)
+        if a.strategies:
+            res.pop("rows")
+        text = json.dumps(res, indent=2, ensure_ascii=False)
         if a.out:
             pathlib.Path(a.out).write_text(text + "\n", encoding="utf-8")
         print(text)
+        return
+    if a.cmd == "dividends":
+        from .dividends import apply
+        print(json.dumps(apply(a.src, a.dst), indent=2))
         return
     if a.cmd == "doctor":
         from .doctor import check

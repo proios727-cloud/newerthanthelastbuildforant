@@ -59,3 +59,19 @@ fund's first full week: XLB, XLE, XLF, XLI, XLK, XLP, XLU, XLV and XLY in 1999-1
 - **Validator flags are real events, kept as is:** the 2008 crash weeks (XLE −26%, XLF +31% and +33%), the 24 Aug 2015 flash
   crash, and March 2020. The validator's 15% wick and 25% move limits are tuned for daily bars.
 - Use: `python3 -m chart longrun` (see `chart/longrun.py`).
+
+# Total return: `chart/data/tr/`, `chart/data/etf_tr/`, `chart/data/weekly_desk/`
+
+- **Daily total-return copies** of the 8 desk equities and 13 ETFs. They are generated, not edited:
+  `python3 -m chart dividends chart/data chart/data/tr` and `... chart/data/etf chart/data/etf_tr`. Each is a standard
+  back-adjustment: bars before an ex-date are scaled by (1 − dividend / previous close), so the latest prices stay as
+  traded. Use these for research verdicts. The raw folders stay the source for live prices, tickets and limits.
+- **`chart/data/meta/dividends.csv`** lists 241 dividends in the daily span, taken from the "dividend amount" column of
+  Alpha Vantage's weekly adjusted series. Amounts are raw per share. Dividends before the splits in `chart/adjust.py` are
+  divided by the split ratio when loaded. `ex_date` is the first session of the week the dividend falls in; a real
+  ex-date can be up to 4 sessions later (SPY's falls on Fridays). Yearly totals are exact.
+- **Check:** every weekly close from Nov 2023 to Oct 2026 matches Alpha Vantage's adjusted close within 0.08%
+  (mean 0.01%) for all 18 symbols that paid dividends.
+- **`chart/data/weekly_desk/`:** weekly total-return bars for SPY, QQQ, IWM, AAPL, MSFT, NVDA and AMD, built the same way as
+  `chart/data/weekly/`, 1999 (IWM 2000) → 2026-10-23. They match the daily total-return files within 0.03%. **TSLA is
+  missing:** the free tier's 25-requests-a-day cap was reached, so it follows in a later run.

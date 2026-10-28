@@ -25,7 +25,7 @@ def _sample(curve):
 
 
 def build(groups, min_train=252, test=21, fee_bps=1.0, slippage_bps=2.0, rotation_folder=None, longrun_folder=None,
-          forward_dir=None):
+          forward_dir=None, longrun_scan=()):
     """groups: {group name: folder}. Each folder is scanned on its own, and gets its own basket rotation."""
     kw = {"min_train": min_train, "test": test, "fee_bps": fee_bps, "slippage_bps": slippage_bps}
     out = {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "settings": kw, "groups": []}
@@ -51,6 +51,9 @@ def build(groups, min_train=252, test=21, fee_bps=1.0, slippage_bps=2.0, rotatio
     if longrun_folder:
         from .longrun import run
         out["longrun"] = run(longrun_folder)
+    if longrun_scan:
+        from .longrun import strategy_scan
+        out["longrun_scan"] = [{k: v for k, v in strategy_scan(f).items() if k != "rows"} for f in longrun_scan]
     if forward_dir is not None:
         out["forward"] = forward_panel(forward_dir)
     return out

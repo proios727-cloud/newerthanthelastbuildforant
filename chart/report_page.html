@@ -327,7 +327,16 @@ function longrunPanel() {
           <thead><tr><th>Stress window</th><th>Rule</th><th>Basket</th></tr></thead>
           <tbody>${b.variants[0].regimes.map(reg).join("")}</tbody></table></div>
       </div>`).join("")}
-    <p class="note">Weekly version of the live rule: ${L.lookback_weeks}-week momentum (≈ 60 sessions), decided on the first weekly bar of each month, filled at the next weekly open. Prices include dividends, which the daily panels above do not; that alone is worth about 1.9 points a year to the basket. Drawdowns are month-end.</p>`;
+    ${(D.longrun_scan || []).length ? `
+      <span class="label">Six single-asset strategies, weekly, 20+ years (2-year warm-up, quarterly test blocks)</span>
+      <div class="grid2">${D.longrun_scan.map(sc => `
+        <div class="tbl"><table>
+          <thead><tr><th>${sc.folder.split("/").pop()}</th><th>Tests</th><th>Risk filters</th><th>Candidates</th></tr></thead>
+          <tbody>${Object.entries(sc.by_strategy).map(([k, v]) => `<tr><td>${k}</td><td class="num">${v.tests}</td><td class="num">${v.risk_filters}</td><td class="num">${v.candidates}</td></tr>`).join("")}</tbody></table>
+          <p class="note">${sc.passes.map(r => `${r.symbol} ${r.strategy} ${pct(r.cagr)} (hold ${pct(r.hold_cagr)}), drawdown ${pct(r.max_drawdown)} vs ${pct(r.hold_drawdown)}${r.candidate ? " · candidate" : ""}`).join("<br>")}</p></div>`).join("")}
+      </div>
+      <p class="note">Over two decades the trend-following filters (SMA cross, Donchian, MACD) cut drawdowns on a third or more of assets, always at a cost in return; no strategy beats holding the desk stocks. With 120 tests, one or two "candidates" is what chance alone produces.</p>` : ""}
+    <p class="note">Weekly version of the live rule: ${L.lookback_weeks}-week momentum (≈ 60 sessions), decided on the first weekly bar of each month, filled at the next weekly open. Prices include dividends (about 1.9 points a year for the basket). Build the daily panels from the total-return folders (chart/data/tr, chart/data/etf_tr) to compare like with like. Drawdowns are month-end.</p>`;
 }
 segs();
 render();

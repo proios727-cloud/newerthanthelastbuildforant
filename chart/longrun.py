@@ -84,3 +84,30 @@ def run(folder="chart/data/weekly", lookback=12, top=3):
             res["variants"].append(row)
         out["baskets"].append(res)
     return out
+
+
+def strategy_scan(folder, min_train=104, test=13, fee_bps=1.0, slippage_bps=2.0):
+    """The six single-asset strategies on weekly bars: rolling walk-forward with 2 years before the first test block
+    and quarterly blocks, judged by the scan's candidate and risk-filter rules. Grid lengths are read as weeks here,
+    so these are slower versions of the daily signals."""
+    from .scan import entry
+    from .sweep import GRIDS
+    rows = []
+    for f in sorted(pathlib.Path(folder).glob("*.csv")):
+        bars = load_csv(f)
+        for s in GRIDS:
+            e = entry(f.stem.upper(), bars, s, min_train=min_train, test=test, fee_bps=fee_bps,
+                      slippage_bps=slippage_bps, periods_per_year=52)
+            rows.append({"symbol": e["symbol"], "strategy": s, "from": e["oos_window"][0], "to": e["oos_window"][1],
+                         "cagr": e["oos"]["cagr"], "max_drawdown": e["oos"]["max_drawdown"], "calmar": e["oos"]["calmar"],
+                         "exposure": e["oos"]["exposure"], "hold_cagr": e["hold"]["cagr"],
+                         "hold_drawdown": e["hold"]["max_drawdown"], "candidate": e["candidate"],
+                         "risk_filter": e["risk_filter"]})
+    by = {}
+    for r in rows:
+        b = by.setdefault(r["strategy"], {"tests": 0, "risk_filters": 0, "candidates": 0})
+        b["tests"] += 1
+        b["risk_filters"] += r["risk_filter"]
+        b["candidates"] += r["candidate"]
+    return {"folder": str(folder), "by_strategy": by, "passes": [r for r in rows if r["risk_filter"] or r["candidate"]],
+            "rows": rows}
