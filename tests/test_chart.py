@@ -745,7 +745,9 @@ class BriefTests(unittest.TestCase):
             if record_rotation(cut, log, lookback=60, top=2):
                 rotation_tickets(cut, log, tix)
             record_rotation(cut, tr, lookback=60, top=2, trend=20)
-        text = rotation_brief(b, log, tix, tr, {"problems": ["key missing"]})
+        text = rotation_brief(b, log, tix, tr, {"problems": ["key missing"]},
+                              {"hold": False, "decided": "2026-03-31", "close_vs_average_now": -0.02})
+        self.assertIn("Below: cash as of 2026-03-31", text)
         self.assertIn("**Hold: A, D**", text)
         self.assertIn("## Paper tickets", text)
         self.assertIn("## Defensive variant", text)
@@ -777,3 +779,39 @@ class DividendTests(unittest.TestCase):
         self.assertEqual(dividends.apply(src, dst, table), {"XLK": 1})
         out = chart.load_csv(os.path.join(dst, "XLK.csv"))
         self.assertAlmostEqual(out[0].close, 99.8)
+
+
+class OverlayTests(unittest.TestCase):
+    def weekly(self, closes, start="2020-01-03"):
+        from datetime import date, timedelta
+        d = date.fromisoformat(start)
+        return [Bar((d + timedelta(weeks=k)).isoformat(), c, c, c, c) for k, c in enumerate(closes)]
+
+    def test_decisions_month_end_average_and_unfinished_month(self):
+        from chart.overlay import decisions
+        bars = self.weekly([100 + k for k in range(30)])                        # steady rise: always above average
+        d = decisions(bars, months=3)
+        self.assertTrue(d and all(v == 1 for v in d.values()))
+        self.assertTrue(all(bars[i].ts[:7] != bars[i + 1].ts[:7] for i in d if i + 1 < len(bars)))  # month-end bars
+        self.assertNotIn(len(bars) - 1, d)            # 2020-07-24: July isn't over, so no decision on the last bar
+        falling = self.weekly([200 - 3 * k for k in range(30)])
+        self.assertTrue(all(v == 0 for v in decisions(falling, months=3).values()))
+
+    def test_run_goes_to_cash_and_earns_cash_rate(self):
+        from chart.overlay import run, verdict
+        up = [100 + k for k in range(26)]
+        down = [125 - 4 * k for k in range(1, 26)]
+        bars = self.weekly(up + down)
+        r0 = run(bars, months=2, start=0, fee_bps=0, slippage_bps=0)
+        r2 = run(bars, months=2, start=0, fee_bps=0, slippage_bps=0, cash_rate=0.05)
+        self.assertGreater(r0["stats"]["max_drawdown"], r0["hold"]["max_drawdown"])   # shallower than holding
+        self.assertGreater(r2["equity"][-1], r0["equity"][-1])                        # cash yield adds while out
+        self.assertLess(r0["stats"]["exposure"], 1.0)
+        self.assertIn("risk_filter", verdict(r0))
+
+    def test_status_reports_last_completed_decision(self):
+        from chart.overlay import status
+        s = status(self.weekly([100 + k for k in range(30)]), months=3)
+        self.assertTrue(s["hold"])
+        self.assertLess(s["decided"], s["last_bar"])
+        self.assertGreater(s["close_vs_average_now"], 0)

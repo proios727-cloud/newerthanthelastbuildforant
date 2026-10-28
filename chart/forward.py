@@ -243,7 +243,7 @@ def _rows(path):
     return [json.loads(l) for l in path.read_text().splitlines() if l.strip()] if path.exists() else []
 
 
-def rotation_brief(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, trend_log=None, doctor=None):
+def rotation_brief(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, trend_log=None, doctor=None, overlay=None):
     """One Markdown page for the desk on decision day: the picks and why, what changes, the paper tickets, the defensive
     variant's call, the forward record so far and anything blocking the job. None if nothing has been decided yet."""
     decisions = _rows(log)
@@ -273,6 +273,11 @@ def rotation_brief(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, trend_
             gap = t.get("basket_vs_trend")
             lines += ["", "## Defensive variant (cash below the basket's 200-session average)", "",
                       f"Hold: {', '.join(t['picks']) or 'cash'}" + (f" · basket {pct(gap)} vs its average" if gap is not None else "")]
+    if overlay:
+        lines += ["", "## Market regime flag (SPY vs its 10-month average)", "",
+                  f"{'Above: hold' if overlay['hold'] else 'Below: cash'} as of {overlay['decided']}; "
+                  f"now {pct(overlay['close_vs_average_now'])} vs the average. Information only: not on the book "
+                  "(research/trend-overlay/VERDICT.md)."]
     rep = report_rotation(bars_by_symbol, log)
     lines += ["", "## Forward record (live log)", ""]
     if rep["completed_periods"]:
