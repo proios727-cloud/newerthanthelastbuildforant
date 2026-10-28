@@ -1,7 +1,8 @@
 name: chart-forward
 # Forward paper test for the chart scan. Research only: it never previews, fills or places an order.
-# Weekdays after the close: append the day's bars (Alpha Vantage, needs the ALPHAVANTAGE_API_KEY secret),
-# log the scan's signals before the next open, and keep both on the `shadow-data` branch under chart-forward/.
+# Weekdays after the close: append the day's bars (Alpha Vantage, needs the ALPHAVANTAGE_API_KEY secret; 8 stocks +
+# 13 ETFs = 21 requests, inside the free 25/day), log the scan's signals and, on the first session of each month, the
+# ETF rotation rule's picks, all before the next open; keep everything on the `shadow-data` branch under chart-forward/.
 on:
   schedule:
     - cron: "37 21 * * 1-5"
@@ -31,9 +32,12 @@ jobs:
             git -C /tmp/data checkout -q --orphan shadow-data
             git -C /tmp/data rm -rfq .
           fi
-          mkdir -p /tmp/data/chart-forward/data
+          mkdir -p /tmp/data/chart-forward/data /tmp/data/chart-forward/etf
           for f in chart/data/*.csv; do
             [ -e "/tmp/data/chart-forward/data/$(basename "$f")" ] || cp "$f" /tmp/data/chart-forward/data/
+          done
+          for f in chart/data/etf/*.csv; do
+            [ -e "/tmp/data/chart-forward/etf/$(basename "$f")" ] || cp "$f" /tmp/data/chart-forward/etf/
           done
       - name: Update bars, record signals, report
         env:
@@ -41,9 +45,12 @@ jobs:
         run: |
           D=/tmp/data/chart-forward
           python -m chart update "$D/data"
-          python -m chart validate "$D"/data/*.csv > "$D/VALIDATE.json" || echo "validation problems: see VALIDATE.json"
+          python -m chart update "$D/etf" --all
+          python -m chart validate "$D"/data/*.csv "$D"/etf/*.csv > "$D/VALIDATE.json" || echo "validation problems: see VALIDATE.json"
           python -m chart forward record "$D/data" --log "$D/signals.jsonl"
           python -m chart forward report "$D/data" --log "$D/signals.jsonl" > "$D/REPORT.json"
+          python -m chart forward rotation-record "$D/etf" --log "$D/rotation.jsonl"
+          [ -s "$D/rotation.jsonl" ] && python -m chart forward rotation-report "$D/etf" --log "$D/rotation.jsonl" > "$D/ROTATION.json" || true
       - name: Push to shadow-data
         run: |
           cd /tmp/data

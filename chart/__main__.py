@@ -58,14 +58,16 @@ def main(argv=None):
     s.add_argument("--all", action="store_true",
                    help="research mode: scan every CSV in the folder, not only symbols in desk.json's universe")
     f = sub.add_parser("forward", help="log today's scan before the open, or score logged signals")
-    f.add_argument("action", choices=("record", "report"))
+    f.add_argument("action", choices=("record", "report", "rotation-record", "rotation-report", "rotation-replay"))
     f.add_argument("folder", nargs="?", default="chart/data")
     f.add_argument("--log", help="signal log path (default ledger/signals.jsonl)")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
+    u.add_argument("--all", action="store_true", help="update every CSV in the folder, not only desk.json equities")
     r = sub.add_parser("report", help="write the visual scorecard (.html) or its data (.json)")
     r.add_argument("folders", nargs="+", help="NAME=FOLDER pairs, e.g. Stocks=chart/data")
     r.add_argument("--out", required=True)
+    r.add_argument("--rotation", help="ETF folder for the rotation-rule panel (stress spread + live-calendar replay)")
     st = sub.add_parser("stress", help="stress-test a basket rotation rule across rebalance days, costs and universes")
     st.add_argument("folder", nargs="?", default="chart/data/etf")
     st.add_argument("--lookback", type=int, default=60)
@@ -79,6 +81,17 @@ def main(argv=None):
         from fund import config
         from . import forward
         uni = config.load().universe
+        if a.action.startswith("rotation-"):
+            bars = {p.stem.upper(): load_csv(p) for p in sorted(pathlib.Path(a.folder).glob("*.csv"))}
+            log = a.log or forward.ROTATION_LOG
+            if a.action == "rotation-replay":
+                print(json.dumps(forward.replay_rotation(bars), indent=2))
+            elif a.action == "rotation-record":
+                sig = forward.record_rotation(bars, log)
+                print(json.dumps(sig, indent=2) if sig else "not a decision day, or already recorded")
+            else:
+                print(json.dumps(forward.report_rotation(bars, log), indent=2))
+            return
         log = a.log or forward.LOG
         if a.action == "record":
             row = forward.record(scan(pathlib.Path(a.folder).glob("*.csv"), uni, min_train=252, test=21,
@@ -90,12 +103,14 @@ def main(argv=None):
     if a.cmd == "update":
         from fund import config
         from .update import update
-        print(json.dumps(update(a.folder, config.load().universe), indent=2))
+        uni = ({f.stem.upper(): {"asset": "equity"} for f in pathlib.Path(a.folder).glob("*.csv")} if a.all
+               else config.load().universe)
+        print(json.dumps(update(a.folder, uni), indent=2))
         return
     if a.cmd == "report":
         from .report import build, render_html
         groups = dict(x.split("=", 1) for x in a.folders)
-        data = build(groups)
+        data = build(groups, rotation_folder=a.rotation)
         text = render_html(data) if a.out.endswith(".html") else json.dumps(data, separators=(",", ":"))
         pathlib.Path(a.out).write_text(text, encoding="utf-8")
         print(f"wrote {a.out}")

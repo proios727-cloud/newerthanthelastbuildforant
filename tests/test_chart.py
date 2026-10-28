@@ -572,3 +572,56 @@ class RobustTests(unittest.TestCase):
         self.assertEqual(r["days"], 7)
         self.assertLessEqual(r["cagr"]["min"], r["cagr"]["median"])
         self.assertLessEqual(r["cagr"]["median"], r["cagr"]["max"])
+
+
+class RotationForwardTests(unittest.TestCase):
+    def basket(self):
+        # Business days across Jan-Apr 2026; A trends up, B flat, C down, D up slowly.
+        from datetime import date, timedelta
+        days, d = [], date(2026, 1, 2)
+        while len(days) < 90:
+            if d.weekday() < 5:
+                days.append(d.isoformat())
+            d += timedelta(days=1)
+        mk = lambda f: [Bar(t, f(i), f(i) + 1, f(i) - 1, f(i)) for i, t in enumerate(days)]
+        return {"A": mk(lambda i: 100 + i), "B": mk(lambda i: 100.0), "C": mk(lambda i: 200 - i), "D": mk(lambda i: 100 + 0.2 * i)}
+
+    def test_signal_only_on_first_session_of_month(self):
+        from chart.forward import rotation_signal
+        b = self.basket()
+        first_of_month = [i for i in range(1, 90) if b["A"][i].ts[:7] != b["A"][i - 1].ts[:7]]
+        for i in range(70, 90):
+            cut = {s: v[:i + 1] for s, v in b.items()}
+            sig = rotation_signal(cut, lookback=60, top=2)
+            self.assertEqual(sig is not None, i in first_of_month)
+        i = [k for k in first_of_month if k >= 60][0]
+        sig = rotation_signal({s: v[:i + 1] for s, v in b.items()}, lookback=60, top=2)
+        self.assertEqual(sig["picks"], ["A", "D"])             # B is flat (momentum 0, not > 0), C is falling
+
+    def test_record_once_and_report_scores_next_open(self):
+        from chart.forward import record_rotation, report_rotation
+        b = self.basket()
+        log = os.path.join(tempfile.mkdtemp(), "rot.jsonl")
+        decided = []
+        for i in range(60, 90):
+            cut = {s: v[:i + 1] for s, v in b.items()}
+            if record_rotation(cut, log, lookback=60, top=2):
+                decided.append(b["A"][i].ts)
+            self.assertIsNone(record_rotation(cut, log, lookback=60, top=2) if decided and decided[-1] == b["A"][i].ts else None)
+        r = report_rotation(b, log)
+        self.assertEqual(r["decisions_logged"], len(decided))
+        p = r["periods"][0]
+        start = next(x.ts for x in b["A"] if x.ts > decided[0])
+        self.assertEqual(p["from"], start)
+        a = {x.ts: x for x in b["A"]}; dd = {x.ts: x for x in b["D"]}
+        self.assertAlmostEqual(p["rule"], round(((a[p["to"]].close / a[start].open - 1) + (dd[p["to"]].close / dd[start].open - 1)) / 2, 5))
+
+    def test_replay_matches_live_record_path(self):
+        from chart.forward import record_rotation, replay_rotation, report_rotation
+        b = self.basket()
+        log = os.path.join(tempfile.mkdtemp(), "rot.jsonl")
+        for i in range(90):
+            record_rotation({s: v[:i + 1] for s, v in b.items()}, log, lookback=60, top=2)
+        live = report_rotation(b, log)
+        rep = replay_rotation(b, lookback=60, top=2)
+        self.assertEqual(live["periods"], rep["periods"])
