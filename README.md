@@ -149,3 +149,47 @@ python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin 
 ```
 
 **Windows, no install:** double-click `skills/router-doctor/windows/Check-WiFi.bat`. It watches the router and the internet for a few minutes, tracks the Wi-Fi band and signal, then saves a verdict report (`WiFi-Check-*.txt` plus a CSV) to the Desktop.
+
+## Charting engine and RE Studio
+
+| Path | What it is |
+|---|---|
+| `chart/` | Indicator engine (SMA, EMA, Wilder RMA, RSI, MACD, Bollinger, ATR) and a bar backtester that fills on the next bar's open, so it never looks ahead. Pure stdlib. Built from published definitions; see `chart/SPEC.md`. |
+| `chart/sweep.py` | Parameter sweep, single-split walk-forward, and **rolling walk-forward**: settings are re-picked before every 10-bar test block using only earlier bars, and the blocks are stitched into one continuous out-of-sample run against buy-and-hold. |
+| `chart/strategies.py` | Trend-filtered RSI dips, MACD with a trend filter, Bollinger reversion, Donchian breakout. |
+| `chart/rotate.py` | Basket momentum rotation (hold the strongest symbol, or cash), scored against an equal-weight basket. |
+| `chart/scan.py` | Quant-seat bridge: rolling walk-forward of all 6 strategies on each `chart/data/<SYMBOL>.csv` in the desk universe, plus the basket rotation, emitted as a `signal_list` with a candidate flag and the reasons it was rejected. Research only. |
+| `chart/data/` | Daily bars for the desk's 8 equities, 2023-10-02 → 2026-10-26 (770 sessions each), mostly from ThetaData. Sources, the NVDA split adjustment and the two recorded bad-print fixes are in `chart/data/SOURCES.md`. |
+| `chart/data/etf/` | Research universe: 11 Select Sector SPDRs plus TLT and GLD, same span. Splits, dropped bad rows and vendor gaps are in `chart/data/SOURCES.md`. |
+| `chart/report.py`, `chart/report_page.html` | `python3 -m chart report Stocks=chart/data ETFs=chart/data/etf --out scorecard.html` writes a self-contained scorecard: verdicts, stats, and each strategy's out-of-sample curve against holding. |
+| `chart/robust.py` | `python3 -m chart stress chart/data/etf` stress-tests a rotation rule from every rebalance day, at several cost levels, and with key funds removed. |
+| `chart/validate.py`, `chart/adjust.py` | Data checks (order, bad prints, one-day jumps, cross-vendor closes) and split/correction handling. |
+| `chart/forward.py`, `chart/update.py` | Forward paper test: log each day's signals before the open, score them as bars arrive. `.github/workflows/chart-forward.yml` runs it every weekday on the `shadow-data` branch (needs the `ALPHAVANTAGE_API_KEY` secret). |
+| `tests/test_chart.py` | Oracle cases from the spec, including a test that checks the tests can fail and a check that the test slice can't influence parameter choice. |
+| `docs/re-studio.md` | Reference for the AI reverse-engineering stack (REA, Ghidra, jadx, Frida…): install, engines, workflows, prompts, legal guardrails. |
+| `.claude/skills/re-studio/` | Project skill: scope gate → evidence → SPEC.md → clean-room build → oracle loop. |
+
+```bash
+python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1
+python3 -m chart backtest prices.csv --strategy rsi_revert --rsi-n 14 --lo 30 --hi 70
+python3 -m chart walkforward chart/data/SPY.csv --strategy sma_cross --train 0.7
+python3 -m chart walkforward chart/data/SPY.csv --strategy bollinger_revert --rolling
+python3 -m chart scan --out ledger/signals.json      # 1-year train, monthly blocks, 1 bp fee + 2 bp slippage
+python3 -m chart validate chart/data/*.csv
+python3 -m chart forward record && python3 -m chart forward report
+```
+
+**Rolling scan, 25 out-of-sample months (Oct 2024 → Oct 2026), 128 tests across both universes.** A strategy is judged two ways: as a *return candidate* (beats holding on return and Sharpe, and wins at least half the months) and as a *risk filter* (a drawdown at least a third shallower than holding, with an equal or better Calmar ratio).
+
+- **ETF momentum rotation: the headline number was mostly luck, but a smaller edge survives stress testing.**
+  - The +28.8%/yr winner (vs +9.7% for the equal-weight basket) leaned on a 5-day lookback. Shifting its rebalance day by 1–4 sessions moved the result anywhere from −0.4% to +32%/yr, and without XLK the edge disappears.
+  - What survives is the textbook rule: **60-day momentum, monthly rebalance, hold the top 3**, trading only the funds that change. Across all 21 possible rebalance days it made a median +13.8%/yr (worst +8.0%) vs +9.7% for the basket, with a similar drawdown (median −12.7% vs −13.5%), a Sharpe of 0.96 vs 0.85, and a better Calmar ratio on 16 of 21 days.
+  - That edge thins at 10 bp fees plus 10 bp slippage (+12.0%/yr, about the same Sharpe as the basket) and goes at 25+25 bp. It also needs GLD and TLT in the basket: on sectors only it doesn't beat holding.
+  - Verdict: a modest, cost-sensitive edge worth forward paper-testing as a rule, not a deployable result.
+- **The SMA cross keeps working as a risk filter:** IWM, XLC, XLI and XLB all cut their drawdown by 40–57% for a similar or better Calmar ratio.
+- **The earlier MACD-trend risk filters on TSLA and AMD didn't hold up on the ETFs.** MACD-trend matched holding's Calmar on only 1 of 13, so treat those two as likely luck.
+- **On the 8 desk stocks, nothing beats holding.** They were picked with hindsight in a strong bull market.
+
+Two years of one market regime is still a short test. The forward paper test is the evidence that counts next.
+
+The CSV needs `date, open, high, low, close[, volume]` in ascending order. Backtest results are research output, not investment advice.
