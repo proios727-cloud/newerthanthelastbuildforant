@@ -263,6 +263,12 @@ function rotation() {
   const c = R.stress.costs, w = R.stress.without, rp = R.replay;
   const rowC = x => `<tr><td>${x.fee_bps}+${x.slippage_bps} bp</td><td class="num">${pct(x.cagr.median)}</td><td class="num">${pct(x.cagr.min)}</td><td class="num">${pct(x.hold.cagr)}</td><td class="num">${fix(x.sharpe_median)} / ${fix(x.hold.sharpe)}</td><td class="num">${x.days_calmar_at_least_hold}/${x.days}</td></tr>`;
   const rowW = x => `<tr><td>without ${x.dropped}</td><td class="num">${pct(x.cagr.median)}</td><td class="num">${pct(x.cagr.min)}</td><td class="num">${pct(x.hold.cagr)}</td><td class="num">${fix(x.sharpe_median)} / ${fix(x.hold.sharpe)}</td><td class="num">${x.days_calmar_at_least_hold}/${x.days}</td></tr>`;
+  const rowV = (x, k) => `<tr${k ? "" : ' style="font-weight:600"'}><td>${x.label}</td><td class="num">${pct(x.cagr_low_cost)}</td><td class="num">${pct(x.cagr_high_cost)}</td><td class="num">${pct(x.drawdown_median)}</td><td class="num">${x.trades_median}</td><td class="num">${pct(x.replay_rule)} vs ${pct(x.replay_basket)}</td><td class="num">${pct(x.replay_drawdown)}</td></tr>`;
+  const variants = R.variants ? `
+    <div class="tbl"><table>
+      <thead><tr><th>Variants tested</th><th>CAGR median 1+2 bp</th><th>10+10 bp</th><th>Drawdown median</th><th>Trades</th><th>Replay vs basket</th><th>Replay drawdown</th></tr></thead>
+      <tbody>${R.variants.map(rowV).join("")}</tbody></table></div>
+    <p class="note">Hysteresis (keep a fund until it falls out of a wider band) and a basket trend filter were tested to cut costs and drawdown. Neither earned a change: hysteresis barely cut trades and lost return; the trend filter's gain depends on its length (200 days is worse than none) and this window has no bear market to test it on.</p>` : "";
   const ex = rp.periods.map(p => p.excess), m = Math.max(...ex.map(Math.abs), 0.01);
   const bars = rp.periods.map(p => {
     const h = Math.max(2, Math.abs(p.excess) / m * 46);
@@ -282,6 +288,7 @@ function rotation() {
         <span class="num">Cumulative ${pct(rp.cumulative.rule)} vs ${pct(rp.cumulative.basket)} · ahead in ${rp.months_beat_basket} of ${rp.completed_periods} months</span>
       </div>
     </div>
+    ${variants}
     <p class="note">The stress rows run the fixed rule from all ${c[0].days} possible rebalance days, trading only the funds that change. The replay uses the live rule (decide on the first session of each month, fill at the next open), deciding from point-in-time data. Both are backtests; the forward log is the real test.</p>`;
 }
 segs();

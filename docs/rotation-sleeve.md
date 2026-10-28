@@ -20,6 +20,25 @@ Risk Officer → trader → `EXECUTE` path.
 **Turnover:** it changes about 1.2 of its 3 holdings a month. That costs about **0.3%/yr at 1+2 bp** and **1.9%/yr at
 10+10 bp**, so the edge after costs ranges from about **+1.4 points a year** down to **about zero**.
 
+## Variants tested: no change to the rule
+
+Two changes were tested to widen the thin after-cost edge. Each was scored from all 21 rebalance days and on the
+live-calendar replay (`chart stress --buffer N` / `--trend N`; the scorecard's rotation panel shows the same table).
+
+| Variant | CAGR median, 1+2 bp | 10+10 bp | Drawdown median | Trades | Replay vs basket | Replay drawdown |
+|---|---|---|---|---|---|---|
+| **Adopted rule** | **+13.8%** | **+12.0%** | −12.7% | 31 | **+49.4% vs +43.1%** | −7.5% |
+| Hysteresis: keep a fund while it ranks in the top 4 | +10.4% | +8.8% | −13.5% | 28 | +34.0% | −10.6% |
+| Hysteresis: top 5 | +8.0% | +6.6% | −14.1% | 27 | +30.9% | −10.0% |
+| Basket below its 150-day average → cash | +12.2% | +10.5% | −9.7% | 28 | +46.0% | −6.7% |
+| Basket below its 200-day average → cash | +12.7% | +10.8% | −12.7% | 31 | +39.2% | −7.5% |
+
+- **Hysteresis is rejected.** It saves only about 3 trades in two years, and holding fading funds longer costs 3–6
+  points a year. The month-to-month swaps are where the rule's return comes from.
+- **The trend filter is not adopted.** At 150 days it trims the median drawdown from −12.7% to −9.7%, at a cost of about
+  1.5 points a year. At 200 days it helps nothing. A gain that depends on the filter length is fitting, and this window
+  holds no bear market to test a trend filter on. Revisit it with older data.
+
 **Caveats:** this is one 3-year window and one market regime. The rule was chosen on the stress-test window, so the
 replay isn't fully out of sample. Older regimes (2018, 2020, 2022) need paid historical data.
 
@@ -42,3 +61,10 @@ if 6+ months of forward results stay ahead of the basket after costs.
 **To proceed with B:** add the ETFs to `desk.json` → `fund.universe` (asset `equity`, one group per fund), then let the
 daily `chart-forward` job log decisions. Both need the `ALPHAVANTAGE_API_KEY` repository secret. The universe change is
 yours to approve because it changes what the desk may trade.
+
+**What the job produces each month:** on the first session of the month, `chart forward rotation-tickets` turns the
+decision into paper tickets (`rotation_tickets.jsonl` on `shadow-data`). It sizes buys at the 5% position cap of
+`starting_nav` in whole shares, with a limit 0.5% above the decision close. It sells only funds leaving the top 3, with a
+limit 0.5% below, and leaves kept funds alone. The tickets are review material for analyst → Risk Officer → trader. Nothing
+is previewed or sent. `chart doctor` runs first and fails the job if the key is missing or bars are more than 3 weekdays
+old, so a missed month is visible.

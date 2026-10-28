@@ -50,15 +50,51 @@ def build(groups, min_train=252, test=21, fee_bps=1.0, slippage_bps=2.0, rotatio
     return out
 
 
+ROTATION_VARIANTS = (("Adopted rule", {}), ("Hysteresis: keep while in top 4", {"buffer": 1}),
+                     ("Hysteresis: keep while in top 5", {"buffer": 2}), ("Basket trend filter, 150 days", {"trend": 150}),
+                     ("Basket trend filter, 200 days", {"trend": 200}))
+
+
+def _month_end_drawdown(periods, key):
+    eq = peak = 1.0
+    worst = 0.0
+    for p in periods:
+        eq *= 1 + p[key]
+        peak = max(peak, eq)
+        worst = min(worst, eq / peak - 1)
+    return worst
+
+
+def rotation_variants(bars, aligned):
+    """Each variant of the rule scored the same two ways: every rebalance day at two cost levels, and the replay."""
+    from .forward import ROTATION_RULE, replay_rotation
+    from .robust import day_sweep
+    base = {"lookback": ROTATION_RULE["lookback"], "hold": 21, "top": ROTATION_RULE["top"]}
+    out = []
+    for label, extra in ROTATION_VARIANTS:
+        lo = day_sweep(aligned, fee_bps=1, slippage_bps=2, **base, **extra)
+        hi = day_sweep(aligned, fee_bps=10, slippage_bps=10, **base, **extra)
+        rp = replay_rotation(bars, **extra)
+        out.append({"label": label, "params": extra, "cagr_low_cost": lo["cagr"]["median"],
+                    "cagr_high_cost": hi["cagr"]["median"], "drawdown_median": lo["max_drawdown"]["median"],
+                    "trades_median": lo["trades_median"], "replay_rule": rp["cumulative"]["rule"],
+                    "replay_basket": rp["cumulative"]["basket"], "replay_ahead": rp["months_beat_basket"],
+                    "replay_months": rp["completed_periods"],
+                    "replay_drawdown": round(_month_end_drawdown(rp["periods"], "rule"), 5)})
+    return out
+
+
 def rotation_panel(folder):
     """Stress-test spread and live-calendar replay of the ETF rotation rule, for the page's rotation section."""
     from .forward import ROTATION_RULE, replay_rotation
     from .robust import stress
+    from .rotate import align
     bars = {f.stem.upper(): load_csv(f) for f in sorted(pathlib.Path(folder).glob("*.csv"))}
     st = stress(bars, {"lookback": ROTATION_RULE["lookback"], "hold": 21, "top": ROTATION_RULE["top"]})
     rp = replay_rotation(bars)
     return {"rule": ROTATION_RULE, "stress": st,
-            "replay": {k: rp[k] for k in ("periods", "completed_periods", "months_beat_basket", "cumulative")}}
+            "replay": {k: rp[k] for k in ("periods", "completed_periods", "months_beat_basket", "cumulative")},
+            "variants": rotation_variants(bars, align(bars))}
 
 
 PAGE = pathlib.Path(__file__).with_name("report_page.html")
