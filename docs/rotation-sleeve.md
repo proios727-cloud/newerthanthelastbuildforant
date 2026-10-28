@@ -12,8 +12,10 @@ Risk Officer → trader → `EXECUTE` path.
 The 2023–2026 "edge" doesn't hold up. Two problems:
 
 1. **The daily tests ignored dividends.** The daily files are price-only. The equal-weight basket yields about 1.9% a year
-   (TLT 4.3%, XLE 3.1%, XLU 2.9%), while the rule mostly holds low-yield momentum funds such as XLK, GLD and XLY. On total
-   return, the gross edge of about +1.7 points a year mostly goes away.
+   (TLT 4.3%, XLE 3.1%, XLU 2.9%), while the rule mostly holds lower-yield momentum funds. On total-return daily bars
+   (`chart/data/etf_tr/`), the 2023–26 live-calendar replay edge shrinks from +1.8 to +1.2 points a year: +16.9% against
+   +15.8%. The stress-test median is +15.4% against +11.7%. About a third of the edge was missing dividends; the rest
+   holds on this window.
 2. **Over two decades the rule earns less than the basket.** From 2005 to 2026 (weekly total-return bars) it made 9.0% a
    year against 10.0% for holding the basket, and about 7.0% after 10+10 bp costs. From 2018 to 2026 with all 13 funds it
    made 8.3% against 12.8%.
@@ -64,7 +66,7 @@ longrun`). Over 2024–2026 that weekly version matches the daily rule's return 
 **Volatility-weighted top 3** (inverse 12-week volatility, a scratch test with no code added) trimmed the worst drawdown by
 1–4 points but cost 0.3–0.8 points a year in every case. Not adopted.
 
-## The original 2023–2026 daily evidence (price only)
+## The original 2023–2026 daily evidence (price only; total-return figures in the bottom line)
 
 | Test | Rule | Equal-weight basket |
 |---|---|---|

@@ -751,3 +751,29 @@ class BriefTests(unittest.TestCase):
         self.assertIn("## Defensive variant", text)
         self.assertIn("- key missing", text)
         self.assertIn("| 1 | A |", text)
+
+
+class DividendTests(unittest.TestCase):
+    def test_back_adjustment_puts_the_dividend_into_returns(self):
+        from chart.dividends import total_return
+        bars = bars_from([100.0, 100.0, 99.0, 99.0])          # pays 1.0 on day 3: price drops, holder is whole
+        tr = total_return(bars, [(bars[2].ts, 1.0)])
+        self.assertAlmostEqual(tr[2].close / tr[1].close, 1.0)
+        self.assertEqual([b.close for b in tr[2:]], [99.0, 99.0])  # latest prices stay as traded
+        self.assertAlmostEqual(tr[0].open, 99.0)
+        self.assertEqual(total_return(bars, [("1999-01-01", 1.0), (bars[0].ts, 1.0)]), bars)   # outside / first bar
+
+    def test_load_split_adjusts_and_apply_writes_copies(self):
+        from chart import dividends
+        d = tempfile.mkdtemp()
+        table = os.path.join(d, "div.csv")
+        with open(table, "w") as f:
+            f.write("symbol,week_ending,ex_date,amount\nXLK,2025-09-26,2025-09-22,0.40\nXLK,2025-12-26,2025-12-22,0.22\n")
+        self.assertEqual(dividends.load(table)["XLK"], [("2025-09-22", 0.2), ("2025-12-22", 0.22)])
+        src, dst = os.path.join(d, "src"), os.path.join(d, "dst")
+        os.mkdir(src)
+        with open(os.path.join(src, "XLK.csv"), "w") as f:
+            f.write("date,open,high,low,close,volume\n2025-09-19,100,101,99,100,1\n2025-09-22,99.8,100,99,99.8,1\n")
+        self.assertEqual(dividends.apply(src, dst, table), {"XLK": 1})
+        out = chart.load_csv(os.path.join(dst, "XLK.csv"))
+        self.assertAlmostEqual(out[0].close, 99.8)
