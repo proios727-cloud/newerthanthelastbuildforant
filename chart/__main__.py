@@ -9,6 +9,7 @@ python3 -m chart doctor chart/data chart/data/etf   # preflight: API key, data f
 python3 -m chart longrun                            # the rotation rule over 2004-2026 weekly bars, by regime
 python3 -m chart longrun chart/data/weekly_desk --strategies   # six strategies, 20+ years, weekly
 python3 -m chart dividends chart/data chart/data/tr  # total-return copies (dividends back-adjusted)
+python3 -m chart overlay chart/data/weekly_desk/SPY.csv   # 10-month trend overlay, 2000-2026, by crash
 """
 import argparse
 import json
@@ -70,6 +71,7 @@ def main(argv=None):
     f.add_argument("--nav", type=float, help="rotation-tickets: paper NAV (default desk.json starting_nav)")
     f.add_argument("--trend-log", help="rotation-brief: the defensive variant's log, to show its call")
     f.add_argument("--doctor", help="rotation-brief: a `chart doctor` JSON file, to list blockers")
+    f.add_argument("--overlay", help="rotation-brief: a `chart overlay --status` JSON file, for the regime flag")
     f.add_argument("--trend", type=int, default=0, help="rotation-record/replay: basket trend filter length (sessions)")
     f.add_argument("--buffer", type=int, default=0, help="rotation-record/replay: hysteresis band")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
@@ -94,6 +96,12 @@ def main(argv=None):
     lr.add_argument("--out", help="also write the JSON here")
     lr.add_argument("--strategies", action="store_true",
                     help="instead: walk-forward the six single-asset strategies on the folder's weekly bars")
+    ov = sub.add_parser("overlay", help="monthly trend overlay on one fund (hold above its N-month average, else cash)")
+    ov.add_argument("csv")
+    ov.add_argument("--months", type=int, default=10)
+    ov.add_argument("--week", type=int, default=-1, help="decision bar within the month: -1 last (default), 0 first")
+    ov.add_argument("--cash-rate", type=float, default=0.0, help="yearly yield on cash while out (default 0)")
+    ov.add_argument("--status", action="store_true", help="only print the latest decision and distance from the average")
     dv = sub.add_parser("dividends", help="write total-return (dividend back-adjusted) copies of a folder's CSVs")
     dv.add_argument("src")
     dv.add_argument("dst")
@@ -115,7 +123,8 @@ def main(argv=None):
             rule = {k: v for k, v in (("trend", a.trend), ("buffer", a.buffer)) if v}
             if a.action == "rotation-brief":
                 doc = json.loads(pathlib.Path(a.doctor).read_text()) if a.doctor else None
-                text = forward.rotation_brief(bars, log, a.tickets or forward.TICKETS_LOG, a.trend_log, doc)
+                ovl = json.loads(pathlib.Path(a.overlay).read_text()) if a.overlay else None
+                text = forward.rotation_brief(bars, log, a.tickets or forward.TICKETS_LOG, a.trend_log, doc, ovl)
                 print(text or "no decision logged yet")
             elif a.action == "rotation-tickets":
                 row = forward.rotation_tickets(bars, log, a.tickets or forward.TICKETS_LOG,
@@ -168,6 +177,22 @@ def main(argv=None):
         if a.out:
             pathlib.Path(a.out).write_text(text + "\n", encoding="utf-8")
         print(text)
+        return
+    if a.cmd == "overlay":
+        from . import overlay
+        bars = load_csv(a.csv)
+        if a.status:
+            print(json.dumps(overlay.status(bars, a.months), indent=2))
+            return
+        weekly = len({b.ts[:7] for b in bars}) * 6 > len(bars)          # fewer than ~6 bars a month: weekly data
+        start = min(overlay.decisions(bars, 12, -1))
+        r = overlay.run(bars, a.months, a.week, start, cash_rate=a.cash_rate, ppy=52 if weekly else 252)
+        keep = ("cagr", "max_drawdown", "calmar", "sharpe", "exposure", "n_trades")
+        print(json.dumps(_round({"from": r["dates"][0], "to": r["dates"][-1],
+                                 "overlay": {k: r["stats"][k] for k in keep},
+                                 "hold": {k: r["hold"][k] for k in keep[:4]}, **overlay.verdict(r),
+                                 "stress_windows": overlay.windows(r), "status": overlay.status(bars, a.months)}),
+                         indent=2, ensure_ascii=False))
         return
     if a.cmd == "dividends":
         from .dividends import apply
