@@ -131,7 +131,8 @@ def fixed(aligned, params, min_train=252, top=1, **kw):
 def day_sweep(aligned, lookback=60, hold=21, top=3, min_train=252, buffer=0, trend=0, **kw):
     """Run a fixed rule from every possible rebalance day (offset 0..hold-1); summarise the spread, not the best day."""
     hold_stats = rotate.equal_weight_hold(aligned, min_train, None,
-                                          **{k: v for k, v in kw.items() if k in ("fee_bps", "slippage_bps")}).stats
+                                          **{k: v for k, v in kw.items()
+                                             if k in ("fee_bps", "slippage_bps", "periods_per_year")}).stats
     runs = []
     for off in range(hold):
         t = picks_top(aligned, lookback=lookback, hold=hold, top=top, offset=off, buffer=buffer, trend=trend)
