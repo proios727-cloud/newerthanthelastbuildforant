@@ -61,6 +61,12 @@ def band_of(channel, hint=""):
     return "2.4" if channel <= 14 else "5"
 
 
+def is_dfs(channel, band="5"):
+    """5 GHz channels 52-144 share spectrum with radar; a radar hit forces the
+    router off the channel at once, so clients drop for seconds to a minute."""
+    return band == "5" and 52 <= channel <= 144
+
+
 def _strength(signal):
     """0-1 from a percentage (0-100) or dBm (negative)."""
     if signal is None:
@@ -197,6 +203,9 @@ def eero_recommendations(v, current=None):
         recs.append("eero app → run its speed test. Slow at the eero too means the ISP line; report it to the provider with screenshots.")
     if v == "dns":
         recs.append("eero app → Settings → Network settings → DNS: pick a resolver you trust (may be locked on ISP-managed eeros).")
+    if current and is_dfs(current["channel"], current["band"]):
+        recs.append(f"5 GHz channel {current['channel']} is radar-shared (DFS); radar forces a channel switch and a short drop. "
+                    "If drops are random, run `watch` and ask eero support or the provider to avoid channels 52-144.")
     if v == "wifi_link":
         if current and current.get("band") == "2.4":
             recs.append("This device is on 2.4 GHz. In the eero app's device page, check the band; if it stays on 2.4 near an eero, "

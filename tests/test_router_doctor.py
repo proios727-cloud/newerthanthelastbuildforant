@@ -93,6 +93,14 @@ class AnalysisTest(unittest.TestCase):
         self.assertIn("speed test", rd.eero_recommendations("isp_or_upstream")[0])
         self.assertIn("home network", rd.eero_recommendations("no_data")[0])
 
+    def test_dfs_channels(self):
+        self.assertTrue(rd.is_dfs(112) and rd.is_dfs(52) and rd.is_dfs(144))
+        self.assertFalse(rd.is_dfs(36) or rd.is_dfs(149) or rd.is_dfs(6, "2.4"))
+        on112 = {"ssid": "home", "channel": 112, "band": "5", "signal": 88, "current": True}
+        self.assertTrue(any("radar-shared" in r for r in rd.eero_recommendations("healthy", on112)))
+        on36 = dict(on112, channel=36)
+        self.assertFalse(any("radar" in r for r in rd.eero_recommendations("healthy", on36)))
+
     def test_watch_blames_wifi_when_router_spikes_with_internet(self):
         s = [{"gw": 3.0, "net": 15.0}] * 20
         s[5] = {"gw": 180.0, "net": 210.0}

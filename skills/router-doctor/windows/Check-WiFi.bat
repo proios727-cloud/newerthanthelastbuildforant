@@ -91,11 +91,38 @@ function Get-Cause($samples) {
     [pscustomobject]@{ Cause = $cause; Router = $gw; Internet = $net; Samples = $samples.Count }
 }
 
-function Get-Advice([string]$cause, $bands, $minSignal) {
+function Test-Dfs($channel) {
+    # 5 GHz channels 52-144 share spectrum with radar. When the router hears radar it must
+    # leave the channel at once, so devices drop for seconds to a minute (DFS).
+    $c = 0
+    if (-not [int]::TryParse([string]$channel, [ref]$c)) { return $false }
+    return ($c -ge 52 -and $c -le 144)
+}
+
+function Get-ChannelChanges($samples) {
+    # Channel switches seen during the run, each with the drops/spikes within 30 s before it.
+    $changes = @()
+    $prev = $null
+    for ($i = 0; $i -lt $samples.Count; $i++) {
+        $ch = [string]$samples[$i].Channel
+        if (-not $ch) { continue }
+        if ($null -ne $prev -and $ch -ne $prev.Channel) {
+            $lo = [Math]::Max(0, $i - 15)
+            $hits = @($samples[$lo..$i] | Where-Object { $null -eq $_.Router -or $null -eq $_.Internet }).Count
+            $changes += [pscustomobject]@{ Time = $samples[$i].Time; From = $prev.Channel; To = $ch
+                FromDfs = (Test-Dfs $prev.Channel); DropsBefore = $hits }
+        }
+        $prev = [pscustomobject]@{ Channel = $ch }
+    }
+    return $changes
+}
+
+function Get-Advice([string]$cause, $bands, $minSignal, $startChannel, $changes) {
     $a = @()
     switch ($cause) {
         'wifi_link' {
             $a += 'The hiccups start between this PC and your router, so it is your Wi-Fi, not your provider.'
+            if (@($changes | Where-Object { $_.FromDfs }).Count) { break }  # radar event explains it; coverage advice would mislead
             $a += 'eero app: tap this PC in the device list; check which eero it is on, the band and the signal.'
             $a += 'Turn on "Optimize for conferencing and gaming" if your app shows it, then restart the network once from the app.'
             $a += 'If the PC is far from its eero, move the eero or add a node. No setting replaces coverage.'
@@ -119,6 +146,17 @@ function Get-Advice([string]$cause, $bands, $minSignal) {
     if ($null -ne $minSignal -and $minSignal -lt 60) {
         $a += "Signal dipped to $minSignal%. Under ~60% means distance or walls are in the way."
     }
+    $radar = @($changes | Where-Object { $_.FromDfs })
+    if ($radar.Count) {
+        foreach ($c in $radar) {
+            $a += "At $($c.Time) the eero left radar-shared channel $($c.From) for $($c.To) ($($c.DropsBefore) drops just before). That is a radar (DFS) event, a known cause of short random drops."
+        }
+        $a += 'If this keeps happening, ask eero support or your provider to keep the 5 GHz radio off radar channels (52-144). The eero app does not let you pick a channel.'
+    } elseif (@($changes).Count) {
+        $a += "The Wi-Fi channel changed during the test ($((@($changes | ForEach-Object { "$($_.From)->$($_.To) at $($_.Time)" })) -join ', '))."
+    } elseif (Test-Dfs $startChannel) {
+        $a += "You are on channel $startChannel, which is radar-shared (DFS). Fine for now, but radar events force a channel switch and a short drop. If drops come back, rerun this: a channel change in the report confirms it."
+    }
     $a += 'ISP-supplied eeros can have settings locked; if an option is missing, your provider controls it.'
     return $a
 }
@@ -130,14 +168,15 @@ function Invoke-WifiCheck {
     Write-Host '  Wi-Fi Check (read-only)' -ForegroundColor Cyan
     Write-Host '  Best run WHILE the Wi-Fi is acting up.' -ForegroundColor DarkGray
     Write-Host ''
-    $in = Read-Host '  Minutes to watch (Enter = 5)'
-    $minutes = 5
+    $in = Read-Host '  Minutes to watch (Enter = 15)'
+    $minutes = 15
     if ($in -match '^\d+(\.\d+)?$') { $minutes = [double]$in }
 
     $wifi = Get-Wifi
     $gw = Get-Gateway
     Write-Host ''
     Write-Host ("  Network: {0} | {1} | {2} ch {3} | signal {4}% | rx {5} / tx {6} Mbps" -f $wifi.SSID, $wifi.Radio, $wifi.Band, $wifi.Channel, $wifi.Signal, $wifi.RxMbps, $wifi.TxMbps)
+    if (Test-Dfs $wifi.Channel) { Write-Host "  Note: channel $($wifi.Channel) is radar-shared (DFS). Watching for forced channel switches." -ForegroundColor DarkYellow }
     Write-Host ("  Router:  {0}" -f $(if ($gw) { $gw } else { 'not found' }))
     Write-Host ''
 
@@ -147,6 +186,7 @@ function Invoke-WifiCheck {
     $end = (Get-Date).AddMinutes($minutes)
     $total = [int]($minutes * 30)
     $i = 0
+    $lastCh = [string]$wifi.Channel
     while ((Get-Date) -lt $end) {
         $t = Get-Date
         $r = Send-Ping $gw
@@ -156,9 +196,13 @@ function Invoke-WifiCheck {
             $w = Get-Wifi
             if ($w.Band) { $bands.Add($w.Band) }
             if ($null -ne $w.Signal) { $signals.Add($w.Signal) }
+            if ($w.Channel -and $lastCh -and [string]$w.Channel -ne $lastCh) {
+                Write-Host ("  {0}  CHANNEL CHANGED {1} -> {2}{3}" -f $t.ToString('HH:mm:ss'), $lastCh, $w.Channel, $(if (Test-Dfs $lastCh) { '  (left a radar channel)' } else { '' })) -ForegroundColor Magenta
+            }
+            if ($w.Channel) { $lastCh = [string]$w.Channel }
         }
         $samples.Add([pscustomobject]@{ Time = $t.ToString('HH:mm:ss'); Router = $r; Internet = $n
-            Band = $(if ($w) { $w.Band } else { '' }); Signal = $(if ($w) { $w.Signal } else { '' }) })
+            Band = $(if ($w) { $w.Band } else { '' }); Channel = $(if ($w) { $w.Channel } else { '' }); Signal = $(if ($w) { $w.Signal } else { '' }) })
         $line = "  {0}  router {1,7}  internet {2,7}" -f $t.ToString('HH:mm:ss'), (Format-Ms $r), (Format-Ms $n)
         if ($null -eq $r -or $null -eq $n -or $r -gt 100 -or $n -gt 100) { Write-Host $line -ForegroundColor Yellow } else { Write-Host $line -ForegroundColor DarkGray }
         $i++
@@ -171,7 +215,8 @@ function Invoke-WifiCheck {
     $res = Get-Cause $samples
     $minSig = $null
     if ($signals.Count) { $minSig = ($signals | Measure-Object -Minimum).Minimum }
-    $advice = Get-Advice $res.Cause $bands $minSig
+    $changes = Get-ChannelChanges $samples
+    $advice = Get-Advice $res.Cause $bands $minSig $wifi.Channel $changes
     $label = @{ wifi_link = 'YOUR WI-FI'; isp_or_upstream = 'YOUR INTERNET PROVIDER'; stable = 'NOTHING CAUGHT (stable)'; no_data = 'NO DATA' }[$res.Cause]
 
     $report = @()
@@ -182,6 +227,9 @@ function Invoke-WifiCheck {
     $report += "VERDICT: $label"
     $report += ("Router link:   median {0}, spikes {1}, drops {2}" -f (Format-Ms $res.Router.Median), $res.Router.Spikes, $res.Router.Drops)
     $report += ("Internet link: median {0}, spikes {1}, drops {2}" -f (Format-Ms $res.Internet.Median), $res.Internet.Spikes, $res.Internet.Drops)
+    $chs = @($samples | Where-Object { $_.Channel } | ForEach-Object { [string]$_.Channel } | Select-Object -Unique)
+    $chNote = @($chs | ForEach-Object { if (Test-Dfs $_) { "$_ (radar-shared)" } else { "$_" } }) -join ' -> '
+    $report += "Channels seen: $(if ($chNote) { $chNote } else { 'unknown' })   Channel changes: $(@($changes).Count)"
     $report += "Bands seen: $(if ($bands.Count) { (@($bands | Select-Object -Unique)) -join ', ' } else { 'unknown' })   Lowest signal: $(if ($null -ne $minSig) { "$minSig%" } else { 'unknown' })"
     $report += ''
     $report += 'What to do:'

@@ -36,7 +36,7 @@ A one-shot test misses on-and-off trouble. Run `python scripts/router_doctor.py 
 - `isp_or_upstream`: only the internet side spikes, so it's the line or the provider.
 - `stable`: nothing caught. Run it again at the time of day it usually happens.
 
-On Windows with no Python, have the user double-click `windows/Check-WiFi.bat`. It runs the same watch and spike rule, also logs band and signal every 10 s (band hopping is a common cause of drops on mesh), and saves `WiFi-Check-*.txt` to the Desktop for them to send back.
+On Windows with no Python, have the user double-click `windows/Check-WiFi.bat`. It runs the same watch and spike rule, also logs band, channel and signal every 10 s (band hopping and forced radar/DFS channel switches off 5 GHz channels 52-144 are common causes of drops on mesh; a switch off a DFS channel with drops just before it is reported as a radar event), and saves `WiFi-Check-*.txt` to the Desktop for them to send back.
 
 ## eero (and other app-managed mesh)
 eero has **no local admin page or API** and chooses channels automatically (eero 6, 6+, Pro 6/6E/7, and ISP-branded units). Steps 3–5 above don't apply, so nothing gets scripted against the router.
