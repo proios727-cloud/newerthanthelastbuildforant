@@ -67,6 +67,7 @@ def main(argv=None):
     r = sub.add_parser("report", help="write the visual scorecard (.html) or its data (.json)")
     r.add_argument("folders", nargs="+", help="NAME=FOLDER pairs, e.g. Stocks=chart/data")
     r.add_argument("--out", required=True)
+    r.add_argument("--rotation", help="ETF folder for the rotation-rule panel (stress spread + live-calendar replay)")
     st = sub.add_parser("stress", help="stress-test a basket rotation rule across rebalance days, costs and universes")
     st.add_argument("folder", nargs="?", default="chart/data/etf")
     st.add_argument("--lookback", type=int, default=60)
@@ -109,7 +110,7 @@ def main(argv=None):
     if a.cmd == "report":
         from .report import build, render_html
         groups = dict(x.split("=", 1) for x in a.folders)
-        data = build(groups)
+        data = build(groups, rotation_folder=a.rotation)
         text = render_html(data) if a.out.endswith(".html") else json.dumps(data, separators=(",", ":"))
         pathlib.Path(a.out).write_text(text, encoding="utf-8")
         print(f"wrote {a.out}")
