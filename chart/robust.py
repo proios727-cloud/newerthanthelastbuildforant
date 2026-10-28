@@ -9,17 +9,35 @@ from . import rotate
 from .backtest import Result, _stats
 
 
-def picks_top(aligned, lookback=10, hold=1, top=1, offset=0):
+def basket_index(aligned):
+    """Equal-weight basket level per bar (each fund rebased to 1 on the first aligned bar)."""
+    syms, dates, bars = aligned
+    return [sum(bars[s][i].close / bars[s][0].close for s in syms) / len(syms) for i in range(len(dates))]
+
+
+def picks_top(aligned, lookback=10, hold=1, top=1, offset=0, buffer=0, trend=0):
     """Target per bar: a tuple of the `top` strongest symbols with positive momentum (empty = cash), or None (keep).
-    Decides every `hold` bars after warm-up, starting `offset` bars later than rotate.picks would."""
+    Decides every `hold` bars after warm-up, starting `offset` bars later than rotate.picks would.
+
+    buffer > 0 adds hysteresis: a fund already held stays while it still ranks inside the top `top + buffer` with
+    positive momentum, and only the freed slots go to the strongest funds not held. buffer=0 is plain top-N.
+    trend > 0 adds a basket trend filter: on a decision bar where the equal-weight basket closes below its
+    `trend`-bar average, the target is cash. Bars before the average exists are not filtered."""
     syms, dates, bars = aligned
     out = [None] * len(dates)
+    idx = basket_index(aligned) if trend else None
+    prev = ()
     for i in range(lookback + offset, len(dates)):
         if (i - lookback - offset) % hold:
             continue
+        if trend and i >= trend - 1 and idx[i] < sum(idx[i - trend + 1:i + 1]) / trend:
+            out[i] = prev = ()
+            continue
         mom = {s: bars[s][i].close / bars[s][i - lookback].close - 1 for s in syms}
         ranked = sorted(syms, key=lambda s: (mom[s], s), reverse=True)
-        out[i] = tuple(sorted(s for s in ranked[:top] if mom[s] > 0))
+        keep = [s for s in prev if s in ranked[:top + buffer] and mom[s] > 0]
+        fill = [s for s in ranked if s not in keep and mom[s] > 0][:top - len(keep)]
+        out[i] = prev = tuple(sorted(keep + fill))
     return out
 
 
@@ -110,21 +128,22 @@ def fixed(aligned, params, min_train=252, top=1, **kw):
     return res.stats
 
 
-def day_sweep(aligned, lookback=60, hold=21, top=3, min_train=252, **kw):
+def day_sweep(aligned, lookback=60, hold=21, top=3, min_train=252, buffer=0, trend=0, **kw):
     """Run a fixed rule from every possible rebalance day (offset 0..hold-1); summarise the spread, not the best day."""
     hold_stats = rotate.equal_weight_hold(aligned, min_train, None,
                                           **{k: v for k, v in kw.items() if k in ("fee_bps", "slippage_bps")}).stats
     runs = []
     for off in range(hold):
-        t = picks_top(aligned, lookback=lookback, hold=hold, top=top, offset=off)
+        t = picks_top(aligned, lookback=lookback, hold=hold, top=top, offset=off, buffer=buffer, trend=trend)
         runs.append(run_multi(aligned, t, min_train, None, trade_changes_only=True, **kw).stats)
     med = lambda k: sorted(r[k] for r in runs)[len(runs) // 2]
     return {
-        "rule": {"lookback": lookback, "hold": hold, "top": top},
+        "rule": {"lookback": lookback, "hold": hold, "top": top, "buffer": buffer, "trend": trend},
         "days": len(runs),
         "cagr": {"min": min(r["cagr"] for r in runs), "median": med("cagr"), "max": max(r["cagr"] for r in runs)},
         "max_drawdown": {"worst": min(r["max_drawdown"] for r in runs), "median": med("max_drawdown")},
         "sharpe_median": med("sharpe"),
+        "trades_median": med("n_trades"),
         "days_calmar_at_least_hold": sum(r["calmar"] >= hold_stats["calmar"] for r in runs),
         "hold": {k: hold_stats[k] for k in ("cagr", "max_drawdown", "sharpe", "calmar")},
     }

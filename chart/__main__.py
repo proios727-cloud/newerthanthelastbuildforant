@@ -5,6 +5,7 @@ python3 -m chart scan --out ledger/signals.json
 python3 -m chart forward record      # once a day, after the close and before the next open
 python3 -m chart forward report
 python3 -m chart validate chart/data/SPY.csv
+python3 -m chart doctor chart/data chart/data/etf   # preflight: API key, data freshness, next rotation decision
 """
 import argparse
 import json
@@ -58,9 +59,12 @@ def main(argv=None):
     s.add_argument("--all", action="store_true",
                    help="research mode: scan every CSV in the folder, not only symbols in desk.json's universe")
     f = sub.add_parser("forward", help="log today's scan before the open, or score logged signals")
-    f.add_argument("action", choices=("record", "report", "rotation-record", "rotation-report", "rotation-replay"))
+    f.add_argument("action", choices=("record", "report", "rotation-record", "rotation-report", "rotation-replay",
+                                      "rotation-tickets"))
     f.add_argument("folder", nargs="?", default="chart/data")
     f.add_argument("--log", help="signal log path (default ledger/signals.jsonl)")
+    f.add_argument("--tickets", help="rotation-tickets: ticket log path (default ledger/rotation_tickets.jsonl)")
+    f.add_argument("--nav", type=float, help="rotation-tickets: paper NAV (default desk.json starting_nav)")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
     u.add_argument("--all", action="store_true", help="update every CSV in the folder, not only desk.json equities")
@@ -73,6 +77,11 @@ def main(argv=None):
     st.add_argument("--lookback", type=int, default=60)
     st.add_argument("--hold", type=int, default=21)
     st.add_argument("--top", type=int, default=3)
+    st.add_argument("--buffer", type=int, default=0, help="hysteresis: keep a held fund while it ranks in the top TOP+BUFFER")
+    st.add_argument("--trend", type=int, default=0, help="cash when the equal-weight basket is below its TREND-bar average")
+    dr = sub.add_parser("doctor", help="preflight for the forward job: API key, data freshness, next rotation decision")
+    dr.add_argument("folders", nargs="*", default=["chart/data", "chart/data/etf"])
+    dr.add_argument("--max-stale", type=int, default=3, help="weekdays the newest bar may lag today (default 3)")
     v = sub.add_parser("validate", help="sanity-check OHLC CSVs, optionally against an overlapping reference")
     v.add_argument("csv", nargs="+")
     v.add_argument("--ref", help="reference CSV whose overlapping closes must match")
@@ -80,11 +89,16 @@ def main(argv=None):
     if a.cmd == "forward":
         from fund import config
         from . import forward
-        uni = config.load().universe
+        cfg = config.load()
+        uni = cfg.universe
         if a.action.startswith("rotation-"):
             bars = {p.stem.upper(): load_csv(p) for p in sorted(pathlib.Path(a.folder).glob("*.csv"))}
             log = a.log or forward.ROTATION_LOG
-            if a.action == "rotation-replay":
+            if a.action == "rotation-tickets":
+                row = forward.rotation_tickets(bars, log, a.tickets or forward.TICKETS_LOG,
+                                               nav=a.nav or cfg.starting_nav, weight_pct=cfg.limits.max_position_pct)
+                print(json.dumps(row, indent=2) if row else "no new decision to ticket")
+            elif a.action == "rotation-replay":
                 print(json.dumps(forward.replay_rotation(bars), indent=2))
             elif a.action == "rotation-record":
                 sig = forward.record_rotation(bars, log)
@@ -118,8 +132,14 @@ def main(argv=None):
     if a.cmd == "stress":
         from .robust import stress
         bars = {f.stem.upper(): load_csv(f) for f in sorted(pathlib.Path(a.folder).glob("*.csv"))}
-        print(json.dumps(_round(stress(bars, {"lookback": a.lookback, "hold": a.hold, "top": a.top})), indent=2))
+        print(json.dumps(_round(stress(bars, {"lookback": a.lookback, "hold": a.hold, "top": a.top,
+                                                   "buffer": a.buffer, "trend": a.trend})), indent=2))
         return
+    if a.cmd == "doctor":
+        from .doctor import check
+        res = check(a.folders, max_stale=a.max_stale)
+        print(json.dumps(res, indent=2, ensure_ascii=False))
+        raise SystemExit(0 if res["ok"] else 1)
     if a.cmd == "validate":
         from .validate import check
         res = [check(c, a.ref) for c in a.csv]

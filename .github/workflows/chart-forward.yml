@@ -2,7 +2,8 @@ name: chart-forward
 # Forward paper test for the chart scan. Research only: it never previews, fills or places an order.
 # Weekdays after the close: append the day's bars (Alpha Vantage, needs the ALPHAVANTAGE_API_KEY secret; 8 stocks +
 # 13 ETFs = 21 requests, inside the free 25/day), log the scan's signals and, on the first session of each month, the
-# ETF rotation rule's picks, all before the next open; keep everything on the `shadow-data` branch under chart-forward/.
+# ETF rotation rule's picks (plus paper order tickets for desk review), all before the next open; keep everything on the
+# `shadow-data` branch under chart-forward/. `chart doctor` fails the run loudly if the key is missing or bars go stale.
 on:
   schedule:
     - cron: "37 21 * * 1-5"
@@ -21,6 +22,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Preflight (API key)
+        env:
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+        run: |
+          python -m chart doctor chart/data chart/data/etf --max-stale 100000 > /tmp/doctor.json || {
+            python -c "import json; [print('::error::' + p) for p in json.load(open('/tmp/doctor.json'))['problems']]"
+            exit 1
+          }
       - name: Check out shadow-data
         run: |
           git config user.name "chart-forward"
@@ -50,7 +59,11 @@ jobs:
           python -m chart forward record "$D/data" --log "$D/signals.jsonl"
           python -m chart forward report "$D/data" --log "$D/signals.jsonl" > "$D/REPORT.json"
           python -m chart forward rotation-record "$D/etf" --log "$D/rotation.jsonl"
-          [ -s "$D/rotation.jsonl" ] && python -m chart forward rotation-report "$D/etf" --log "$D/rotation.jsonl" > "$D/ROTATION.json" || true
+          if [ -s "$D/rotation.jsonl" ]; then
+            python -m chart forward rotation-report "$D/etf" --log "$D/rotation.jsonl" > "$D/ROTATION.json"
+            python -m chart forward rotation-tickets "$D/etf" --log "$D/rotation.jsonl" --tickets "$D/rotation_tickets.jsonl"
+          fi
+          python -m chart doctor "$D/data" "$D/etf" > "$D/DOCTOR.json" || true
       - name: Push to shadow-data
         run: |
           cd /tmp/data
@@ -62,3 +75,6 @@ jobs:
             git pull -q --rebase origin shadow-data
           done
           exit 1
+      - name: Fail if bars are stale
+        run: |
+          python -c "import json, sys; d = json.load(open('/tmp/data/chart-forward/DOCTOR.json')); [print('::error::' + p) for p in d['problems']]; sys.exit(not d['ok'])"

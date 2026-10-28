@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 import unittest
@@ -573,6 +574,23 @@ class RobustTests(unittest.TestCase):
         self.assertLessEqual(r["cagr"]["min"], r["cagr"]["median"])
         self.assertLessEqual(r["cagr"]["median"], r["cagr"]["max"])
 
+    def test_buffer_keeps_a_held_fund_until_it_leaves_top_plus_buffer(self):
+        from chart import robust, rotate
+        al = rotate.align({"A": bars_from([100, 110, 111, 112]), "B": bars_from([100, 101, 113, 114]),
+                           "C": bars_from([100, 99, 98, 97])})
+        self.assertEqual(robust.picks_top(al, lookback=1, top=1)[1:3], [("A",), ("B",)])
+        self.assertEqual(robust.picks_top(al, lookback=1, top=1, buffer=1)[1:3], [("A",), ("A",)])
+        big = rotate.align(self.basket())
+        self.assertEqual(robust.picks_top(big, lookback=20, hold=5, top=2),
+                         robust.picks_top(big, lookback=20, hold=5, top=2, buffer=0))
+
+    def test_trend_filter_goes_to_cash_below_basket_average(self):
+        from chart import robust, rotate
+        al = rotate.align({"X": bars_from([100, 110, 120, 130, 140, 100, 101])})
+        self.assertEqual(robust.picks_top(al, lookback=1)[-1], ("X",))
+        self.assertEqual(robust.picks_top(al, lookback=1, trend=5)[-1], ())
+        self.assertEqual(robust.picks_top(al, lookback=1, trend=5)[3], ("X",))     # above its average: unfiltered
+
 
 class RotationForwardTests(unittest.TestCase):
     def basket(self):
@@ -625,3 +643,67 @@ class RotationForwardTests(unittest.TestCase):
         live = report_rotation(b, log)
         rep = replay_rotation(b, lookback=60, top=2)
         self.assertEqual(live["periods"], rep["periods"])
+
+    def test_signal_buffer_uses_previous_picks_and_trend_can_go_to_cash(self):
+        from chart.forward import rotation_signal
+        b = self.basket()
+        i = [k for k in range(61, 90) if b["A"][k].ts[:7] != b["A"][k - 1].ts[:7]][0]
+        cut = {s: v[:i + 1] for s, v in b.items()}
+        self.assertEqual(rotation_signal(cut, lookback=60, top=1)["picks"], ["A"])
+        self.assertEqual(rotation_signal(cut, lookback=60, top=1, buffer=1, prev=("D",))["picks"], ["D"])
+        self.assertEqual(rotation_signal(cut, lookback=60, top=1, buffer=0, prev=("D",))["picks"], ["A"])
+        px = lambda k: 100.0 + k if k <= i - 3 else 100.0 + (i - 3) - 8 * (k - (i - 3))   # up, then a sharp 3-day drop
+        flat = {s: [Bar(x.ts, px(k), px(k) + 1, px(k) - 1, px(k)) for k, x in enumerate(v[:i + 1])] for s, v in b.items()}
+        self.assertEqual(len(rotation_signal(flat, lookback=60, top=2)["picks"]), 2)        # momentum still positive
+        sig = rotation_signal(flat, lookback=60, top=2, trend=20)
+        self.assertEqual(sig["picks"], [])
+        self.assertLess(sig["basket_vs_trend"], 0)
+
+    def test_tickets_trade_only_changes_and_are_written_once(self):
+        from chart.forward import rotation_tickets
+        b = self.basket()
+        d = tempfile.mkdtemp()
+        log, tix = os.path.join(d, "rot.jsonl"), os.path.join(d, "tix.jsonl")
+        self.assertIsNone(rotation_tickets(b, log, tix))
+        t0, t1 = b["A"][70].ts, b["A"][80].ts
+        with open(log, "w") as f:
+            f.write(json.dumps({"as_of": t0, "picks": ["A", "D"]}) + "\n")
+        first = rotation_tickets(b, log, tix, nav=100_000, weight_pct=5)
+        self.assertEqual([(t["symbol"], t["side"], t["qty"]) for t in first["tickets"]],
+                         [("A", "buy", int(5000 // b["A"][70].close)), ("D", "buy", int(5000 // b["D"][70].close))])
+        self.assertIsNone(rotation_tickets(b, log, tix))
+        with open(log, "a") as f:
+            f.write(json.dumps({"as_of": t1, "picks": ["A", "B"]}) + "\n")
+        second = rotation_tickets(b, log, tix, nav=100_000, weight_pct=5)
+        self.assertEqual([(t["symbol"], t["side"]) for t in second["tickets"]], [("D", "sell"), ("B", "buy")])
+        self.assertEqual(second["tickets"][0]["qty"], first["tickets"][1]["qty"])
+        self.assertEqual(second["kept"], ["A"])
+        self.assertLess(second["tickets"][0]["limit"], second["tickets"][0]["ref_close"])
+        self.assertGreater(second["tickets"][1]["limit"], second["tickets"][1]["ref_close"])
+
+
+class DoctorTests(unittest.TestCase):
+    def test_dates(self):
+        from datetime import date
+        from chart.doctor import next_decision, weekdays_between
+        self.assertEqual(next_decision(date(2026, 10, 28)), date(2026, 11, 2))
+        self.assertEqual(next_decision(date(2026, 11, 2)), date(2026, 11, 2))
+        self.assertEqual(next_decision(date(2026, 8, 1)), date(2026, 8, 3))      # Saturday the 1st → Monday
+        self.assertEqual(weekdays_between(date(2026, 10, 23), date(2026, 10, 26)), 1)   # Fri → Mon
+        self.assertEqual(weekdays_between(date(2026, 10, 26), date(2026, 10, 26)), 0)
+
+    def test_flags_missing_key_stale_and_lagging_files(self):
+        from datetime import date
+        from chart.doctor import check
+        d = tempfile.mkdtemp()
+        for sym, last in (("AAA", "2026-10-26"), ("BBB", "2026-10-23")):
+            with open(os.path.join(d, f"{sym}.csv"), "w") as f:
+                f.write(f"date,open,high,low,close,volume\n2026-10-22,1,1,1,1,0\n{last},1,1,1,1,0\n")
+        ok = check([d], today=date(2026, 10, 27), env={"ALPHAVANTAGE_API_KEY": "x"})
+        self.assertEqual(ok["data"][d]["weekdays_behind"], 1)
+        self.assertEqual(len(ok["problems"]), 1)
+        self.assertIn("BBB", ok["problems"][0])
+        bad = check([d], today=date(2026, 11, 6), env={})
+        self.assertFalse(bad["ok"])
+        self.assertEqual(len(bad["problems"]), 3)
+        self.assertEqual(bad["next_rotation_decision"], "2026-12-01")

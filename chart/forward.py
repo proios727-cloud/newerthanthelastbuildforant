@@ -89,25 +89,42 @@ ROTATION_LOG = LOG.with_name("rotation.jsonl")
 ROTATION_RULE = {"lookback": 60, "top": 3}
 
 
-def rotation_signal(bars_by_symbol, lookback=60, top=3):
-    """The rule's decision for the latest session, or None when that session is not a decision day."""
+def _last_picks(path):
+    path = pathlib.Path(path)
+    rows = [json.loads(l) for l in path.read_text().splitlines() if l.strip()] if path.exists() else []
+    return tuple(rows[-1]["picks"]) if rows else ()
+
+
+def rotation_signal(bars_by_symbol, lookback=60, top=3, buffer=0, trend=0, prev=()):
+    """The rule's decision for the latest session, or None when that session is not a decision day.
+    `buffer` and `trend` mean what they mean in robust.picks_top; `prev` is the last decision's picks."""
     from . import rotate
-    syms, dates, bars = rotate.align(bars_by_symbol)
+    from .robust import basket_index
+    aligned = rotate.align(bars_by_symbol)
+    syms, dates, bars = aligned
     i = len(dates) - 1
     if i < lookback or dates[i][:7] == dates[i - 1][:7]:
         return None
     mom = {s: bars[s][i].close / bars[s][i - lookback].close - 1 for s in syms}
     ranked = sorted(syms, key=lambda s: (mom[s], s), reverse=True)
-    picks = sorted(s for s in ranked[:top] if mom[s] > 0)
-    return {"as_of": dates[i], "rule": {"lookback": lookback, "top": top}, "picks": picks,
-            "momentum": {s: round(mom[s], 4) for s in ranked}, "basket": syms}
+    rule = {"lookback": lookback, "top": top, **({"buffer": buffer} if buffer else {}), **({"trend": trend} if trend else {})}
+    out = {"as_of": dates[i], "rule": rule, "momentum": {s: round(mom[s], 4) for s in ranked}, "basket": syms}
+    if trend and i >= trend - 1:
+        idx = basket_index(aligned)
+        avg = sum(idx[i - trend + 1:i + 1]) / trend
+        out["basket_vs_trend"] = round(idx[i] / avg - 1, 4)
+        if idx[i] < avg:
+            return {**out, "picks": []}
+    keep = [s for s in prev if s in ranked[:top + buffer] and mom[s] > 0]
+    fill = [s for s in ranked if s not in keep and mom[s] > 0][:top - len(keep)]
+    return {**out, "picks": sorted(keep + fill)}
 
 
 def record_rotation(bars_by_symbol, path=ROTATION_LOG, now=None, **rule):
-    sig = rotation_signal(bars_by_symbol, **{**ROTATION_RULE, **rule})
+    path = pathlib.Path(path)
+    sig = rotation_signal(bars_by_symbol, prev=_last_picks(path), **{**ROTATION_RULE, **rule})
     if sig is None:
         return None
-    path = pathlib.Path(path)
     if path.exists() and any(json.loads(l)["as_of"] == sig["as_of"] for l in path.read_text().splitlines() if l.strip()):
         return None
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -168,3 +185,54 @@ def replay_rotation(bars_by_symbol, since=None, **rule):
     out = report_rotation(bars_by_symbol, log)
     out["note"] = "Replay over history (a backtest), not live forward results."
     return out
+
+
+# --- Paper order tickets for the rotation decisions ------------------------------------------------------------------
+# Turns the latest logged decision into share counts a desk can review. Only the names leaving are sold and only the
+# names joining are bought (as robust.run_multi's trade_changes_only does); a name kept is left alone. Nothing here
+# previews, fills or sends an order: each ticket still goes analyst → Risk Officer → trader → EXECUTE.
+
+TICKETS_LOG = LOG.with_name("rotation_tickets.jsonl")
+
+
+def _paper_holdings(rows):
+    held = {}
+    for r in rows:
+        for t in r["tickets"]:
+            held[t["symbol"]] = held.get(t["symbol"], 0) + (t["qty"] if t["side"] == "buy" else -t["qty"])
+    return {s: q for s, q in held.items() if q > 0}
+
+
+def rotation_tickets(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, nav=100_000.0, weight_pct=5.0,
+                     limit_bps=50, now=None):
+    """Tickets for the latest logged decision, appended once to `tickets`; None if there is no decision or it was
+    already ticketed. Buys size to `weight_pct` of `nav` at the decision close (whole shares, rounded down) with a
+    limit `limit_bps` above it; sells close the whole paper position with a limit `limit_bps` below."""
+    log, tickets = pathlib.Path(log), pathlib.Path(tickets)
+    decisions = [json.loads(l) for l in log.read_text().splitlines() if l.strip()] if log.exists() else []
+    if not decisions:
+        return None
+    d = decisions[-1]
+    done = [json.loads(l) for l in tickets.read_text().splitlines() if l.strip()] if tickets.exists() else []
+    if any(r["as_of"] == d["as_of"] for r in done):
+        return None
+    held = _paper_holdings(done)
+    close = {s: next(b.close for b in bars_by_symbol[s] if b.ts == d["as_of"]) for s in set(held) | set(d["picks"])}
+    out = []
+    for s in sorted(held):
+        if s not in d["picks"]:
+            out.append({"symbol": s, "side": "sell", "qty": held[s], "ref_close": close[s],
+                        "limit": round(close[s] * (1 - limit_bps / 1e4), 2)})
+    for s in d["picks"]:
+        if s not in held:
+            qty = int(nav * weight_pct / 100 // close[s])
+            if qty > 0:
+                out.append({"symbol": s, "side": "buy", "qty": qty, "ref_close": close[s],
+                            "limit": round(close[s] * (1 + limit_bps / 1e4), 2)})
+    row = {"recorded_at": (now or datetime.now(timezone.utc)).isoformat(), "as_of": d["as_of"], "picks": d["picks"],
+           "nav": nav, "weight_pct": weight_pct, "tickets": out, "kept": sorted(set(held) & set(d["picks"])),
+           "status": "paper: for analyst → Risk Officer → trader review; nothing has been sent"}
+    tickets.parent.mkdir(parents=True, exist_ok=True)
+    with tickets.open("a") as f:
+        f.write(json.dumps(row) + "\n")
+    return row
