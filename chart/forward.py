@@ -120,12 +120,29 @@ def rotation_signal(bars_by_symbol, lookback=60, top=3, buffer=0, trend=0, prev=
     return {**out, "picks": sorted(keep + fill)}
 
 
+CATCH_UP = 5    # sessions after a decision day within which a missed decision is still recorded (flagged late)
+
+
 def record_rotation(bars_by_symbol, path=ROTATION_LOG, now=None, **rule):
+    """Log today's decision once. If the decision day's bar arrived late (the job ran before the vendor published it),
+    the decision is still made from bars up to that day only, and logged with `late` so the record shows it."""
+    from . import rotate
     path = pathlib.Path(path)
-    sig = rotation_signal(bars_by_symbol, prev=_last_picks(path), **{**ROTATION_RULE, **rule})
+    logged = {json.loads(l)["as_of"] for l in path.read_text().splitlines() if l.strip()} if path.exists() else set()
+    rule = {**ROTATION_RULE, **rule}
+    sig = rotation_signal(bars_by_symbol, prev=_last_picks(path), **rule)
     if sig is None:
-        return None
-    if path.exists() and any(json.loads(l)["as_of"] == sig["as_of"] for l in path.read_text().splitlines() if l.strip()):
+        _, dates, _ = rotate.align(bars_by_symbol)
+        missed = [d for k, d in enumerate(dates[-CATCH_UP:], len(dates) - min(CATCH_UP, len(dates)))
+                  if k and d[:7] != dates[k - 1][:7] and d not in logged]
+        if not missed:
+            return None
+        cut = {s: [b for b in bars if b.ts <= missed[-1]] for s, bars in bars_by_symbol.items()}
+        sig = rotation_signal(cut, prev=_last_picks(path), **rule)
+        if sig is None:
+            return None
+        sig = {**sig, "late": True, "recorded_after": dates[-1]}
+    if sig["as_of"] in logged:
         return None
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a") as f:
@@ -162,6 +179,7 @@ def report_rotation(bars_by_symbol, path=ROTATION_LOG):
         rule = _basket_return(bars_by_symbol, r["picks"], start, end)
         hold = _basket_return(bars_by_symbol, r["basket"], start, end)
         periods.append({"decided": r["as_of"], "from": start, "to": end, "picks": r["picks"], "complete": fill is not None,
+                        **({"late": True} if r.get("late") else {}),
                         "rule": round(rule, 5), "basket": round(hold, 5), "excess": round(rule - hold, 5)})
     done = [p for p in periods if p["complete"]]
     growth = lambda key: round(math.prod(1 + p[key] for p in periods) - 1, 5) if periods else 0.0
@@ -255,6 +273,9 @@ def rotation_brief(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, trend_
              f"Rule: {d['rule']['lookback']}-session momentum, top {d['rule']['top']} with positive momentum, equal weight. "
              "Paper only: nothing here has been sent.", "",
              f"**Hold: {', '.join(d['picks']) or 'cash'}**"]
+    if d.get("late"):
+        lines.append(f"_Recorded late: the {d['as_of']} bar only arrived by {d['recorded_after']}. The decision uses data up to "
+                     f"{d['as_of']} only, but its fill date had passed when it was logged, so this month is backfilled._")
     if prev:
         out_, in_ = sorted(set(prev["picks"]) - set(d["picks"])), sorted(set(d["picks"]) - set(prev["picks"]))
         lines.append(f"Changes vs {prev['as_of']}: " + ("; ".join(x for x in (

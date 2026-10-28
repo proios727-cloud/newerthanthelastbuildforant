@@ -25,7 +25,7 @@ def _sample(curve):
 
 
 def build(groups, min_train=252, test=21, fee_bps=1.0, slippage_bps=2.0, rotation_folder=None, longrun_folder=None,
-          forward_dir=None, longrun_scan=()):
+          forward_dir=None, longrun_scan=(), overlay=None):
     """groups: {group name: folder}. Each folder is scanned on its own, and gets its own basket rotation."""
     kw = {"min_train": min_train, "test": test, "fee_bps": fee_bps, "slippage_bps": slippage_bps}
     out = {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "settings": kw, "groups": []}
@@ -56,7 +56,34 @@ def build(groups, min_train=252, test=21, fee_bps=1.0, slippage_bps=2.0, rotatio
         out["longrun_scan"] = [{k: v for k, v in strategy_scan(f).items() if k != "rows"} for f in longrun_scan]
     if forward_dir is not None:
         out["forward"] = forward_panel(forward_dir)
+    if overlay:
+        out["overlay"] = overlay_panel(*overlay)
     return out
+
+
+def overlay_panel(weekly_csv, daily_csv=None):
+    """The SPY trend-overlay verdict: every average length, the stress windows, both halves, and today's flag."""
+    from . import overlay
+    from .backtest import _stats
+    bars = load_csv(weekly_csv)
+    start = min(overlay.decisions(bars, 12, -1))
+    keep = ("cagr", "max_drawdown", "calmar", "exposure", "n_trades")
+    rows, ten = [], None
+    for n in (6, 8, 10, 12):
+        r = overlay.run(bars, n, -1, start)
+        rows.append({"months": n, **{k: r["stats"][k] for k in keep}, **overlay.verdict(r)})
+        ten = r if n == 10 else ten
+    halves = []
+    for a, b in ((ten["dates"][0], "2009-03-31"), ("2009-04-01", ten["dates"][-1])):
+        ix = [i for i, t in enumerate(ten["dates"]) if a <= t <= b]
+        e = [ten["equity"][i] / ten["equity"][ix[0]] for i in ix]
+        h = [ten["hold_equity"][i] / ten["hold_equity"][ix[0]] for i in ix]
+        so, sh = _stats(e, [], 0, 1, 52), _stats(h, [], 0, 1, 52)
+        halves.append({"from": a, "to": b, "overlay": so["cagr"], "overlay_dd": so["max_drawdown"],
+                       "hold": sh["cagr"], "hold_dd": sh["max_drawdown"]})
+    return {"symbol": pathlib.Path(weekly_csv).stem.upper(), "from": ten["dates"][0], "to": ten["dates"][-1],
+            "hold": {k: ten["hold"][k] for k in keep[:3]}, "rows": rows, "windows": overlay.windows(ten),
+            "halves": halves, "status": overlay.status(load_csv(daily_csv or weekly_csv))}
 
 
 def forward_panel(folder):

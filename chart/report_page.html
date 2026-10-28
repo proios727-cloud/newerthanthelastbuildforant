@@ -115,6 +115,7 @@ svg.chart { width: 100%; height: auto; display: block; }
   <section class="panel rot" id="forward" hidden></section>
   <section class="panel rot" id="rotation" hidden></section>
   <section class="panel rot" id="longrun" hidden></section>
+  <section class="panel rot" id="overlay" hidden></section>
 
   <p class="note" id="foot"></p>
 </div>
@@ -338,9 +339,32 @@ function longrunPanel() {
       <p class="note">Over two decades the trend-following filters (SMA cross, Donchian, MACD) cut drawdowns on a third or more of assets, always at a cost in return; no strategy beats holding the desk stocks. With 120 tests, one or two "candidates" is what chance alone produces.</p>` : ""}
     <p class="note">Weekly version of the live rule: ${L.lookback_weeks}-week momentum (≈ 60 sessions), decided on the first weekly bar of each month, filled at the next weekly open. Prices include dividends (about 1.9 points a year for the basket). Build the daily panels from the total-return folders (chart/data/tr, chart/data/etf_tr) to compare like with like. Drawdowns are month-end.</p>`;
 }
+function overlayPanel() {
+  const O = D.overlay, el = document.getElementById("overlay");
+  if (!O) return;
+  el.hidden = false;
+  const st = O.status;
+  const row = r => `<tr${r.months === 10 ? ' style="font-weight:600"' : ""}><td>${r.months}-month average</td><td class="num">${pct(r.cagr)}</td><td class="num">${pct(r.max_drawdown)}</td><td class="num">${fix(r.calmar)}</td><td class="num">${Math.round(r.exposure * 100)}%</td><td class="num">${r.n_trades}</td><td>${r.risk_filter ? "pass" : "fail"}</td></tr>`;
+  const win = w => `<tr><td>${w.window}</td><td class="num">${pct(w.overlay)}</td><td class="num">${pct(w.hold)}</td></tr>`;
+  const half = h => `<tr><td>${h.from.slice(0, 4)} → ${h.to.slice(0, 4)}</td><td class="num">${pct(h.overlay)} (${pct(h.overlay_dd)})</td><td class="num">${pct(h.hold)} (${pct(h.hold_dd)})</td></tr>`;
+  el.innerHTML = `
+    <div><span class="label">Desk-level trend overlay · ${O.symbol} · ${O.from} → ${O.to}</span>
+      <h2>Crash insurance, not an edge: regime flag ${st.hold ? "says hold" : "says cash"} (${pct(st.close_vs_average_now)} vs the 10-month average)</h2></div>
+    <div class="grid2">
+      <div class="tbl"><table>
+        <thead><tr><th>Hold ${O.symbol} above its…</th><th>CAGR</th><th>Worst drawdown</th><th>Calmar</th><th>Invested</th><th>Exits</th><th>Risk filter</th></tr></thead>
+        <tbody><tr><td>Buy and hold</td><td class="num">${pct(O.hold.cagr)}</td><td class="num">${pct(O.hold.max_drawdown)}</td><td class="num">${fix(O.hold.calmar)}</td><td class="num">100%</td><td class="num">–</td><td></td></tr>${O.rows.map(row).join("")}</tbody></table>
+        <table style="margin-top:12px"><thead><tr><th>Period (10-month)</th><th>Overlay (drawdown)</th><th>Hold (drawdown)</th></tr></thead><tbody>${O.halves.map(half).join("")}</tbody></table></div>
+      <div class="tbl"><table>
+        <thead><tr><th>Stress window</th><th>Overlay</th><th>Hold</th></tr></thead>
+        <tbody>${O.windows.map(win).join("")}</tbody></table></div>
+    </div>
+    <p class="note">Weekly total return, decided at month-end and filled at the next open, 1+2 bp, cash at 0% (conservative). It passes the risk-filter rule at every length, but all of the benefit came from the 2000–02 and 2008 bear markets; since 2009 it trails holding by about 6 points a year. Logged daily as an information-only flag (last decision ${st.decided}). Verdict: research/trend-overlay/VERDICT.md.</p>`;
+}
 segs();
 render();
 forwardPanel();
+overlayPanel();
 rotation();
 longrunPanel();
 </script>

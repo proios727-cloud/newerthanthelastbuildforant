@@ -634,6 +634,24 @@ class RotationForwardTests(unittest.TestCase):
         a = {x.ts: x for x in b["A"]}; dd = {x.ts: x for x in b["D"]}
         self.assertAlmostEqual(p["rule"], round(((a[p["to"]].close / a[start].open - 1) + (dd[p["to"]].close / dd[start].open - 1)) / 2, 5))
 
+    def test_late_decision_day_bar_is_still_recorded_and_flagged(self):
+        from chart.forward import record_rotation
+        b = self.basket()
+        i = [k for k in range(61, 90) if b["A"][k].ts[:7] != b["A"][k - 1].ts[:7]][0]
+        d = tempfile.mkdtemp()
+        on_time, late = os.path.join(d, "a.jsonl"), os.path.join(d, "b.jsonl")
+        record_rotation({s: v[:i + 1] for s, v in b.items()}, on_time, lookback=60, top=2)
+        self.assertIsNone(record_rotation({s: v[:i] for s, v in b.items()}, late, lookback=60, top=2))
+        sig = record_rotation({s: v[:i + 2] for s, v in b.items()}, late, lookback=60, top=2)   # day i arrives with i+1
+        ref = json.loads(open(on_time).read())
+        self.assertEqual((sig["as_of"], sig["picks"], sig["momentum"]), (ref["as_of"], ref["picks"], ref["momentum"]))
+        self.assertTrue(sig["late"])
+        self.assertIsNone(record_rotation({s: v[:i + 3] for s, v in b.items()}, late, lookback=60, top=2))
+        from chart.forward import rotation_brief
+        self.assertIn("Recorded late", rotation_brief(b, late, os.path.join(d, "none.jsonl")))
+        far = os.path.join(d, "c.jsonl")                                     # more than CATCH_UP sessions late: skipped
+        self.assertIsNone(record_rotation({s: v[:i + 7] for s, v in b.items()}, far, lookback=60, top=2))
+
     def test_replay_matches_live_record_path(self):
         from chart.forward import record_rotation, replay_rotation, report_rotation
         b = self.basket()

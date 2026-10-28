@@ -84,6 +84,8 @@ def main(argv=None):
     r.add_argument("--longrun", help="weekly folder for the long-history panel, e.g. chart/data/weekly")
     r.add_argument("--forward", help="folder holding ROTATION.json / ROTATION_TREND200.json from shadow-data")
     r.add_argument("--longrun-scan", nargs="*", default=(), help="weekly folders for the 20-year strategy panel")
+    r.add_argument("--overlay", nargs="+", metavar="CSV",
+                   help="trend-overlay panel: weekly CSV, then optionally a daily CSV for today's flag")
     st = sub.add_parser("stress", help="stress-test a basket rotation rule across rebalance days, costs and universes")
     st.add_argument("folder", nargs="?", default="chart/data/etf")
     st.add_argument("--lookback", type=int, default=60)
@@ -157,7 +159,7 @@ def main(argv=None):
         from .report import build, render_html
         groups = dict(x.split("=", 1) for x in a.folders)
         data = build(groups, rotation_folder=a.rotation, longrun_folder=a.longrun, forward_dir=a.forward,
-                     longrun_scan=a.longrun_scan)
+                     longrun_scan=a.longrun_scan, overlay=a.overlay)
         text = render_html(data) if a.out.endswith(".html") else json.dumps(data, separators=(",", ":"))
         pathlib.Path(a.out).write_text(text, encoding="utf-8")
         print(f"wrote {a.out}")
