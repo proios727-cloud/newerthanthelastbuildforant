@@ -120,12 +120,25 @@ def gex_svg(bars, spot, m):
     return "".join(out)
 
 
+def research_state():
+    """The chart engine's live-facing outputs, computed from the repo's own data (no network)."""
+    from chart import forward, load_csv, overlay
+    from chart.doctor import next_decision
+    flag = overlay.status(load_csv(ROOT / "chart/data/tr/SPY.csv"))
+    etf = {f.stem.upper(): load_csv(f) for f in sorted((ROOT / "chart/data/etf").glob("*.csv"))}
+    last = max(b[-1].ts for b in etf.values())
+    since = (datetime.fromisoformat(last) - timedelta(days=45)).date().isoformat()
+    periods = forward.replay_rotation(etf, since=since)["periods"]
+    return {"flag": flag, "rotation": periods[-1] if periods else None, "data_through": last,
+            "next_decision": next_decision(datetime.now(timezone.utc).date()).isoformat()}
+
+
 def pill(text, tone):
     return f'<span class="pill {tone}">{E(text)}</span>'
 
 
 def render():
-    f, o, k, s = fund_state(), options_state(), kalshi_state(), sportsbook_state()
+    f, o, k, s, r = fund_state(), options_state(), kalshi_state(), sportsbook_state(), research_state()
     live = judge.from_env().live
     m, ch = o["map"], o["chain"]
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -142,6 +155,10 @@ def render():
     fair_h, fair_a = s["fair"]
     regime_tone = "green" if o["regime"] == "positive_gamma" else "amber"
     regime_txt = "Positive gamma · dampening" if o["regime"] == "positive_gamma" else "Negative gamma · trending"
+    fl, rot = r["flag"], r["rotation"]
+    trend_txt = f"{'Above' if fl['hold'] else 'Below'} 10-mo avg · {fl['close_vs_average_now'] * 100:+.1f}%"
+    trend_tone = "green" if fl["hold"] else "red"
+    rot_txt = ", ".join(rot["picks"]) or "cash" if rot else "—"
 
     return f"""<title>Desk Control Room</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -207,6 +224,7 @@ def render():
     <div><span class="eyebrow">Paper NAV</span><b class="mono">${f["nav"]:,.0f}</b></div>
     <div><span class="eyebrow">SPY dealer regime</span><b>{pill(regime_txt, regime_tone)}</b></div>
     <div><span class="eyebrow">Kalshi mode</span><b>{pill("SHADOW · live refused", "amber")}</b></div>
+    <div><span class="eyebrow">SPY trend flag</span><b>{pill(trend_txt, trend_tone)}</b></div>
     <div><span class="eyebrow">TypeSafe judgments</span><b>{pill("Live", "green") if live else pill("Stub · never blocks", "dim")}</b></div>
   </div>
 
@@ -252,6 +270,17 @@ def render():
         <div class="sig"><span>Fair price</span><span class="mono">−150 / +130 → {fair_h:.1%} / {fair_a:.1%} no-vig</span>{pill(f'Home −140 EV {s["ev_home"]:+.1f}%', "green" if s["ev_home"] > 0 else "dim")}</div>
       </div>
       <p class="note">A move counts as sharp only when TypeSafe finds no injury, lineup or weather news that explains it. Alerts only; no bets are placed.</p>
+    </section>
+
+    <section>
+      <div class="head"><h2>Research · chart engine</h2>{pill("Paper only", "dim")}</div>
+      <div class="signals">
+        <div class="sig"><span>Regime flag</span><span>SPY {trend_txt.lower()}; last month-end decision {E(fl["decided"])}. Information only: not on the book.</span>{pill("Hold" if fl["hold"] else "Cash", trend_tone)}</div>
+        <div class="sig"><span>ETF rotation</span><span>Latest month's picks (replayed from data through {E(r["data_through"])}): <b class="mono">{E(rot_txt)}</b>. Next live decision {E(r["next_decision"])}.</span>{pill("Logged", "blue")}</div>
+        <div class="sig"><span>Verdicts</span><span>No strategy beats holding over 20+ years. Rotation and trend filters reduce drawdowns at a cost in return.</span>{pill("Vetted", "dim")}</div>
+        <div class="sig"><span>Forward log</span><span>Daily on the <span class="mono">shadow-data</span> branch: decisions, paper tickets, <span class="mono">BRIEF.md</span>. Needs the <span class="mono">ALPHAVANTAGE_API_KEY</span> secret.</span>{pill("Check secret", "amber")}</div>
+      </div>
+      <p class="note">Details: README "Current conclusions", <span class="mono">docs/rotation-sleeve.md</span>, <span class="mono">research/trend-overlay/VERDICT.md</span>. Nothing here places, previews or approves an order.</p>
     </section>
   </div>
 </div>

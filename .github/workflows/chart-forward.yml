@@ -1,12 +1,12 @@
 name: chart-forward
 # Forward paper test for the chart scan. Research only: it never previews, fills or places an order.
-# Weekdays after the close: append the day's bars (Alpha Vantage, needs the ALPHAVANTAGE_API_KEY secret; 8 stocks +
+# Weekdays, 2.5-3.5 hours after the close: append the day's bars (Alpha Vantage, needs the ALPHAVANTAGE_API_KEY secret; 8 stocks +
 # 13 ETFs = 21 requests, inside the free 25/day), log the scan's signals and, on the first session of each month, the
 # ETF rotation rule's picks (plus paper order tickets for desk review), all before the next open; keep everything on the
 # `shadow-data` branch under chart-forward/. `chart doctor` fails the run loudly if the key is missing or bars go stale.
 on:
   schedule:
-    - cron: "37 21 * * 1-5"
+    - cron: "37 23 * * 1-5"     # 19:37 EDT / 18:37 EST: late enough for the vendor's daily bar in both seasons
   workflow_dispatch:
 concurrency:
   group: shadow-data-writer
