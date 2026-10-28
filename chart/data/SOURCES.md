@@ -43,3 +43,19 @@ raw responses. They are research data only, outside the desk universe. Scan them
 left as gaps, not filled from another vendor: XLK 10-05, XLE 10-06, XLV 10-08 and 10-09, XLP 10-08, XLC 10-08, TLT 10-08,
 GLD 10-05, all in October 2026. A one-day gap barely moves a 3-year test. The basket rotation uses only dates every fund has
 (766 of 770).
+
+# Long history: `chart/data/weekly/`
+
+The same 13 ETFs as **weekly** bars from Alpha Vantage `TIME_SERIES_WEEKLY_ADJUSTED` (free tier), written by script from the raw
+responses. Daily history this long (`TIME_SERIES_DAILY` with `outputsize=full`) is a premium feature. Each file starts at the
+fund's first full week: XLB, XLE, XLF, XLI, XLK, XLP, XLU, XLV and XLY in 1999-11, TLT in 2002-08, GLD in 2004-11, XLRE in
+2015-10, and XLC in 2018-06. All end on **2026-10-23**, the last complete week.
+
+- **Total return.** Open, high and low are scaled by adjusted close ÷ close, and close is the adjusted close. That folds in
+  dividends and the 2025-12-05 splits. The daily files are price-only, so a daily basket misses about 1.9% a year of dividends
+  (TLT 4.3%, XLRE 3.3%, XLE 3.1%, XLU 2.9%, XLP 2.7%, GLD 0%; Jan 2024 → Oct 2026).
+- **Checked against the daily files.** The newest 59 weekly closes match the daily closes on the same dates, within 0.2%. The
+  only exceptions are pre-split raw prices of the five funds that split in Dec 2025, and adjusted closes handle those.
+- **Validator flags are real events, kept as is:** the 2008 crash weeks (XLE −26%, XLF +31% and +33%), the 24 Aug 2015 flash
+  crash, and March 2020. The validator's 15% wick and 25% move limits are tuned for daily bars.
+- Use: `python3 -m chart longrun` (see `chart/longrun.py`).

@@ -112,7 +112,9 @@ svg.chart { width: 100%; height: auto; display: block; }
     <div class="panel detail" id="detail" aria-live="polite"></div>
   </div>
 
+  <section class="panel rot" id="forward" hidden></section>
   <section class="panel rot" id="rotation" hidden></section>
+  <section class="panel rot" id="longrun" hidden></section>
 
   <p class="note" id="foot"></p>
 </div>
@@ -291,7 +293,45 @@ function rotation() {
     ${variants}
     <p class="note">The stress rows run the fixed rule from all ${c[0].days} possible rebalance days, trading only the funds that change. The replay uses the live rule (decide on the first session of each month, fill at the next open), deciding from point-in-time data. Both are backtests; the forward log is the real test.</p>`;
 }
+function forwardPanel() {
+  const F = D.forward, el = document.getElementById("forward");
+  if (!F) return;
+  el.hidden = false;
+  const line = (name, r) => r && r.completed_periods
+    ? `<tr><td>${name}</td><td class="num">${r.completed_periods}</td><td class="num">${r.months_beat_basket}</td><td class="num">${pct(r.cumulative.rule)} vs ${pct(r.cumulative.basket)}</td></tr>`
+    : `<tr><td>${name}<br><span class="note">${r && r.decisions_logged ? `${r.decisions_logged} decision(s) logged, first month not complete` : "No live decisions yet"}</span></td><td class="num">0</td><td class="num">–</td><td class="num">–</td></tr>`;
+  el.innerHTML = `
+    <div><span class="label">Forward test · live paper log</span>
+      <h2>The real test: decisions written down before the fill</h2></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Log</th><th>Months done</th><th>Ahead of basket</th><th>Cumulative vs basket</th></tr></thead>
+      <tbody>${line("Adopted rule", F.rule)}${line("Defensive variant (200-day trend filter)", F.trend200)}</tbody></table></div>
+    <p class="note">Next decision: ${F.next_decision}, at the close of the first session of the month. The daily job needs the ALPHAVANTAGE_API_KEY repository secret to log anything.</p>`;
+}
+function longrunPanel() {
+  const L = D.longrun, el = document.getElementById("longrun");
+  if (!L) return;
+  el.hidden = false;
+  const row = (v, k) => `<tr${k ? "" : ' style="font-weight:600"'}><td>${v.label}</td><td class="num">${pct(v.cagr)}</td><td class="num">${pct(v.net_cagr["20bp"])}</td><td class="num">${pct(v.basket_cagr)}</td><td class="num">${pct(v.drawdown)}</td><td class="num">${pct(v.basket_drawdown)}</td><td class="num">${v.months_ahead}/${v.months}</td></tr>`;
+  const reg = g => `<tr><td>${g.regime}</td><td class="num">${pct(g.rule)}</td><td class="num">${pct(g.basket)}</td></tr>`;
+  el.innerHTML = `
+    <div><span class="label">Long history · weekly total-return bars</span>
+      <h2>Over two decades the rule cut drawdowns, not returns</h2></div>
+    ${L.baskets.map(b => `
+      <span class="label">${b.basket.split(",")[0]} · ${b.variants[0].from} → ${b.variants[0].to}</span>
+      <div class="grid2">
+        <div class="tbl"><table>
+          <thead><tr><th>Variant</th><th>CAGR</th><th>net 10+10 bp</th><th>Basket</th><th>Worst drawdown</th><th>Basket</th><th>Months ahead</th></tr></thead>
+          <tbody>${b.variants.map(row).join("")}</tbody></table></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Stress window</th><th>Rule</th><th>Basket</th></tr></thead>
+          <tbody>${b.variants[0].regimes.map(reg).join("")}</tbody></table></div>
+      </div>`).join("")}
+    <p class="note">Weekly version of the live rule: ${L.lookback_weeks}-week momentum (≈ 60 sessions), decided on the first weekly bar of each month, filled at the next weekly open. Prices include dividends, which the daily panels above do not; that alone is worth about 1.9 points a year to the basket. Drawdowns are month-end.</p>`;
+}
 segs();
 render();
+forwardPanel();
 rotation();
+longrunPanel();
 </script>

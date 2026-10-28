@@ -707,3 +707,47 @@ class DoctorTests(unittest.TestCase):
         self.assertFalse(bad["ok"])
         self.assertEqual(len(bad["problems"]), 3)
         self.assertEqual(bad["next_rotation_decision"], "2026-12-01")
+
+
+class LongrunTests(unittest.TestCase):
+    def periods(self):
+        p = lambda d0, d1, picks, r, b: {"decided": d0, "from": d0, "to": d1, "picks": picks, "complete": True,
+                                         "rule": r, "basket": b, "excess": r - b}
+        return [p("2008-01-02", "2008-12-31", ["A", "B", "C"], -0.10, -0.30),
+                p("2009-01-02", "2009-12-31", ["A", "B", "D"], 0.20, 0.25),
+                p("2010-01-04", "2010-12-31", ["A", "E", "F"], 0.10, 0.10)]
+
+    def test_summarize_drawdown_turnover_and_cost_drag(self):
+        from chart.longrun import summarize
+        s = summarize(self.periods(), cost_bps=(10,))
+        self.assertAlmostEqual(s["drawdown"], -0.10)
+        self.assertAlmostEqual(s["basket_drawdown"], -0.30)
+        self.assertEqual(s["months_ahead"], 1)
+        self.assertEqual(s["swaps_per_month"], 1.5)                       # 1 then 2 names changed
+        self.assertAlmostEqual(s["cagr"] - s["net_cagr"]["10bp"], 1.5 * 12 * 2 / 3 * 10 / 1e4, places=4)
+
+    def test_regimes_and_years(self):
+        from chart.longrun import by_year, regimes
+        r = regimes(self.periods(), (("crash", "2008-01-01", "2008-12-31"), ("none", "2001-01-01", "2001-12-31")))
+        self.assertEqual(r, [{"regime": "crash", "rule": -0.1, "basket": -0.3, "months": 1}])
+        self.assertEqual([y["year"] for y in by_year(self.periods())], ["2008", "2009", "2010"])
+
+
+class BriefTests(unittest.TestCase):
+    def test_brief_lists_picks_changes_tickets_and_blockers(self):
+        from chart.forward import record_rotation, rotation_brief, rotation_tickets
+        b = RotationForwardTests().basket()
+        d = tempfile.mkdtemp()
+        log, tix, tr = (os.path.join(d, n) for n in ("rot.jsonl", "tix.jsonl", "tr.jsonl"))
+        self.assertIsNone(rotation_brief(b, log, tix))
+        for i in range(90):
+            cut = {s: v[:i + 1] for s, v in b.items()}
+            if record_rotation(cut, log, lookback=60, top=2):
+                rotation_tickets(cut, log, tix)
+            record_rotation(cut, tr, lookback=60, top=2, trend=20)
+        text = rotation_brief(b, log, tix, tr, {"problems": ["key missing"]})
+        self.assertIn("**Hold: A, D**", text)
+        self.assertIn("## Paper tickets", text)
+        self.assertIn("## Defensive variant", text)
+        self.assertIn("- key missing", text)
+        self.assertIn("| 1 | A |", text)

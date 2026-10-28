@@ -63,7 +63,16 @@ jobs:
             python -m chart forward rotation-report "$D/etf" --log "$D/rotation.jsonl" > "$D/ROTATION.json"
             python -m chart forward rotation-tickets "$D/etf" --log "$D/rotation.jsonl" --tickets "$D/rotation_tickets.jsonl"
           fi
+          # Defensive variant logged alongside on paper: the same rule, in cash while the basket is below its 200-session average.
+          python -m chart forward rotation-record "$D/etf" --trend 200 --log "$D/rotation_trend200.jsonl"
+          if [ -s "$D/rotation_trend200.jsonl" ]; then
+            python -m chart forward rotation-report "$D/etf" --log "$D/rotation_trend200.jsonl" > "$D/ROTATION_TREND200.json"
+          fi
           python -m chart doctor "$D/data" "$D/etf" > "$D/DOCTOR.json" || true
+          if [ -s "$D/rotation.jsonl" ]; then
+            python -m chart forward rotation-brief "$D/etf" --log "$D/rotation.jsonl" --tickets "$D/rotation_tickets.jsonl" \
+              --trend-log "$D/rotation_trend200.jsonl" --doctor "$D/DOCTOR.json" > "$D/BRIEF.md"
+          fi
       - name: Push to shadow-data
         run: |
           cd /tmp/data

@@ -6,6 +6,7 @@ python3 -m chart forward record      # once a day, after the close and before th
 python3 -m chart forward report
 python3 -m chart validate chart/data/SPY.csv
 python3 -m chart doctor chart/data chart/data/etf   # preflight: API key, data freshness, next rotation decision
+python3 -m chart longrun                            # the rotation rule over 2004-2026 weekly bars, by regime
 """
 import argparse
 import json
@@ -60,11 +61,15 @@ def main(argv=None):
                    help="research mode: scan every CSV in the folder, not only symbols in desk.json's universe")
     f = sub.add_parser("forward", help="log today's scan before the open, or score logged signals")
     f.add_argument("action", choices=("record", "report", "rotation-record", "rotation-report", "rotation-replay",
-                                      "rotation-tickets"))
+                                      "rotation-tickets", "rotation-brief"))
     f.add_argument("folder", nargs="?", default="chart/data")
     f.add_argument("--log", help="signal log path (default ledger/signals.jsonl)")
     f.add_argument("--tickets", help="rotation-tickets: ticket log path (default ledger/rotation_tickets.jsonl)")
     f.add_argument("--nav", type=float, help="rotation-tickets: paper NAV (default desk.json starting_nav)")
+    f.add_argument("--trend-log", help="rotation-brief: the defensive variant's log, to show its call")
+    f.add_argument("--doctor", help="rotation-brief: a `chart doctor` JSON file, to list blockers")
+    f.add_argument("--trend", type=int, default=0, help="rotation-record/replay: basket trend filter length (sessions)")
+    f.add_argument("--buffer", type=int, default=0, help="rotation-record/replay: hysteresis band")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
     u.add_argument("--all", action="store_true", help="update every CSV in the folder, not only desk.json equities")
@@ -72,6 +77,8 @@ def main(argv=None):
     r.add_argument("folders", nargs="+", help="NAME=FOLDER pairs, e.g. Stocks=chart/data")
     r.add_argument("--out", required=True)
     r.add_argument("--rotation", help="ETF folder for the rotation-rule panel (stress spread + live-calendar replay)")
+    r.add_argument("--longrun", help="weekly folder for the long-history panel, e.g. chart/data/weekly")
+    r.add_argument("--forward", help="folder holding ROTATION.json / ROTATION_TREND200.json from shadow-data")
     st = sub.add_parser("stress", help="stress-test a basket rotation rule across rebalance days, costs and universes")
     st.add_argument("folder", nargs="?", default="chart/data/etf")
     st.add_argument("--lookback", type=int, default=60)
@@ -79,6 +86,9 @@ def main(argv=None):
     st.add_argument("--top", type=int, default=3)
     st.add_argument("--buffer", type=int, default=0, help="hysteresis: keep a held fund while it ranks in the top TOP+BUFFER")
     st.add_argument("--trend", type=int, default=0, help="cash when the equal-weight basket is below its TREND-bar average")
+    lr = sub.add_parser("longrun", help="the rotation rule over two decades of weekly total-return bars, by regime")
+    lr.add_argument("folder", nargs="?", default="chart/data/weekly")
+    lr.add_argument("--out", help="also write the JSON here")
     dr = sub.add_parser("doctor", help="preflight for the forward job: API key, data freshness, next rotation decision")
     dr.add_argument("folders", nargs="*", default=["chart/data", "chart/data/etf"])
     dr.add_argument("--max-stale", type=int, default=3, help="weekdays the newest bar may lag today (default 3)")
@@ -94,14 +104,19 @@ def main(argv=None):
         if a.action.startswith("rotation-"):
             bars = {p.stem.upper(): load_csv(p) for p in sorted(pathlib.Path(a.folder).glob("*.csv"))}
             log = a.log or forward.ROTATION_LOG
-            if a.action == "rotation-tickets":
+            rule = {k: v for k, v in (("trend", a.trend), ("buffer", a.buffer)) if v}
+            if a.action == "rotation-brief":
+                doc = json.loads(pathlib.Path(a.doctor).read_text()) if a.doctor else None
+                text = forward.rotation_brief(bars, log, a.tickets or forward.TICKETS_LOG, a.trend_log, doc)
+                print(text or "no decision logged yet")
+            elif a.action == "rotation-tickets":
                 row = forward.rotation_tickets(bars, log, a.tickets or forward.TICKETS_LOG,
                                                nav=a.nav or cfg.starting_nav, weight_pct=cfg.limits.max_position_pct)
                 print(json.dumps(row, indent=2) if row else "no new decision to ticket")
             elif a.action == "rotation-replay":
-                print(json.dumps(forward.replay_rotation(bars), indent=2))
+                print(json.dumps(forward.replay_rotation(bars, **rule), indent=2))
             elif a.action == "rotation-record":
-                sig = forward.record_rotation(bars, log)
+                sig = forward.record_rotation(bars, log, **rule)
                 print(json.dumps(sig, indent=2) if sig else "not a decision day, or already recorded")
             else:
                 print(json.dumps(forward.report_rotation(bars, log), indent=2))
@@ -124,7 +139,7 @@ def main(argv=None):
     if a.cmd == "report":
         from .report import build, render_html
         groups = dict(x.split("=", 1) for x in a.folders)
-        data = build(groups, rotation_folder=a.rotation)
+        data = build(groups, rotation_folder=a.rotation, longrun_folder=a.longrun, forward_dir=a.forward)
         text = render_html(data) if a.out.endswith(".html") else json.dumps(data, separators=(",", ":"))
         pathlib.Path(a.out).write_text(text, encoding="utf-8")
         print(f"wrote {a.out}")
@@ -134,6 +149,13 @@ def main(argv=None):
         bars = {f.stem.upper(): load_csv(f) for f in sorted(pathlib.Path(a.folder).glob("*.csv"))}
         print(json.dumps(_round(stress(bars, {"lookback": a.lookback, "hold": a.hold, "top": a.top,
                                                    "buffer": a.buffer, "trend": a.trend})), indent=2))
+        return
+    if a.cmd == "longrun":
+        from .longrun import run
+        text = json.dumps(run(a.folder), indent=2, ensure_ascii=False)
+        if a.out:
+            pathlib.Path(a.out).write_text(text + "\n", encoding="utf-8")
+        print(text)
         return
     if a.cmd == "doctor":
         from .doctor import check

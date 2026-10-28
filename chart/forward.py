@@ -236,3 +236,53 @@ def rotation_tickets(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, nav=
     with tickets.open("a") as f:
         f.write(json.dumps(row) + "\n")
     return row
+
+
+def _rows(path):
+    path = pathlib.Path(path)
+    return [json.loads(l) for l in path.read_text().splitlines() if l.strip()] if path.exists() else []
+
+
+def rotation_brief(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, trend_log=None, doctor=None):
+    """One Markdown page for the desk on decision day: the picks and why, what changes, the paper tickets, the defensive
+    variant's call, the forward record so far and anything blocking the job. None if nothing has been decided yet."""
+    decisions = _rows(log)
+    if not decisions:
+        return None
+    d, prev = decisions[-1], (decisions[-2] if len(decisions) > 1 else None)
+    pct = lambda x: f"{x * 100:+.1f}%"
+    lines = [f"# Rotation decision: {d['as_of']}", "",
+             f"Rule: {d['rule']['lookback']}-session momentum, top {d['rule']['top']} with positive momentum, equal weight. "
+             "Paper only: nothing here has been sent.", "",
+             f"**Hold: {', '.join(d['picks']) or 'cash'}**"]
+    if prev:
+        out_, in_ = sorted(set(prev["picks"]) - set(d["picks"])), sorted(set(d["picks"]) - set(prev["picks"]))
+        lines.append(f"Changes vs {prev['as_of']}: " + ("; ".join(x for x in (
+            f"sell {', '.join(out_)}" if out_ else "", f"buy {', '.join(in_)}" if in_ else "") if x) or "none"))
+    lines += ["", "| Rank | Fund | Momentum | Held |", "|---|---|---|---|"]
+    for k, (s, m) in enumerate(list(d["momentum"].items())[:6], 1):
+        lines.append(f"| {k} | {s} | {pct(m)} | {'✓' if s in d['picks'] else ''} |")
+    tix = next((r for r in reversed(_rows(tickets)) if r["as_of"] == d["as_of"]), None)
+    if tix:
+        lines += ["", f"## Paper tickets ({tix['weight_pct']:g}% of {tix['nav']:,.0f} NAV each)", ""]
+        lines += [f"- {t['side'].upper()} {t['qty']} {t['symbol']} limit {t['limit']:.2f} (close {t['ref_close']:.2f})"
+                  for t in tix["tickets"]] or ["- none: holdings unchanged"]
+    if trend_log:
+        t = next((r for r in reversed(_rows(trend_log)) if r["as_of"] == d["as_of"]), None)
+        if t:
+            gap = t.get("basket_vs_trend")
+            lines += ["", "## Defensive variant (cash below the basket's 200-session average)", "",
+                      f"Hold: {', '.join(t['picks']) or 'cash'}" + (f" · basket {pct(gap)} vs its average" if gap is not None else "")]
+    rep = report_rotation(bars_by_symbol, log)
+    lines += ["", "## Forward record (live log)", ""]
+    if rep["completed_periods"]:
+        lines.append(f"{rep['completed_periods']} completed months, ahead of the basket in {rep['months_beat_basket']}. "
+                     f"Cumulative {pct(rep['cumulative']['rule'])} vs basket {pct(rep['cumulative']['basket'])} (before costs, price only).")
+    else:
+        lines.append("No completed month yet.")
+    if doctor and doctor.get("problems"):
+        lines += ["", "## Blocking", ""] + [f"- {p}" for p in doctor["problems"]]
+    lines += ["", "_Long-history context (2004-2026, weekly, total return): the rule trailed the equal-weight basket by about "
+              "1 point a year but roughly halved the worst drawdown, mostly in 2008. Treat it as a risk reducer, not a return "
+              "edge. See docs/rotation-sleeve.md._"]
+    return "\n".join(lines) + "\n"

@@ -24,7 +24,8 @@ def _sample(curve):
             "hold": [round(curve["hold"][i] / h0, 4) for i in idx]}
 
 
-def build(groups, min_train=252, test=21, fee_bps=1.0, slippage_bps=2.0, rotation_folder=None):
+def build(groups, min_train=252, test=21, fee_bps=1.0, slippage_bps=2.0, rotation_folder=None, longrun_folder=None,
+          forward_dir=None):
     """groups: {group name: folder}. Each folder is scanned on its own, and gets its own basket rotation."""
     kw = {"min_train": min_train, "test": test, "fee_bps": fee_bps, "slippage_bps": slippage_bps}
     out = {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "settings": kw, "groups": []}
@@ -47,7 +48,21 @@ def build(groups, min_train=252, test=21, fee_bps=1.0, slippage_bps=2.0, rotatio
                               "data_through": max(b[-1].ts for b in bars.values())})
     if rotation_folder:
         out["rotation"] = rotation_panel(rotation_folder)
+    if longrun_folder:
+        from .longrun import run
+        out["longrun"] = run(longrun_folder)
+    if forward_dir is not None:
+        out["forward"] = forward_panel(forward_dir)
     return out
+
+
+def forward_panel(folder):
+    """The live forward logs' reports (ROTATION.json, ROTATION_TREND200.json from the shadow-data branch), if present."""
+    from datetime import date
+    from .doctor import next_decision
+    read = lambda n: json.loads((pathlib.Path(folder) / n).read_text()) if (pathlib.Path(folder) / n).exists() else None
+    return {"rule": read("ROTATION.json"), "trend200": read("ROTATION_TREND200.json"),
+            "next_decision": next_decision(date.today()).isoformat()}
 
 
 ROTATION_VARIANTS = (("Adopted rule", {}), ("Hysteresis: keep while in top 4", {"buffer": 1}),
