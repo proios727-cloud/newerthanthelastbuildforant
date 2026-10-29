@@ -38,3 +38,5 @@ It is not expected to beat holding on return.
 - **Stress windows:** 2000–02 dot-com, 2008, 2011, 2015–16, 2018 Q4, 2020, 2022.
 
 **Multiple testing:** 4 lengths × 3 funds = 12 primary tests, plus 9 sector funds at N = 10.
+
+_Update 2026-10-29: BIL weekly history was fetched; the real-cash run is in VERDICT.md. The rule and grid are unchanged._

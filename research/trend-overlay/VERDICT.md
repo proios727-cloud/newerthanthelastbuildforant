@@ -24,7 +24,9 @@
 - **Decision week:** first, second, third or last week of the month all pass. CAGR ranges from 6.1% to 8.5%, and the worst
   drawdown from −21% to −34%.
 - **Costs:** at 10+10 bp, 8.0%.
-- **Cash yield:** a flat 2% assumption (a sensitivity, not data) adds about 0.5 points a year.
+- **Cash yield:** with real T-bill returns (BIL, total return, from Jul 2007; `chart/data/cash/BIL.csv`), time out of
+  the market earns 1.4% a year on average. That adds 0.3 points a year to SPY (8.6% vs 8.3% at 0% cash over 2007–2026),
+  0.3 to QQQ and 0.5 to IWM. No verdict changes. Holding SPY made 10.6% over the same span.
 
 **Other funds, 10-month:**
 - **QQQ:** 9.1% against 9.4%, worst drawdown −28% against −76%. Passes at every setting and every decision week.
@@ -63,8 +65,8 @@
 - **A long bear market** (2000- or 2008-style) is where it pays, by 25–40 points per episode.
 - **V-shaped selloffs** (2011, 2015–16, 2018 Q4) are where it loses, by 3–7 points per episode.
 - **The cost in a bull market** is about 6 points a year on SPY, as 2009–2026 shows.
-- **Cash yield** at today's rates (about 4–5%) would narrow the gap while out; BIL history (from 2007) would replace the 0%
-  assumption.
+- **Cash yield:** measured with BIL since 2007, it is worth 0.3–0.5 points a year. At today's rates (about 4–5%) it would
+  narrow the gap more in the months spent out of the market.
 
 ## Next step
 

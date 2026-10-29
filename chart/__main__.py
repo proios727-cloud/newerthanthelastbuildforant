@@ -103,6 +103,7 @@ def main(argv=None):
     ov.add_argument("--months", type=int, default=10)
     ov.add_argument("--week", type=int, default=-1, help="decision bar within the month: -1 last (default), 0 first")
     ov.add_argument("--cash-rate", type=float, default=0.0, help="yearly yield on cash while out (default 0)")
+    ov.add_argument("--cash", help="CSV of a T-bill fund (e.g. chart/data/cash/BIL.csv) whose return cash earns while out")
     ov.add_argument("--status", action="store_true", help="only print the latest decision and distance from the average")
     dv = sub.add_parser("dividends", help="write total-return (dividend back-adjusted) copies of a folder's CSVs")
     dv.add_argument("src")
@@ -188,7 +189,8 @@ def main(argv=None):
             return
         weekly = len({b.ts[:7] for b in bars}) * 6 > len(bars)          # fewer than ~6 bars a month: weekly data
         start = min(overlay.decisions(bars, 12, -1))
-        r = overlay.run(bars, a.months, a.week, start, cash_rate=a.cash_rate, ppy=52 if weekly else 252)
+        r = overlay.run(bars, a.months, a.week, start, cash_rate=a.cash_rate, ppy=52 if weekly else 252,
+                        cash=load_csv(a.cash) if a.cash else None)
         keep = ("cagr", "max_drawdown", "calmar", "sharpe", "exposure", "n_trades")
         print(json.dumps(_round({"from": r["dates"][0], "to": r["dates"][-1],
                                  "overlay": {k: r["stats"][k] for k in keep},

@@ -194,7 +194,7 @@ corrected, is in `docs/research-log.md`. New ideas go through `.claude/skills/st
 
 | Question | Answer | Evidence |
 |---|---|---|
-| Does any strategy beat holding? | **No.** None of the 42 weekly tests on the desk stocks; 2 of 78 on the ETFs (XLRE mean reversion), about what chance produces. | `chart longrun --strategies` |
+| Does any strategy beat holding? | **No.** None of the 48 weekly tests on the desk stocks; 2 of 78 on the ETFs (XLRE mean reversion), about what chance produces. | `chart longrun --strategies` |
 | ETF momentum rotation (60-day, top 3, monthly) | **No return edge** over two decades (9.0% vs 10.0%/yr). It halved the worst drawdown, mostly in 2008. Paper log only, with a 200-day trend variant alongside. | `docs/rotation-sleeve.md` |
 | Trend filters (SMA cross, Donchian, MACD) | **Risk filters at a cost:** they cut drawdowns on about a third of assets and always give up 1–14 points a year. Specific 2023–26 pairings mostly don't carry over. | `chart longrun --strategies` |
 | Desk-level overlay: SPY above its 10-month average | **Crash insurance:** −21% worst drawdown vs −55% since 2000, but about 6 points a year behind holding since 2009. Logged as a regime flag, not on the book. | `research/trend-overlay/VERDICT.md` |

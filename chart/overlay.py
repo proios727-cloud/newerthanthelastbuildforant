@@ -43,8 +43,11 @@ def decisions(bars, months=10, week=-1):
     return out
 
 
-def run(bars, months=10, week=-1, start=0, fee_bps=1.0, slippage_bps=2.0, cash_rate=0.0, ppy=52):
-    """Equity per bar from `start`, the overlay's stats, and buy-and-hold's over the same bars."""
+def run(bars, months=10, week=-1, start=0, fee_bps=1.0, slippage_bps=2.0, cash_rate=0.0, ppy=52, cash=None):
+    """Equity per bar from `start`, the overlay's stats, and buy-and-hold's over the same bars.
+    `cash` (bars of a T-bill fund such as BIL) makes time out of the market earn that fund's return on the same dates;
+    dates it doesn't cover fall back to `cash_rate`."""
+    cash_close = {b.ts: b.close for b in cash} if cash else {}
     sig = decisions(bars, months, week)
     cost = (fee_bps + slippage_bps) / 1e4
     weekly_cash = (1 + cash_rate) ** (1 / ppy) - 1
@@ -65,7 +68,8 @@ def run(bars, months=10, week=-1, start=0, fee_bps=1.0, slippage_bps=2.0, cash_r
         elif pos:
             e *= bars[i].close / bars[i - 1].close
         else:
-            e *= 1 + weekly_cash
+            a, b = cash_close.get(bars[i - 1].ts), cash_close.get(bars[i].ts)
+            e *= b / a if a and b else 1 + weekly_cash
         pending = sig.get(i)
         held += pos
         eq.append(e)
