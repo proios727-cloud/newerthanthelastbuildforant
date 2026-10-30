@@ -79,6 +79,10 @@ class PainIndexTests(unittest.TestCase):
             report = SKILL / "reports" / f"{data_file.stem}.md"
             self.assertEqual(report.read_text(), pain_index.render(data), f"regenerate {report.name}")
 
+    def test_every_report_has_its_dataset(self):
+        for report in sorted((SKILL / "reports").glob("*.md")):
+            self.assertTrue((SKILL / "data" / f"{report.stem}.json").exists(), f"missing data/{report.stem}.json")
+
 
 if __name__ == "__main__":
     unittest.main()
