@@ -6,3 +6,4 @@ data/
 re/*/original/
 re/*/decompiled/
 !chart/data/
+!.claude/skills/product-pain-miner/data/
