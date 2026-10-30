@@ -203,6 +203,7 @@ corrected, is in `docs/research-log.md`. New ideas go through `.claude/skills/st
 The forward paper log (`chart-forward` workflow, needs the `ALPHAVANTAGE_API_KEY` secret) is the evidence that counts next.
 
 The CSV needs `date, open, high, low, close[, volume]` in ascending order. Backtest results are research output, not investment advice.
+
 ## Skill: product-pain-miner
 
 `.claude/skills/product-pain-miner/` turns public complaints about everyday items into ranked redesign concepts. Each category is a JSON dataset (`data/<category>.json`, every entry sourced), and the ranked report (`reports/<category>.md`) is generated from it. Ask Claude to "run product-pain-miner on bathroom" to add a category, or to "refresh kitchen" to update one.
