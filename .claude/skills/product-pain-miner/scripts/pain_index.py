@@ -20,7 +20,7 @@ MODES = {
     "one-size-fits-all": "One size fits all",
     "wears-out-early": "Wears out early",
 }
-SCORES = ("frequency", "severity", "workaround", "feasibility")
+SCORES = ("frequency", "severity", "annoyance", "workaround", "feasibility")
 TEXT = ("item", "complaint", "redesign")
 ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 URL_RE = re.compile(r"^https?://\S+$")
@@ -71,7 +71,9 @@ def validate(data):
 
 
 def score(e):
-    pain = round(e["frequency"] * e["severity"] * e["workaround"] / 125 * 100)
+    # A daily nuisance counts as much as real harm: take whichever bothers people more.
+    impact = max(e["severity"], e["annoyance"])
+    pain = round(e["frequency"] * impact * e["workaround"] / 125 * 100)
     return pain, round(pain * e["feasibility"] / 5)
 
 
@@ -92,7 +94,8 @@ def render(data):
         "",
         f"_Generated from `data/{data['category']}.json` (updated {data['updated']}). Do not edit by hand._",
         "",
-        "**Opportunity** = pain × feasibility. **Pain** = frequency × severity × workaround difficulty (0–100).",
+        "**Opportunity** = pain × feasibility. **Pain** = frequency × max(severity, annoyance) × workaround difficulty (0–100). "
+        "A nuisance counts as much as harm.",
         "",
         "## Ranked opportunities",
         "",

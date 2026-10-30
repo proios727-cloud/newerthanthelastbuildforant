@@ -33,7 +33,9 @@ is always generated from it and never edited by hand.
 3. **Classify.** Read `references/failure-modes.md` and assign exactly one primary `failure_mode`.
 4. **Score** each entry 1–5 on:
    - `frequency`: how often the complaint appears across sources (5 = in nearly every thread/review set)
-   - `severity`: cost to the user (1 = mild annoyance, 3 = wasted money/time, 5 = injury or health risk)
+   - `severity`: real cost to the user (1 = none, 3 = wasted money/time, 5 = injury or health risk)
+   - `annoyance`: how much it bugs people each time it happens (1 = barely noticed, 3 = sighs and workarounds,
+     5 = people rant about it). Nuisances count: a daily irritation with no real harm can still score 5.
    - `workaround`: how hard it is to avoid (1 = easy fix exists, 5 = no workaround)
    - `feasibility`: how buildable the redesign is (1 = new tech needed, 5 = cheap change to existing product)
 5. **Redesign.** Write one concrete `redesign` per entry: what changes physically or behaviorally, not a slogan.
@@ -49,7 +51,7 @@ is always generated from it and never edited by hand.
 
 ## Scoring (computed by the script, do not hand-edit)
 
-- `pain = frequency × severity × workaround` normalized to 0–100
+- `pain = frequency × max(severity, annoyance) × workaround` normalized to 0–100, so a nuisance ranks as high as real harm
 - `opportunity = pain × feasibility / 5`; this is the ranking key: high pain that is cheap to fix ranks first
 
 ## Dataset schema
@@ -64,7 +66,7 @@ is always generated from it and never edited by hand.
       "item": "Nonstick pans & air-fryer baskets",
       "complaint": "Coating flakes within months; users worry about eating it",
       "failure_mode": "wears-out-early",
-      "frequency": 5, "severity": 4, "workaround": 3, "feasibility": 3,
+      "frequency": 5, "severity": 4, "annoyance": 4, "workaround": 3, "feasibility": 3,
       "redesign": "…",
       "prior_art": "optional",
       "sources": ["https://…"]

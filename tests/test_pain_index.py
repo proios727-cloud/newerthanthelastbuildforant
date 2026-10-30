@@ -12,7 +12,7 @@ _spec.loader.exec_module(pain_index)
 
 ENTRY = {
     "id": "a-thing", "item": "Thing", "complaint": "Breaks", "failure_mode": "wears-out-early",
-    "frequency": 5, "severity": 5, "workaround": 5, "feasibility": 5,
+    "frequency": 5, "severity": 5, "annoyance": 5, "workaround": 5, "feasibility": 5,
     "redesign": "Make it not break", "sources": ["https://example.com/a"],
 }
 
@@ -27,8 +27,13 @@ class PainIndexTests(unittest.TestCase):
 
     def test_scores_bounds(self):
         self.assertEqual(pain_index.score(ENTRY), (100, 100))
-        low = dict(ENTRY, frequency=1, severity=1, workaround=1, feasibility=1)
+        low = dict(ENTRY, frequency=1, severity=1, annoyance=1, workaround=1, feasibility=1)
         self.assertEqual(pain_index.score(low), (1, 0))
+
+    def test_nuisance_counts_as_much_as_harm(self):
+        harm = dict(ENTRY, severity=5, annoyance=1)
+        nuisance = dict(ENTRY, severity=1, annoyance=5)
+        self.assertEqual(pain_index.score(harm), pain_index.score(nuisance))
 
     def test_rejects_bad_fields(self):
         bad = dict(ENTRY, id="Bad Id", failure_mode="nope", frequency=6, severity=True, sources=["ftp://x"])
@@ -43,9 +48,9 @@ class PainIndexTests(unittest.TestCase):
         self.assertTrue(any("source URL" in p for p in problems))
 
     def test_ranks_by_opportunity_then_pain(self):
-        cheap = dict(ENTRY, id="cheap", severity=3)                 # pain 60, opp 60
+        cheap = dict(ENTRY, id="cheap", severity=3, annoyance=3)    # pain 60, opp 60
         hard = dict(ENTRY, id="hard", feasibility=2)                # pain 100, opp 40
-        tie = dict(ENTRY, id="tie", severity=3, workaround=5)       # same as cheap
+        tie = dict(ENTRY, id="tie", severity=3, annoyance=1)        # same as cheap
         ids = [e["id"] for e, _, _ in pain_index.ranked(dataset(hard, tie, cheap))]
         self.assertEqual(ids, ["cheap", "tie", "hard"])
 

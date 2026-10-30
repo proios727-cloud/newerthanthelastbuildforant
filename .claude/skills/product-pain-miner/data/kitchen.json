@@ -7,7 +7,7 @@
       "item": "Nonstick pans & air-fryer baskets",
       "complaint": "Coating flakes within weeks or months, sometimes after one wash; users worry about eating the flakes",
       "failure_mode": "wears-out-early",
-      "frequency": 5, "severity": 4, "workaround": 3, "feasibility": 3,
+      "frequency": 5, "severity": 4, "annoyance": 4, "workaround": 3, "feasibility": 3,
       "redesign": "Swappable coated insert on a durable stainless or cast body, a wear-indicator layer that changes color before bare metal shows, and an honest 'replace insert by' lifespan on the box",
       "prior_art": "Stainless or carbon-steel baskets; replaceable-liner air fryers",
       "sources": [
@@ -21,7 +21,7 @@
       "item": "Basket-style air fryers",
       "complaint": "Mesh and crevices trap grease; the basket is hard to fully clean",
       "failure_mode": "wears-out-early",
-      "frequency": 4, "severity": 2, "workaround": 3, "feasibility": 4,
+      "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4,
       "redesign": "Flat perforated tray with no mesh and no internal seams, rounded inside corners, and a lift-out drip pan that goes in the dishwasher",
       "sources": [
         "https://www.tastingtable.com/2280139/disadvantages-basket-style-air-fryer/",
@@ -33,7 +33,7 @@
       "item": "Stovetop controls",
       "complaint": "A row of knobs controls a 2×2 grid of burners, so people turn on the wrong burner",
       "failure_mode": "mapping-mismatch",
-      "frequency": 4, "severity": 4, "workaround": 2, "feasibility": 4,
+      "frequency": 4, "severity": 4, "annoyance": 4, "workaround": 2, "feasibility": 4,
       "redesign": "Arrange the knobs in the same 2×2 pattern as the burners, and add a lit 'hot' ring on the knob of each active burner",
       "prior_art": "Staggered-knob ranges; induction hobs with per-zone touch controls",
       "sources": [
@@ -46,7 +46,7 @@
       "item": "Plastic wrap / cling film",
       "complaint": "The serrated cutter loses the film's edge, the wrap clings to itself, and the blade cuts fingers",
       "failure_mode": "seller-first",
-      "frequency": 4, "severity": 2, "workaround": 3, "feasibility": 5,
+      "frequency": 4, "severity": 2, "annoyance": 5, "workaround": 3, "feasibility": 5,
       "redesign": "A refillable slide-cutter box with a guide that holds the cut edge at the slot, plus standard refill core sizes",
       "prior_art": "Slide-cutter dispensers (tested by Cook's Illustrated)",
       "sources": [
@@ -60,7 +60,7 @@
       "item": "Peel-off lids (yogurt, tins)",
       "complaint": "The tab tears off or the foil rips partway, and food splashes or the user gets cut",
       "failure_mode": "seller-first",
-      "frequency": 4, "severity": 2, "workaround": 2, "feasibility": 4,
+      "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 4,
       "redesign": "A full-width pull ring bonded through the whole seal, a rolled safe edge on tins, and a peel line that guides the tear around the rim",
       "sources": [
         "https://www.creativebloq.com/news/everyday-product-design-fails"
@@ -71,7 +71,7 @@
       "item": "Snack & chip bags",
       "complaint": "Once opened, the bag can't be resealed and the food goes stale",
       "failure_mode": "seller-first",
-      "frequency": 4, "severity": 2, "workaround": 2, "feasibility": 4,
+      "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 4,
       "redesign": "A peel-and-press adhesive reseal strip below the tear line on every family-size bag",
       "prior_art": "Resealable cheese and deli packs",
       "sources": [
@@ -83,7 +83,7 @@
       "item": "Food storage containers",
       "complaint": "Locking tabs snap off and lids stop sealing or don't fit",
       "failure_mode": "wears-out-early",
-      "frequency": 3, "severity": 2, "workaround": 3, "feasibility": 4,
+      "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4,
       "redesign": "A gasket and lid in one piece with no hinged tabs; one lid size for each footprint across the whole set; replacement lids sold separately",
       "sources": [
         "https://www.chowhound.com/2095661/kitchen-items-avoid-buying/"
@@ -94,7 +94,7 @@
       "item": "French-door refrigerators",
       "complaint": "Water and icemaker lines run through usable space, freeze, or take up shelf room",
       "failure_mode": "one-size-fits-all",
-      "frequency": 2, "severity": 3, "workaround": 4, "feasibility": 3,
+      "frequency": 2, "severity": 3, "annoyance": 3, "workaround": 4, "feasibility": 3,
       "redesign": "Run the water and icemaker lines inside the cabinet wall with a heated sleeve, and give the icemaker a removable module",
       "sources": [
         "https://www.tastingtable.com/2121884/kitchen-design-horrors-reddit"
@@ -105,7 +105,7 @@
       "item": "Kitchen lighting",
       "complaint": "Ceiling lights sit behind the cook and throw shadows onto the worktop",
       "failure_mode": "one-size-fits-all",
-      "frequency": 3, "severity": 2, "workaround": 3, "feasibility": 5,
+      "frequency": 3, "severity": 2, "annoyance": 3, "workaround": 3, "feasibility": 5,
       "redesign": "Wall cabinets sold with an integrated under-cabinet LED channel and plug-through wiring as standard, not as an add-on",
       "sources": [
         "https://www.which.co.uk/news/article/things-people-regret-most-about-their-kitchens-aLAkj2Y8Kgcp"
