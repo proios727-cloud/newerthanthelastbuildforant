@@ -824,6 +824,11 @@ class OverlayTests(unittest.TestCase):
         r2 = run(bars, months=2, start=0, fee_bps=0, slippage_bps=0, cash_rate=0.05)
         self.assertGreater(r0["stats"]["max_drawdown"], r0["hold"]["max_drawdown"])   # shallower than holding
         self.assertGreater(r2["equity"][-1], r0["equity"][-1])                        # cash yield adds while out
+        fund = self.weekly([100 * 1.001 ** k for k in range(len(bars))])                # a T-bill fund: +0.1% a week
+        rc = run(bars, months=2, start=0, fee_bps=0, slippage_bps=0, cash=fund)
+        weeks_out = len(bars) - 1 - round(rc["stats"]["exposure"] * len(bars)) - 1
+        self.assertGreater(rc["equity"][-1], r0["equity"][-1])
+        self.assertAlmostEqual(rc["equity"][-1] / r0["equity"][-1], 1.001 ** (weeks_out + 1), delta=0.0021)
         self.assertLess(r0["stats"]["exposure"], 1.0)
         self.assertIn("risk_filter", verdict(r0))
 

@@ -72,6 +72,12 @@ fund's first full week: XLB, XLE, XLF, XLI, XLK, XLP, XLU, XLV and XLY in 1999-1
   ex-date can be up to 4 sessions later (SPY's falls on Fridays). Yearly totals are exact.
 - **Check:** every weekly close from Nov 2023 to Oct 2026 matches Alpha Vantage's adjusted close within 0.08%
   (mean 0.01%) for all 18 symbols that paid dividends.
-- **`chart/data/weekly_desk/`:** weekly total-return bars for SPY, QQQ, IWM, AAPL, MSFT, NVDA and AMD, built the same way as
-  `chart/data/weekly/`, 1999 (IWM 2000) → 2026-10-23. They match the daily total-return files within 0.03%. **TSLA is
-  missing:** the free tier's 25-requests-a-day cap was reached, so it follows in a later run.
+- **`chart/data/weekly_desk/`:** weekly total-return bars for SPY, QQQ, IWM, AAPL, MSFT, NVDA, AMD and TSLA, built the same way as
+  `chart/data/weekly/`, 1999 (IWM 2000) → 2026-10-23. They match the daily total-return files within 0.03%. **TSLA**
+  (from 2010-07) was added on 2026-10-29. Its weekly closes match the daily total-return file exactly.
+
+# Cash: `chart/data/cash/BIL.csv`
+
+SPDR 1–3 Month T-Bill ETF, weekly total return (Alpha Vantage weekly adjusted), 2007-06-08 → 2026-10-23, built the same way
+as `chart/data/weekly/`. It is used as the return on cash when the trend overlay is out of the market
+(`chart overlay --cash chart/data/cash/BIL.csv`). Average 1.4% a year over the span, near zero in 2009–15 and 2020–21.
