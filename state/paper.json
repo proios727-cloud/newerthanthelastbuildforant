@@ -1,0 +1,13 @@
+{
+  "equity": 10000.0,
+  "position": null,
+  "pending": null,
+  "day": "2026-11-02",
+  "day_start_equity": 10000.0,
+  "day_pnl": 0.0,
+  "trades_today": 0,
+  "cooldown": 0,
+  "last_candle_t": 1793661300000,
+  "closed_trades": 0,
+  "last_review_day": "2026-11-02"
+}
