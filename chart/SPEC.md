@@ -165,4 +165,7 @@ Long or flat at 100% of equity. Rule and verdict: `research/crypto-breakout/`.
 - **Costs:** fee and slippage per side; slippage is adverse on every fill.
 - `python3 -m chart breakout <csv...> [--json out]` reports results against buy and hold, the final-third holdout, each
   calendar year and a cost ladder. Tests: `tests/test_breakout.py`.
-- Crypto data lives in `chart/data/crypto/4h/` (24-hour bars, UTC), written by `scripts/tv_ohlcv_to_csv.py --all-hours`.
+- Options: `--daily` (365 bars a year), `--end YYYY-MM-DD`, and `--window NAME:START:END` (strategy vs buy and hold over a
+  dated window).
+- Crypto data lives in `chart/data/crypto/4h/` and `chart/data/crypto/1D/` (24-hour bars, UTC, from 2024 and 2017), written by
+  `scripts/tv_ohlcv_to_csv.py --all-hours`.

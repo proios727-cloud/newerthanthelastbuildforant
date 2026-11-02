@@ -83,6 +83,10 @@ def main(argv=None):
     bo = sub.add_parser("breakout", help="20-bar breakout over EMA200, 10-bar-low exit, 2xATR stop (research/crypto-breakout)")
     bo.add_argument("csv", nargs="+")
     bo.add_argument("--json", help="also write the full report as JSON here")
+    bo.add_argument("--daily", action="store_true", help="daily bars: 365 bars a year (default: 4h, 2190)")
+    bo.add_argument("--end", help="drop bars after this date (YYYY-MM-DD)")
+    bo.add_argument("--window", action="append", default=[], metavar="NAME:START:END",
+                    help="report strategy vs buy and hold over a dated window, e.g. 2022bear:2022-01-01:2022-12-31")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
     u.add_argument("--all", action="store_true", help="update every CSV in the folder, not only desk.json equities")
@@ -170,7 +174,9 @@ def main(argv=None):
         return
     if a.cmd == "breakout":
         from .breakout import format_report as fmt_bo, report as report_bo
-        rep = report_bo(a.csv)
+        wins = [tuple(w.split(":")) for w in a.window]
+        rep = report_bo(a.csv, ppy=365 if a.daily else 6 * 365, end=a.end, windows=wins,
+                        interval="1D" if a.daily else "4h")
         print(fmt_bo(rep))
         if a.json:
             pathlib.Path(a.json).write_text(json.dumps(_round(rep), indent=1))

@@ -60,6 +60,16 @@ class BreakoutTests(unittest.TestCase):
         _, tr = B.run(setup([(105.5, 107, 105, 106)] * 3), fee_bps=0, slip_bps=0)
         self.assertNotEqual(tr[0]["entry"], 105.0)
 
+    def test_window_return_matches_equity_and_price(self):
+        bars = setup([(105.5, 107, 105, 106)] * 10)
+        eq, _ = B.run(bars, fee_bps=0, slip_bps=0)
+        d0, d1 = bars[230].ts[:10], bars[-1].ts[:10]
+        strat, hold = B.window_return(bars, eq, d0, d1)
+        lo = next(i for i, b in enumerate(bars) if b.ts[:10] == d0)
+        self.assertAlmostEqual(hold, bars[-1].close / bars[lo - 1].close - 1)
+        self.assertAlmostEqual(strat, eq[-1] / eq[lo - 1] - 1)
+        self.assertIsNone(B.window_return(bars, eq, "1999-01-01", "1999-12-31"))
+
 
 if __name__ == "__main__":
     unittest.main()

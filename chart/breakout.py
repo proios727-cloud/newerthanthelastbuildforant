@@ -115,22 +115,39 @@ def summary(bars, equity, trades, ppy=BARS_PER_YEAR_4H):
     }
 
 
-def report(paths):
-    """Base case and cost ladder for each CSV path."""
+def window_return(bars, equity, start, end):
+    """(strategy, buy and hold) return over the bars dated start..end inclusive (YYYY-MM-DD), or None if none are."""
+    idx = [i for i, b in enumerate(bars) if start <= b.ts[:10] <= end]
+    if not idx:
+        return None
+    lo, hi = idx[0], idx[-1]
+    start_eq = equity[lo - 1] if lo > 0 else 1.0
+    start_px = bars[lo - 1].close if lo > 0 else bars[0].open
+    return equity[hi] / start_eq - 1, bars[hi].close / start_px - 1
+
+
+def report(paths, ppy=BARS_PER_YEAR_4H, end=None, windows=(), interval="4h"):
+    """Base case, cost ladder and named windows for each CSV path. `end` (YYYY-MM-DD) drops later bars first."""
     import pathlib
     from . import load_csv
     out = {}
     for p in paths:
         bars = load_csv(p)
+        if end:
+            bars = [b for b in bars if b.ts[:10] <= end]
         eq, tr = run(bars)
-        s = summary(bars, eq, tr)
-        held = 0
-        for t in tr:                                   # exposure in bars, from entry/exit timestamps
-            idx = {b.ts: i for i, b in enumerate(bars)}
-            held += (idx[t["exit_ts"]] if t["exit_ts"] else len(bars)) - idx[t["entry_ts"]]
+        s = summary(bars, eq, tr, ppy)
+        idx = {b.ts: i for i, b in enumerate(bars)}
+        held = sum((idx[t["exit_ts"]] if t["exit_ts"] else len(bars)) - idx[t["entry_ts"]] for t in tr)
         s["exposure"] = held / len(bars)
-        s["cost_ladder"] = {lab: summary(bars, *run(bars, fee_bps=f, slip_bps=sl))["total_return"]
+        s["interval"] = interval
+        s["cost_ladder"] = {lab: summary(bars, *run(bars, fee_bps=f, slip_bps=sl), ppy)["total_return"]
                             for lab, f, sl in COST_LADDER}
+        s["windows"] = {}
+        for name, a, b in windows:
+            r = window_return(bars, eq, a, b)
+            if r:
+                s["windows"][name] = {"from": a, "to": b, "strategy": r[0], "buy_hold": r[1]}
         out[pathlib.Path(p).stem] = s
     return out
 
@@ -139,7 +156,7 @@ def format_report(rep):
     lines = []
     for sym, s in rep.items():
         bh = s["buy_hold"]
-        lines += [f"\n## {sym}: {s['first'][:10]} → {s['last'][:10]}, {s['bars']} bars (4h)\n",
+        lines += [f"\n## {sym}: {s['first'][:10]} → {s['last'][:10]}, {s['bars']} bars ({s.get('interval', '4h')})\n",
                   "| | Strategy (10+10 bp) | Buy & hold |", "|---|---|---|",
                   f"| Total return | {s['total_return']:+.1%} | {bh['total_return']:+.1%} |",
                   f"| CAGR | {s['cagr']:+.1%} | {bh['cagr']:+.1%} |",
@@ -152,4 +169,8 @@ def format_report(rep):
                   "\nCost ladder (total return): " + " · ".join(f"{k}: {v:+.1%}" for k, v in s["cost_ladder"].items()),
                   "\n| Year | Strategy | Buy & hold |", "|---|---|---|"]
         lines += [f"| {y} | {v['strategy']:+.1%} | {v['buy_hold']:+.1%} |" for y, v in s["by_year"].items()]
+        if s.get("windows"):
+            lines += ["\n| Window | Strategy | Buy & hold |", "|---|---|---|"]
+            lines += [f"| {k} ({v['from']} → {v['to']}) | {v['strategy']:+.1%} | {v['buy_hold']:+.1%} |"
+                      for k, v in s["windows"].items()]
     return "\n".join(lines)
