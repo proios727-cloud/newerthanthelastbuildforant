@@ -53,3 +53,11 @@ the first exit rule hit. That record is the only evidence: historical option quo
 
 **Judge after 30 closed picks:** win rate, average win vs average loss, and total P&L in units of max risk. Below
 breakeven after costs → stop.
+
+## Amendment, 2026-11-02 (before any pick was logged)
+The first run showed that the open-interest minimum alone blocked SPY and IWM. Their 2026-12-11 strikes carried open interest
+of only 12–218, yet quoted at 1–3% bid/ask spreads. Open interest piles up in the standard monthly expiries, while the spread
+measures fill quality directly. Owner's decision: **liquidity is judged spread-first.**
+- **Short leg:** bid/ask spread ≤ 5% of mid (≤ $0.05 when mid < $0.50) **and** open interest ≥ 100.
+- **Long leg:** bid/ask spread ≤ 10% of mid (≤ $0.05 when mid < $0.50).
+Nothing else changes. No picks existed when this was written, so it can't have been tuned to results.

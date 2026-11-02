@@ -41,6 +41,12 @@ class PremiumTests(unittest.TestCase):
         thin = chain()
         thin["contracts"][2]["oi"] = 10
         self.assertIn("thin", P.screen("T", thin, closes(), today="2026-11-02")["reason"])
+        wide = chain()
+        wide["contracts"][2].update(bid=1.10, ask=1.25)            # 12.8% of mid on the short leg
+        self.assertIn("thin", P.screen("T", wide, closes(), today="2026-11-02")["reason"])
+        ok = chain()
+        ok["contracts"][2]["oi"] = 150                              # OI 150 passes once quotes are tight
+        self.assertEqual(P.screen("T", ok, closes(), today="2026-11-02")["status"], "pass")
 
     def test_short_delta_must_be_in_band(self):
         c = chain()

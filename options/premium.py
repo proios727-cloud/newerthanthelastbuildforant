@@ -11,8 +11,9 @@ TARGET_DELTA = 0.20
 DELTA_BAND = (0.15, 0.25)          # the short strike must land here, or the chain didn't reach far enough out
 WIDTH_PCT = 0.025
 MIN_IV_RV = 1.20
-MIN_OI = 500
-MAX_SPREAD = 0.10
+MIN_OI = 100                       # short leg (amended 2026-11-02: spread-first liquidity)
+MAX_SPREAD_SHORT = 0.05
+MAX_SPREAD_LONG = 0.10
 MIN_CREDIT_FRAC = 0.25
 
 
@@ -50,12 +51,12 @@ def iv_atm(contracts, spot):
     return None
 
 
-def _spread_ok(c):
+def _spread_ok(c, limit):
     b, a = c.get("bid"), c.get("ask")
     if b is None or a is None or a <= 0 or b <= 0:
         return False
     mid = (a + b) / 2
-    return (a - b) <= (0.05 if mid < 0.50 else MAX_SPREAD * mid)
+    return (a - b) <= (0.05 if mid < 0.50 else limit * mid)
 
 
 def vertical(contracts, kind, spot):
@@ -77,7 +78,7 @@ def vertical(contracts, kind, spot):
     return {"kind": kind, "short": short["strike"], "long": long["strike"], "short_delta": short["delta"],
             "short_oi": short.get("oi", 0), "short_bid": short.get("bid"), "short_ask": short.get("ask"),
             "long_bid": long.get("bid"), "long_ask": long.get("ask"), "width": width, "credit": round(credit, 2),
-            "liquid": short.get("oi", 0) >= MIN_OI and _spread_ok(short) and _spread_ok(long)}
+            "liquid": short.get("oi", 0) >= MIN_OI and _spread_ok(short, MAX_SPREAD_SHORT) and _spread_ok(long, MAX_SPREAD_LONG)}
 
 
 def screen(ticker, chain, closes, earnings=None, today=None):
