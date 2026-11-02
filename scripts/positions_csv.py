@@ -19,8 +19,9 @@ FIELDS = ["id", "source", "date", "ticker", "contract", "instrument_id", "type",
           "take_profit_at", "stop_at", "time_exit", "cash_needed"]
 
 
-def open_positions(path=JOURNAL):
-    rows = read_jsonl(path)
+def open_positions(path=None):
+    """Open events without a later close event for the same id."""
+    rows = read_jsonl(path or JOURNAL)
     closed = {r["id"] for r in rows if r.get("event") == "close"}
     return [r for r in rows if r.get("event") == "open" and r["id"] not in closed]
 
@@ -33,8 +34,12 @@ def main(argv):
         w = csv.DictWriter(f, fieldnames=FIELDS, extrasaction="ignore")
         w.writeheader()
         w.writerows(pos)
-    print(f"{argv[1]}: {len(pos)} open positions; quote ids: {json.dumps([p['instrument_id'] for p in pos])}; "
+    ids = [p["instrument_id"] for p in pos if p.get("instrument_id")]
+    print(f"{argv[1]}: {len(pos)} open positions; quote ids: {json.dumps(ids)}; "
           f"symbols: {json.dumps(sorted({p['ticker'] for p in pos} | {'SPY', 'QQQ'}))}")
+    missing = [p["id"] for p in pos if not p.get("instrument_id")]
+    if missing:
+        print(f"no instrument_id (no live quote until it's added from get_option_instruments): {', '.join(missing)}")
 
 
 if __name__ == "__main__":
