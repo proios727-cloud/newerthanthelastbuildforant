@@ -16,6 +16,8 @@ is always generated from it and never edited by hand.
 | `references/failure-modes.md` | The 7 root design failures used for classification, with check questions |
 | `data/<category>.json` | One dataset per category (schema below) |
 | `reports/<category>.md` | Generated ranked report |
+| `explorer.html` | Generated interactive page (filters, matrix, pain vs. ease plot), built from `assets/explorer-template.html` |
+| `OVERVIEW.md` | Generated cross-category view: failure modes by category, top 15 overall, every entry by mode |
 | `scripts/pain_index.py` | Validates a dataset, scores it, renders the report. Stdlib only |
 
 ## Workflow
@@ -46,6 +48,13 @@ is always generated from it and never edited by hand.
      --out .claude/skills/product-pain-miner/reports/<category>.md
    ```
    Fix every problem it reports. It refuses to render an invalid dataset.
+   Then regenerate the cross-category view, which ranks every entry across all categories:
+   ```bash
+   python3 .claude/skills/product-pain-miner/scripts/pain_index.py --overview .claude/skills/product-pain-miner/data \
+     --out .claude/skills/product-pain-miner/OVERVIEW.md --explorer .claude/skills/product-pain-miner/explorer.html
+   ```
+   Then republish `explorer.html` to the existing page with the Artifact tool, passing
+   `url: https://claude.ai/artifact/BeGhoH5ejyeWaPe7C9DVyg` so the link stays the same. Don't create a new artifact.
 7. **Report back** to the user: top 5 by opportunity, which failure modes dominate, and any entries
    with weak evidence (one source only).
 

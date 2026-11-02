@@ -1,0 +1,366 @@
+<title>Pain to Redesign Index</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: inspection sheet. Summary strip, then the failure-mode matrix beside the pain/feasibility plot, then the ranked defect list. */
+:root {
+  --paper: #f2f4f3;
+  --sheet: #ffffff;
+  --ink: #17201d;
+  --muted: #5a6964;
+  --line: #d3dcd8;
+  --faint: #e6ebe9;
+  --accent: #c2410c;
+  --accent-ink: #ffffff;
+  --heat: #c2410c;
+  --dot-off: #c3cdc9;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #111614; --sheet: #182019; --ink: #e5ebe8; --muted: #95a59f; --line: #2b3632;
+    --faint: #1f2925; --accent: #fb8a4c; --accent-ink: #1a0f08; --heat: #fb8a4c; --dot-off: #3a4742;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #111614; --sheet: #182019; --ink: #e5ebe8; --muted: #95a59f; --line: #2b3632;
+  --faint: #1f2925; --accent: #fb8a4c; --accent-ink: #1a0f08; --heat: #fb8a4c; --dot-off: #3a4742;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5;
+}
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px;
+}
+h1, h2 { font-family: var(--display); font-weight: 700; letter-spacing: .01em; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1; }
+h2 { font-size: 22px; text-transform: uppercase; letter-spacing: .06em; }
+.lede { color: var(--muted); max-width: 68ch; margin: 8px 0 0; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+header { display: grid; gap: 18px; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px 32px; }
+.stat { display: grid; }
+.stat b { font-family: var(--display); font-size: 34px; font-weight: 600; line-height: 1.05; }
+.stat span { font-size: 13px; color: var(--muted); }
+
+.controls { display: grid; gap: 12px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--paper); padding-block: 12px; border-bottom: 1px solid var(--line); }
+@media (max-width: 860px) { .controls { position: static; } }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row > .label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); min-width: 78px; }
+.chip {
+  font: 500 13px var(--body); color: var(--ink); background: var(--sheet); border: 1px solid var(--line);
+  border-radius: 999px; padding: 4px 12px; cursor: pointer;
+}
+.chip:hover { border-color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chip:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+input[type="search"], select {
+  font: 14px var(--body); color: var(--ink); background: var(--sheet); border: 1px solid var(--line);
+  border-radius: 6px; padding: 6px 10px; min-width: 0;
+}
+input[type="search"] { flex: 1 1 220px; }
+.toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); cursor: pointer; }
+.reset { font: 500 13px var(--body); background: none; border: none; color: var(--accent); cursor: pointer; padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; }
+
+.panels { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 860px) { .panels { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.panel p.note { margin: 0; font-size: 13px; color: var(--muted); }
+
+.matrix-wrap { overflow-x: auto; }
+table.matrix { border-collapse: separate; border-spacing: 3px; width: 100%; min-width: 500px; font-size: 13px; }
+.matrix th { font: 500 10px var(--mono); text-transform: uppercase; letter-spacing: .03em; color: var(--muted); padding: 4px 2px; text-align: center; }
+.matrix th.rowh { text-align: left; font: 500 13px var(--body); text-transform: none; letter-spacing: 0; color: var(--ink); white-space: nowrap; }
+.matrix th button, .matrix td button { all: unset; cursor: pointer; display: block; width: 100%; }
+.matrix th button:hover { color: var(--accent); }
+.matrix td { padding: 0; }
+.matrix td button {
+  text-align: center; border-radius: 4px; padding: 7px 0; font: 500 13px var(--mono); font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.matrix td button.zero { color: var(--dot-off); }
+.matrix td button.sel { outline: 2px solid var(--ink); outline-offset: -2px; }
+.matrix td.total { font: 600 13px var(--mono); text-align: center; color: var(--ink); }
+
+.plot { position: relative; }
+.plot svg { width: 100%; height: auto; display: block; overflow: visible; }
+.plot .axis text { fill: var(--muted); font: 11px var(--mono); }
+.plot .grid line { stroke: var(--faint); }
+.plot .quad { fill: var(--accent); opacity: .07; }
+.plot .quadlabel { fill: var(--accent); font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.plot circle { cursor: pointer; stroke: var(--sheet); stroke-width: 2; transition: r .12s; }
+.plot circle.on { fill: var(--accent); }
+.plot circle.off { fill: var(--dot-off); }
+.plot circle:hover, .plot circle.hot { r: 8; }
+.tip {
+  position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); border-radius: 6px;
+  padding: 8px 10px; font-size: 12px; line-height: 1.35; max-width: 240px; transform: translate(-50%, calc(-100% - 12px));
+}
+.tip b { display: block; font-weight: 600; }
+
+.listhead { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: baseline; }
+.count { font-size: 13px; color: var(--muted); }
+ol.defects { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.defect {
+  background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px;
+  display: grid; grid-template-columns: 48px minmax(0, 1fr) 112px; gap: 4px 18px;
+}
+.defect.flash { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 620px) { .defect { grid-template-columns: 36px minmax(0, 1fr); } .defect .score { grid-column: 2; justify-items: start; } }
+.rank { font-family: var(--display); font-size: 28px; font-weight: 600; color: var(--muted); line-height: 1; }
+.defect .main { display: grid; gap: 6px; min-width: 0; }
+.defect h3 { margin: 0; font: 600 17px var(--body); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 4px; background: var(--faint); color: var(--muted); }
+.tag.nuis { background: none; border: 1px dashed var(--muted); }
+.complaint { margin: 0; color: var(--muted); }
+.fix { margin: 0; }
+.fix::before { content: "Redesign"; display: block; font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 2px; }
+.score { display: grid; justify-items: end; align-content: start; gap: 2px; }
+.score b { font-family: var(--display); font-size: 36px; font-weight: 700; line-height: 1; color: var(--ink); }
+.score span { font: 11px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+details { font-size: 13px; }
+summary { cursor: pointer; color: var(--muted); width: fit-content; }
+.dims { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px 16px; margin: 10px 0; }
+.dim { display: grid; gap: 3px; }
+.dim span { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.pips { display: flex; gap: 3px; }
+.pips i { width: 16px; height: 6px; border-radius: 3px; background: var(--faint); }
+.pips i.f { background: var(--ink); }
+.dim.lead .pips i.f { background: var(--accent); }
+.sources { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 2px; }
+.sources a { color: var(--ink); overflow-wrap: anywhere; }
+.prior { margin: 6px 0 0; color: var(--muted); }
+.empty { padding: 32px; text-align: center; color: var(--muted); background: var(--sheet); border: 1px dashed var(--line); border-radius: 10px; }
+footer { font-size: 13px; color: var(--muted); max-width: 72ch; }
+@media (prefers-reduced-motion: reduce) { .plot circle { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">product-pain-miner · cross-category view</div>
+    <h1>Pain to Redesign Index</h1>
+    <p class="lede">Public complaints about everyday household items, scored and paired with a concrete redesign. Opportunity ranks fixes by how much an item bothers people and how cheap the fix is. Filter by room or by the design failure behind the complaint.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <section class="controls" aria-label="Filters">
+    <div class="row" id="cat-row"><span class="label">Category</span></div>
+    <div class="row" id="mode-row"><span class="label">Failure</span></div>
+    <div class="row">
+      <span class="label">Find</span>
+      <input type="search" id="q" placeholder="Search items, complaints, redesigns" aria-label="Search">
+      <select id="sort" aria-label="Sort by">
+        <option value="opp">Sort: opportunity</option>
+        <option value="pain">Sort: pain</option>
+        <option value="feasibility">Sort: easiest fix</option>
+        <option value="severity">Sort: real harm</option>
+        <option value="annoyance">Sort: annoyance</option>
+      </select>
+      <label class="toggle"><input type="checkbox" id="nuis"> Nuisance-led only</label>
+      <button class="reset" id="reset" type="button">Clear filters</button>
+    </div>
+  </section>
+
+  <div class="panels">
+    <section class="panel" aria-labelledby="m-h">
+      <h2 id="m-h">Where each failure shows up</h2>
+      <p class="note">Count of complaints by design failure and category. Select a cell, row or column to filter.</p>
+      <div class="matrix-wrap"><table class="matrix" id="matrix"></table></div>
+    </section>
+    <section class="panel" aria-labelledby="p-h">
+      <h2 id="p-h">Pain vs. ease of fix</h2>
+      <p class="note">Each dot is one complaint. Top right means high pain and a cheap fix. Select a dot to jump to it.</p>
+      <div class="plot" id="plot"></div>
+    </section>
+  </div>
+
+  <section aria-labelledby="l-h" style="display:grid;gap:14px">
+    <div class="listhead">
+      <h2 id="l-h">Ranked complaints</h2>
+      <span class="count" id="count"></span>
+    </div>
+    <ol class="defects" id="list"></ol>
+  </section>
+
+  <footer>
+    <p><b>How scores work.</b> Each complaint is scored 1–5 on frequency, harm (severity), annoyance, how hard it is to work around, and how buildable the fix is. Pain = frequency × the higher of harm and annoyance × workaround, scaled to 0–100, so a daily nuisance counts as much as real harm. Opportunity = pain × feasibility ÷ 5. Scores are judgement calls made from the linked sources, not review counts.</p>
+    <p>Generated from the skill's datasets on __UPDATED__.</p>
+  </footer>
+</div>
+
+<script>
+const DATA = __DATA__;
+const MODES = DATA.modes;
+const E = DATA.entries;
+const CATS = [...new Set(E.map(e => e.category))].sort();
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const nuisance = e => e.annoyance > e.severity;
+const modeOrder = Object.keys(MODES).map(m => [m, E.filter(e => e.failure_mode === m).length])
+  .filter(([, n]) => n).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([m]) => m);
+
+const state = { cat: null, mode: null, q: "", sort: "opp", nuis: false };
+try {
+  const saved = JSON.parse(localStorage.getItem("pain-index-sort") || "null");
+  if (saved && ["opp","pain","feasibility","severity","annoyance"].includes(saved)) state.sort = saved;
+} catch (_) {}
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function stats() {
+  const n = E.length, nu = E.filter(nuisance).length;
+  $("stats").innerHTML = [
+    [n, "complaints"], [CATS.length, "categories"], [modeOrder.length, "design failures"],
+    [Math.round(nu / n * 100) + "%", "led by annoyance, not harm"],
+  ].map(([b, s]) => `<div class="stat"><b class="num">${b}</b><span>${s}</span></div>`).join("");
+}
+
+function chips() {
+  const mk = (row, key, items, label) => {
+    const r = $(row);
+    r.querySelectorAll(".chip").forEach(c => c.remove());
+    [[null, "All"], ...items.map(v => [v, label(v)])].forEach(([v, text]) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.textContent = text;
+      b.setAttribute("aria-pressed", String(state[key] === v));
+      b.onclick = () => { state[key] = state[key] === v ? null : v; render(); };
+      r.appendChild(b);
+    });
+  };
+  mk("cat-row", "cat", CATS, cap);
+  mk("mode-row", "mode", modeOrder, m => MODES[m]);
+}
+
+function filtered() {
+  const q = state.q.trim().toLowerCase();
+  return E.filter(e =>
+    (!state.cat || e.category === state.cat) &&
+    (!state.mode || e.failure_mode === state.mode) &&
+    (!state.nuis || nuisance(e)) &&
+    (!q || [e.item, e.complaint, e.redesign, e.prior_art, e.category, MODES[e.failure_mode]].join(" ").toLowerCase().includes(q))
+  ).sort((a, b) => (b[state.sort] - a[state.sort]) || (b.opp - a.opp) || (b.pain - a.pain) || a.id.localeCompare(b.id));
+}
+
+function matrix() {
+  const max = Math.max(...modeOrder.flatMap(m => CATS.map(c => E.filter(e => e.failure_mode === m && e.category === c).length)));
+  const cell = (m, c) => {
+    const n = E.filter(e => e.failure_mode === m && e.category === c).length;
+    const pct = n ? Math.round(14 + (n / max) * 56) : 0;
+    const sel = state.mode === m && state.cat === c ? " sel" : "";
+    const bg = n ? `background:color-mix(in oklab, var(--heat) ${pct}%, var(--sheet))` : "background:var(--faint)";
+    return `<td><button type="button" class="${n ? "" : "zero"}${sel}" style="${bg}" data-m="${m}" data-c="${c}" aria-label="${MODES[m]} in ${c}: ${n}">${n || "·"}</button></td>`;
+  };
+  $("matrix").innerHTML =
+    `<thead><tr><th></th>${CATS.map(c => `<th><button type="button" data-c="${c}">${cap(c)}</button></th>`).join("")}<th>Total</th></tr></thead><tbody>` +
+    modeOrder.map(m => `<tr><th class="rowh"><button type="button" data-m="${m}">${MODES[m]}</button></th>${CATS.map(c => cell(m, c)).join("")}<td class="total">${E.filter(e => e.failure_mode === m).length}</td></tr>`).join("") +
+    `</tbody>`;
+  $("matrix").querySelectorAll("button").forEach(b => b.onclick = () => {
+    const m = b.dataset.m || null, c = b.dataset.c || null;
+    if (m && c) { const same = state.mode === m && state.cat === c; state.mode = same ? null : m; state.cat = same ? null : c; }
+    else if (m) state.mode = state.mode === m ? null : m;
+    else state.cat = state.cat === c ? null : c;
+    render();
+  });
+}
+
+function plot(shown) {
+  const W = 520, H = 330, L = 44, R = 14, T = 14, B = 40;
+  const x = v => L + (v / 100) * (W - L - R);
+  const y = v => T + (5 - v) / 4 * (H - T - B);
+  const ids = new Set(shown.map(e => e.id));
+  const jitter = (s) => { let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return ((h % 1000) / 1000 - .5); };
+  let g = `<rect class="quad" x="${x(50)}" y="${y(5) - 8}" width="${x(100) - x(50)}" height="${y(3.5) - y(5) + 8}" rx="6"/>`;
+  g += `<text class="quadlabel" x="${x(100) - 6}" y="${y(5) + 6}" text-anchor="end">Quick wins</text>`;
+  g += `<g class="grid">${[0, 20, 40, 60, 80, 100].map(v => `<line x1="${x(v)}" x2="${x(v)}" y1="${T}" y2="${H - B}"/>`).join("")}${[1, 2, 3, 4, 5].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/>`).join("")}</g>`;
+  g += `<g class="axis">${[0, 20, 40, 60, 80, 100].map(v => `<text x="${x(v)}" y="${H - B + 16}" text-anchor="middle">${v}</text>`).join("")}`;
+  g += `${[1, 2, 3, 4, 5].map(v => `<text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`).join("")}`;
+  g += `<text x="${(L + W - R) / 2}" y="${H - 4}" text-anchor="middle">Pain (0–100)</text>`;
+  g += `<text transform="translate(12 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">Ease of fix (1–5)</text></g>`;
+  const order = [...E].sort((a, b) => Number(ids.has(a.id)) - Number(ids.has(b.id)));
+  g += order.map(e => {
+    const cx = x(e.pain) + jitter(e.id) * 10, cy = y(e.feasibility) + jitter(e.id + "y") * 22;
+    return `<circle class="${ids.has(e.id) ? "on" : "off"}" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5.5" data-id="${e.id}" tabindex="${ids.has(e.id) ? 0 : -1}" role="button" aria-label="${esc(e.item)}: pain ${e.pain}, ease ${e.feasibility}, opportunity ${e.opp}"/>`;
+  }).join("");
+  $("plot").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scatter plot of pain against ease of fix">${g}</svg><div class="tip" id="tip" hidden></div>`;
+  const tip = $("tip"), box = $("plot");
+  box.querySelectorAll("circle").forEach(c => {
+    const e = E.find(v => v.id === c.dataset.id);
+    const show = () => {
+      const r = c.getBoundingClientRect(), b = box.getBoundingClientRect();
+      tip.innerHTML = `<b>${esc(e.item)}</b>${cap(e.category)} · ${MODES[e.failure_mode]}<br>Pain ${e.pain} · Ease ${e.feasibility} · Opp. ${e.opp}`;
+      tip.style.left = Math.min(Math.max(r.left - b.left + r.width / 2, 120), b.width - 120) + "px";
+      tip.style.top = (r.top - b.top) + "px"; tip.hidden = false;
+    };
+    c.addEventListener("mouseenter", show); c.addEventListener("focus", show);
+    c.addEventListener("mouseleave", () => tip.hidden = true); c.addEventListener("blur", () => tip.hidden = true);
+    const go = () => jump(e.id);
+    c.addEventListener("click", go); c.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); go(); } });
+  });
+}
+
+function jump(id) {
+  if (!filtered().some(e => e.id === id)) { Object.assign(state, { cat: null, mode: null, q: "", nuis: false }); $("q").value = ""; $("nuis").checked = false; render(); }
+  const el = document.getElementById("d-" + id);
+  if (!el) return;
+  el.querySelector("details").open = true;
+  el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+  el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+}
+
+function pips(n) { return `<div class="pips">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= n ? "f" : ""}"></i>`).join("")}</div>`; }
+
+function list(shown) {
+  $("count").textContent = shown.length === E.length ? `All ${E.length} complaints` : `${shown.length} of ${E.length} complaints`;
+  if (!shown.length) { $("list").innerHTML = `<li class="empty">No complaints match these filters. Clear a filter to see more.</li>`; return; }
+  $("list").innerHTML = shown.map((e, i) => {
+    const lead = e.annoyance > e.severity ? "annoyance" : "severity";
+    const dims = [["frequency", "How often"], ["severity", "Real harm"], ["annoyance", "Annoyance"], ["workaround", "Hard to avoid"], ["feasibility", "Ease of fix"]]
+      .map(([k, l]) => `<div class="dim${k === lead ? " lead" : ""}"><span>${l} · ${e[k]}/5</span>${pips(e[k])}</div>`).join("");
+    const src = e.sources.map(u => { let h = u; try { h = new URL(u).hostname.replace(/^www\./, ""); } catch (_) {} return `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(h)}</a></li>`; }).join("");
+    return `<li class="defect" id="d-${e.id}">
+      <div class="rank num">${i + 1}</div>
+      <div class="main">
+        <h3>${esc(e.item)}</h3>
+        <div class="tags"><span class="tag">${cap(e.category)}</span><span class="tag">${MODES[e.failure_mode]}</span>${nuisance(e) ? `<span class="tag nuis">Nuisance-led</span>` : ""}</div>
+        <p class="complaint">${esc(e.complaint)}</p>
+        <p class="fix">${esc(e.redesign)}</p>
+        <details><summary>Scores and ${e.sources.length} source${e.sources.length > 1 ? "s" : ""}</summary>
+          <div class="dims">${dims}</div>
+          ${e.prior_art ? `<p class="prior">Prior art: ${esc(e.prior_art)}</p>` : ""}
+          <ol class="sources">${src}</ol>
+        </details>
+      </div>
+      <div class="score"><b class="num">${e.opp}</b><span>Opportunity</span><span class="num">Pain ${e.pain}</span></div>
+    </li>`;
+  }).join("");
+}
+
+function render() {
+  const shown = filtered();
+  chips(); matrix(); plot(shown); list(shown);
+}
+
+$("q").addEventListener("input", ev => { state.q = ev.target.value; render(); });
+$("sort").value = state.sort;
+$("sort").addEventListener("change", ev => { state.sort = ev.target.value; try { localStorage.setItem("pain-index-sort", JSON.stringify(state.sort)); } catch (_) {} render(); });
+$("nuis").addEventListener("change", ev => { state.nuis = ev.target.checked; render(); });
+$("reset").addEventListener("click", () => { Object.assign(state, { cat: null, mode: null, q: "", nuis: false }); $("q").value = ""; $("nuis").checked = false; render(); });
+
+stats(); render();
+</script>
