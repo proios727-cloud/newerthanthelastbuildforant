@@ -1,0 +1,15 @@
+date,symbol,strategy,variant,side,entry,exit,reason,shares,notional,return_pct,pnl,cost,cash_account_ok
+2026-10-22,QQQ,gap_fade,gap_fade gap=1% stop=1.0x,long,713.73,702.0,stop,0.7005,500.0,-1.683,-8.42,0.2,yes
+2026-10-22,SPY,gap_fade,gap_fade gap=0.5% stop=1.0x,long,766.62,764.02,close,0.6522,500.0,-0.379,-1.9,0.2,yes
+2026-10-22,SPY,orb,orb or=30 tgt=close rvol=1.2,short,763.31,764.02,close,0.655,500.0,-0.133,-0.67,0.2,no (short)
+2026-10-23,SPY,gap_fade,gap_fade gap=0.5% stop=1.0x,long,760.59,759.88,close,0.6549,498.1,-0.133,-0.66,0.2,yes
+2026-10-27,QQQ,orb,orb or=15 tgt=2R rvol=1.2,short,714.26,718.19,stop,0.7,500.0,-0.59,-2.95,0.2,no (short)
+2026-10-29,QQQ,gap_fade,gap_fade gap=1% stop=1.0x,long,715.1,715.29,close,0.6874,491.58,-0.013,-0.07,0.2,yes
+2026-10-29,QQQ,orb,orb or=15 tgt=2R rvol=1.2,long,717.07,715.29,close,0.6932,497.05,-0.288,-1.43,0.2,yes
+2026-10-29,SPY,orb,orb or=30 tgt=close rvol=1.2,long,769.62,767.27,stop,0.6488,499.33,-0.345,-1.72,0.2,yes
+2026-10-30,QQQ,gap_fade,gap_fade gap=1% stop=1.0x,long,695.89,690.52,close,0.7063,491.52,-0.812,-3.99,0.2,yes
+2026-10-30,QQQ,orb,orb or=15 tgt=2R rvol=1.2,long,698.18,694.03,stop,0.7099,495.62,-0.634,-3.14,0.2,yes
+2026-10-30,SPY,gap_fade,gap_fade gap=0.5% stop=1.0x,long,760.07,753.21,stop,0.6545,497.44,-0.943,-4.69,0.2,yes
+2026-10-30,SPY,orb,orb or=30 tgt=close rvol=1.2,short,758.6,755.69,close,0.656,497.61,0.344,1.71,0.2,no (short)
+2026-11-02,QQQ,orb,orb or=15 tgt=2R rvol=1.2,long,696.51,693.3,stop,0.7071,492.47,-0.501,-2.47,0.2,yes
+2026-11-02,SPY,gap_fade,gap_fade gap=0.5% stop=1.0x,short,759.86,763.25,stop,0.6485,492.75,-0.486,-2.4,0.2,no (short)
