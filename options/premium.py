@@ -8,6 +8,7 @@ import datetime as dt
 import math
 
 TARGET_DELTA = 0.20
+DELTA_BAND = (0.15, 0.25)          # the short strike must land here, or the chain didn't reach far enough out
 WIDTH_PCT = 0.025
 MIN_IV_RV = 1.20
 MIN_OI = 500
@@ -64,6 +65,8 @@ def vertical(contracts, kind, spot):
     if not otm:
         return None
     short = min(otm, key=lambda c: abs(abs(c["delta"]) - TARGET_DELTA))
+    if not DELTA_BAND[0] <= abs(short["delta"]) <= DELTA_BAND[1]:
+        return None
     goal = short["strike"] - WIDTH_PCT * spot if kind == "put" else short["strike"] + WIDTH_PCT * spot
     further = [c for c in side if (c["strike"] < short["strike"] if kind == "put" else c["strike"] > short["strike"])]
     if not further:
@@ -102,7 +105,7 @@ def screen(ticker, chain, closes, earnings=None, today=None):
     kinds = ["put"] if t == "up" else ["call"] if t == "down" else ["put", "call"]
     legs = [vertical(contracts, k, spot) for k in kinds]
     if any(v is None for v in legs):
-        return fail("no strikes for the spread")
+        return fail("no 0.15-0.25 delta short strike in the chain")
     credit = sum(v["credit"] for v in legs)
     width = max(v["width"] for v in legs)                      # an iron condor risks one side at a time
     max_loss = width - credit

@@ -42,6 +42,13 @@ class PremiumTests(unittest.TestCase):
         thin["contracts"][2]["oi"] = 10
         self.assertIn("thin", P.screen("T", thin, closes(), today="2026-11-02")["reason"])
 
+    def test_short_delta_must_be_in_band(self):
+        c = chain()
+        c["contracts"] = [x for x in c["contracts"] if not (x["type"] == "put" and x["strike"] < 100)]
+        c["contracts"].append(leg(98, "put", -0.40, 2.0, 2.1))
+        c["contracts"].append(leg(97, "put", -0.35, 1.6, 1.7))
+        self.assertIn("delta", P.screen("T", c, closes(), today="2026-11-02")["reason"])
+
     def test_mixed_trend_iron_condor(self):
         flat = closes(drift=0.0)
         r = P.screen("T", chain(), flat, today="2026-11-02")
