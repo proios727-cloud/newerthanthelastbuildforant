@@ -56,5 +56,29 @@ class PremiumTests(unittest.TestCase):
         self.assertEqual(P.rank([a, c, b]), [b, a, c])
 
 
+class MarkTests(unittest.TestCase):
+    def setUp(self):
+        import importlib.util, pathlib
+        spec = importlib.util.spec_from_file_location("pm", pathlib.Path(__file__).resolve().parents[1] / "scripts/premium_mark.py")
+        self.pm = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.pm)
+
+    def test_legs_parse_and_natural_debit(self):
+        pm = self.pm
+        self.assertEqual(pm.legs("P -95 +92.5 (Δ0.22) / C -105 +107.5 (Δ0.21)"),
+                         [("put", 95.0, 92.5), ("call", 105.0, 107.5)])
+        pick = {"legs": "P -95 +92.5 (Δ0.22)", "expiry": "2026-12-11", "credit": 0.80, "max_loss": 1.70}
+        c = chain()
+        self.assertEqual(pm.debit(pick, c), round(1.25 - 0.36, 2))   # buy 95 at ask, sell 92.5 at bid
+
+    def test_exit_rules(self):
+        pm = self.pm
+        pick = {"expiry": "2026-12-11", "credit": 0.80}
+        self.assertEqual(pm.decide(pick, 0.40, "2026-11-10"), "take profit")
+        self.assertEqual(pm.decide(pick, 1.60, "2026-11-10"), "stop")
+        self.assertEqual(pm.decide(pick, 0.70, "2026-11-25"), "time exit")
+        self.assertEqual(pm.decide(pick, 0.70, "2026-11-10"), "")
+
+
 if __name__ == "__main__":
     unittest.main()
