@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import logging
 import subprocess
 import sys
@@ -161,6 +162,7 @@ class Bot:
                              f"reviews/{day}-packet.json": rep / f"review-{day}-packet.json",
                              "reviews/latest.md": rep / f"review-{day}.md",
                              "reviews/latest-packet.json": rep / f"review-{day}-packet.json",
+                             "reviews/latest-summary.json": rep / f"review-{day}-summary.json",
                              "reviews/paper.json": STATE_DIR / "paper.json",
                              "reviews/tuned.json": STATE_DIR / "tuned.json"}, day)
         self.broker.s["last_review_day"] = day
@@ -168,8 +170,15 @@ class Bot:
         self.cfg = Config.load()  # pick up any thresholds the review tuned
         self.journal.log("review", day=day, returncode=r.returncode, published=published,
                          stderr=r.stderr[-1500:], thresholds={"take": self.cfg.take_threshold, "regime": self.cfg.regime_threshold})
-        ping(self.cfg, f"Nightly review {day}",
-             f"equity {self.broker.s['equity']:.2f}  take>={self.cfg.take_threshold}  published={published}")
+        sp = rep / f"review-{day}-summary.json"
+        sm = json.loads(sp.read_text()) if sp.exists() else {}
+        fmt = lambda v, f="{:.0%}": "n/a" if v is None else f.format(v)
+        ping(self.cfg, f"Nightly review {day}", "\n".join([
+            f"Equity {self.broker.s['equity']:.2f} | P&L {sm.get('pnl', 0):+.2f} | {sm.get('closed_trades', 0)} trades, win {fmt(sm.get('win_rate'))}",
+            f"Regime acc {fmt(sm.get('regime_accuracy'))} (n={sm.get('regime_scored', 0)}), Brier {fmt(sm.get('brier'), '{:.3f}')}",
+            f"TAKE {fmt(sm.get('take_avg_r'), '{:+.2f}R')} (n={sm.get('take_n', 0)}) vs SKIP {fmt(sm.get('skip_avg_r'), '{:+.2f}R')} (n={sm.get('skip_n', 0)})",
+            f"take>={self.cfg.take_threshold} {('tuned ' + str(sm['tuned'])) if sm.get('tuned') else ''}| Drex errors {sm.get('drex_errors', 0)} | log {'OK' if sm.get('log_ok', True) else 'BROKEN'}",
+        ]))
 
     def run(self):
         ms = INTERVAL_MS[self.cfg.interval]

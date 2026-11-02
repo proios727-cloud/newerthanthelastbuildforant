@@ -166,6 +166,14 @@ def main():
     (REPORTS / f"review-{day}-packet.json").write_text(json.dumps(
         {"confident_regime_misses": misses[:15], "takes_that_stopped": wrong_takes[:15],
          "skips_that_would_have_won": wrong_skips[:15], "confusion": {k: dict(v) for k, v in conf.items()}}, indent=2, default=str))
+    take_r, skip_r = by_dec.get("TAKE", []), by_dec.get("SKIP", [])
+    (REPORTS / f"review-{day}-summary.json").write_text(json.dumps({
+        "day": day, "closed_trades": len(exits), "pnl": round(pnl, 2), "win_rate": round(wins / len(exits), 3) if exits else None,
+        "regime_scored": scored, "regime_accuracy": round(acc, 3) if acc is not None else None,
+        "brier": round(float(np.mean(brier)), 3) if brier else None,
+        "take_n": len(take_r), "take_avg_r": round(float(np.mean(take_r)), 2) if take_r else None,
+        "skip_n": len(skip_r), "skip_avg_r": round(float(np.mean(skip_r)), 2) if skip_r else None,
+        "tuned": tuned, "drex_errors": sum(errors.values()), "log_ok": ok}))
     print("\n".join(md))
 
 
