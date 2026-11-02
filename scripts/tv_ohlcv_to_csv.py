@@ -3,6 +3,7 @@
 Connector results are saved as JSON files by the session (or a subagent) instead of being retyped. This reads them and writes
 chart/data/intraday/<interval>/<SYMBOL>.csv with columns timestamp,open,high,low,close,volume, regular hours only (09:30-16:00 ET).
     python3 scripts/tv_ohlcv_to_csv.py OUTROOT RESPONSE.json [RESPONSE.json ...]
+    python3 scripts/tv_ohlcv_to_csv.py --all-hours OUTROOT RESPONSE.json ...   # crypto: every bar, timestamps in UTC
 """
 import csv
 import datetime as dt
@@ -24,27 +25,29 @@ def load_response(path):
     return body
 
 
-def rows_from(body):
+def rows_from(body, all_hours=False):
     b = body["bars"]
     cols = [b[k] for k in ("t", "o", "h", "l", "c", "v")]
     if len({len(c) for c in cols}) != 1:
         raise ValueError("column lengths differ")
     out = []
     for t, o, h, l, c, v in zip(*cols):
-        ts = dt.datetime.fromtimestamp(int(t), ET)
-        if RTH_OPEN <= ts.time() < RTH_CLOSE:
+        ts = dt.datetime.fromtimestamp(int(t), dt.timezone.utc if all_hours else ET)
+        if all_hours or RTH_OPEN <= ts.time() < RTH_CLOSE:
             out.append((ts.isoformat(), o, h, l, c, v))
     return out
 
 
 def main(argv):
+    all_hours = "--all-hours" in argv
+    argv = [a for a in argv if a != "--all-hours"]
     if len(argv) < 3:
         raise SystemExit(__doc__)
     root = pathlib.Path(argv[1])
     for path in argv[2:]:
         body = load_response(path)
         sym = body["symbol"].split(":")[-1].upper()
-        rows = rows_from(body)
+        rows = rows_from(body, all_hours)
         dest = root / body["interval"] / f"{sym}.csv"
         dest.parent.mkdir(parents=True, exist_ok=True)
         with open(dest, "w", newline="") as f:

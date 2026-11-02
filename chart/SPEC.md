@@ -155,3 +155,14 @@ Session backtester for regular-hours bars with ISO US/Eastern timestamps (`chart
 - `walk_forward`: the variant is re-picked each month by compounded net return on all earlier sessions (≥ 40), and only that
   month's trades count. Costs are per side, in bps of notional (ladder 0, 1+1, 2+2, 5+5).
 - `python3 -m chart intraday <folder> [--json out.json]`. Tests: `tests/test_intraday.py`.
+
+## Trend breakout (chart/breakout.py)
+
+Long or flat at 100% of equity. Rule and verdict: `research/crypto-breakout/`.
+- **Entry:** at bar i's close, close > highest high of bars i−20..i−1 and close > EMA(200)[i]. It fills at bar i+1's open.
+- **Exit:** close < lowest low of bars i−10..i−1 (prior bars only), filled at the next open. Or a stop at entry − 2 × ATR(14)
+  of the signal bar, filled at the stop, or at the open if a later bar opens below it.
+- **Costs:** fee and slippage per side; slippage is adverse on every fill.
+- `python3 -m chart breakout <csv...> [--json out]` reports results against buy and hold, the final-third holdout, each
+  calendar year and a cost ladder. Tests: `tests/test_breakout.py`.
+- Crypto data lives in `chart/data/crypto/4h/` (24-hour bars, UTC), written by `scripts/tv_ohlcv_to_csv.py --all-hours`.

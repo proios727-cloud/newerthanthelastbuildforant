@@ -1,29 +1,63 @@
-# Verdict: invalid run, rule not tested
+# Verdict: BTC/ETH 4-hour trend breakout
 
-**Neither TextToQuant run tested the rule in `RULE.md`, because its exit could never fire.** Do not read these numbers
-as evidence for or against trend breakouts.
+**Reject.** In this repo's own engine the rule fails the pre-registered pass bar on both coins. Both lost money in the
+final-third holdout, the period nobody had looked at. Do not alert on it or trade it.
 
-| Run (TextToQuant id) | Trades | Return | Max DD | Buy & hold | Grade | What happened |
-|---|---|---|---|---|---|---|
-| BTCUSDT 4h, 2023-11-02 → 2026-11-02 (`9c974ac7`) | 1 | +52.2% | −38.9% | +121.1% | none (too few trades) | One trade held for 6,542 of 6,577 bars and closed only when the data ran out. This is buy-and-hold, not the rule. |
-| ETHUSDT 4h, same window (`d09eeff1`) | 4 | +5.4% | −32.3% | +24.3% | F (18/100) | Every exit was the ATR stop or the end of the data. The 10-bar-low exit never triggered. |
+- **BTC:** made +12.6% against buy and hold's +85.3%. It lost on return per unit of drawdown, in the holdout, and in 2 of 3
+  years.
+- **ETH:** better. It made +68.6% while buy and hold was flat, and it halved the worst drawdown (−32% vs −68%). But it lost
+  10.2% in the holdout, and its average trade is not statistically distinguishable from zero (t = 1.0).
+- **Costs decide it.** At 25+25 bp, BTC loses 24% and ETH's edge shrinks to +1%.
 
-Costs were on: 10 bp fee and 0.1% slippage per side. Sizing was 1% equity risk per trade (the parser's default).
+Rule, pass bar and amendment were all fixed before any data was seen: `RULE.md`. Code: `chart/breakout.py`, tests:
+`tests/test_breakout.py`. Run it with `python3 -m chart breakout chart/data/crypto/4h/*.csv`. Full tables:
+`results_own_engine.md`.
 
-## Why the exit was unreachable
-In the parsed strategy, the **entry** compares the close with the highest high of the 20 bars *before* the current one
-(`shift: 1`). The **exit** compares the close with a 10-bar `range_low` that *includes* the current bar. A bar's close is
-never below its own low, so "close crosses below the 10-bar low" can never be true. That left only the 2 × ATR stop, and
-on BTC it was never touched.
+## Evidence (own engine, 4-hour bars, 2024-01-01 → 2026-11-01, 10 bp fee + 10 bp slippage per side)
 
-## Against the pass bar
-It fails the bar's first test (≥ 30 trades) on both assets. But the failure comes from the parser, not the market, so the
-honest verdict is **not tested** rather than reject.
+| | BTC strategy | BTC hold | ETH strategy | ETH hold |
+|---|---|---|---|---|
+| Total return | +12.6% | +85.3% | **+68.6%** | −0.3% |
+| CAGR | +4.3% | +24.3% | +20.2% | −0.1% |
+| Max drawdown | −31.2% | −53.4% | **−32.2%** | −68.0% |
+| CAGR ÷ max DD | 0.14 | **0.45** | **0.63** | 0.00 |
+| Holdout, 2025-11-21 → | −12.0% | −5.5% | −10.2% | −15.9% |
+| 2024 | +35.6% | +121.3% | +50.9% | +46.3% |
+| 2025 | −7.4% | −6.3% | +19.0% | −11.0% |
+| 2026 (to Nov 1) | −10.3% | −10.6% | −6.1% | −23.4% |
+| Trades · win rate · t | 72 · 32% · 0.46 | | 68 · 31% · 1.00 | |
+| Time in market | 25% | 100% | 27% | 100% |
+| Cost ladder 0 / 5+5 / 10+10 / 25+25 | +52 / +28 / +13 / −24% | | +118 / +92 / +69 / +1% | |
 
-## Budget
-The free plan's lifetime allowance had 3 backtests. These runs used 2, so **1 is left**, and it never renews. One run
-covers one asset, so the both-asset test in `RULE.md` can no longer be completed on this plan.
+## Against the pass bar (all required, on both coins)
 
-## Next step
-Run the same rule, unchanged, in this repo's own engine (`chart/`) on Binance 4-hour bars from the TradingView connector.
-It is free, has no run limit, uses the exit exactly as written, and can test both assets plus a longer history.
+| Test | BTC | ETH |
+|---|---|---|
+| ≥ 30 trades | pass (72) | pass (68) |
+| Positive at 10+10 bp | pass | pass |
+| CAGR ÷ max DD above buy and hold's | **fail** | pass |
+| Positive in final-third holdout | **fail** | **fail** |
+| Positive in more than half the years | **fail** (1 of 3) | pass (2 of 3) |
+
+## What it is and isn't
+- **It behaves as a risk filter, not a return engine.** It is in the market about a quarter of the time and sidesteps
+  most of each crash. That is why ETH held up in its bad years. It does not capture enough of the up-moves to beat holding
+  BTC in a bull market.
+- **Only 2.8 years of 4-hour data were available** (the connector's history starts on 2024-01-01). That covers one bull
+  leg and one long decline. That is too short to call the ETH result an edge.
+
+## The TextToQuant runs
+The two TextToQuant runs did not test the rule. The parser made the exit unreachable, so BTC's single trade was just buy
+and hold.
+
+| Run (id) | Trades | Return | Buy & hold | Grade | Problem |
+|---|---|---|---|---|---|
+| BTCUSDT 4h (`9c974ac7`) | 1 | +52.2% | +121.1% | none | Exit compared with a 10-bar low that includes the current bar; held 6,542 of 6,577 bars |
+| ETHUSDT 4h (`d09eeff1`) | 4 | +5.4% | +24.3% | F | Same parse; only the ATR stop could fire |
+
+The free plan has **1 lifetime backtest left.**
+
+## What would change the verdict
+- Daily bars from 2017 on (the TradingView daily feed goes back to listing) for a longer test of the ETH risk-filter
+  behaviour. That needs a new, pre-registered daily rule, because the 4-hour parameters can't be re-tuned on this data.
+- A cost assumption below 5+5 bp (maker fees, a VIP tier) helps both coins. But it doesn't fix the holdout.

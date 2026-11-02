@@ -11,6 +11,7 @@ python3 -m chart longrun chart/data/weekly_desk --strategies   # six strategies,
 python3 -m chart dividends chart/data chart/data/tr  # total-return copies (dividends back-adjusted)
 python3 -m chart overlay chart/data/weekly_desk/SPY.csv   # 10-month trend overlay, 2000-2026, by crash
 python3 -m chart intraday chart/data/intraday/15m          # ORB + gap fade, every variant and walk-forward
+python3 -m chart breakout chart/data/crypto/4h/*.csv       # 4h trend breakout with ATR stop vs buy and hold
 """
 import argparse
 import json
@@ -79,6 +80,9 @@ def main(argv=None):
     it.add_argument("folder", nargs="?", default="chart/data/intraday/15m")
     it.add_argument("--symbols", default="SPY,QQQ")
     it.add_argument("--json", help="also write the full report as JSON here")
+    bo = sub.add_parser("breakout", help="20-bar breakout over EMA200, 10-bar-low exit, 2xATR stop (research/crypto-breakout)")
+    bo.add_argument("csv", nargs="+")
+    bo.add_argument("--json", help="also write the full report as JSON here")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
     u.add_argument("--all", action="store_true", help="update every CSV in the folder, not only desk.json equities")
@@ -161,6 +165,13 @@ def main(argv=None):
         from .intraday import format_report, report
         rep = report(a.folder, tuple(a.symbols.split(",")))
         print(format_report(rep))
+        if a.json:
+            pathlib.Path(a.json).write_text(json.dumps(_round(rep), indent=1))
+        return
+    if a.cmd == "breakout":
+        from .breakout import format_report as fmt_bo, report as report_bo
+        rep = report_bo(a.csv)
+        print(fmt_bo(rep))
         if a.json:
             pathlib.Path(a.json).write_text(json.dumps(_round(rep), indent=1))
         return

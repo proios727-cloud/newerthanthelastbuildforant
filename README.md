@@ -19,6 +19,7 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `fund/preview.py` | Order preview → `EXECUTE` gate → paper fill. There is no live execution path. |
 | `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
 | `chart/intraday.py` | Intraday session backtester (opening-range breakout, gap fade, walk-forward). Data: `chart/data/intraday/`, sources: `docs/intraday-data.md`. **Verdict: reject** (`research/intraday-orb/VERDICT.md`). |
+| `chart/breakout.py` | 4-hour trend breakout with an ATR stop, vs buy and hold. Data: `chart/data/crypto/4h/` (BTC, ETH). **Verdict: reject** (`research/crypto-breakout/VERDICT.md`). |
 | `tests/` | unit tests: `python3 -m unittest -v` |
 
 ```bash

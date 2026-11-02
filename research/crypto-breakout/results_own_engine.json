@@ -1,0 +1,102 @@
+{
+ "BTCUSDT": {
+  "first": "2024-01-01T00:00:00+00:00",
+  "last": "2026-11-01T20:00:00+00:00",
+  "bars": 6216,
+  "trades": 72,
+  "win_rate": 0.319444,
+  "mean_trade": 0.00305,
+  "t_stat": 0.462629,
+  "total_return": 0.12631,
+  "cagr": 0.042798,
+  "max_drawdown": -0.311962,
+  "calmar": 0.137188,
+  "buy_hold": {
+   "total_return": 0.85306,
+   "cagr": 0.242745,
+   "max_drawdown": -0.534474,
+   "calmar": 0.454175
+  },
+  "exposure": 0.249678,
+  "holdout_final_third": {
+   "from": "2025-11-21T16:00:00+00:00",
+   "strategy": -0.120256,
+   "buy_hold": -0.055207
+  },
+  "by_year": {
+   "2024": {
+    "strategy": 0.356275,
+    "buy_hold": 1.213058
+   },
+   "2025": {
+    "strategy": -0.074417,
+    "buy_hold": -0.063347
+   },
+   "2026": {
+    "strategy": -0.102788,
+    "buy_hold": -0.10604
+   }
+  },
+  "exits": {
+   "10-bar low": 41,
+   "stop": 31,
+   "open": 0
+  },
+  "cost_ladder": {
+   "0": 0.517437,
+   "5+5": 0.280349,
+   "10+10": 0.12631,
+   "25+25": -0.242142
+  }
+ },
+ "ETHUSDT": {
+  "first": "2024-01-01T00:00:00+00:00",
+  "last": "2026-11-01T20:00:00+00:00",
+  "bars": 6216,
+  "trades": 68,
+  "win_rate": 0.308824,
+  "mean_trade": 0.011508,
+  "t_stat": 0.99603,
+  "total_return": 0.686457,
+  "cagr": 0.202174,
+  "max_drawdown": -0.321696,
+  "calmar": 0.628461,
+  "buy_hold": {
+   "total_return": -0.002875,
+   "cagr": -0.001014,
+   "max_drawdown": -0.680294,
+   "calmar": -0.00149
+  },
+  "exposure": 0.270753,
+  "holdout_final_third": {
+   "from": "2025-11-21T16:00:00+00:00",
+   "strategy": -0.102306,
+   "buy_hold": -0.15895
+  },
+  "by_year": {
+   "2024": {
+    "strategy": 0.508809,
+    "buy_hold": 0.462739
+   },
+   "2025": {
+    "strategy": 0.189727,
+    "buy_hold": -0.109696
+   },
+   "2026": {
+    "strategy": -0.060506,
+    "buy_hold": -0.234325
+   }
+  },
+  "exits": {
+   "10-bar low": 37,
+   "stop": 31,
+   "open": 0
+  },
+  "cost_ladder": {
+   "0": 1.178867,
+   "5+5": 0.920465,
+   "10+10": 0.686457,
+   "25+25": 0.01446
+  }
+ }
+}
