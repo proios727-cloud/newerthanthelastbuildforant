@@ -91,8 +91,21 @@ class PainIndexTests(unittest.TestCase):
         self.assertIn("**2 complaints** across 2 categories. 1 of them (50%)", md)
         self.assertLess(md.index("| 1 | Other |"), md.index("| 2 | Test |"))
 
+    def test_explorer_page_is_current(self):
+        datasets = [json.loads(f.read_text()) for f in sorted((SKILL / "data").glob("*.json"))]
+        self.assertEqual((SKILL / "explorer.html").read_text(), pain_index.render_explorer(datasets),
+                         "regenerate explorer.html")
+
+    def test_explorer_embeds_scores_and_escapes_script_close(self):
+        e = dict(ENTRY, complaint="ends </script> here")
+        html = pain_index.render_explorer([dataset(e)], "<script>const DATA = __DATA__;</script><p>__UPDATED__</p>")
+        self.assertNotIn("</script> here", html)
+        self.assertIn('"opp": 100', html)
+        self.assertIn('"category": "test"', html)
+        self.assertIn("<p>2026-10-30</p>", html)
+
     def test_cli_requires_exactly_one_mode(self):
-        for argv in ([], ["x.json", "--overview", "data"]):
+        for argv in ([], ["x.json", "--overview", "data"], ["x.json", "--explorer", "e.html"]):
             with self.assertRaises(SystemExit):
                 pain_index.main(argv)
 

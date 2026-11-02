@@ -5,6 +5,7 @@ Usage:
   python pain_index.py data/kitchen.json                         # validate only
   python pain_index.py data/kitchen.json --out reports/kitchen.md
   python pain_index.py --overview data --out OVERVIEW.md         # cross-category view
+  python pain_index.py --overview data --explorer explorer.html  # interactive page, same data
 
 Exit 1 with a readable list of problems if the dataset is invalid. Never renders a broken file.
 Stdlib only.
@@ -160,6 +161,22 @@ def render_overview(datasets):
     return "\n".join(out)
 
 
+EXPLORER_FIELDS = ("id", "item", "complaint", "failure_mode", "frequency", "severity", "annoyance",
+                   "workaround", "feasibility", "redesign", "prior_art", "sources")
+TEMPLATE = pathlib.Path(__file__).resolve().parent.parent / "assets" / "explorer-template.html"
+
+
+def render_explorer(datasets, template=None):
+    entries = []
+    for d in sorted(datasets, key=lambda d: d["category"]):
+        for e in d["entries"]:
+            pain, opp = score(e)
+            entries.append({k: e.get(k) for k in EXPLORER_FIELDS} | {"category": d["category"], "pain": pain, "opp": opp})
+    blob = json.dumps({"modes": MODES, "entries": entries}, ensure_ascii=False).replace("</", "<\\/")
+    html = (template or TEMPLATE.read_text())
+    return html.replace("__UPDATED__", max(d["updated"] for d in datasets)).replace("__DATA__", blob)
+
+
 def load(path):
     try:
         data = json.loads(pathlib.Path(path).read_text())
@@ -180,19 +197,25 @@ def main(argv=None):
     ap.add_argument("dataset", nargs="?")
     ap.add_argument("--overview", metavar="DATA_DIR", help="render the cross-category view from every dataset in DATA_DIR")
     ap.add_argument("--out")
+    ap.add_argument("--explorer", metavar="HTML", help="with --overview, also write the interactive page")
     args = ap.parse_args(argv)
     if bool(args.dataset) == bool(args.overview):
         ap.error("give either a dataset or --overview DATA_DIR")
+    if args.explorer and not args.overview:
+        ap.error("--explorer needs --overview DATA_DIR")
     if args.overview:
         paths = sorted(pathlib.Path(args.overview).glob("*.json"))
         datasets = [load(p) for p in paths]
         if not paths or None in datasets:
             return 1
+        if args.explorer:
+            pathlib.Path(args.explorer).write_text(render_explorer(datasets))
+            print(f"wrote {args.explorer}")
         text = render_overview(datasets)
         if args.out:
             pathlib.Path(args.out).write_text(text)
             print(f"wrote {args.out} ({len(datasets)} datasets)")
-        else:
+        elif not args.explorer:
             print(text, end="")
         return 0
     data = load(args.dataset)
