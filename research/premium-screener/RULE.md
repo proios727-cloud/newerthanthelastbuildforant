@@ -61,3 +61,20 @@ measures fill quality directly. Owner's decision: **liquidity is judged spread-f
 - **Short leg:** bid/ask spread ≤ 5% of mid (≤ $0.05 when mid < $0.50) **and** open interest ≥ 100.
 - **Long leg:** bid/ask spread ≤ 10% of mid (≤ $0.05 when mid < $0.50).
 Nothing else changes. No picks existed when this was written, so it can't have been tuned to results.
+
+## Amendment 2, 2026-11-02: single-leg, paper mode (before any pick was logged)
+The owner has never traded spreads and isn't trading any of their current accounts yet. So:
+- **Structure:** **cash-secured puts only**, one leg. Sell the put with delta nearest 0.20, within 0.15–0.25.
+  - The short-put liquidity rule from amendment 1 still applies.
+  - Covered calls need 100 owned shares. They're out of scope until the owner holds stock.
+- **Trend:** puts are not sold in a **downtrend** (close < SMA50 < SMA200), which would mean buying a falling stock.
+  Up and mixed trends are allowed.
+- **Credit** = the put's bid (natural fill). **Cash needed** = strike × 100. **Breakeven** = strike − credit.
+- **Return on cash** = credit ÷ strike. **Annualized** = return on cash × 365 ÷ days to expiry. Approximate probability
+  of expiring worthless = 1 − |delta|.
+- **Score** = (IV30 ÷ RV20) × annualized return on cash. The top 5 are logged.
+- **Exits** are unchanged: take profit when the put can be bought back at ≤ 50% of the credit, stop when it costs ≥ 2×
+  the credit, close at 21 days to expiry, and never hold through earnings. If the paper position is assigned at
+  expiry, it's recorded as assigned at the strike.
+- **Paper mode:** no account is read or used for sizing. Each pick is logged per contract, with the cash it would need,
+  so the record shows what account size it takes.

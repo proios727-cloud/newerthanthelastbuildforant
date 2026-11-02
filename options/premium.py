@@ -131,3 +131,50 @@ def rank(results, top=5):
     for i, r in enumerate(passed):
         r["rank"] = i + 1 if i < top else None
     return passed[:top] + passed[top:] + [r for r in results if r["status"] != "pass"]
+
+
+def screen_put(ticker, chain, closes, earnings=None, today=None):
+    """Single-leg cash-secured put (RULE.md amendment 2). Same metrics as screen(), plus cash and annualized return."""
+    today = today or dt.date.today().isoformat()
+    spot, contracts = float(chain["spot"]), chain["contracts"]
+    expiry = contracts[0]["expiry"] if contracts else None
+    out = {"ticker": ticker, "spot": spot, "expiry": expiry, "dte": None, "iv30": None, "rv20": None, "iv_rv": None,
+           "trend": None, "structure": "", "legs": "", "credit": None, "cash_needed": None, "breakeven": None,
+           "return_on_cash": None, "annualized": None, "pop": None, "score": None, "earnings": earnings or "",
+           "status": "pass", "reason": ""}
+    if expiry:
+        out["dte"] = (dt.date.fromisoformat(expiry) - dt.date.fromisoformat(today)).days
+    iv, r = iv_atm(contracts, spot), rv(closes)
+    t = trend(closes)[0] if closes else "mixed"
+    out.update(iv30=iv, rv20=r, trend=t, iv_rv=(iv / r) if iv and r else None)
+
+    def fail(why):
+        out.update(status="fail", reason=why)
+        return out
+
+    if earnings and expiry and today <= earnings <= expiry:
+        return fail(f"earnings {earnings} before expiry")
+    if out["iv_rv"] is None:
+        return fail("IV or realized vol unavailable")
+    puts = [c for c in contracts if c["type"] == "put" and c.get("delta") is not None and c["strike"] < spot]
+    if not puts:
+        return fail("no out-of-the-money puts in the chain")
+    short = min(puts, key=lambda c: abs(abs(c["delta"]) - TARGET_DELTA))
+    if not DELTA_BAND[0] <= abs(short["delta"]) <= DELTA_BAND[1]:
+        return fail("no 0.15-0.25 delta put in the chain")
+    k, credit = short["strike"], short.get("bid") or 0.0
+    roc = credit / k if k else 0.0
+    out.update(structure="cash-secured put", legs=f"P -{k:g} (Δ{abs(short['delta']):.2f})", credit=round(credit, 2),
+               cash_needed=round(k * 100), breakeven=round(k - credit, 2), return_on_cash=round(roc, 4),
+               annualized=round(roc * 365 / out["dte"], 4) if out["dte"] else None,
+               pop=round(1 - abs(short["delta"]), 3))
+    if t == "down":
+        return fail("downtrend: no puts sold into a falling stock")
+    if out["iv_rv"] < MIN_IV_RV:
+        return fail(f"IV/RV {out['iv_rv']:.2f} < {MIN_IV_RV}")
+    if not (short.get("oi", 0) >= MIN_OI and _spread_ok(short, MAX_SPREAD_SHORT)):
+        return fail("put open interest or bid/ask too thin")
+    if not credit:
+        return fail("no bid")
+    out["score"] = round(out["iv_rv"] * (out["annualized"] or 0), 4)
+    return out

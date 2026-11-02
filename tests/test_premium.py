@@ -68,6 +68,16 @@ class PremiumTests(unittest.TestCase):
         c = {"status": "fail", "score": None}
         self.assertEqual(P.rank([a, c, b]), [b, a, c])
 
+    def test_cash_secured_put(self):
+        r = P.screen_put("T", chain(), closes(), today="2026-11-02")
+        self.assertEqual((r["status"], r["structure"], r["legs"]), ("pass", "cash-secured put", "P -95 (Δ0.22)"), r["reason"])
+        self.assertEqual((r["credit"], r["cash_needed"], r["breakeven"]), (1.20, 9500, 93.8))
+        self.assertAlmostEqual(r["annualized"], round(1.20 / 95 * 365 / 39, 4))
+
+    def test_put_not_sold_in_downtrend(self):
+        down = list(reversed(closes()))
+        self.assertIn("downtrend", P.screen_put("T", chain(), down, today="2026-11-02")["reason"])
+
 
 class MarkTests(unittest.TestCase):
     def setUp(self):
@@ -83,6 +93,11 @@ class MarkTests(unittest.TestCase):
         pick = {"legs": "P -95 +92.5 (Δ0.22)", "expiry": "2026-12-11", "credit": 0.80, "max_loss": 1.70}
         c = chain()
         self.assertEqual(pm.debit(pick, c), round(1.25 - 0.36, 2))   # buy 95 at ask, sell 92.5 at bid
+
+    def test_single_leg_debit(self):
+        pick = {"legs": "P -95 (Δ0.22)", "expiry": "2026-12-11", "credit": 1.20}
+        self.assertEqual(self.pm.legs(pick["legs"]), [("put", 95.0, None)])
+        self.assertEqual(self.pm.debit(pick, chain()), 1.25)                  # buy back at the ask
 
     def test_exit_rules(self):
         pm = self.pm

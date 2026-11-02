@@ -21,12 +21,12 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PICKS = ROOT / "research/premium-screener/picks.jsonl"
 MARKS = ROOT / "research/premium-screener/marks.jsonl"
-LEG = re.compile(r"([PC]) -([\d.]+) \+([\d.]+)")
+LEG = re.compile(r"([PC]) -([\d.]+)(?: \+([\d.]+))?")
 
 
 def legs(text):
     """'P -95 +92.5 (Δ0.22) / C -105 +107.5 (Δ0.21)' -> [("put", 95.0, 92.5), ("call", 105.0, 107.5)]"""
-    return [("put" if k == "P" else "call", float(s), float(l)) for k, s, l in LEG.findall(text)]
+    return [("put" if k == "P" else "call", float(s), float(l) if l else None) for k, s, l in LEG.findall(text)]
 
 
 def debit(pick, chain):
@@ -34,10 +34,15 @@ def debit(pick, chain):
     q = {(c["type"], float(c["strike"])): c for c in chain["contracts"] if c["expiry"] == pick["expiry"]}
     total = 0.0
     for kind, short, long in legs(pick["legs"]):
-        s, lg = q.get((kind, short)), q.get((kind, long))
-        if not s or not lg or s.get("ask") is None or lg.get("bid") is None:
+        s = q.get((kind, short))
+        if not s or s.get("ask") is None:
             return None
-        total += s["ask"] - lg["bid"]
+        total += s["ask"]
+        if long is not None:
+            lg = q.get((kind, long))
+            if not lg or lg.get("bid") is None:
+                return None
+            total -= lg["bid"]
     return round(total, 2)
 
 

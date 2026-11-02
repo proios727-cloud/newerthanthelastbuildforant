@@ -114,3 +114,32 @@ When the user asks to check a signal (usually after an alert fires):
    ```
 4. Show its card as printed. It gives GO or NO-GO with each gate, the size, and on GO an order ticket that the user
    places by hand. Never place, preview or review the order.
+
+## 6. Premium screener, paper mode (about 11:05 ET)
+
+Rule: `research/premium-screener/RULE.md`, amendment 2. It sells cash-secured puts only. No account is read, and nothing is
+ordered: the owner enters picks by hand in a paper account.
+1. **Collect the data** with read-only subagents, four tickers each, across the 16 tickers in the rule.
+   - Daily bars (260) with `mcp-tv-get-ohlcv`.
+   - The next earnings dates with Robinhood `get_earnings_calendar` (market-wide, filtered by symbol).
+   - One expiry 30–45 days out per ticker. Fetch puts from 18% below spot (12% for ETFs) up to the nearest strike, plus
+     the at-the-money call, with `get_option_instruments` and `get_option_quotes`.
+2. **Convert the data:**
+   ```bash
+   python3 scripts/rh_chain_from_transcript.py <agent transcripts> options/data/chains_premium
+   python3 scripts/tv_from_transcript.py <bars transcript> /tmp/pb
+   python3 scripts/tv_ohlcv_to_csv.py --all-hours --merge chart/data/daily_tv /tmp/pb/*.json
+   ```
+   Write `research/premium-screener/earnings_<date>.json` (`{"TICKER": "YYYY-MM-DD"}`) from the earnings results.
+3. **Screen and log:**
+   ```bash
+   python3 scripts/premium_screen.py --chains options/data/chains_premium --bars chart/data/daily_tv/1D \
+     --earnings research/premium-screener/earnings_<date>.json --out research/premium-screener/<date>
+   ```
+   It logs the top 5 to `picks.jsonl`, skipping any ticker and expiry that's already open.
+4. **Mark open picks to market** with their own expiry's quotes, then apply the exits:
+   ```bash
+   python3 scripts/premium_mark.py --chains options/data/chains_premium --write
+   ```
+5. Upload `premium_screen.csv` to the dashboard dataset `premium_screen` (as in step 3), then commit and push (step 4).
+6. **Report:** today's passes with each order ticket, open paper picks with their P&L, and any exit rule hit.
