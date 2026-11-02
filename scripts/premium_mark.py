@@ -2,8 +2,8 @@
 
     python3 scripts/premium_mark.py --chains DIR [--today YYYY-MM-DD] [--write]
 
-For each open pick in research/premium-screener/picks.jsonl, it finds the latest chain file for its ticker with the same
-expiry and prices the close at the natural debit: buy back each short leg at the ask, sell each long leg at the bid.
+For each open pick in research/premium-screener/picks.jsonl, it takes the newest snapshot of its ticker and expiry
+(options.chain_index) and prices the close at the natural debit: buy back each short leg at the ask, sell each long leg at the bid.
 - debit <= 50% of credit  -> "take profit"
 - debit >= 2x credit      -> "stop"
 - days to expiry <= 21    -> "time exit"
@@ -19,6 +19,11 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from chart import append_jsonl, read_jsonl  # noqa: E402
+from options import chain_index  # noqa: E402
+from options.premium import open_picks as _open  # noqa: E402
+
 PICKS = ROOT / "research/premium-screener/picks.jsonl"
 MARKS = ROOT / "research/premium-screener/marks.jsonl"
 LEG = re.compile(r"([PC]) -([\d.]+)(?: \+([\d.]+))?")
@@ -60,11 +65,7 @@ def decide(pick, cost, today):
 
 
 def open_picks():
-    if not PICKS.exists():
-        return []
-    rows = [json.loads(x) for x in PICKS.read_text().splitlines() if x.strip()]
-    closed = {r["close_of"] for r in rows if "close_of" in r}
-    return [r for r in rows if "close_of" not in r and r["id"] not in closed]
+    return _open(read_jsonl(PICKS))
 
 
 def main(argv=None):
@@ -73,12 +74,9 @@ def main(argv=None):
     ap.add_argument("--today", default=dt.date.today().isoformat())
     ap.add_argument("--write", action="store_true")
     a = ap.parse_args(argv)
-    chains = {}
-    for p in sorted(pathlib.Path(a.chains).glob("*.json")):
-        c = json.loads(p.read_text())
-        chains[c["symbol"]] = c
+    chains = chain_index(a.chains)
     for pick in open_picks():
-        chain = chains.get(pick["ticker"])
+        _, chain = chains.get((pick["ticker"], pick["expiry"]), (None, None))
         cost = debit(pick, chain) if chain else None
         rule = decide(pick, cost, a.today)
         pnl = None if cost is None else round(pick["credit"] - cost, 2)
@@ -89,8 +87,7 @@ def main(argv=None):
             target = PICKS if rule else MARKS
             if rule:
                 rec = {"close_of": pick["id"], **{k: v for k, v in rec.items() if k != "id"}}
-            with open(target, "a") as f:
-                f.write(json.dumps(rec) + "\n")
+            append_jsonl(target, rec)
 
 
 if __name__ == "__main__":

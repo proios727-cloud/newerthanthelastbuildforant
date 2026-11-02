@@ -26,6 +26,7 @@ import datetime as dt
 import json
 
 KINDS = ("close_above", "close_below", "reject_below", "reject_above")
+FIRST_ENTRY, DEFAULT_BEFORE, SESSION_CLOSE = "09:45", "14:00", "16:00"   # trigger window defaults; RTH close
 
 
 def _hm(ts):
@@ -62,8 +63,20 @@ def _triggered(kind, bar, level):
     raise ValueError(f"unknown trigger kind {kind!r}")
 
 
-def score(signal, sessions, ivl=15):
-    """One signal → result dict. `sessions` is chart.intraday.sessions(...) output for that ticker."""
+def first_trigger(trig, bars, sessions, date, ivl):
+    """First bar in `bars` (a prefix of `date`'s session) inside the trigger window that meets the trigger and its RVOL
+    gate. Returns (index or None, rvol at the last bar that met the trigger, index of that bar); None where none did."""
+    after, before, last_rv, fired = trig.get("after", FIRST_ENTRY), trig.get("before", DEFAULT_BEFORE), None, None
+    for i, b in enumerate(bars):
+        if _hm(b.ts) < after or _end_hm(b, ivl) > before or not _triggered(trig["kind"], b, trig["level"]):
+            continue
+        last_rv, fired = rvol_at(sessions, date, i), i
+        if not trig.get("rvol_min") or (last_rv is not None and last_rv >= trig["rvol_min"]):
+            return i, last_rv, i
+    return None, last_rv, fired         # any trigger that fired was on thin volume: the gate says wait for the next one
+
+
+def _blank(signal):
     out = {"id": signal["id"], "date": signal["date"], "ticker": signal["ticker"], "setup": signal.get("setup", ""),
            "side": signal.get("side", "none"), "tier": signal.get("tier", ""), "status": "", "trigger_time": "",
            "entry": None, "exit": None, "exit_time": "", "r": None, "mfe_r": None, "mae_r": None, "rvol": None,
@@ -73,6 +86,12 @@ def score(signal, sessions, ivl=15):
         out["trigger"] = f"{signal['trigger']['kind'].replace('_', ' ')} {signal['trigger']['level']:g}"
     if signal.get("stop"):
         out["stop_level"] = signal["stop"]["level"]
+    return out
+
+
+def score(signal, sessions, ivl=15):
+    """One signal → result dict. `sessions` is chart.intraday.sessions(...) output for that ticker."""
+    out = _blank(signal)
     if out["side"] not in ("long", "short"):
         out["status"] = "no trade"
         return out
@@ -81,18 +100,12 @@ def score(signal, sessions, ivl=15):
         out["status"] = "no data"
         return out
     # A session is complete once its last bar ends at the close, or a later session exists (half days).
-    complete = _end_hm(day[-1], ivl) >= "16:00" or sessions[-1][0] > signal["date"]
-    trig, sign = signal["trigger"], 1 if out["side"] == "long" else -1
-    after, before = trig.get("after", "09:45"), trig.get("before", "14:00")
+    complete = _end_hm(day[-1], ivl) >= SESSION_CLOSE or sessions[-1][0] > signal["date"]
+    sign = 1 if out["side"] == "long" else -1
     stop, basis, target = signal["stop"]["level"], signal["stop"].get("basis", "touch"), signal.get("target")
-    for i, b in enumerate(day[:-1]):
-        if _hm(b.ts) < after or _end_hm(b, ivl) > before or not _triggered(trig["kind"], b, trig["level"]):
-            continue
-        rv = rvol_at(sessions, signal["date"], i)
-        out["rvol"] = rv
-        if trig.get("rvol_min") and (rv is None or rv < trig["rvol_min"]):
-            continue                       # the level fired on thin volume: the gate says wait for the next one
-        out["trigger_time"] = _end_hm(b, ivl)
+    i, out["rvol"], _ = first_trigger(signal["trigger"], day[:-1], sessions, signal["date"], ivl)   # entry needs a next bar
+    if i is not None:
+        out["trigger_time"] = _end_hm(day[i], ivl)
         entry = day[i + 1].open
         risk = abs(entry - stop)
         if risk == 0 or (sign > 0 and entry <= stop) or (sign < 0 and entry >= stop):
@@ -102,23 +115,22 @@ def score(signal, sessions, ivl=15):
         best = worst = 0.0
         for j in range(i + 1, len(day)):
             x = day[j]
-            fav = (x.high - entry) if sign > 0 else (entry - x.low)
-            adv = (entry - x.low) if sign > 0 else (x.high - entry)
+            first = j == i + 1                 # the entry bar opens at the entry price, so it can't gap through a level
+            worst = max(worst, (entry - x.low) if sign > 0 else (x.high - entry))
             if basis == "touch":
                 hit_stop = (x.low <= stop) if sign > 0 else (x.high >= stop)
-                stop_px = (min(x.open, stop) if sign > 0 else max(x.open, stop)) if j > i + 1 else stop
+                stop_px = stop if first else (min if sign > 0 else max)(x.open, stop)
             else:
                 hit_stop = (x.close < stop) if sign > 0 else (x.close > stop)
                 stop_px = x.close
-            hit_tgt = target is not None and ((x.high >= target) if sign > 0 else (x.low <= target))
             if hit_stop:
-                best, worst = max(best, fav), max(worst, adv)
+                best = max(best, (x.high - entry) if sign > 0 else (entry - x.low))
                 return _close(out, "stop", stop_px, x, ivl, entry, sign, risk, best, worst)
-            if hit_tgt:
-                tgt_px = max(x.open, target) if sign > 0 and j > i + 1 else (min(x.open, target) if j > i + 1 else target)
-                best, worst = max(best, (tgt_px - entry) * sign), max(worst, adv)
+            if target is not None and ((x.high >= target) if sign > 0 else (x.low <= target)):
+                tgt_px = target if first else (max if sign > 0 else min)(x.open, target)
+                best = max(best, (tgt_px - entry) * sign)
                 return _close(out, "target", tgt_px, x, ivl, entry, sign, risk, best, worst)
-            best, worst = max(best, fav), max(worst, adv)
+            best = max(best, (x.high - entry) if sign > 0 else (entry - x.low))
         res = _close(out, "close", day[-1].close, day[-1], ivl, entry, sign, risk, best, worst)
         if not complete:
             res["status"] = "open"
@@ -162,8 +174,7 @@ def score_journal(journal_path, bars_folder):
             p = pathlib.Path(bars_folder) / f"{t}.csv"
             cache[t] = to_sessions(load_csv(p)) if p.exists() else []
         sess = cache[t]
-        results.append(score(s, sess, interval_minutes(sess) if sess else 15) if sess else
-                       {**score({**s, "side": "none"}, []), "side": s.get("side", "none"), "status": "no data"})
+        results.append(score(s, sess, interval_minutes(sess)) if sess else {**_blank(s), "status": "no data"})
     return results
 
 

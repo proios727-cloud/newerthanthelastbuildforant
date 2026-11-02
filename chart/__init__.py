@@ -1,5 +1,7 @@
 """Original indicator engine and bar backtester. Spec: chart/SPEC.md."""
 import csv
+import json
+import pathlib
 from dataclasses import dataclass
 
 from .backtest import STRATEGIES, Result, backtest, rsi_revert, sma_cross
@@ -35,3 +37,18 @@ def load_csv(path):
         if not a.ts < b.ts:
             raise ValueError(f"rows must be strictly ascending: {a.ts} then {b.ts}")
     return bars
+
+
+def read_jsonl(path):
+    """Rows of a JSON Lines journal, skipping blank lines; [] if the file doesn't exist."""
+    path = pathlib.Path(path)
+    return [json.loads(x) for x in path.read_text().splitlines() if x.strip()] if path.exists() else []
+
+
+def append_jsonl(path, *rows):
+    """Append rows to a JSON Lines journal (journals are append-only: never edit a line in place)."""
+    path = pathlib.Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a") as f:
+        for r in rows:
+            f.write(json.dumps(r) + "\n")

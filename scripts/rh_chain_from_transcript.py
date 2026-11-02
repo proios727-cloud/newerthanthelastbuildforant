@@ -10,11 +10,10 @@ import json
 import pathlib
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from _transcript import tool_results  # noqa: E402
 
-def _text(content):
-    if isinstance(content, str):
-        return content
-    return "".join(c.get("text", "") for c in content if isinstance(c, dict))
+WANTED = ("get_option_instruments", "get_option_quotes", "get_equity_quotes")
 
 
 def _num(x):
@@ -25,37 +24,26 @@ def _num(x):
 
 
 def collect(lines):
-    calls, instruments, quotes, spots = {}, {}, {}, {}
-    for line in lines:
+    instruments, quotes, spots = {}, {}, {}
+    for name, _, raw in tool_results(lines, lambda n: n.split("__")[-1] in WANTED):
         try:
-            msg = json.loads(line).get("message", {})
-        except json.JSONDecodeError:
+            data = json.loads(raw).get("data", {})
+        except (json.JSONDecodeError, AttributeError):
             continue
-        content = msg.get("content") if isinstance(msg, dict) else None
-        if not isinstance(content, list):
-            continue
-        for c in content:
-            if c.get("type") == "tool_use":
-                calls[c["id"]] = c["name"].split("__")[-1]
-            elif c.get("type") == "tool_result" and c.get("tool_use_id") in calls:
-                name = calls[c["tool_use_id"]]
-                try:
-                    data = json.loads(_text(c.get("content"))).get("data", {})
-                except (json.JSONDecodeError, AttributeError):
-                    continue
-                if name == "get_option_instruments":
-                    for i in data.get("instruments", []):
-                        instruments[i["id"]] = i
-                elif name == "get_option_quotes":
-                    for r in data.get("results", []):
-                        q = r.get("quote") or {}
-                        if q.get("instrument_id"):
-                            quotes[q["instrument_id"]] = q
-                elif name == "get_equity_quotes":
-                    for r in data.get("results", []):
-                        q = r.get("quote") or {}
-                        if q.get("symbol") and _num(q.get("last_trade_price")):
-                            spots[q["symbol"]] = (float(q["last_trade_price"]), q.get("venue_last_trade_time"))
+        name = name.split("__")[-1]
+        if name == "get_option_instruments":
+            for i in data.get("instruments", []):
+                instruments[i["id"]] = i
+        elif name == "get_option_quotes":
+            for r in data.get("results", []):
+                q = r.get("quote") or {}
+                if q.get("instrument_id"):
+                    quotes[q["instrument_id"]] = q
+        else:
+            for r in data.get("results", []):
+                q = r.get("quote") or {}
+                if q.get("symbol") and _num(q.get("last_trade_price")):
+                    spots[q["symbol"]] = (float(q["last_trade_price"]), q.get("venue_last_trade_time"))
     return instruments, quotes, spots
 
 

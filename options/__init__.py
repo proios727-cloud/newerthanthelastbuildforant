@@ -81,6 +81,25 @@ def load_chain(name):
     return json.loads((CHAINS / name).read_text(encoding="utf-8"))
 
 
+def chain_index(folder):
+    """{(symbol, expiry): (path, chain)} from a folder of chain snapshots, keeping the newest snapshot (by `asof`, then
+    file name) for each pair. Each chain holds only that expiry's contracts, so callers never mix expiries."""
+    best = {}
+    for p in sorted(pathlib.Path(folder).glob("*.json")):
+        c = json.loads(p.read_text())
+        for exp in sorted({k["expiry"] for k in c["contracts"]}):
+            key, rank = (c["symbol"], exp), (c.get("asof") or "", p.name)
+            if key not in best or rank >= best[key][0]:
+                best[key] = (rank, p, {**c, "contracts": [k for k in c["contracts"] if k["expiry"] == exp]})
+    return {k: (p, c) for k, (_, p, c) in best.items()}
+
+
+def mid(c):
+    """Bid/ask midpoint of a quote dict, or None without a usable two-sided quote."""
+    b, a = c.get("bid"), c.get("ask")
+    return (a + b) / 2 if b is not None and a is not None and a > 0 else None
+
+
 def gex_by_strike(chain):
     """{strike: (call_gex, put_gex)} in dollars per 1% move; put_gex is ≤ 0."""
     spot = chain["spot"]
