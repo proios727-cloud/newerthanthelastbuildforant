@@ -143,3 +143,20 @@ ordered: the owner enters picks by hand in a paper account.
    ```
 5. Upload `premium_screen.csv` to the dashboard dataset `premium_screen` (as in step 3), then commit and push (step 4).
 6. **Report:** today's passes with each order ticket, open paper picks with their P&L, and any exit rule hit.
+
+## 7. Paper positions (Positions tab)
+
+- **Journal:** `research/paper/positions.jsonl`, append-only. Each line is an `open` event, or a `close` event (`id`, `event`:
+  `"close"`, `date`, `exit`).
+- **Sources:**
+  - the premium screener's paper picks: the daily run adds each new rank-1–5 pick as an `open` event;
+  - fills the owner reports from their own paper account: `source: "my paper fill"`, with their price and quantity.
+- **Instrument id:** take it from the `get_option_instruments` response in the run's transcript. It must be the exact
+  contract (ticker, expiry, strike, type).
+- **After any change:**
+  1. Run `python3 scripts/positions_csv.py /tmp/positions.csv`.
+  2. Upload the file to the `positions` dataset.
+  3. Set `pos_quotes.source.args.instrument_ids` to the ids it prints, and `pos_spot.source.args.symbols` to its symbols
+     (ArtifactData `update` with `if_version`).
+  4. Run both calls once to confirm they answer.
+- The dashboard marks positions live on the owner's own Robinhood connection, read-only. Nothing places orders.

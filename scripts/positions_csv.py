@@ -1,0 +1,38 @@
+"""Write the dashboard's open paper positions from research/paper/positions.jsonl.
+
+The journal is append-only: an "open" event adds a position, a later {"id", "event": "close", "date", "exit"} closes it.
+Positions come from the premium screener's paper log, Heat Seeker trades and fills the owner reports from their paper
+account (source "my paper fill"). No brokerage account is read.
+    python3 scripts/positions_csv.py OUT.csv
+"""
+import csv
+import json
+import pathlib
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+JOURNAL = ROOT / "research/paper/positions.jsonl"
+FIELDS = ["id", "source", "date", "ticker", "contract", "instrument_id", "type", "strike", "expiry", "side", "qty", "entry",
+          "take_profit_at", "stop_at", "time_exit", "cash_needed"]
+
+
+def open_positions(path=JOURNAL):
+    rows = [json.loads(x) for x in path.read_text().splitlines() if x.strip()] if path.exists() else []
+    closed = {r["id"] for r in rows if r.get("event") == "close"}
+    return [r for r in rows if r.get("event") == "open" and r["id"] not in closed]
+
+
+def main(argv):
+    if len(argv) < 2:
+        raise SystemExit(__doc__)
+    pos = open_positions()
+    with open(argv[1], "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=FIELDS, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(pos)
+    print(f"{argv[1]}: {len(pos)} open positions; quote ids: {json.dumps([p['instrument_id'] for p in pos])}; "
+          f"symbols: {json.dumps(sorted({p['ticker'] for p in pos} | {'SPY', 'QQQ'}))}")
+
+
+if __name__ == "__main__":
+    main(sys.argv)
