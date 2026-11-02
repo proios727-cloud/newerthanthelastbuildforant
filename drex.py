@@ -67,3 +67,21 @@ def top(answer: dict) -> tuple[str, float]:
     probs = answer["probabilities"]
     label = max(probs, key=probs.get)
     return label, float(probs[label])
+
+
+def check(base: str = "https://console.nace.ai", model: str = "drex-v2.0") -> dict:
+    """Onboarding check: one tiny decide call. Prints the answer, never the key."""
+    r = Drex(base, model, 30).decide("Help! My payouts have been failing for 3 days.",
+                                     {"is_urgent": {"type": "noul", "instructions": "Does this convey urgency?"}})
+    return {"model": r.get("model"), "is_urgent": r["answers"]["is_urgent"]["noul"],
+            "input_tokens": (r.get("usage") or {}).get("input_tokens"), "request_id": r.get("request_id")}
+
+
+if __name__ == "__main__":
+    import sys
+    import config  # noqa: F401  (loads .env)
+    try:
+        print("DREX OK", json.dumps(check()))
+    except DrexError as e:
+        print("DREX FAIL", e)
+        sys.exit(1)

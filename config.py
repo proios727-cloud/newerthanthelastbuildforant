@@ -7,6 +7,20 @@ from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+
+
+def _load_dotenv(path: Path = ROOT / ".env") -> None:
+    """Minimal .env loader (KEY=VALUE lines). Real environment variables win."""
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+_load_dotenv()
 STATE_DIR = Path(os.environ.get("BOT_STATE_DIR", ROOT / "state"))
 
 
