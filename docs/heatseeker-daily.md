@@ -57,7 +57,14 @@ follows this file step by step. Nothing here places, previews or cancels an orde
    python3 scripts/heatseeker_dash_data.py /tmp/hs_dash --chains <today's SPY chain> <today's QQQ chain>
    ```
    This session's transcript is the newest `.jsonl` under `~/.claude/projects/<project>/`.
-7. **Update the dashboard** (step 3 below), then commit and push (step 4).
+7. **Set price alerts** for every tradeable signal logged today:
+   - Use `mcp-tv-create-alert` with the symbol `AMEX:SPY` or `NASDAQ:QQQ`.
+   - Set `condition` to `cross_up` for long triggers and `cross_down` for short ones, and `price` to the trigger level.
+   - Set `auto_deactivate: true`, `mobile_push: true`, and `expiration` to the signal's `before` time today, in UTC.
+   - Name it `HS <id> · <setup> · <level>`.
+   - Write a message that says the alert is a touch, not an entry, then gives the full rule (close, RVOL, index
+     alignment), the stop, the target, the tier and the contract idea, and ends with `Ask Claude: "check <id>"`.
+8. **Update the dashboard** (step 3 below), then commit and push (step 4).
 
 ## 2. After-close run (about 16:25 ET)
 
@@ -94,3 +101,16 @@ the page from a scheduled run.
 - Push to `heatseeker-log`, with up to 4 retries on network errors.
 - Don't open a pull request for daily log updates.
 - Never force-push.
+
+## 5. On demand: "check <signal id>"
+
+When the user asks to check a signal (usually after an alert fires):
+1. Fetch today's 15-minute bars so far for SPY and QQQ (as in step 1.5) and merge them.
+2. Get a live quote for the signal's contract (Robinhood `get_option_quotes`, read-only) and the account's buying power
+   (`get_accounts` or `get_portfolio`, read-only).
+3. Run:
+   ```bash
+   python3 scripts/heatseeker_check.py <id> --bid <bid> --ask <ask> --buying-power <bp>
+   ```
+4. Show its card as printed. It gives GO or NO-GO with each gate, the size, and on GO an order ticket that the user
+   places by hand. Never place, preview or review the order.

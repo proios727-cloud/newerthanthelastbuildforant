@@ -1,3 +1,4 @@
+import pathlib
 import unittest
 
 from chart import Bar
@@ -82,6 +83,25 @@ class SignalScoreTests(unittest.TestCase):
         a = [FLAT, (100.2, 101.2, 100.1, 100.5), (100.4, 100.6, 99.5, 99.7)] + [FLAT] * 23
         b = [FLAT, (100.2, 101.2, 100.1, 100.5), (100.4, 100.6, 99.5, 99.7)] + [(150, 151, 149, 150)] * 23
         self.assertEqual(S.score(sig(target=None), sessions(a))["entry"], S.score(sig(target=None), sessions(b))["entry"])
+
+    def test_go_no_go_check(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("hc", pathlib.Path(__file__).resolve().parents[1] / "scripts/heatseeker_check.py")
+        hc = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(hc)
+        rows = [(100, 100.2, 99.8, 100), (100, 100.8, 100, 100.7), (100.7, 101, 100.6, 100.9)] + [FLAT] * 23
+        s = sig(side="long", tier="B", contract="SPY 2026-03-03 100C, delta 0.5",
+                trigger={"kind": "close_above", "level": 100.5, "after": "09:45"}, stop={"level": 100.2, "basis": "close"},
+                target=101.5)
+        partner = sessions([(50, 50.5, 50, 50.4)] * 26)
+        r = hc.check(s, sessions(rows), partner, bid=1.00, ask=1.04, buying_power=20000, now="10:20")
+        self.assertEqual(r["verdict"], "GO", r["gates"])
+        self.assertEqual(r["contracts"], 2)               # 2.5% of 20,000 = 500, half for tier B = 250; 250 // 104
+        self.assertIn("LIMIT 1.03", r["ticket"])
+        late = hc.check(s, sessions(rows), partner, bid=1.00, ask=1.04, buying_power=20000, now="15:40")
+        self.assertEqual(late["verdict"], "NO-GO")
+        wide = hc.check(s, sessions(rows), partner, bid=0.80, ask=1.04, buying_power=20000, now="10:20")
+        self.assertFalse(dict((g[0], g[1]) for g in wide["gates"])["spread"])
 
     def test_test_the_test(self):
         rows = [FLAT, (100.2, 101.2, 100.1, 100.5), (100.4, 100.6, 99.5, 99.7)] + [FLAT] * 23
