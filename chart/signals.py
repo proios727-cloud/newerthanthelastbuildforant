@@ -19,6 +19,7 @@ Trigger kinds, judged on a bar's close (a bar counts only if it opens at or afte
 The trade fills at the next bar's open. Stop basis "close": out at the first bar that closes beyond the stop, at that close.
 Stop basis "touch": out at the stop when a bar trades through it (at the open if it gaps through). A target is a touch.
 If the stop and the target are both reached in one bar, the stop counts. Anything still open exits at the last bar's close.
+Before the session's bars are complete, an untriggered signal is "in progress" and an unresolved trade is "open".
 `rvol_min`: cumulative volume up to the trigger bar ÷ the average for the same time of day over the prior 10 sessions.
 """
 import datetime as dt
@@ -79,6 +80,8 @@ def score(signal, sessions, ivl=15):
     if not day:
         out["status"] = "no data"
         return out
+    # A session is complete once its last bar ends at the close, or a later session exists (half days).
+    complete = _end_hm(day[-1], ivl) >= "16:00" or sessions[-1][0] > signal["date"]
     trig, sign = signal["trigger"], 1 if out["side"] == "long" else -1
     after, before = trig.get("after", "09:45"), trig.get("before", "14:00")
     stop, basis, target = signal["stop"]["level"], signal["stop"].get("basis", "touch"), signal.get("target")
@@ -116,8 +119,11 @@ def score(signal, sessions, ivl=15):
                 best, worst = max(best, (tgt_px - entry) * sign), max(worst, adv)
                 return _close(out, "target", tgt_px, x, ivl, entry, sign, risk, best, worst)
             best, worst = max(best, fav), max(worst, adv)
-        return _close(out, "close", day[-1].close, day[-1], ivl, entry, sign, risk, best, worst)
-    out["status"] = "not triggered"
+        res = _close(out, "close", day[-1].close, day[-1], ivl, entry, sign, risk, best, worst)
+        if not complete:
+            res["status"] = "open"
+        return res
+    out["status"] = "not triggered" if complete else "in progress"
     return out
 
 

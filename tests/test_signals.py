@@ -62,6 +62,11 @@ class SignalScoreTests(unittest.TestCase):
         r = S.score(s, sessions(rows))
         self.assertEqual((r["status"], r["entry"], r["exit"]), ("close", 100.7, 101))
 
+    def test_incomplete_session_is_in_progress(self):
+        self.assertEqual(S.score(sig(), sessions([FLAT] * 10))["status"], "in progress")
+        rows = [FLAT, (100.2, 101.2, 100.1, 100.5), (100.4, 100.6, 99.9, 100.1)] + [FLAT] * 5
+        self.assertEqual(S.score(sig(target=None), sessions(rows))["status"], "open")
+
     def test_rvol_gate_blocks_thin_volume(self):
         from chart.intraday import sessions as to_s
         bars = []

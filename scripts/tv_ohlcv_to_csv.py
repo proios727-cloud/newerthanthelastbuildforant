@@ -4,6 +4,9 @@ Connector results are saved as JSON files by the session (or a subagent) instead
 chart/data/intraday/<interval>/<SYMBOL>.csv with columns timestamp,open,high,low,close,volume, regular hours only (09:30-16:00 ET).
     python3 scripts/tv_ohlcv_to_csv.py OUTROOT RESPONSE.json [RESPONSE.json ...]
     python3 scripts/tv_ohlcv_to_csv.py --all-hours OUTROOT RESPONSE.json ...   # crypto: every bar, timestamps in UTC
+    python3 scripts/tv_ohlcv_to_csv.py --merge OUTROOT RESPONSE.json ...       # add new bars to an existing CSV
+--merge keeps the existing rows, replaces any with the same timestamp, and drops a final bar that is still forming
+(its interval has not ended yet), so a daily job can append each new session.
 """
 import csv
 import datetime as dt
@@ -39,8 +42,8 @@ def rows_from(body, all_hours=False):
 
 
 def main(argv):
-    all_hours = "--all-hours" in argv
-    argv = [a for a in argv if a != "--all-hours"]
+    all_hours, merge = "--all-hours" in argv, "--merge" in argv
+    argv = [a for a in argv if a not in ("--all-hours", "--merge")]
     if len(argv) < 3:
         raise SystemExit(__doc__)
     root = pathlib.Path(argv[1])
@@ -50,6 +53,18 @@ def main(argv):
         rows = rows_from(body, all_hours)
         dest = root / body["interval"] / f"{sym}.csv"
         dest.parent.mkdir(parents=True, exist_ok=True)
+        if merge:
+            ivl = {"1m": 60, "5m": 300, "15m": 900, "30m": 1800, "1h": 3600, "4h": 14400, "1D": 86400}[body["interval"]]
+            now = dt.datetime.now(dt.timezone.utc)
+            rows = [r for r in rows if dt.datetime.fromisoformat(r[0]) + dt.timedelta(seconds=ivl) <= now]
+            old = {}
+            if dest.exists():
+                with open(dest, newline="") as f:
+                    for r in list(csv.reader(f))[1:]:
+                        old[r[0]] = r
+            for r in rows:
+                old[r[0]] = list(r)
+            rows = [old[k] for k in sorted(old)]
         with open(dest, "w", newline="") as f:
             w = csv.writer(f)
             w.writerow(["timestamp", "open", "high", "low", "close", "volume"])
