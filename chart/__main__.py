@@ -12,6 +12,7 @@ python3 -m chart dividends chart/data chart/data/tr  # total-return copies (divi
 python3 -m chart overlay chart/data/weekly_desk/SPY.csv   # 10-month trend overlay, 2000-2026, by crash
 python3 -m chart intraday chart/data/intraday/15m          # ORB + gap fade, every variant and walk-forward
 python3 -m chart breakout chart/data/crypto/4h/*.csv       # 4h trend breakout with ATR stop vs buy and hold
+python3 -m chart signals research/heatseeker/signals.jsonl --csv out.csv   # score the forward signal journal
 """
 import argparse
 import json
@@ -87,6 +88,10 @@ def main(argv=None):
     bo.add_argument("--end", help="drop bars after this date (YYYY-MM-DD)")
     bo.add_argument("--window", action="append", default=[], metavar="NAME:START:END",
                     help="report strategy vs buy and hold over a dated window, e.g. 2022bear:2022-01-01:2022-12-31")
+    sg = sub.add_parser("signals", help="score a forward signal journal against 15-minute bars (chart/signals.py)")
+    sg.add_argument("journal")
+    sg.add_argument("--bars", default="chart/data/intraday/15m")
+    sg.add_argument("--csv", help="also write one row per signal here (for the dashboard)")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
     u.add_argument("--all", action="store_true", help="update every CSV in the folder, not only desk.json equities")
@@ -180,6 +185,18 @@ def main(argv=None):
         print(fmt_bo(rep))
         if a.json:
             pathlib.Path(a.json).write_text(json.dumps(_round(rep), indent=1))
+        return
+    if a.cmd == "signals":
+        import csv as _csv
+        from .signals import score_journal, summary as sig_summary
+        res = score_journal(a.journal, a.bars)
+        if a.csv:
+            with open(a.csv, "w", newline="") as f:
+                w = _csv.DictWriter(f, fieldnames=list(res[0]) if res else ["id"])
+                w.writeheader()
+                w.writerows({k: ("" if v is None else round(v, 4) if isinstance(v, float) else v) for k, v in r.items()}
+                            for r in res)
+        print(json.dumps({"summary": _round(sig_summary(res)), "signals": _round(res)}, indent=1))
         return
     if a.cmd == "update":
         from fund import config
