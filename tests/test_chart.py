@@ -1,6 +1,7 @@
 import json
 import os
 import tempfile
+import pathlib
 import unittest
 
 import chart
@@ -438,6 +439,38 @@ class UpdateTests(unittest.TestCase):
         self.assertNotIn("BTC/USD", rep)
         self.assertEqual(len(calls), 2)
 
+    def test_update_from_dir_reads_saved_connector_files(self):
+        from chart.update import update
+        d, src = tempfile.mkdtemp(), tempfile.mkdtemp()
+        self.addCleanup(lambda: [__import__("shutil").rmtree(x) for x in (d, src)])
+        pathlib.Path(src, "SPY.csv").write_text(self.AV)
+        uni = {"SPY": {"asset": "equity"}, "QQQ": {"asset": "equity"}}
+        rep = update(d, uni, source=src, pause=0)          # no key needed
+        self.assertEqual(rep["SPY"], 3)
+        self.assertTrue(rep["QQQ"].startswith("error:"))   # a missing file is reported, not fatal
+        self.assertEqual(update(d, {"SPY": {"asset": "equity"}}, source=src)["SPY"], 0)
+
+    def test_transcript_extract_keeps_good_bars_and_lists_errors(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("avt", pathlib.Path(__file__).parents[1] / "scripts" / "av_from_transcript.py")
+        avt = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(avt)
+        name = "mcp__Alpha_Vantage_MCP_Server__TIME_SERIES_DAILY"
+
+        def use(i, sym):
+            return json.dumps({"message": {"content": [{"type": "tool_use", "id": i, "name": name, "input": {"symbol": sym}}]}})
+
+        def res(i, body):
+            return json.dumps({"message": {"content": [{"type": "tool_result", "tool_use_id": i, "content": body}]}})
+
+        lines = [use("a", "spy"), res("a", json.dumps({"result": self.AV})),
+                 use("b", "IWM"), res("b", json.dumps({"error": {"message": "not entitled"}})),
+                 use("c", "SPY"), res("c", json.dumps({"error": {"message": "rate limit"}})),
+                 use("d", "QQQ"), res("d", [{"type": "text", "text": json.dumps({"result": self.AV})}])]
+        good, bad = avt.extract(lines)
+        self.assertEqual(sorted(good), ["QQQ", "SPY"])      # SPY's later failed retry doesn't drop its good fetch
+        self.assertEqual(bad, {"IWM": "not entitled"})
+
 
 class AdjustTests(unittest.TestCase):
     def test_split_adjust_divides_only_earlier_bars(self):
@@ -725,6 +758,8 @@ class DoctorTests(unittest.TestCase):
         self.assertFalse(bad["ok"])
         self.assertEqual(len(bad["problems"]), 3)
         self.assertEqual(bad["next_rotation_decision"], "2026-12-01")
+        feed = check([d], today=date(2026, 10, 27), env={}, feed="connector")
+        self.assertEqual(len(feed["problems"]), 1)          # no key complaint, only the lagging file
 
 
 class LongrunTests(unittest.TestCase):

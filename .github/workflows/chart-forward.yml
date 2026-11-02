@@ -1,9 +1,11 @@
 name: chart-forward
 # Forward paper test for the chart scan. Research only: it never previews, fills or places an order.
-# Weekdays, 2.5-3.5 hours after the close: append the day's bars (Alpha Vantage, needs the ALPHAVANTAGE_API_KEY secret; 8 stocks +
-# 13 ETFs = 21 requests, inside the free 25/day), log the scan's signals and, on the first session of each month, the
-# ETF rotation rule's picks (plus paper order tickets for desk review), all before the next open; keep everything on the
-# `shadow-data` branch under chart-forward/. `chart doctor` fails the run loudly if the key is missing or bars go stale.
+# Weekdays, 2.5-3.5 hours after the close: append the day's bars, log the scan's signals and, on the first session of
+# each month, the ETF rotation rule's picks (plus paper order tickets for desk review), all before the next open; keep
+# everything on the `shadow-data` branch under chart-forward/. The steps live in scripts/forward_run.sh.
+# Two feeds (docs/forward-feed.md): with the ALPHAVANTAGE_API_KEY secret this job fetches the bars itself (8 stocks +
+# 13 ETFs = 21 requests, inside the free 25/day); without it the job skips with a notice, and the Claude connector feed
+# (a scheduled Claude task) runs the same script and pushes to shadow-data instead.
 on:
   schedule:
     - cron: "37 23 * * 1-5"     # 19:37 EDT / 18:37 EST: late enough for the vendor's daily bar in both seasons
@@ -23,14 +25,22 @@ jobs:
         with:
           python-version: "3.11"
       - name: Preflight (API key)
+        id: pre
         env:
           ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
         run: |
+          if [ -z "$ALPHAVANTAGE_API_KEY" ]; then
+            echo "::notice::No ALPHAVANTAGE_API_KEY secret: skipping. The Claude connector feed updates shadow-data instead (docs/forward-feed.md)."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           python -m chart doctor chart/data chart/data/etf --max-stale 100000 > /tmp/doctor.json || {
             python -c "import json; [print('::error::' + p) for p in json.load(open('/tmp/doctor.json'))['problems']]"
             exit 1
           }
+          echo "run=true" >> "$GITHUB_OUTPUT"
       - name: Check out shadow-data
+        if: steps.pre.outputs.run == 'true'
         run: |
           git config user.name "chart-forward"
           git config user.email "chart-forward@users.noreply.github.com"
@@ -41,40 +51,13 @@ jobs:
             git -C /tmp/data checkout -q --orphan shadow-data
             git -C /tmp/data rm -rfq .
           fi
-          mkdir -p /tmp/data/chart-forward/data /tmp/data/chart-forward/etf
-          for f in chart/data/*.csv; do
-            [ -e "/tmp/data/chart-forward/data/$(basename "$f")" ] || cp "$f" /tmp/data/chart-forward/data/
-          done
-          for f in chart/data/etf/*.csv; do
-            [ -e "/tmp/data/chart-forward/etf/$(basename "$f")" ] || cp "$f" /tmp/data/chart-forward/etf/
-          done
       - name: Update bars, record signals, report
+        if: steps.pre.outputs.run == 'true'
         env:
           ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
-        run: |
-          D=/tmp/data/chart-forward
-          python -m chart update "$D/data"
-          python -m chart update "$D/etf" --all
-          python -m chart validate "$D"/data/*.csv "$D"/etf/*.csv > "$D/VALIDATE.json" || echo "validation problems: see VALIDATE.json"
-          python -m chart forward record "$D/data" --log "$D/signals.jsonl"
-          python -m chart forward report "$D/data" --log "$D/signals.jsonl" > "$D/REPORT.json"
-          python -m chart forward rotation-record "$D/etf" --log "$D/rotation.jsonl"
-          if [ -s "$D/rotation.jsonl" ]; then
-            python -m chart forward rotation-report "$D/etf" --log "$D/rotation.jsonl" > "$D/ROTATION.json"
-            python -m chart forward rotation-tickets "$D/etf" --log "$D/rotation.jsonl" --tickets "$D/rotation_tickets.jsonl"
-          fi
-          # Defensive variant logged alongside on paper: the same rule, in cash while the basket is below its 200-session average.
-          python -m chart forward rotation-record "$D/etf" --trend 200 --log "$D/rotation_trend200.jsonl"
-          if [ -s "$D/rotation_trend200.jsonl" ]; then
-            python -m chart forward rotation-report "$D/etf" --log "$D/rotation_trend200.jsonl" > "$D/ROTATION_TREND200.json"
-          fi
-          python -m chart overlay "$D/data/SPY.csv" --status > "$D/OVERLAY.json"     # regime flag, information only
-          python -m chart doctor "$D/data" "$D/etf" > "$D/DOCTOR.json" || true
-          if [ -s "$D/rotation.jsonl" ]; then
-            python -m chart forward rotation-brief "$D/etf" --log "$D/rotation.jsonl" --tickets "$D/rotation_tickets.jsonl" \
-              --trend-log "$D/rotation_trend200.jsonl" --doctor "$D/DOCTOR.json" --overlay "$D/OVERLAY.json" > "$D/BRIEF.md"
-          fi
+        run: scripts/forward_run.sh /tmp/data
       - name: Push to shadow-data
+        if: steps.pre.outputs.run == 'true'
         run: |
           cd /tmp/data
           git add chart-forward
@@ -86,5 +69,6 @@ jobs:
           done
           exit 1
       - name: Fail if bars are stale
+        if: steps.pre.outputs.run == 'true'
         run: |
           python -c "import json, sys; d = json.load(open('/tmp/data/chart-forward/DOCTOR.json')); [print('::error::' + p) for p in d['problems']]; sys.exit(not d['ok'])"

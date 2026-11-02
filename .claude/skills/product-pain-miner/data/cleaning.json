@@ -1,0 +1,104 @@
+{
+  "category": "cleaning",
+  "updated": "2026-10-31",
+  "entries": [
+    {
+      "id": "brush-roll-hair-wrap",
+      "item": "Vacuum brush rolls",
+      "complaint": "Hair and thread wind tightly around the brush roll and its ends until it stops spinning, so it has to be cut free with scissors",
+      "failure_mode": "wears-out-early",
+      "frequency": 5, "severity": 2, "annoyance": 5, "workaround": 3, "feasibility": 4,
+      "redesign": "A tapered or comb-guarded brush roll that pushes hair toward a built-in cutter, sealed end caps that hair can't wind into, and a roll that pops out without tools",
+      "prior_art": "Dyson conical brush bar; Shark anti-wrap rolls",
+      "sources": [
+        "https://www.bestcordlessvacuumguide.com/how-to-remove-hair-wrap-from-a-brushroll/",
+        "https://www.onegoodthingbyjillee.com/remove-hair-from-vacuum-brush-roll/",
+        "https://bbbprograms.org/media/newsroom/decisions/shark-vertex-vacuum",
+        "https://newsroom.sharkninja.com/zero-m-technology-a-high-performance-vacuum-innovation-designed-to-defend-against-hair-wrap/"
+      ]
+    },
+    {
+      "id": "kitchen-sponge-stinks",
+      "item": "Kitchen sponges",
+      "complaint": "Sponges start to smell and harbor bacteria within days, yet most people keep them for a month or more because nothing shows when one is spent",
+      "failure_mode": "no-feedback",
+      "frequency": 5, "severity": 3, "annoyance": 4, "workaround": 2, "feasibility": 5,
+      "redesign": "A quick-drying sponge with a color strip that fades after about a week of wetting, sold in a draining holder that keeps it off the wet sink edge",
+      "prior_art": "Silicone scrubbers; draining sponge holders",
+      "sources": [
+        "https://reviewed.com/cooking/features/how-often-you-should-change-your-kitchen-sponge",
+        "https://komonews.com/news/consumer/kitchen-sponge-smell-funky-replace-it",
+        "https://www.idealhome.co.uk/house-manual/cleaning/cleaning-experts-dish-sponge-warning",
+        "https://www.phillymag.com/2017/08/02/how-often-replace-kitchen-sponge/"
+      ]
+    },
+    {
+      "id": "robot-vacuum-stuck",
+      "item": "Robot vacuums",
+      "complaint": "The robot snags on socks, cords and rug tassels or wedges under low furniture, so owners tidy the floor before every run",
+      "failure_mode": "one-size-fits-all",
+      "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 3,
+      "redesign": "A front camera that recognizes and steers around small soft objects, a height sensor that checks clearance before driving under furniture, and a brush that reverses to release a snag",
+      "prior_art": "Camera-based obstacle avoidance on premium models",
+      "sources": [
+        "https://justadadapproved.com/why-do-robot-vacuums-get-stuck-on-cords-socks-and-rug-tassels/",
+        "https://www.tomsguide.com/home/smart-home/why-does-my-robot-vacuum-keep-getting-stuck-5-simple-ways-to-fix-it",
+        "https://forums.wyze.com/t/wyze-vacuum-what-you-need-to-know-before-buying-one/171159",
+        "https://www.mumsnet.com/talk/am_i_being_unreasonable/5550658-to-ask-if-your-robot-hoover-or-hoover-mop-works"
+      ]
+    },
+    {
+      "id": "mop-bucket-wringer",
+      "item": "Mops & mop buckets",
+      "complaint": "Wringers leave the mop dripping or don't fit the bucket, pads fray or catch, and buckets tip and spill dirty water",
+      "failure_mode": "wears-out-early",
+      "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4,
+      "redesign": "Separate clean and dirty tanks in a wide-based bucket, with a wringer molded into the bucket rather than clipped on, a pouring spout, and pads that attach by a full-width hook strip instead of tabs",
+      "sources": [
+        "https://www.productreview.com.au/listings/vileda-easy-wring-mop-bucket",
+        "https://www.webstaurantstore.com/product-reviews/274MOPBCKTBL.html",
+        "https://www.lowes.com/reviews/libman-1283-mops/5005975923?offset=100",
+        "https://es.trustpilot.com/review/mop-pro.co?page=7"
+      ]
+    },
+    {
+      "id": "stick-vac-trigger-hold",
+      "item": "Cordless stick vacuums",
+      "complaint": "The trigger has to be held down the whole time and can't be locked on, which makes hands sore during longer cleans",
+      "failure_mode": "one-size-fits-all",
+      "frequency": 3, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 5,
+      "redesign": "A click-on/click-off button with an auto-pause when the vacuum stands upright or the floor head lifts off the floor, so battery is saved without a held trigger",
+      "prior_art": "Stick vacuums with on/off switches; Dyson's later button models",
+      "sources": [
+        "https://published1.consumer.org.nz/products/stick-vacuum-cleaners/guide",
+        "https://forums.wyze.com/t/stick-vacuum/202003"
+      ]
+    },
+    {
+      "id": "stick-vac-battery-sealed",
+      "item": "Cordless stick vacuums",
+      "complaint": "The battery is built in, runs far short of the box claim on max power, and when it wears out replacing the whole vacuum is cheaper",
+      "failure_mode": "wears-out-early",
+      "frequency": 3, "severity": 3, "annoyance": 4, "workaround": 4, "feasibility": 4,
+      "redesign": "A battery that clicks out with standard cells, runtime printed for each power mode (not only eco), and a spare battery that charges in the dock",
+      "prior_art": "Click-in removable batteries on some stick vacuums",
+      "sources": [
+        "https://published1.consumer.org.nz/products/stick-vacuum-cleaners/guide"
+      ]
+    },
+    {
+      "id": "spray-bottle-clogs",
+      "item": "Trigger spray bottles",
+      "complaint": "Nozzles clog with dried cleaner, seals wear so the trigger sputters, and the last inch can't be sprayed because the tube no longer reaches",
+      "failure_mode": "last-mile-waste",
+      "frequency": 4, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 5,
+      "redesign": "A weighted pickup tube that follows the liquid to the lowest point, a nozzle that closes when you twist it off, and a trigger head that unscrews to move onto a refill bottle",
+      "prior_art": "Weighted-tube sprayers; refill-and-reuse cleaner bottles",
+      "sources": [
+        "https://www.hunker.com/12398310/how-to-fix-a-spray-bottle-that-isnt-spraying/",
+        "https://www.hometalk.com/30508348/q-why-do-spray-bottles-stop-working-and-what-can-you-do-about-it",
+        "https://www.cromwell.co.uk/shop/cleaning-and-hygiene/spray-bottles/c/080203"
+      ]
+    }
+  ]
+}
