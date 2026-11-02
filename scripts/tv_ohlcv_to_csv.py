@@ -5,8 +5,9 @@ chart/data/intraday/<interval>/<SYMBOL>.csv with columns timestamp,open,high,low
     python3 scripts/tv_ohlcv_to_csv.py OUTROOT RESPONSE.json [RESPONSE.json ...]
     python3 scripts/tv_ohlcv_to_csv.py --all-hours OUTROOT RESPONSE.json ...   # crypto: every bar, timestamps in UTC
     python3 scripts/tv_ohlcv_to_csv.py --merge OUTROOT RESPONSE.json ...       # add new bars to an existing CSV
---merge keeps the existing rows, replaces any with the same timestamp, and drops a final bar that is still forming
-(its interval has not ended yet), so a daily job can append each new session.
+--merge keeps the existing rows, replaces any for the same instant, and drops a final bar that is still forming
+(its interval has not ended yet), so a daily job can append each new session. Rows are matched by instant, not by text,
+and the merged file is written in this run's zone (UTC with --all-hours, else ET), so a file never holds one bar twice.
 """
 import csv
 import datetime as dt
@@ -44,6 +45,15 @@ def rows_from(body, all_hours=False):
     return out
 
 
+def merge_rows(old, new, tz):
+    """Existing CSV rows + new rows -> one row per instant, sorted, timestamps rewritten in `tz`. New rows win."""
+    by_instant = {}
+    for r in list(old) + list(new):
+        t = dt.datetime.fromisoformat(r[0])
+        by_instant[t.timestamp()] = [t.astimezone(tz).isoformat(), *r[1:]]
+    return [by_instant[k] for k in sorted(by_instant)]
+
+
 def main(argv):
     all_hours, merge = "--all-hours" in argv, "--merge" in argv
     argv = [a for a in argv if a not in ("--all-hours", "--merge")]
@@ -60,14 +70,11 @@ def main(argv):
             ivl = INTERVAL_MINUTES[body["interval"]] * 60
             now = dt.datetime.now(dt.timezone.utc)
             rows = [r for r in rows if dt.datetime.fromisoformat(r[0]) + dt.timedelta(seconds=ivl) <= now]
-            old = {}
+            old = []
             if dest.exists():
                 with open(dest, newline="") as f:
-                    for r in list(csv.reader(f))[1:]:
-                        old[r[0]] = r
-            for r in rows:
-                old[r[0]] = list(r)
-            rows = [old[k] for k in sorted(old)]
+                    old = list(csv.reader(f))[1:]
+            rows = merge_rows(old, rows, dt.timezone.utc if all_hours else ET)
         with open(dest, "w", newline="") as f:
             w = csv.writer(f)
             w.writerow(["timestamp", "open", "high", "low", "close", "volume"])
