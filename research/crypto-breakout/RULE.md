@@ -25,3 +25,23 @@ so this spends exactly 2: one rule on two assets. A failure on either one counts
 4. TextToQuant badge: DEPLOY. Anything else counts as "not proven".
 
 **Pass on both → forward paper log, then alert. Pass on one → not proven. Fail on both → reject.**
+
+## Amendment, 2026-11-02, before any own-engine data was fetched
+TextToQuant's parse made the exit unreachable (`VERDICT.md`), so the same rule is run in `chart/breakout.py`. The entry,
+exit and stop are **unchanged**. Only the execution details below are new.
+
+- **Data:** Binance spot BTCUSDT and ETHUSDT 4-hour bars from the TradingView connector, all 24 hours, as far back as
+  the feed goes.
+- **Fills:** a signal at bar i's close fills at bar i+1's open. The 10-bar-low exit compares the close with the lowest
+  low of the 10 bars **before** bar i, which is the TextToQuant bug, fixed.
+- **Stop:** fixed at entry fill − 2 × ATR(14) as of the signal bar. It is checked on each later bar's low. A bar that
+  opens below the stop fills at its open.
+- **Sizing:** 100% of equity, long or flat, with no leverage, so the result compares directly with buy and hold.
+- **Costs:** 10 bp fee + 10 bp slippage per side (base case). Ladder: 0, 5+5, 10+10, 25+25 bp.
+- **No parameters are fitted,** so there is no walk-forward. Out-of-sample checks instead:
+  - the **final third** of each history, a holdout no one has looked at;
+  - **every calendar year** separately;
+  - **the other coin.**
+
+**Pass bar, on both coins:** at least 30 trades; positive net return at 10+10 bp; return ÷ max drawdown above buy and
+hold's; positive in the final-third holdout; positive in more than half of the calendar years.
