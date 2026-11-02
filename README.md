@@ -51,3 +51,8 @@ Secrets set in the Render dashboard: `NACE_API_KEY`, `GITHUB_TOKEN` (fine-graine
 
 ## Not included (deliberate)
 Live order execution. Paper only until the paper week is reviewed; live needs exchange keys, a host that Binance serves (api.binance.com returns 451 from US/cloud IPs), and an explicit go-ahead.
+
+## Run on GitHub Actions (no Render needed)
+Workflow `.github/workflows/regime-bot.yml` (on the repo's default branch, since scheduled workflows only run from there) runs `python bot.py --hours 5.25` in back-to-back shifts; an hourly trigger keeps the next shift queued.
+State (log, paper account, snapshots) is stored on the `regime-bot-state` branch after every shift; nightly reviews go to `regime-bot-reviews`.
+Repo secrets: `NACE_API_KEY` (required), `BOT_NTFY_TOPIC` (optional). The built-in `GITHUB_TOKEN` handles publishing.

@@ -1,7 +1,10 @@
 """Step 7: hard risk layer. Nothing reaches the broker without passing every check here."""
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
+
+FILL_BUFFER = 0.002  # size as if filled 0.2% worse than signal price (spread + slippage)
 
 
 @dataclass
@@ -36,8 +39,8 @@ def check(cfg, *, regime_p: float, take_p: float, signal, equity: float, open_po
         return Verdict(False, reasons)
 
     qty_risk = equity * cfg.risk_per_trade_pct / 100 / stop_dist
-    qty_cap = equity * cfg.max_position_pct / 100 / signal.entry
-    qty = round(min(qty_risk, qty_cap), 5)
+    qty_cap = equity * cfg.max_position_pct / 100 / (signal.entry * (1 + FILL_BUFFER))
+    qty = math.floor(min(qty_risk, qty_cap) * 1e5) / 1e5  # round down, never up
     if qty <= 0:
         return Verdict(False, ["size rounds to zero"])
     capped = ["size capped by max_position_pct"] if qty_cap < qty_risk else []

@@ -180,8 +180,9 @@ class Bot:
             f"take>={self.cfg.take_threshold} {('tuned ' + str(sm['tuned'])) if sm.get('tuned') else ''}| Drex errors {sm.get('drex_errors', 0)} | log {'OK' if sm.get('log_ok', True) else 'BROKEN'}",
         ]))
 
-    def run(self):
+    def run(self, hours: float | None = None):
         ms = INTERVAL_MS[self.cfg.interval]
+        deadline = time.time() + hours * 3600 if hours else None
         self.journal.log("start", config=self.cfg.as_dict())
         while True:
             try:
@@ -195,13 +196,22 @@ class Bot:
                 log.exception("nightly review failed")
                 self.journal.log("error", stage="review", error=repr(e))
             now = int(time.time() * 1000)
-            time.sleep(max(5.0, ((now // ms + 1) * ms - now) / 1000 + 3))
+            nap = max(5.0, ((now // ms + 1) * ms - now) / 1000 + 3)
+            if deadline and time.time() + nap > deadline:
+                self.journal.log("shift_end", hours=hours)
+                return
+            time.sleep(nap)
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--once", action="store_true")
+    ap.add_argument("--hours", type=float, default=None, help="run for a fixed shift, then exit (GitHub Actions)")
     a = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     bot = Bot(Config.load())
-    bot.cycle() if a.once else bot.run()
+    if a.once:
+        bot.cycle()
+        bot.maybe_review()
+    else:
+        bot.run(a.hours)
