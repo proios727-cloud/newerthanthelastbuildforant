@@ -36,6 +36,9 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      - name: Drex key check
+        continue-on-error: true
+        run: python drex.py
       - name: Load state
         run: |
           if git fetch origin regime-bot-state; then
