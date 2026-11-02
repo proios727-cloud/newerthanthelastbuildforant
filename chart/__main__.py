@@ -77,6 +77,7 @@ def main(argv=None):
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
     u.add_argument("--all", action="store_true", help="update every CSV in the folder, not only desk.json equities")
+    u.add_argument("--from-dir", help="read <SYMBOL>.csv Alpha Vantage daily files from this folder instead of the API")
     r = sub.add_parser("report", help="write the visual scorecard (.html) or its data (.json)")
     r.add_argument("folders", nargs="+", help="NAME=FOLDER pairs, e.g. Stocks=chart/data")
     r.add_argument("--out", required=True)
@@ -111,6 +112,8 @@ def main(argv=None):
     dr = sub.add_parser("doctor", help="preflight for the forward job: API key, data freshness, next rotation decision")
     dr.add_argument("folders", nargs="*", default=["chart/data", "chart/data/etf"])
     dr.add_argument("--max-stale", type=int, default=3, help="weekdays the newest bar may lag today (default 3)")
+    dr.add_argument("--feed", choices=["key", "connector"], default="key",
+                    help="connector: bars come from the Claude connector feed, so skip the API key check")
     v = sub.add_parser("validate", help="sanity-check OHLC CSVs, optionally against an overlapping reference")
     v.add_argument("csv", nargs="+")
     v.add_argument("--ref", help="reference CSV whose overlapping closes must match")
@@ -154,7 +157,7 @@ def main(argv=None):
         from .update import update
         uni = ({f.stem.upper(): {"asset": "equity"} for f in pathlib.Path(a.folder).glob("*.csv")} if a.all
                else config.load().universe)
-        print(json.dumps(update(a.folder, uni), indent=2))
+        print(json.dumps(update(a.folder, uni, source=a.from_dir), indent=2))
         return
     if a.cmd == "report":
         from .report import build, render_html
@@ -204,7 +207,7 @@ def main(argv=None):
         return
     if a.cmd == "doctor":
         from .doctor import check
-        res = check(a.folders, max_stale=a.max_stale)
+        res = check(a.folders, max_stale=a.max_stale, feed=a.feed)
         print(json.dumps(res, indent=2, ensure_ascii=False))
         raise SystemExit(0 if res["ok"] else 1)
     if a.cmd == "validate":

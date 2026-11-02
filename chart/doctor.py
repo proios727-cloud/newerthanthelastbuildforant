@@ -1,6 +1,6 @@
 """Preflight for the forward test: say plainly what would make tonight's run a silent no-op.
 
-Checks the Alpha Vantage key, how many weekdays each data folder's newest bar is behind, and when the rotation rule
+Checks the Alpha Vantage key (unless bars come through the connector feed), how many weekdays each data folder's newest bar is behind, and when the rotation rule
 next decides (the first weekday of next month; exchange holidays are not modelled, so a holiday pushes it a day).
 """
 import os
@@ -33,11 +33,12 @@ def next_decision(today):
     return nxt
 
 
-def check(folders, today=None, env=None, max_stale=3):
+def check(folders, today=None, env=None, max_stale=3, feed="key"):
+    """`feed="connector"`: bars arrive through the Claude connector feed, so no API key is needed."""
     today = today or date.today()
     env = os.environ if env is None else env
     problems, data = [], {}
-    if not env.get("ALPHAVANTAGE_API_KEY"):
+    if feed == "key" and not env.get("ALPHAVANTAGE_API_KEY"):
         problems.append("ALPHAVANTAGE_API_KEY is not set: `chart update` cannot fetch bars, so nothing new is logged. "
                         "Add it under Settings → Secrets and variables → Actions.")
     for folder in folders:

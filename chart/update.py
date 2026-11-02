@@ -1,7 +1,9 @@
 """Append the latest daily bars to chart/data CSVs from Alpha Vantage (free key: compact = last 100 sessions).
 
 Only rows newer than a file's last date are added, so history from another vendor is never overwritten.
-Needs ALPHAVANTAGE_API_KEY. Crypto symbols are skipped (the desk's crypto data comes from elsewhere).
+Needs ALPHAVANTAGE_API_KEY, or `source`: a folder of <SYMBOL>.csv files already fetched in Alpha Vantage's daily csv
+format (the Claude connector feed, see docs/forward-feed.md). Crypto symbols are skipped (the desk's crypto data comes
+from elsewhere).
 """
 import csv
 import io
@@ -54,17 +56,27 @@ def fetch(symbol, key, opener=urllib.request.urlopen):
     return parse_av_csv(text)
 
 
-def update(folder, universe, key=None, pause=1.2, opener=urllib.request.urlopen):
+def read(symbol, source):
+    """Bars for `symbol` from `source`/<SYMBOL>.csv, an Alpha Vantage daily csv saved by the connector feed."""
+    path = pathlib.Path(source) / f"{symbol}.csv"
+    if not path.exists():
+        raise ValueError(f"{path} not found")
+    return parse_av_csv(path.read_text())
+
+
+def update(folder, universe, key=None, pause=1.2, opener=urllib.request.urlopen, source=None):
     key = key or os.environ.get("ALPHAVANTAGE_API_KEY")
-    if not key:
-        raise SystemExit("set ALPHAVANTAGE_API_KEY")
+    if not key and not source:
+        raise SystemExit("set ALPHAVANTAGE_API_KEY, or pass --from-dir")
     report = {}
     for sym, meta in sorted(universe.items()):
         if meta.get("asset") != "equity":
             continue
         try:
-            report[sym] = merge(pathlib.Path(folder) / f"{sym}.csv", fetch(sym, key, opener))
+            rows = read(sym, source) if source else fetch(sym, key, opener)
+            report[sym] = merge(pathlib.Path(folder) / f"{sym}.csv", rows)
         except Exception as e:                      # one bad symbol must not stop the rest
             report[sym] = f"error: {e}"
-        time.sleep(pause)
+        if not source:
+            time.sleep(pause)
     return report

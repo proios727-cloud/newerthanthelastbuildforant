@@ -70,7 +70,7 @@ they hold up in step 4 **and** in a market or period that wasn't searched. Two "
 The forward log is the only evidence that can't be overfit after the fact:
 - `python3 -m chart forward record` logs the scan.
 - `forward rotation-record [--trend N]` logs a rotation rule.
-- The daily `chart-forward` workflow runs both on the `shadow-data` branch and needs the `ALPHAVANTAGE_API_KEY` secret.
+- Both run daily on the `shadow-data` branch, fed by the `ALPHAVANTAGE_API_KEY` workflow or the Claude connector task (`docs/forward-feed.md`).
 - Live use still goes through analyst → Risk Officer → trader → `EXECUTE`.
 
 ## Never
