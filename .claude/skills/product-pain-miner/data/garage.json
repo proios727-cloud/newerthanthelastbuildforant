@@ -1,0 +1,78 @@
+{
+  "category": "garage",
+  "updated": "2026-11-03",
+  "entries": [
+    {
+      "id": "tool-batteries-locked-in",
+      "item": "Cordless power tool batteries",
+      "complaint": "Every brand, and sometimes each line within a brand, uses its own battery, so switching brands means buying new batteries and chargers",
+      "failure_mode": "seller-first",
+      "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 4, "feasibility": 2,
+      "redesign": "A shared battery connector standard across brands, with each brand competing on the tool itself",
+      "prior_art": "Cordless Alliance System; Power X Change; Bosch Amp Share",
+      "sources": [
+        "https://toolguyd.com/universal-cordless-power-tool-battery/",
+        "https://lawnmowerforum.com/threads/the-insanity-of-battery-incompatibility.16310/exportthread",
+        "https://www.alltools.com.au/blog/2021/power-tool-batteries-are-interchangeable",
+        "https://ukworkshop.co.uk/threads/battery-compatibility.146494"
+      ]
+    },
+    {
+      "id": "garage-door-left-open",
+      "item": "Garage door openers",
+      "complaint": "Nothing tells you the door was left open overnight, and built-in alerts are missing, fixed at an hour, or don't fire",
+      "failure_mode": "no-feedback",
+      "frequency": 3, "severity": 3, "annoyance": 3, "workaround": 3, "feasibility": 5,
+      "redesign": "A light on the wall button that stays lit while the door is open, plus an opener setting that auto-closes after a set time or after dark",
+      "prior_art": "Timer-to-close features; camera-based open-door alerts",
+      "sources": [
+        "https://forums.wyze.com/t/garage-door-left-open-notification/37016",
+        "https://community.smartthings.com/t/garage-door-open-ness-detection-alert/12097",
+        "https://www.techradar.com/home/smart-home/googles-nest-cameras-will-now-alert-you-if-you-left-the-garage-door-open",
+        "https://forums.wyze.com/t/garage-door-notification-if-door-is-open-at-specific-time-and-for-time-duration/233941"
+      ]
+    },
+    {
+      "id": "garage-keypad-dies",
+      "item": "Garage door keypads & remotes",
+      "complaint": "Keypads and remotes stop working with no warning, usually a dead battery, lost pairing or lock mode, and each brand resets differently",
+      "failure_mode": "no-feedback",
+      "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 5,
+      "redesign": "A low-battery blink on the keypad weeks ahead, and an opener light that shows when lock mode is on",
+      "sources": [
+        "https://ahs.com/home-matters/repair-maintenance/how-to-troubleshoot-a-garage-door-keypad",
+        "https://www.libertyhomeguard.com/troubleshooting-your-garage-door-keypad",
+        "https://www.smarthomeperfected.com/garage-door-keypad-not-working/",
+        "https://www.trunetto.com/troubleshooting/garage-doors/liftmaster/liftmaster-wireless-keypad-not-working-reset-reprogram"
+      ]
+    },
+    {
+      "id": "pegboard-hooks-fall-out",
+      "item": "Pegboard hooks",
+      "complaint": "Thin 1/8-inch hooks wobble in 1/4-inch holes and fall out every time a tool is taken down",
+      "failure_mode": "wears-out-early",
+      "frequency": 3, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 5,
+      "redesign": "Hooks with a twist-lock tab that snaps behind the board, sized to the hole, and sold in the same kit as the board",
+      "prior_art": "Locking pegboard hooks; steel pegboard systems",
+      "sources": [
+        "https://www.garagejournal.com/forum/threads/peg-board-hardware-advice.1304/",
+        "https://wallcontrol.com/blogs/wall-storage-organization-blog/how-to-prevent-pegboard-hooks-from-falling-out-or-sagging-a-durable-solution-for-organized-wall-storage",
+        "https://grassrootsmotorsports.com/forum/grm/how-do-you-pegboard/140927/page1"
+      ]
+    },
+    {
+      "id": "extension-cord-tangles",
+      "item": "Extension cords",
+      "complaint": "Long cords twist and kink into a tangle when coiled, and the kinks damage the wire inside",
+      "failure_mode": "wears-out-early",
+      "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4,
+      "redesign": "A flat cord that coils without twisting, with a built-in strap and a lit end that shows the cord is live",
+      "prior_art": "Flat cords; lighted-end extension cords",
+      "sources": [
+        "https://blogs.popularwoodworking.com/review/how-to-roll-up-an-extension-cord",
+        "https://www.thisoldhouse.com/tools/21015253/proper-use-and-storage-of-extension-cords",
+        "https://www.monoprice.com/p/resources/smart-ways-to-store-extension-cords-safely-and-efficiently"
+      ]
+    }
+  ]
+}
