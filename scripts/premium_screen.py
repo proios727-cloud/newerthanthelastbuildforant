@@ -6,7 +6,8 @@
 - DIR (--bars): daily bar CSVs (<TICKER>.csv), e.g. from scripts/tv_ohlcv_to_csv.py --all-hours.
 - EARNINGS.json: {"AAPL": "2026-01-29", ...}, the next earnings date per ticker (missing means none found).
 Writes OUTDIR/premium_screen.csv (every ticker, ranked, with the failed filter) and appends the top 5 to
-research/premium-screener/picks.jsonl unless a pick for the same ticker and expiry is already open.
+research/premium-screener/picks.jsonl unless a pick for the same ticker and expiry is already open. Each ticker is screened
+on its newest snapshot of the earliest expiry 30-45 days out (options.chain_index, options.premium.pick_expiry).
 """
 import argparse
 import csv
@@ -17,18 +18,21 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from chart import load_csv  # noqa: E402
-from options.premium import rank, screen, screen_put  # noqa: E402
+from chart import append_jsonl, load_csv, read_jsonl  # noqa: E402
+from options import chain_index  # noqa: E402
+from options.premium import open_picks, pick_expiry, rank, screen, screen_put  # noqa: E402
 
 PICKS = ROOT / "research/premium-screener/picks.jsonl"
 
 
-def latest_chains(folder):
-    best = {}
-    for p in sorted(pathlib.Path(folder).glob("*.json")):
-        c = json.loads(p.read_text())
-        best[c["symbol"]] = (p, c)                         # sorted by name, so the latest snapshot wins
-    return best
+def chains_to_screen(folder, today):
+    """{symbol: (path, chain)}: each symbol's rule expiry, from its newest snapshot of that expiry."""
+    idx = chain_index(folder)
+    out = {}
+    for sym in sorted({s for s, _ in idx}):
+        exp = pick_expiry([e for s, e in idx if s == sym], today)
+        out[sym] = idx[(sym, exp)]
+    return out
 
 
 def main(argv=None):
@@ -44,13 +48,12 @@ def main(argv=None):
     a = ap.parse_args(argv)
     earnings = json.loads(pathlib.Path(a.earnings).read_text())
     results = []
-    for sym, (path, chain) in sorted(latest_chains(a.chains).items()):
+    for sym, (path, chain) in chains_to_screen(a.chains, a.today).items():
         bars_path = pathlib.Path(a.bars) / f"{sym}.csv"
         closes = [b.close for b in load_csv(bars_path) if b.ts[:10] <= a.today] if bars_path.exists() else []
         r = (screen_put if a.mode == "put" else screen)(sym, chain, closes, earnings.get(sym), a.today)
         if r["status"] == "pass" and a.mode == "put":
-            k = r["legs"].split()[1].lstrip("-")
-            r["ticket"] = (f"SELL TO OPEN 1 {sym} {r['expiry']} {k} PUT · LIMIT {r['credit']:.2f} or better · GTC · "
+            r["ticket"] = (f"SELL TO OPEN 1 {sym} {r['expiry']} {r['strike']:g} PUT · LIMIT {r['credit']:.2f} or better · GTC · "
                            f"cash secured ${r['cash_needed']:,}")
         r["chain_file"] = str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path)
         r["asof"] = chain.get("asof")
@@ -70,25 +73,15 @@ def main(argv=None):
             w.writerow({k: (round(v, 4) if isinstance(v, float) else ("" if v is None else v))
                         for k, v in r.items()})
     if not a.no_log:
-        open_keys = set()
-        if PICKS.exists():
-            for line in PICKS.read_text().splitlines():
-                if line.strip():
-                    p = json.loads(line)
-                    if not p.get("closed"):
-                        open_keys.add((p["ticker"], p["expiry"]))
-        with open(PICKS, "a") as f:
-            for r in ranked:
-                if r.get("rank") and (r["ticker"], r["expiry"]) not in open_keys:
-                    f.write(json.dumps({"id": f"{a.today}-{r['ticker']}", "date": a.today, "logged_at": r["asof"],
-                                        "ticker": r["ticker"], "structure": r["structure"], "legs": r["legs"],
-                                        "expiry": r["expiry"], "credit": r["credit"], "width": r.get("width"),
-                                        "max_loss": r.get("max_loss") or r.get("breakeven"),
-                                        "cash_needed": r.get("cash_needed"), "breakeven": r.get("breakeven"),
-                                        "ticket": r.get("ticket"), "mode": "paper",
-                                        "pop": r["pop"], "iv_rv": round(r["iv_rv"], 3),
-                                        "rank": r["rank"], "exit_rules": "take 50% of credit; stop at 2x credit; "
-                                        "close at 21 DTE; never hold through earnings", "closed": None}) + "\n")
+        held = {(p["ticker"], p["expiry"]) for p in open_picks(read_jsonl(PICKS))}
+        append_jsonl(PICKS, *[
+            {"id": f"{a.today}-{r['ticker']}", "date": a.today, "logged_at": r["asof"], "ticker": r["ticker"],
+             "structure": r["structure"], "legs": r["legs"], "expiry": r["expiry"], "credit": r["credit"],
+             "width": r.get("width"), "max_loss": r.get("max_loss") or r.get("breakeven"),
+             "cash_needed": r.get("cash_needed"), "breakeven": r.get("breakeven"), "ticket": r.get("ticket"),
+             "mode": "paper", "pop": r["pop"], "iv_rv": round(r["iv_rv"], 3), "rank": r["rank"],
+             "exit_rules": "take 50% of credit; stop at 2x credit; close at 21 DTE; never hold through earnings"}
+            for r in ranked if r.get("rank") and (r["ticker"], r["expiry"]) not in held])
     for r in ranked:
         print(f"{r.get('rank') or '-':>2} {r['ticker']:<5} {r['status']:<4} {r['structure'] or '':<18} "
               f"{r['legs'] or '':<38} cr {r['credit']} IV/RV {r['iv_rv'] and round(r['iv_rv'], 2)} {r['reason']}")

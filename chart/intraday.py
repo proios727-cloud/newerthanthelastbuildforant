@@ -15,6 +15,7 @@ COST_LADDER = (("0", 0.0), ("1+1", 2.0), ("2+2", 4.0), ("5+5", 10.0))   # label,
 BASE_COST = 2.0
 MIN_TRAIN_SESSIONS = 40
 RVOL_LOOKBACK = 20
+INTERVAL_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "4h": 240, "1D": 1440}   # TradingView names
 
 
 def _time(ts):

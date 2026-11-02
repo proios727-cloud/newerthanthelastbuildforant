@@ -10,8 +10,8 @@ The cost is a payoff with many small wins and occasional large losses, concentra
 risk only, a hard stop, and no positions through earnings.
 
 ## Universe (fixed)
-SPY, QQQ, IWM, DIA, AAPL, MSFT, NVDA, AMD, TSLA, META, AMZN, GOOGL, AVGO, NFLX, PLTR, GLD. These are the most liquid
-optionable names on Robinhood, where spreads are tight enough for realistic fills.
+SPY, QQQ, IWM, DIA, AAPL, MSFT, NVDA, AMD, TSLA, META, AMZN, GOOGL, AVGO, NFLX, PLTR, GLD, plus MU from amendment 3.
+These are the most liquid optionable names on Robinhood, where spreads are tight enough for realistic fills.
 
 ## Inputs, per ticker, each trading day
 - Daily bars, 260 sessions, from the TradingView connector:
@@ -78,3 +78,8 @@ The owner has never traded spreads and isn't trading any of their current accoun
   expiry, it's recorded as assigned at the strike.
 - **Paper mode:** no account is read or used for sizing. Each pick is logged per contract, with the cash it would need,
   so the record shows what account size it takes.
+
+## Amendment 3, 2026-11-02: MU added to the universe (owner's request)
+The owner asked for **MU** (Micron) to be screened. It's a heavily traded, optionable large cap, held to the same
+liquidity bar as the other 16 names (amendment 1: short-put spread ≤ 5% of mid, open interest ≥ 100). Every other filter,
+the scoring and the exits are unchanged. MU is added from the 2026-11-02 run on. The universe is now 17 tickers.

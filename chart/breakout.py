@@ -89,10 +89,7 @@ def summary(bars, equity, trades, ppy=BARS_PER_YEAR_4H):
     mean = sum(rets) / n if n else 0.0
     sd = math.sqrt(sum((r - mean) ** 2 for r in rets) / (n - 1)) if n > 1 else 0.0
 
-    def span(lo, hi):                                   # equity and buy-hold return over bars[lo:hi]
-        start_eq = equity[lo - 1] if lo > 0 else 1.0
-        start_px = bars[lo - 1].close if lo > 0 else bars[0].open
-        return equity[hi - 1] / start_eq - 1, bars[hi - 1].close / start_px - 1
+    span = lambda lo, hi: _span(bars, equity, lo, hi)  # noqa: E731
 
     years = {}
     for i, b in enumerate(bars):
@@ -115,15 +112,19 @@ def summary(bars, equity, trades, ppy=BARS_PER_YEAR_4H):
     }
 
 
+def _span(bars, equity, lo, hi):
+    """(strategy, buy and hold) return over bars[lo:hi], measured from the close before `lo` (the first open at 0)."""
+    start_eq = equity[lo - 1] if lo > 0 else 1.0
+    start_px = bars[lo - 1].close if lo > 0 else bars[0].open
+    return equity[hi - 1] / start_eq - 1, bars[hi - 1].close / start_px - 1
+
+
 def window_return(bars, equity, start, end):
     """(strategy, buy and hold) return over the bars dated start..end inclusive (YYYY-MM-DD), or None if none are."""
     idx = [i for i, b in enumerate(bars) if start <= b.ts[:10] <= end]
     if not idx:
         return None
-    lo, hi = idx[0], idx[-1]
-    start_eq = equity[lo - 1] if lo > 0 else 1.0
-    start_px = bars[lo - 1].close if lo > 0 else bars[0].open
-    return equity[hi] / start_eq - 1, bars[hi].close / start_px - 1
+    return _span(bars, equity, idx[0], idx[-1] + 1)
 
 
 def report(paths, ppy=BARS_PER_YEAR_4H, end=None, windows=(), interval="4h"):

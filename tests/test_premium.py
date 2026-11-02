@@ -79,6 +79,39 @@ class PremiumTests(unittest.TestCase):
         self.assertIn("downtrend", P.screen_put("T", chain(), down, today="2026-11-02")["reason"])
 
 
+    def test_screen_uses_one_expiry(self):
+        c = chain()
+        later = [dict(x, expiry="2026-12-18", bid=x["bid"] * 3, ask=x["ask"] * 3) for x in c["contracts"]]
+        c["contracts"] = later + c["contracts"]                      # a second, later expiry must be ignored
+        r = P.screen_put("T", c, closes(), today="2026-11-02")
+        self.assertEqual((r["expiry"], r["credit"], r["strike"]), ("2026-12-11", 1.20, 95))
+
+    def test_open_picks_reads_close_records(self):
+        rows = [{"id": "a", "ticker": "SPY", "expiry": "2026-12-11"}, {"id": "b", "ticker": "QQQ", "expiry": "2026-12-11"},
+                {"close_of": "a", "date": "2026-11-20", "debit": 3.0, "rule": "take profit"}]
+        self.assertEqual([r["id"] for r in P.open_picks(rows)], ["b"])
+
+    def test_pick_expiry(self):
+        self.assertEqual(P.pick_expiry(["2026-11-20", "2026-12-11", "2026-12-18"], "2026-11-02"), "2026-12-11")
+        self.assertEqual(P.pick_expiry(["2026-11-20"], "2026-11-02"), "2026-11-20")   # nothing 30-45 out: earliest
+
+
+class ChainIndexTests(unittest.TestCase):
+    def test_newest_snapshot_per_symbol_and_expiry(self):
+        import json, pathlib, tempfile
+        from options import chain_index
+        with tempfile.TemporaryDirectory() as d:
+            def snap(name, asof, expiries):
+                cs = [leg(100, "put", -0.2, 1, 1.1, expiry=e) for e in expiries]
+                pathlib.Path(d, name).write_text(json.dumps({"symbol": "T", "spot": 100, "asof": asof, "contracts": cs}))
+            snap("T-1.json", "2026-11-02T15:00", ["2026-12-11", "2026-12-18"])
+            snap("T-2.json", "2026-11-03T15:00", ["2026-12-18"])
+            idx = chain_index(d)
+            self.assertEqual(idx[("T", "2026-12-11")][0].name, "T-1.json")   # still marked from the older snapshot
+            self.assertEqual(idx[("T", "2026-12-18")][0].name, "T-2.json")
+            self.assertEqual({c["expiry"] for c in idx[("T", "2026-12-11")][1]["contracts"]}, {"2026-12-11"})
+
+
 class MarkTests(unittest.TestCase):
     def setUp(self):
         import importlib.util, pathlib

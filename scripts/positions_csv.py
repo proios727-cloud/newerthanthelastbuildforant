@@ -11,13 +11,16 @@ import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from chart import read_jsonl  # noqa: E402
+
 JOURNAL = ROOT / "research/paper/positions.jsonl"
 FIELDS = ["id", "source", "date", "ticker", "contract", "instrument_id", "type", "strike", "expiry", "side", "qty", "entry",
           "take_profit_at", "stop_at", "time_exit", "cash_needed"]
 
 
 def open_positions(path=JOURNAL):
-    rows = [json.loads(x) for x in path.read_text().splitlines() if x.strip()] if path.exists() else []
+    rows = read_jsonl(path)
     closed = {r["id"] for r in rows if r.get("event") == "close"}
     return [r for r in rows if r.get("event") == "open" and r["id"] not in closed]
 

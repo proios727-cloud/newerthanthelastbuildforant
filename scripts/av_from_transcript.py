@@ -10,51 +10,29 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from _transcript import newest_transcript, tool_results  # noqa: E402
 from chart.update import parse_av_csv  # noqa: E402
-
-
-def newest_transcript(root=pathlib.Path.home() / ".claude" / "projects"):
-    files = sorted(root.glob("*/*.jsonl"), key=lambda p: p.stat().st_mtime)
-    if not files:
-        raise SystemExit(f"no transcript under {root}")
-    return files[-1]
-
-
-def _text(content):
-    if isinstance(content, str):
-        return content
-    return "".join(c.get("text", "") for c in content if isinstance(c, dict))
 
 
 def extract(lines):
     """{symbol: csv text} for the last good TIME_SERIES_DAILY result per symbol, and {symbol: error} for the rest."""
-    calls, good, bad = {}, {}, {}
-    for line in lines:
+    good, bad = {}, {}
+    for _, args, raw in tool_results(lines, lambda n: n.endswith("__TIME_SERIES_DAILY")):
+        sym = args.get("symbol", "").upper()
         try:
-            msg = json.loads(line).get("message", {})
-        except json.JSONDecodeError:
-            continue
-        content = msg.get("content") if isinstance(msg, dict) else None
-        if not isinstance(content, list):
-            continue
-        for c in content:
-            if c.get("type") == "tool_use" and c.get("name", "").endswith("__TIME_SERIES_DAILY"):
-                calls[c["id"]] = c.get("input", {}).get("symbol", "").upper()
-            elif c.get("type") == "tool_result" and c.get("tool_use_id") in calls:
-                sym, raw = calls[c["tool_use_id"]], _text(c.get("content"))
-                try:
-                    body = json.loads(raw)
-                    text = body["result"] if isinstance(body, dict) and "result" in body else raw
-                except (json.JSONDecodeError, TypeError):
-                    body, text = None, raw
-                try:
-                    parse_av_csv(text)
-                    good[sym] = text
-                    bad.pop(sym, None)
-                except (ValueError, KeyError):
-                    if sym not in good:                   # a retry that failed doesn't undo an earlier good fetch
-                        err = body.get("error", {}).get("message") if isinstance(body, dict) else None
-                        bad[sym] = (err or raw)[:200]
+            body = json.loads(raw)
+            text = body["result"] if isinstance(body, dict) and "result" in body else raw
+        except (json.JSONDecodeError, TypeError):
+            body, text = None, raw
+        try:
+            parse_av_csv(text)
+            good[sym] = text
+            bad.pop(sym, None)
+        except (ValueError, KeyError):
+            if sym not in good:                   # a retry that failed doesn't undo an earlier good fetch
+                err = body.get("error", {}).get("message") if isinstance(body, dict) else None
+                bad[sym] = (err or raw)[:200]
     return good, bad
 
 
