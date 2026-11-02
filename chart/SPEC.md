@@ -139,3 +139,19 @@ time (so sitting in cash doesn't count as risk control), Sharpe > 0, and at leas
 - `rolling_multi` repeats `rotate.rolling`'s re-pick-and-stitch protocol for top-N holdings.
 - `day_sweep` runs one fixed rule from **every** possible rebalance day and reports min/median/max, so no single lucky day
   is reported. `stress` repeats that at 1+2, 10+10 and 25+25 bp and with GLD, TLT and XLK each removed.
+
+## Intraday (chart/intraday.py)
+
+Session backtester for regular-hours bars with ISO US/Eastern timestamps (`chart/data/intraday/`). Rule, grid and verdict:
+`research/intraday-orb/`.
+
+- A signal is decided at a bar's close and fills at the next bar's open. One trade a day at most, flat at the session's last close,
+  and no entries after 14:00 ET.
+- Stops and targets are checked on bar high/low. **The stop wins a tie.** A bar that opens through the stop fills at its open.
+- `orb`: opening range of `or_min` minutes, first close outside it, stop at the other side, target `target_r`·R or the
+  close, optional relative-volume filter against the prior 20 sessions' opening-range volume.
+- `gap_fade`: |open/prior close − 1| ≥ `gap_pct` → fade it from the second bar's open, target the prior close, stop
+  `stop_x`·gap beyond the open or none.
+- `walk_forward`: the variant is re-picked each month by compounded net return on all earlier sessions (≥ 40), and only that
+  month's trades count. Costs are per side, in bps of notional (ladder 0, 1+1, 2+2, 5+5).
+- `python3 -m chart intraday <folder> [--json out.json]`. Tests: `tests/test_intraday.py`.

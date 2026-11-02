@@ -10,6 +10,7 @@ python3 -m chart longrun                            # the rotation rule over 200
 python3 -m chart longrun chart/data/weekly_desk --strategies   # six strategies, 20+ years, weekly
 python3 -m chart dividends chart/data chart/data/tr  # total-return copies (dividends back-adjusted)
 python3 -m chart overlay chart/data/weekly_desk/SPY.csv   # 10-month trend overlay, 2000-2026, by crash
+python3 -m chart intraday chart/data/intraday/15m          # ORB + gap fade, every variant and walk-forward
 """
 import argparse
 import json
@@ -74,6 +75,10 @@ def main(argv=None):
     f.add_argument("--overlay", help="rotation-brief: a `chart overlay --status` JSON file, for the regime flag")
     f.add_argument("--trend", type=int, default=0, help="rotation-record/replay: basket trend filter length (sessions)")
     f.add_argument("--buffer", type=int, default=0, help="rotation-record/replay: hysteresis band")
+    it = sub.add_parser("intraday", help="opening-range breakout and gap fade on intraday bars (research/intraday-orb)")
+    it.add_argument("folder", nargs="?", default="chart/data/intraday/15m")
+    it.add_argument("--symbols", default="SPY,QQQ")
+    it.add_argument("--json", help="also write the full report as JSON here")
     u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
     u.add_argument("folder", nargs="?", default="chart/data")
     u.add_argument("--all", action="store_true", help="update every CSV in the folder, not only desk.json equities")
@@ -151,6 +156,13 @@ def main(argv=None):
             print(json.dumps(row, indent=2) if row else "already recorded for this as-of date")
         else:
             print(json.dumps(forward.report(log, folder=a.folder, universe=uni), indent=2))
+        return
+    if a.cmd == "intraday":
+        from .intraday import format_report, report
+        rep = report(a.folder, tuple(a.symbols.split(",")))
+        print(format_report(rep))
+        if a.json:
+            pathlib.Path(a.json).write_text(json.dumps(_round(rep), indent=1))
         return
     if a.cmd == "update":
         from fund import config
