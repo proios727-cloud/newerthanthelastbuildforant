@@ -14,7 +14,7 @@ import requests
 
 log = logging.getLogger("publish")
 API = "https://api.github.com"
-BRANCH = "reviews"
+BRANCH = os.environ.get("GITHUB_REVIEWS_BRANCH", "reviews")
 
 
 def _h(tok):
@@ -24,7 +24,7 @@ def _h(tok):
 def _ensure_branch(s, repo, tok):
     if s.get(f"{API}/repos/{repo}/branches/{BRANCH}", headers=_h(tok), timeout=15).status_code == 200:
         return
-    default = s.get(f"{API}/repos/{repo}", headers=_h(tok), timeout=15).json()["default_branch"]
+    default = os.environ.get("GITHUB_BOT_BRANCH", "regime-bot")
     sha = s.get(f"{API}/repos/{repo}/git/ref/heads/{default}", headers=_h(tok), timeout=15).json()["object"]["sha"]
     s.post(f"{API}/repos/{repo}/git/refs", headers=_h(tok), json={"ref": f"refs/heads/{BRANCH}", "sha": sha}, timeout=15).raise_for_status()
 

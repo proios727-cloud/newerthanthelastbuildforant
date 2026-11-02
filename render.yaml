@@ -1,5 +1,5 @@
 # Render Blueprint: one always-on background worker with a persistent disk.
-# The nightly review runs inside this worker (it owns the disk), then publishes to the `reviews` branch.
+# The nightly review runs inside this worker (it owns the disk), then publishes to the `regime-bot-reviews` branch.
 services:
   - type: worker
     name: regime-bot
@@ -8,6 +8,7 @@ services:
     region: oregon
     buildCommand: pip install -r requirements.txt
     startCommand: python bot.py
+    branch: regime-bot
     autoDeploy: true         # question rewrites pushed to main redeploy the bot
     disk:
       name: bot-state
@@ -21,7 +22,9 @@ services:
       - key: BOT_STATE_DIR
         value: /var/data/state
       - key: GITHUB_REPO
-        value: proios727-cloud/regime-bot
+        value: proios727-cloud/newerthanthelastbuildforant
+      - key: GITHUB_REVIEWS_BRANCH
+        value: regime-bot-reviews
       - key: NACE_API_KEY        # full Drex key (not the masked preview)
         sync: false
       - key: GITHUB_TOKEN        # fine-grained PAT: Contents read/write on this repo only

@@ -1,11 +1,11 @@
 # Nightly question-sharpening run (instructions for the scheduled Claude session)
 
-The worker already ran `review.py` at 00:00 UTC and pushed results to the `reviews` branch:
+The worker already ran `review.py` at 00:00 UTC and pushed results to the `regime-bot-reviews` branch:
 `reviews/latest.md`, `reviews/latest-packet.json`, `reviews/paper.json`, `reviews/tuned.json`.
 
 ## Steps
-1. `git fetch origin reviews main && git checkout main && git pull`
-2. Read `origin/reviews:reviews/latest.md` and `latest-packet.json`. If the report date is not today (UTC), or it is missing, stop and report that the worker did not publish.
+1. `git fetch origin regime-bot regime-bot-reviews && git checkout regime-bot && git pull origin regime-bot`
+2. Read `origin/regime-bot-reviews:reviews/latest.md` and `latest-packet.json`. If the report date is not today (UTC), or it is missing, stop and report that the worker did not publish.
 3. **Change nothing** if any holds:
    - fewer than 20 scored regime calls, or
    - regime accuracy ≥ 60% and no `confident_regime_misses` with p ≥ 0.7, and TAKE/SKIP replay shows TAKE avg R ≥ SKIP avg R, or
@@ -16,5 +16,5 @@ The worker already ran `review.py` at 00:00 UTC and pushed results to the `revie
    - Bump `version` by exactly 1.
 5. Validate: `python check_questions.py --bump` and `python tests/test_pipeline.py` must both pass. If either fails, `git checkout questions.json` and stop.
 6. Append an entry to `QUESTIONS_CHANGELOG.md`: date, new version, evidence (counts, accuracy, example candle_t values), what changed and why.
-7. Commit both files to `main` with message `questions vN: <one-line reason>` and push. Render auto-deploys; the next candle uses vN, and every log line records it.
+7. Commit both files to the `regime-bot` branch with message `questions vN: <one-line reason>` and push. Render auto-deploys; the next candle uses vN, and every log line records it.
 8. Reply with a 3-line summary: accuracy / TAKE-vs-SKIP R / what changed (or "no change: <reason>").

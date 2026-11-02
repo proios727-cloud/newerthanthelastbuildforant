@@ -46,8 +46,8 @@ Any `Config` field can be overridden with `BOT_<FIELD>` (e.g. `BOT_INTERVAL=5m`,
 Secrets set in the Render dashboard: `NACE_API_KEY`, `GITHUB_TOKEN` (fine-grained, Contents read/write on this repo only), `BOT_NTFY_TOPIC`.
 
 ## Nightly loop
-- 00:00 UTC — the worker runs `review.py`, auto-tunes the TAKE threshold (±0.05 max) and pushes the report to the `reviews` branch.
-- ~01:00 UTC — a scheduled Claude session follows `NIGHTLY_REVIEW.md`: reads the misses, rewrites at most one set of question wording, validates with `check_questions.py --bump` + tests, commits to `main`. Render redeploys. History: `QUESTIONS_CHANGELOG.md` + git log.
+- 00:00 UTC — the worker runs `review.py`, auto-tunes the TAKE threshold (±0.05 max) and pushes the report to the `regime-bot-reviews` branch.
+- ~01:00 UTC — a scheduled Claude session follows `NIGHTLY_REVIEW.md`: reads the misses, rewrites at most one set of question wording, validates with `check_questions.py --bump` + tests, commits to the `regime-bot` branch. Render redeploys. History: `QUESTIONS_CHANGELOG.md` + git log.
 
 ## Not included (deliberate)
 Live order execution. Paper only until the paper week is reviewed; live needs exchange keys, a host that Binance serves (api.binance.com returns 451 from US/cloud IPs), and an explicit go-ahead.
