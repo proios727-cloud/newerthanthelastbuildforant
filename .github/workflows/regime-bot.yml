@@ -1,0 +1,62 @@
+name: regime-bot
+# PAPER only: BTC regime-switching bot (code on the `regime-bot` branch). Never places real orders.
+# Runs ~5.25h shifts; an hourly trigger keeps one shift queued so the next starts as soon as one ends.
+# State (decision log, paper account, snapshots) persists on the `regime-bot-state` branch.
+on:
+  schedule:
+    - cron: "11 * * * *"
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "Shift length in hours"
+        default: "5.25"
+concurrency:
+  group: regime-bot
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  shift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 345
+    env:
+      NACE_API_KEY: ${{ secrets.NACE_API_KEY }}
+      BOT_NTFY_TOPIC: ${{ secrets.BOT_NTFY_TOPIC }}
+      GITHUB_TOKEN: ${{ github.token }}
+      GITHUB_REPO: ${{ github.repository }}
+      GITHUB_REVIEWS_BRANCH: regime-bot-reviews
+      GITHUB_BOT_BRANCH: regime-bot
+      BOT_STATE_DIR: /tmp/state/state
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: regime-bot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Load state
+        run: |
+          if git fetch origin regime-bot-state; then
+            git worktree add --detach /tmp/state FETCH_HEAD
+          else
+            git worktree add --detach /tmp/state
+            git -C /tmp/state checkout -q --orphan regime-bot-state
+            git -C /tmp/state rm -rfq .
+          fi
+          mkdir -p "$BOT_STATE_DIR"
+      - name: Run shift
+        run: python bot.py --hours "${{ inputs.hours || '5.25' }}"
+      - name: Save state
+        if: always()
+        run: |
+          cd /tmp/state
+          # keep the newest 200 snapshots (each one's sha256 is in the log)
+          ls -1t state/snapshots/*.png 2>/dev/null | tail -n +201 | xargs -r rm -f
+          git config user.name "regime-bot"
+          git config user.email "regime-bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && { echo "no state changes"; exit 0; }
+          git commit -qm "state $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do git push origin HEAD:regime-bot-state && break; sleep $((i*5)); done
