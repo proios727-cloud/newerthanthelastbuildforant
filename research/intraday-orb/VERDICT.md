@@ -54,6 +54,7 @@ t > 0.8. That is what chance alone would produce.
   every test in `RULE.md` on data not used here: 1-minute or 5-minute bars from 2018–2022, from a paid or free source
   (`docs/intraday-data.md`).
 - Forward paper results. Nothing goes live from a backtest.
+- The follow-up is pre-registered in `research/intraday-orb-vol/RULE.md` and is waiting on 2018–22 data.
 
 ## Data caveats
 - 15-minute history from the free feed starts on 2026-01-02 (209 sessions), so the 15-minute walk-forward covers only
