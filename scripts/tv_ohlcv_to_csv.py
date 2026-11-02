@@ -15,6 +15,9 @@ import pathlib
 import sys
 from zoneinfo import ZoneInfo
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
+from chart.intraday import INTERVAL_MINUTES  # noqa: E402
+
 ET = ZoneInfo("America/New_York")
 RTH_OPEN, RTH_CLOSE = dt.time(9, 30), dt.time(16, 0)
 
@@ -54,7 +57,7 @@ def main(argv):
         dest = root / body["interval"] / f"{sym}.csv"
         dest.parent.mkdir(parents=True, exist_ok=True)
         if merge:
-            ivl = {"1m": 60, "5m": 300, "15m": 900, "30m": 1800, "1h": 3600, "4h": 14400, "1D": 86400}[body["interval"]]
+            ivl = INTERVAL_MINUTES[body["interval"]] * 60
             now = dt.datetime.now(dt.timezone.utc)
             rows = [r for r in rows if dt.datetime.fromisoformat(r[0]) + dt.timedelta(seconds=ivl) <= now]
             old = {}

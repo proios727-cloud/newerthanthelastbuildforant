@@ -11,6 +11,7 @@ import pathlib
 from datetime import datetime, timezone
 
 from . import load_csv
+from . import read_jsonl as _rows
 from .scan import symbol_for
 
 LOG = pathlib.Path(__file__).resolve().parent.parent / "ledger" / "signals.jsonl"
@@ -254,11 +255,6 @@ def rotation_tickets(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, nav=
     with tickets.open("a") as f:
         f.write(json.dumps(row) + "\n")
     return row
-
-
-def _rows(path):
-    path = pathlib.Path(path)
-    return [json.loads(l) for l in path.read_text().splitlines() if l.strip()] if path.exists() else []
 
 
 def rotation_brief(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, trend_log=None, doctor=None, overlay=None):

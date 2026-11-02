@@ -124,6 +124,8 @@ ordered: the owner enters picks by hand in a paper account.
    - The next earnings dates with Robinhood `get_earnings_calendar` (market-wide, filtered by symbol).
    - One expiry 30–45 days out per ticker. Fetch puts from 18% below spot (12% for ETFs) up to the nearest strike, plus
      the at-the-money call, with `get_option_instruments` and `get_option_quotes`.
+   - For each open pick, also fetch its own contract's quote (its ticker and expiry), so step 4 can mark it after its expiry
+     drops under 30 days. The scripts keep the newest snapshot per ticker and expiry, so the files can sit in one folder.
 2. **Convert the data:**
    ```bash
    python3 scripts/rh_chain_from_transcript.py <agent transcripts> options/data/chains_premium
