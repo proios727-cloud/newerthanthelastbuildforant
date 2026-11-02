@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "notes": "Edited only by the nightly review (step 8). Every log line records the version it was asked with.",
+  "regime": {
+    "regime": {
+      "type": "choice",
+      "instructions": "Image 1 is the BTCUSDT chart (candles, EMA20 blue, EMA50 orange, volume) beside the order book depth within 1% of mid. The state holds the same candle and book metrics as numbers. Classify the market regime for the next several candles.",
+      "criteria": {
+        "TRENDING": "Directional, persistent move: price holding one side of EMA20/EMA50 with the EMAs sloped and separated, ADX roughly above 22, higher highs or lower lows, pullbacks shallow. Volatility normal or rising steadily.",
+        "CHOPPY": "Range-bound or mean-reverting: EMAs flat or interleaved, price crossing them repeatedly, ADX roughly below 20, Bollinger width narrow or stable, no follow-through on breaks.",
+        "PANIC": "Disorderly stress: sudden large range candles, ATR far above its recent average, volume spike, fast drawdown or squeeze, spread widening or one side of the book thinning out. Signals become unreliable."
+      }
+    }
+  },
+  "signal": {
+    "take": {
+      "type": "noul",
+      "instructions": "The state describes a proposed trade (playbook, side, entry, stop, target) plus the current regime, candle metrics and order book. Image 1 is the chart and depth snapshot. Will price reach the target before the stop?",
+      "criteria": {
+        "true": "TAKE: the setup is clean for this playbook, the regime supports it, the book does not lean against it, and reward to risk is realistic.",
+        "false": "SKIP: the setup is weak, late, against the order flow, into a nearby wall, or the regime does not fit the playbook."
+      }
+    },
+    "book_control": {
+      "type": "choice",
+      "instructions": "From the order book metrics (imbalances, walls, spread) and the last candle's taker-buy share, who is in control of short-term price right now?",
+      "criteria": {
+        "BUYERS": "Bids clearly heavier near mid, aggressive taker buying, asks being lifted.",
+        "SELLERS": "Asks clearly heavier near mid, aggressive taker selling, bids being hit.",
+        "BALANCED": "No clear side in control."
+      }
+    },
+    "entry": {
+      "type": "choice",
+      "instructions": "Given who controls the book and the urgency of this setup, how should the order be entered?",
+      "criteria": {
+        "MARKET": "Momentum favors the trade and the book is with it; waiting likely means a worse price or a missed move. Spread is tight.",
+        "LIMIT": "No urgency or a pullback toward the entry is likely; resting at the best bid (long) or best ask (short) should fill at a better price.",
+        "WAIT": "Order flow currently leans against the trade or the book is unstable; re-check on the next candle."
+      }
+    }
+  }
+}
