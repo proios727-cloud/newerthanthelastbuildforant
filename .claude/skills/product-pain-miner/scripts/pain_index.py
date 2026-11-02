@@ -4,6 +4,7 @@
 Usage:
   python pain_index.py data/kitchen.json                         # validate only
   python pain_index.py data/kitchen.json --out reports/kitchen.md
+  python pain_index.py --overview data --out OVERVIEW.md         # cross-category view
 
 Exit 1 with a readable list of problems if the dataset is invalid. Never renders a broken file.
 Stdlib only.
@@ -120,21 +121,82 @@ def render(data):
     return "\n".join(out) + "\n"
 
 
-def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("dataset")
-    ap.add_argument("--out")
-    args = ap.parse_args(argv)
+def render_overview(datasets):
+    rows = sorted(((d["category"], e, *score(e)) for d in datasets for e in d["entries"]),
+                  key=lambda r: (-r[3], -r[2], r[0], r[1]["id"]))
+    cats = sorted(d["category"] for d in datasets)
+    mix = Counter((e["failure_mode"], c) for c, e, _, _ in rows)
+    totals = Counter(e["failure_mode"] for _, e, _, _ in rows)
+    nuisance = sum(1 for _, e, _, _ in rows if e["annoyance"] > e["severity"])
+    updated = max(d["updated"] for d in datasets)
+    out = [
+        "# Cross-category view: pain → redesign",
+        "",
+        f"_Generated from {len(datasets)} datasets in `data/` (latest update {updated}). Do not edit by hand._",
+        "",
+        f"**{len(rows)} complaints** across {len(cats)} categories. "
+        f"{nuisance} of them ({round(nuisance / len(rows) * 100)}%) are nuisance-led: annoyance scores higher than harm.",
+        "",
+        "## Failure modes by category",
+        "",
+        "| Failure | " + " | ".join(c.title() for c in cats) + " | Total |",
+        "|---|" + "---|" * len(cats) + "---|",
+    ]
+    for m, total in sorted(totals.items(), key=lambda kv: (-kv[1], kv[0])):
+        counts = " | ".join(str(mix[(m, c)] or "·") for c in cats)
+        out.append(f"| {MODES[m]} | {counts} | **{total}** |")
+    out += ["", "## Top 15 opportunities overall", "",
+            "| # | Category | Item | Failure | Pain | Opp. | Redesign |", "|---|---|---|---|---|---|---|"]
+    for n, (c, e, pain, opp) in enumerate(rows[:15], 1):
+        out.append(f"| {n} | {c.title()} | {cell(e['item'])} | {MODES[e['failure_mode']]} "
+                   f"| {pain} | **{opp}** | {cell(e['redesign'])} |")
+    out += ["", "## Every entry by failure mode", ""]
+    for m, total in sorted(totals.items(), key=lambda kv: (-kv[1], kv[0])):
+        out += [f"### {MODES[m]} ({total})", ""]
+        for c, e, _, opp in rows:
+            if e["failure_mode"] == m:
+                out.append(f"- **{cell(e['item'])}** ({c}, opp. {opp}): {e['complaint']}")
+        out.append("")
+    return "\n".join(out)
+
+
+def load(path):
     try:
-        data = json.loads(pathlib.Path(args.dataset).read_text())
+        data = json.loads(pathlib.Path(path).read_text())
     except (OSError, json.JSONDecodeError) as exc:
-        print(f"cannot read {args.dataset}: {exc}", file=sys.stderr)
-        return 1
+        print(f"cannot read {path}: {exc}", file=sys.stderr)
+        return None
     problems = validate(data)
     if problems:
-        print(f"{args.dataset}: {len(problems)} problem(s)", file=sys.stderr)
+        print(f"{path}: {len(problems)} problem(s)", file=sys.stderr)
         for p in problems:
             print(f"  - {p}", file=sys.stderr)
+        return None
+    return data
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("dataset", nargs="?")
+    ap.add_argument("--overview", metavar="DATA_DIR", help="render the cross-category view from every dataset in DATA_DIR")
+    ap.add_argument("--out")
+    args = ap.parse_args(argv)
+    if bool(args.dataset) == bool(args.overview):
+        ap.error("give either a dataset or --overview DATA_DIR")
+    if args.overview:
+        paths = sorted(pathlib.Path(args.overview).glob("*.json"))
+        datasets = [load(p) for p in paths]
+        if not paths or None in datasets:
+            return 1
+        text = render_overview(datasets)
+        if args.out:
+            pathlib.Path(args.out).write_text(text)
+            print(f"wrote {args.out} ({len(datasets)} datasets)")
+        else:
+            print(text, end="")
+        return 0
+    data = load(args.dataset)
+    if data is None:
         return 1
     if args.out:
         pathlib.Path(args.out).write_text(render(data))

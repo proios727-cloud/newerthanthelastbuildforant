@@ -16,6 +16,7 @@ is always generated from it and never edited by hand.
 | `references/failure-modes.md` | The 7 root design failures used for classification, with check questions |
 | `data/<category>.json` | One dataset per category (schema below) |
 | `reports/<category>.md` | Generated ranked report |
+| `OVERVIEW.md` | Generated cross-category view: failure modes by category, top 15 overall, every entry by mode |
 | `scripts/pain_index.py` | Validates a dataset, scores it, renders the report. Stdlib only |
 
 ## Workflow
@@ -46,6 +47,11 @@ is always generated from it and never edited by hand.
      --out .claude/skills/product-pain-miner/reports/<category>.md
    ```
    Fix every problem it reports. It refuses to render an invalid dataset.
+   Then regenerate the cross-category view, which ranks every entry across all categories:
+   ```bash
+   python3 .claude/skills/product-pain-miner/scripts/pain_index.py --overview .claude/skills/product-pain-miner/data \
+     --out .claude/skills/product-pain-miner/OVERVIEW.md
+   ```
 7. **Report back** to the user: top 5 by opportunity, which failure modes dominate, and any entries
    with weak evidence (one source only).
 
