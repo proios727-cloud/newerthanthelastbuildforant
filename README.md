@@ -18,6 +18,7 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `fund/risk.py` | The Risk Officer's rules as pure functions. PASS comes with a max size; VETO names the rule. |
 | `fund/preview.py` | Order preview → `EXECUTE` gate → paper fill. There is no live execution path. |
 | `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
+| `chart/intraday.py` | Intraday session backtester (opening-range breakout, gap fade, walk-forward). Data: `chart/data/intraday/`, sources: `docs/intraday-data.md`. **Verdict: reject** (`research/intraday-orb/VERDICT.md`). |
 | `tests/` | unit tests: `python3 -m unittest -v` |
 
 ```bash
