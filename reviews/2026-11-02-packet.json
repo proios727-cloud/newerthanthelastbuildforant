@@ -1,0 +1,10 @@
+{
+  "confident_regime_misses": [],
+  "takes_that_stopped": [],
+  "skips_that_would_have_won": [],
+  "confusion": {
+    "TRENDING": {},
+    "CHOPPY": {},
+    "PANIC": {}
+  }
+}
