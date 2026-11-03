@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Backstage: Today</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F2F3F5}
+a{color:#3B34E0}a:hover{color:#2A23B8}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F2F3F5; color: #15161C; font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.5;">
+
+<header style="background: #15161C; color: #FFFFFF;">
+<div style="max-width: 1320px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: space-between;">
+<div style="display: flex; align-items: center; gap: 10px;">
+<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="2" width="24" height="24" rx="7" fill="none" stroke="#FFFFFF" stroke-width="2"></rect><path d="M9 18 V10 M14 18 V7 M19 18 V12" stroke="{{accent}}" stroke-width="2.5" stroke-linecap="round"></path></svg>
+<span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.01em;">Backstage</span>
+<span style="font-size: 12px; color: #C9CBD3; border: 1px solid #3A3C46; border-radius: 999px; padding: 2px 10px;">Prototype · demo data</span>
+</div>
+<div role="group" aria-label="Workspace discipline" style="display: flex; gap: 4px; background: #23242C; border-radius: 12px; padding: 4px;">
+<sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+<button type="button" onClick="{{m.pick}}" aria-pressed="{{m.pressed}}" style="{{m.style}}">{{m.label}}</button>
+</sc-for>
+</div>
+</div>
+</header>
+
+<div style="max-width: 1320px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
+
+<nav aria-label="Main" style="flex: 1 1 200px; display: flex; flex-direction: column; gap: 4px;">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="6">
+<button type="button" style="{{n.style}}">{{n.label}}</button>
+</sc-for>
+<div style="margin-top: 16px; padding: 16px; background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 14px;">
+<div style="font-size: 13px; font-weight: 600;">How the agents work</div>
+<p style="margin: 6px 0 0; font-size: 13px; color: #5B5E6B;">Agents draft. Nothing is sent, signed or paid until you approve it. Every draft shows the reason it was suggested.</p>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+
+<section style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px;">
+<div>
+<p style="margin: 0; font-size: 13px; color: #5B5E6B;">Tuesday · {{modeLine}}</p>
+<h1 style="margin: 4px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: 34px; line-height: 1.15; letter-spacing: -0.02em;">Good morning, [Your name]</h1>
+</div>
+<p style="margin: 0; font-size: 14px; color: #5B5E6B;"><strong style="color: #15161C;">{{pendingCount}}</strong> drafts waiting for your approval</p>
+</section>
+
+<section aria-labelledby="queue-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+<h2 id="queue-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Approval queue</h2>
+<span style="font-size: 13px; color: #5B5E6B;">Drafted by your agents overnight</span>
+</div>
+<div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;">
+<sc-for list="{{queue}}" as="q" hint-placeholder-count="3">
+<article style="{{q.cardStyle}}">
+<div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: flex-start;">
+<div style="flex: 1 1 360px; min-width: 0;">
+<span style="{{q.tagStyle}}">{{q.tag}}</span>
+<h3 style="margin: 8px 0 4px; font-size: 16px; font-weight: 600;">{{q.title}}</h3>
+<p style="margin: 0; font-size: 14px; color: #3F424D;">{{q.detail}}</p>
+<p style="margin: 8px 0 0; font-size: 13px; color: #5B5E6B;"><strong style="color: #15161C; font-weight: 600;">Why this:</strong> {{q.why}}</p>
+</div>
+<sc-if value="{{q.open}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
+<button type="button" onClick="{{q.skip}}" style="min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid #D3D6DD; background: #FFFFFF; color: #15161C; font-size: 14px; font-weight: 500; cursor: pointer;">Skip</button>
+<button type="button" style="min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid #D3D6DD; background: #FFFFFF; color: #15161C; font-size: 14px; font-weight: 500; cursor: pointer;">Edit draft</button>
+<button type="button" onClick="{{q.approve}}" style="min-height: 44px; padding: 0 18px; border-radius: 10px; border: 0; background: {{accent}}; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer;">Approve</button>
+</div>
+</sc-if>
+<sc-if value="{{q.closed}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; align-items: center; gap: 10px;">
+<span style="{{q.resultStyle}}">{{q.result}}</span>
+<button type="button" onClick="{{q.undo}}" style="min-height: 44px; padding: 0 12px; border: 0; background: transparent; color: #3B34E0; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: underline;">Undo</button>
+</div>
+</sc-if>
+</div>
+</article>
+</sc-for>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+
+<section aria-labelledby="money-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="money-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Where your money is</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">This quarter, every source in one place</p>
+<div style="margin-top: 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+<sc-for list="{{moneyTotals}}" as="t" hint-placeholder-count="3">
+<div style="background: #F2F3F5; border-radius: 12px; padding: 12px;">
+<div style="font-size: 12px; color: #5B5E6B;">{{t.label}}</div>
+<div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700;">{{t.value}}</div>
+</div>
+</sc-for>
+</div>
+<ul style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column;">
+<sc-for list="{{money}}" as="r" hint-placeholder-count="4">
+<li style="display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #ECEEF2;">
+<div style="min-width: 0;">
+<div style="font-size: 14px; font-weight: 500;">{{r.source}}</div>
+<div style="font-size: 13px; color: #5B5E6B;">{{r.note}}</div>
+</div>
+<div style="text-align: right; flex-shrink: 0;">
+<div style="font-size: 14px; font-weight: 600;">{{r.amount}}</div>
+<div style="{{r.statusStyle}}">{{r.status}}</div>
+</div>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<section aria-labelledby="opp-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="opp-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">{{oppTitle}}</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">From found to won, with a clear status on every pitch</p>
+<div style="margin-top: 16px; display: flex; flex-direction: column; gap: 10px;">
+<sc-for list="{{opps}}" as="o" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #ECEEF2; border-radius: 12px;">
+<div style="width: 92px; flex-shrink: 0;"><span style="{{o.stageStyle}}">{{o.stage}}</span></div>
+<div style="min-width: 0;">
+<div style="font-size: 14px; font-weight: 500;">{{o.name}}</div>
+<div style="font-size: 13px; color: #5B5E6B;">{{o.note}}</div>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section aria-labelledby="launch-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="launch-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">{{launchTitle}}</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">{{launchSub}}</p>
+<ol style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 0;">
+<sc-for list="{{launch}}" as="s" hint-placeholder-count="5">
+<li style="display: flex; gap: 12px;">
+<div style="display: flex; flex-direction: column; align-items: center; width: 16px;">
+<span style="{{s.dotStyle}}"></span>
+<span style="flex: 1; width: 2px; background: #E2E4E9; min-height: 24px;"></span>
+</div>
+<div style="padding-bottom: 14px; min-width: 0;">
+<div style="font-size: 12px; font-weight: 600; color: #5B5E6B;">{{s.when}}</div>
+<div style="font-size: 14px;">{{s.what}}</div>
+</div>
+</li>
+</sc-for>
+</ol>
+</section>
+
+<section aria-labelledby="collab-h" style="background: #15161C; color: #FFFFFF; border-radius: 18px; padding: 24px;">
+<span style="font-size: 12px; font-weight: 600; color: #15161C; background: #FFFFFF; border-radius: 999px; padding: 3px 10px;">Cross-discipline</span>
+<h2 id="collab-h" style="margin: 12px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Collab: [Album title] cover art</h2>
+<p style="margin: 4px 0 0; font-size: 14px; color: #C9CBD3;">Musician and visual artist, one shared project with the terms built in.</p>
+<div style="margin-top: 16px; display: flex; flex-direction: column; gap: 10px;">
+<sc-for list="{{splits}}" as="p" hint-placeholder-count="3">
+<div>
+<div style="display: flex; justify-content: space-between; font-size: 13px;"><span>{{p.who}}</span><span style="color: #C9CBD3;">{{p.share}}</span></div>
+<div style="margin-top: 4px; height: 8px; background: #2C2E38; border-radius: 999px;"><div style="{{p.barStyle}}"></div></div>
+</div>
+</sc-for>
+</div>
+<p style="margin: 16px 0 0; font-size: 13px; color: #C9CBD3;">Usage: streaming, merch, posters. No AI training. Both parties approve before anything is published.</p>
+<button type="button" style="margin-top: 16px; min-height: 44px; padding: 0 18px; border-radius: 10px; border: 0; background: #FFFFFF; color: #15161C; font-size: 14px; font-weight: 600; cursor: pointer;">Review split sheet</button>
+</section>
+
+<section aria-labelledby="guard-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="guard-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Protection</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">Your work, your profile and your account, watched daily</p>
+<ul style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+<sc-for list="{{guard}}" as="g" hint-placeholder-count="3">
+<li style="display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid #ECEEF2; border-radius: 12px;">
+<span style="{{g.dotStyle}}"></span>
+<div style="min-width: 0; flex: 1;">
+<div style="display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;"><span style="font-size: 14px; font-weight: 500;">{{g.name}}</span><span style="{{g.statusStyle}}">{{g.status}}</span></div>
+<div style="font-size: 13px; color: #5B5E6B;">{{g.note}}</div>
+</div>
+</li>
+</sc-for>
+</ul>
+</section>
+
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#3B34E0","options":["#3B34E0","#C2410C","#0F766E","#15161C"]},"startMode":{"editor":"enum","default":"both","options":["artist","musician","both"]},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: null, done: {} };
+  }
+
+  content() {
+    const artistQueue = [
+      { id: 'a1', tag: 'Open call', title: 'Application drafted: [Grant or residency name]', detail: 'Artist statement adapted from your bio, plus three recent works picked from your catalog. The entry fee is shown before you submit.', why: 'It matches your medium and region, and the deadline is in 6 days.' },
+      { id: 'a2', tag: 'Commission', title: '50% deposit invoice for [Client] portrait', detail: 'Scope, two revision rounds and the delivery date come from your chat with the client. Finals are released only after payment, and any extra change is priced for the client to approve first.', why: 'You marked the brief as agreed yesterday, and no deposit has been requested yet.' },
+      { id: 'a3', tag: 'Licensing', title: 'Reply to [Brand] about using "[Artwork title]"', detail: 'Quotes a 12-month, single-territory license using your rate card. AI training is excluded.', why: 'An inbound request has been unanswered for 3 days.' }
+    ];
+    const musicianQueue = [
+      { id: 'm1', tag: 'Pitch', title: 'Pitches to 12 independent curators for "[Single title]"', detail: 'A personal note for each curator, a private stream link and your EPK. You will see open and listen status on each one.', why: 'They match the genre, and each curator accepts submissions this week.' },
+      { id: 'm2', tag: 'Royalties', title: 'Register the co-writer split for "[Song title]"', detail: '50/50 with [Co-writer]. Ready to file with your PRO and your publishing admin.', why: 'The song is released, and unregistered works cannot collect performance royalties.' },
+      { id: 'm3', tag: 'Booking', title: 'Reply to the [Venue] hold for [Date]', detail: 'Asks for a guarantee plus a door split, the load-in time and the merch terms.', why: 'The hold expires on Friday, and it fills a gap in your routing.' }
+    ];
+    const collab = { id: 'c1', tag: 'Collab', title: 'Split sheet for the [Album title] cover art', detail: 'The artwork stays 100% with the artist and the recording 100% with the musician. Covers a usage license and merch revenue share.', why: 'Both of you have uploaded files, but no terms are signed yet.' };
+
+    const artistMoney = [
+      { source: 'Print shop sales', note: 'Paid out weekly', amount: '$1,240', status: 'Paid', kind: 'paid' },
+      { source: 'Commission: [Client]', note: 'Deposit not yet invoiced', amount: '$600', status: 'Not invoiced', kind: 'warn' },
+      { source: 'License: [Brand]', note: 'Waiting on your reply', amount: '$900', status: 'Pending', kind: 'pending' },
+      { source: 'Marketplace reserve', note: 'Held as a new-shop reserve. Releases on [date], or sooner with proof of delivery.', amount: '$420', status: 'Held', kind: 'warn' }
+    ];
+    const musicianMoney = [
+      { source: 'Streaming (distributor)', note: 'Matched against Spotify for Artists. 2 months are still on the way, so no gap.', amount: '$310', status: 'Pending', kind: 'pending' },
+      { source: 'Performance royalties', note: '1 work unregistered, so it cannot be collected', amount: '$—', status: 'Blocked', kind: 'warn' },
+      { source: 'Live: [Venue] show', note: 'Guarantee plus door', amount: '$750', status: 'Paid', kind: 'paid' },
+      { source: 'Bandcamp and merch', note: 'Paid out per sale', amount: '$515', status: 'Paid', kind: 'paid' }
+    ];
+
+    const artistOpps = [
+      { stage: 'Found', name: '[Gallery] group show', note: 'Theme fits 2 works in your catalog' },
+      { stage: 'Drafted', name: '[Grant or residency name]', note: 'Waiting for your approval' },
+      { stage: 'Sent', name: '[Magazine] cover open call', note: 'Viewed by the editor 2 days ago' },
+      { stage: 'Won', name: '[Client] portrait', note: 'Brief agreed, deposit pending' }
+    ];
+    const musicianOpps = [
+      { stage: 'Found', name: '[Festival] emerging stage', note: 'Applications open, no fee' },
+      { stage: 'Drafted', name: '12 playlist curators', note: 'Waiting for your approval' },
+      { stage: 'Sent', name: '[Sync agency]', note: 'Opened, and listened for 1:42' },
+      { stage: 'Won', name: '[Venue] headline slot', note: 'Hold confirmed, contract next' }
+    ];
+
+    const artistLaunch = [
+      { when: 'T-21 days', what: 'Final scans and mockups ready', state: 'done' },
+      { when: 'T-14 days', what: 'Press note and mailing-list teaser', state: 'done' },
+      { when: 'T-7 days', what: 'Preorder page goes live', state: 'now' },
+      { when: 'Launch day', what: 'Print drop and studio livestream', state: 'next' },
+      { when: 'T+7 days', what: 'Restock check and thank-you email', state: 'next' }
+    ];
+    const musicianLaunch = [
+      { when: 'T-28 days', what: 'Delivered to the distributor, with splits attached', state: 'done' },
+      { when: 'T-21 days', what: 'Editorial pitch submitted', state: 'done' },
+      { when: 'T-14 days', what: 'Curator pitches and presave link', state: 'now' },
+      { when: 'Release day', what: 'Fan email, socials and a listening event', state: 'next' },
+      { when: 'T+7 days', what: 'Check which curators added the track', state: 'next' }
+    ];
+
+    return { artistQueue, musicianQueue, collab, artistMoney, musicianMoney, artistOpps, musicianOpps, artistLaunch, musicianLaunch };
+  }
+
+  renderVals() {
+    const accent = this.props.accent ?? '#3B34E0';
+    const mode = this.state.mode ?? this.props.startMode ?? 'both';
+    const done = this.state.done;
+    const c = this.content();
+
+    const modeDefs = [
+      { id: 'artist', label: 'Artist' },
+      { id: 'musician', label: 'Musician' },
+      { id: 'both', label: 'Both' }
+    ];
+    const modes = modeDefs.map((m) => {
+      const on = m.id === mode;
+      return {
+        label: m.label,
+        pressed: on ? 'true' : 'false',
+        pick: () => this.setState({ mode: m.id }),
+        style: 'min-height: 44px; padding: 0 16px; border-radius: 9px; border: 0; cursor: pointer; font-size: 14px; font-weight: 600; ' +
+          (on ? 'background: #FFFFFF; color: #15161C;' : 'background: transparent; color: #C9CBD3;')
+      };
+    });
+
+    const navLabels = ['Today', mode === 'musician' ? 'Catalog: songs' : mode === 'artist' ? 'Catalog: works' : 'Catalog', 'Opportunities', 'Money', 'Launches', 'Collabs'];
+    const nav = navLabels.map((label, i) => ({
+      label,
+      style: 'min-height: 44px; text-align: left; padding: 0 14px; border-radius: 10px; border: 0; cursor: pointer; font-size: 14px; ' +
+        (i === 0 ? 'background: #FFFFFF; color: #15161C; font-weight: 600; box-shadow: 0 1px 2px rgba(21,22,28,0.08);' : 'background: transparent; color: #3F424D; font-weight: 500;')
+    }));
+
+    let rawQueue;
+    if (mode === 'artist') rawQueue = c.artistQueue;
+    else if (mode === 'musician') rawQueue = c.musicianQueue;
+    else rawQueue = [c.collab, c.musicianQueue[1], c.artistQueue[1], c.musicianQueue[0]];
+
+    const tagColors = { Collab: '#15161C', Royalties: '#C2410C', Licensing: '#C2410C' };
+    const queue = rawQueue.map((q) => {
+      const st = done[q.id];
+      const set = (v) => this.setState({ done: Object.assign({}, this.state.done, { [q.id]: v }) });
+      const tagBg = tagColors[q.tag] || accent;
+      return Object.assign({}, q, {
+        open: !st,
+        closed: !!st,
+        result: st === 'approved' ? 'Approved, queued to send' : 'Skipped',
+        resultStyle: 'font-size: 14px; font-weight: 600; color: ' + (st === 'approved' ? '#15803D' : '#5B5E6B') + ';',
+        approve: () => set('approved'),
+        skip: () => set('skipped'),
+        undo: () => set(undefined),
+        tagStyle: 'display: inline-block; font-size: 12px; font-weight: 600; color: #FFFFFF; background: ' + tagBg + '; border-radius: 999px; padding: 2px 10px;',
+        cardStyle: 'border: 1px solid #E2E4E9; border-radius: 14px; padding: 16px; ' + (st ? 'background: #F7F8FA; opacity: 0.75;' : 'background: #FFFFFF;')
+      });
+    });
+    const pendingCount = queue.filter((q) => q.open).length;
+
+    const statusColor = { paid: '#15803D', pending: '#5B5E6B', warn: '#C2410C' };
+    let rawMoney = mode === 'artist' ? c.artistMoney : mode === 'musician' ? c.musicianMoney : [c.musicianMoney[0], c.musicianMoney[1], c.artistMoney[1], c.artistMoney[0]];
+    const money = rawMoney.map((r) => Object.assign({}, r, { statusStyle: 'font-size: 12px; font-weight: 600; color: ' + statusColor[r.kind] + ';' }));
+    const totals = {
+      artist: ['$1,660', '$900', '$600'],
+      musician: ['$1,265', '$310', '1 work'],
+      both: ['$2,925', '$1,210', '2 items']
+    }[mode];
+    const moneyTotals = [
+      { label: 'Paid', value: totals[0] },
+      { label: 'On the way', value: totals[1] },
+      { label: 'Stuck', value: totals[2] }
+    ];
+
+    const stageColor = { Found: '#5B5E6B', Drafted: accent, Sent: '#C2410C', Won: '#15803D' };
+    let rawOpps = mode === 'artist' ? c.artistOpps : mode === 'musician' ? c.musicianOpps : [c.musicianOpps[0], c.artistOpps[1], c.musicianOpps[2], c.artistOpps[3]];
+    const opps = rawOpps.map((o) => Object.assign({}, o, {
+      stageStyle: 'display: inline-block; font-size: 12px; font-weight: 600; color: ' + stageColor[o.stage] + '; border: 1.5px solid ' + stageColor[o.stage] + '; border-radius: 999px; padding: 1px 10px;'
+    }));
+
+    const rawLaunch = mode === 'artist' ? c.artistLaunch : c.musicianLaunch;
+    const launch = rawLaunch.map((s) => Object.assign({}, s, {
+      dotStyle: 'width: 14px; height: 14px; border-radius: 999px; box-sizing: border-box; flex-shrink: 0; margin-top: 3px; ' +
+        (s.state === 'done' ? 'background: #15803D;' : s.state === 'now' ? 'background: ' + accent + '; box-shadow: 0 0 0 4px rgba(59,52,224,0.18);' : 'background: #FFFFFF; border: 2px solid #C3C6CF;')
+    }));
+
+    const splits = [
+      { who: '[Musician]: recording and master', pct: 100 },
+      { who: '[Artist]: cover artwork', pct: 100 },
+      { who: 'Merch revenue: artist / musician', pct: 40 }
+    ].map((p, i) => ({
+      who: p.who,
+      share: i === 2 ? '40 / 60' : '100%',
+      barStyle: 'height: 8px; border-radius: 999px; width: ' + p.pct + '%; background: ' + (i === 1 ? '#F59E6B' : '#8F8BFF') + ';'
+    }));
+
+    const artistGuard = [
+      { name: 'AI training crawlers', note: 'Blocked by default on your portfolio. Search engines can still index it.', status: 'Protected', kind: 'ok' },
+      { name: 'Stolen-art watch', note: '3 copies found on print-on-demand sites. 2 takedowns filed, 1 re-upload being tracked.', status: 'Action needed', kind: 'warn' },
+      { name: 'Shop backup', note: 'Your listings, buyers and orders are mirrored, so you can reopen elsewhere in one click.', status: 'Synced', kind: 'ok' }
+    ];
+    const musicianGuard = [
+      { name: 'Artist profile check', note: '"[Single title]" is mapped to your Spotify and Apple IDs, and checked again on release day.', status: 'Verified', kind: 'ok' },
+      { name: 'Stream-spike monitor', note: 'No bot-like spikes. Your promo receipts are logged, ready for an appeal.', status: 'Clear', kind: 'ok' },
+      { name: 'Unclaimed royalties', note: '1 song is not registered with the MLC, so its mechanicals are going unclaimed.', status: 'Action needed', kind: 'warn' }
+    ];
+    const guardRaw = mode === 'artist' ? artistGuard : mode === 'musician' ? musicianGuard : [artistGuard[0], musicianGuard[0], artistGuard[1]];
+    const guardColor = { ok: '#15803D', warn: '#C2410C' };
+    const guard = guardRaw.map((g) => Object.assign({}, g, {
+      dotStyle: 'width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; margin-top: 6px; background: ' + guardColor[g.kind] + ';',
+      statusStyle: 'font-size: 12px; font-weight: 600; color: ' + guardColor[g.kind] + ';'
+    }));
+
+    const modeLine = { artist: 'Artist workspace', musician: 'Musician workspace', both: 'Artist + musician workspace' }[mode];
+
+    return {
+      accent, modes, nav, queue, guard, pendingCount, money, moneyTotals, opps, launch, splits, modeLine,
+      oppTitle: mode === 'artist' ? 'Calls, shows and commissions' : mode === 'musician' ? 'Gigs, pitches and sync' : 'Opportunities',
+      launchTitle: mode === 'artist' ? 'Launch: [Print drop name]' : 'Release: "[Single title]"',
+      launchSub: mode === 'artist' ? 'Drop plan, step by step' : 'Rollout plan, step by step'
+    };
+  }
+}
+</script>
+</body>
+</html>

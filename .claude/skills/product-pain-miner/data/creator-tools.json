@@ -1,0 +1,528 @@
+{
+  "category": "creator-tools",
+  "updated": "2026-11-03",
+  "entries": [
+    {
+      "id": "mus-fraud-takedown-no-appeal",
+      "item": "Music distributors",
+      "complaint": "Distributors (DistroKid and others) pull releases and freeze royalties over 'artificial streams' the artist says they never bought, give no evidence or strike warning, and sometimes say the decision cannot be appealed, while Spotify support sends artists back to the distributor.",
+      "failure_mode": "no-feedback",
+      "frequency": 4,
+      "severity": 5,
+      "annoyance": 5,
+      "workaround": 4,
+      "feasibility": 2,
+      "redesign": "Watch daily streams per track for bot-like spikes (city, playlist source, saves-to-streams ratio) and alert the artist within 24h; keep a log of every paid promo and playlist vendor used; generate an appeal pack (timeline, promo receipts, source breakdown) the moment a strike or takedown arrives.",
+      "prior_art": "Artist.Tools bot-playlist checker",
+      "sources": [
+        "https://www.aol.com/takedown-fails-artists-seeing-music-180936613.html",
+        "https://community.spotify.com/t5/Other-Podcasts-Partners-etc/Spotify-removed-our-release-for-bot-streams-even-after-i/m-p/6622850/highlight/true",
+        "https://au.rollingstone.com/music/music-features/spotify-bot-takedowns-music-29367",
+        "https://www.hypebot.com/distrokid-takedown-wave-hits-indie-artists-after-umg-lawsuit/",
+        "https://routenote.com/radar/?p=4984"
+      ]
+    },
+    {
+      "id": "mus-withdrawal-funds-on-hold",
+      "item": "Music distributors",
+      "complaint": "Artists on TuneCore and UnitedMasters report withdrawal requests rejected and balances moved to 'funds on hold' or the account closed for unspecified 'abnormal activity', with payouts left pending for months.",
+      "failure_mode": "last-mile-waste",
+      "frequency": 3,
+      "severity": 4,
+      "annoyance": 5,
+      "workaround": 4,
+      "feasibility": 2,
+      "redesign": "Show the earnings ledger with a status for each line (cleared, under review, withheld) and the reason and DSP behind any hold; auto-file a dispute when funds are held more than 30 days; sweep cleared earnings out on a schedule so less money sits at risk in one balance.",
+      "prior_art": "UnitedMasters real-time daily royalties (partial)",
+      "sources": [
+        "https://www.trustpilot.com/review/tunecore.com?page=2",
+        "https://www.trustpilot.com/review/tunecore.com?page=4",
+        "https://www.trustpilot.com/review/tunecore.co.uk",
+        "https://www.sikayetvar.com/en/tunecore-us/tunecore-closed-my-account-and-withheld-28443-over-ai-music-claims",
+        "https://ca.trustpilot.com/review/unitedmasters.com",
+        "https://www.chartlex.com/blog/business/unitedmasters-review-2026"
+      ]
+    },
+    {
+      "id": "mus-subscription-hostage-and-addons",
+      "item": "Music distributors",
+      "complaint": "With DistroKid the catalog goes offline if the annual subscription lapses unless the artist paid a per-release 'Leave a Legacy' fee ($29/$49), and the cheap headline price grows quickly with add-ons (Content ID, Store Maximizer, a Musician Plus upgrade just to set release dates).",
+      "failure_mode": "seller-first",
+      "frequency": 4,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 3,
+      "redesign": "Show the full lifetime cost of keeping every release live (base, add-ons, Legacy fees) before upload; remind the artist 60 days before renewal and list which releases would come down; compare distributors and help migrate a catalog with ISRCs kept, so streams and playlists carry over.",
+      "prior_art": "CD Baby one-time pay-per-release model",
+      "sources": [
+        "https://routenote.com/radar/what-happens-if-you-stop-paying-distrokid/",
+        "https://routenote.com/radar/?p=3795",
+        "https://orphiq.com/resources/distrokid-review",
+        "https://routenote.com/radar/distrokid-hidden-fees-what-does-distrokid-really-cost/",
+        "https://vocal.media/humans/distro-kid-review-a-cautionary-tale-for-independent-musicians"
+      ]
+    },
+    {
+      "id": "mus-1000-stream-threshold",
+      "item": "Streaming income",
+      "complaint": "Since 2024, Spotify tracks under 1,000 streams in 12 months earn no recording royalties at all, which hits long-tail and niche catalogs (an estimated $47M in 2024) and is now the subject of an artist lawsuit.",
+      "failure_mode": "one-size-fits-all",
+      "frequency": 4,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Show each track's rolling 12-month stream count against the 1,000 line and flag tracks close to it; suggest where to focus (a playlist, a sync pitch, putting songs together into an EP); show income lost to the threshold so the artist can weigh their release strategy.",
+      "prior_art": "",
+      "sources": [
+        "https://www.billboard.com/pro/spotify-lawsuit-royalty-rules-hurt-indie-artists/",
+        "https://completemusicupdate.com/spotifys-rule-changes-and-thresholds-are-unfair-and-deceptive-practices-says-new-lawsuit/",
+        "https://routenote.com/blog/spotifys-1000-stream-threshold-cost-indie-artists-50-million-in-2024/",
+        "https://www.hypebot.com/did-the-spotify-1000-stream-rule-cost-indie-artists-47-million-spotify-responds/"
+      ]
+    },
+    {
+      "id": "mus-stats-vs-statement-mismatch",
+      "item": "Streaming income transparency",
+      "complaint": "Stream counts in Spotify for Artists never line up with distributor royalty statements, which arrive 2-4 months late, so artists cannot tell if they are being paid correctly; one forum thread is titled 'Warning: Discrepancies in Stream Counts and Revenue'.",
+      "failure_mode": "no-feedback",
+      "frequency": 5,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Import S4A data and distributor statements into one view, match them by reporting month and territory, label expected gaps (non-royalty streams, lag) and unexpected ones, and estimate money still in the pipeline per month.",
+      "prior_art": "Soundcharts, Chartmetric (analytics only, no reconciliation)",
+      "sources": [
+        "https://community.imusician.pro/t/warning-discrepancies-in-stream-counts-and-revenue-with-imusician/12641",
+        "https://community.spotify.com/t5/Content-Questions/Do-my-distributor-quot-Distrokid-quot-pay-me-correctly/m-p/4745835/highlight/true",
+        "https://routenote.com/radar/why-spotify-streams-dont-always-match-your-royalty-reports/",
+        "https://support.dittomusic.com/en/articles/9771905-why-don-t-my-streams-and-views-match-my-royalty-payments"
+      ]
+    },
+    {
+      "id": "mus-wrong-artist-profile",
+      "item": "Music distributors / DSP metadata",
+      "complaint": "Releases land on another artist's Spotify/Apple profile with the same name (or a duplicate profile is created), and artists get passed between the distributor, which may only offer a takedown, and DSP support.",
+      "failure_mode": "mapping-mismatch",
+      "frequency": 4,
+      "severity": 3,
+      "annoyance": 5,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Save the artist's Spotify URI and Apple artist ID once, for themselves and every featured collaborator, and refuse to deliver without them; check the live profile on release day and auto-file the fix request with both distributor and DSP if it is wrong.",
+      "prior_art": "eMastered Artist Page Fixer",
+      "sources": [
+        "https://community.spotify.com/t5/Content-Questions/My-music-is-listed-under-the-wrong-artist/td-p/5192278",
+        "https://community.spotify.com/t5/Content-Questions/Release-listed-on-the-wrong-profile/m-p/5168135/highlight/true",
+        "https://community.imusician.pro/t/released-on-wrong-artist-in-spotify/15189",
+        "https://www.hypebot.com/music-on-the-wrong-spotify-artist-profile-how-to-fix-it-in-2026/"
+      ]
+    },
+    {
+      "id": "mus-unclaimed-mechanicals",
+      "item": "Publishing admin / royalty collection",
+      "complaint": "Self-published songwriters who only joined a PRO never collect streaming mechanicals; their unmatched royalties sit in a pot estimated at $1.5-2.5B, which can pass to the MLC after three years.",
+      "failure_mode": "last-mile-waste",
+      "frequency": 4,
+      "severity": 4,
+      "annoyance": 3,
+      "workaround": 3,
+      "feasibility": 3,
+      "redesign": "When a song is released, check whether it is registered at the PRO, the MLC and SoundExchange and set the ISWC/ISRC links; flag missing registrations as 'money left on table' with an estimated amount, and file them in one step.",
+      "prior_art": "Songtrust, Sentric (paid admin cut)",
+      "sources": [
+        "https://www.hypebot.com/songtrust-uncovers-over-2000-in-royalties-for-diy-songwriter",
+        "https://www.techdirt.com/articles/20190413/16392542003/legacy-music-industry-shouldnt-get-to-watch-over-royalties-independent-songwriters.shtml?cid=132",
+        "https://www.hypebot.com/under-music-modernization-act-songwriters-lose-unclaimed-royalties-ability-to-litigate/"
+      ]
+    },
+    {
+      "id": "mus-pro-live-setlist-reporting",
+      "item": "PROs (live performance royalties)",
+      "complaint": "Performing songwriters lose live royalties because each PRO needs setlists entered by hand in its own portal (BMI Live, ASCAP OnStage) within a limited window, and pay depends on whether the venue is licensed.",
+      "failure_mode": "mapping-mismatch",
+      "frequency": 3,
+      "severity": 2,
+      "annoyance": 3,
+      "workaround": 2,
+      "feasibility": 5,
+      "redesign": "Turn each confirmed gig in the calendar into a draft setlist report for the artist's PRO automatically; ask for the setlist the morning after the show; warn before the 6-month window closes; show the venue's licensing status.",
+      "prior_art": "",
+      "sources": [
+        "https://bandzoogle.com/blog/musicians-how-to-collect-live-performance-royalties",
+        "https://www.bmi.com/news/entry/new_bmi_live_program_allows_performing_songwriters_to_register_live_co",
+        "https://americansongwriter.com/bmi-introduces-new-program-for-live-royalties/"
+      ]
+    },
+    {
+      "id": "mus-editorial-pitch-blackhole",
+      "item": "Playlist pitching (Spotify for Artists)",
+      "complaint": "Artists pitch to Spotify editorial and hear nothing: no confirmation it was heard, no rejection, and the only signal is not getting placed.",
+      "failure_mode": "no-feedback",
+      "frequency": 5,
+      "severity": 2,
+      "annoyance": 4,
+      "workaround": 5,
+      "feasibility": 2,
+      "redesign": "Keep one log of every pitch (editorial, curators, blogs) with what is known about its status; check playlist adds daily for the first 4 weeks and notify on any add; by release day, mark unanswered pitches as closed and move effort to channels that give feedback.",
+      "prior_art": "",
+      "sources": [
+        "https://community.spotify.com/t5/Content-Questions/Editorial-Playlist-Luck/td-p/4798527",
+        "https://dynamoi.com/es/learn/playlist-pitching/how-do-i-know-if-my-spotify-pitch-was-accepted",
+        "https://raespoon.com/dispatches/spotify-playlist-pitching-case-study/"
+      ]
+    },
+    {
+      "id": "mus-paid-submission-generic-feedback",
+      "item": "Paid curator submission (Groover, SubmitHub)",
+      "complaint": "Artists pay per submission and get copy-paste declines (one review: $150 bought 16 of 50 generic replies and 7 no-shows), free-credit declines come with no explanation, and credits for unanswered submissions are refunded inconsistently.",
+      "failure_mode": "seller-first",
+      "frequency": 4,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 2,
+      "feasibility": 3,
+      "redesign": "Score curators by response quality, listen time, real follower engagement and the artist's own past outcomes; refund automatically on non-response; show cost per real add and estimated streams per dollar before the artist spends.",
+      "prior_art": "SubmitHub listen-time tracking and curator stats (partial)",
+      "sources": [
+        "https://www.trustpilot.com/review/groover.co?page=4",
+        "https://www.artist.tools/review/groover",
+        "https://dk.trustpilot.com/review/submithub.com?page=4",
+        "https://www.trustpilot.com/review/submithub.com?page=3",
+        "https://write.as/vinterkarusell/groover-is-a-scam-and-youre-paying-for-it"
+      ]
+    },
+    {
+      "id": "mus-cover-art-rejection-delay",
+      "item": "Release planning / distribution QC",
+      "complaint": "Releases get stuck in processing or bounced late for cover art rules (a pictured LP, a store logo, 'too racy'), so artists miss announced release dates and the 7-day editorial pitch window.",
+      "failure_mode": "bad-timing",
+      "frequency": 3,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 5,
+      "redesign": "Check artwork and metadata against each DSP's rules when uploaded (size, logos, physical-format images, text vs metadata) and work back from the release date to set the deadline for final art; warn the designer and the artist before delivery, not after.",
+      "prior_art": "",
+      "sources": [
+        "https://www.gazette-news.co.uk/news/23409753.spotify-apple-manningtree-bands-new-single-pulled-artwork/",
+        "https://theneedledrop.com/news/dj-sabrina-the-teenage-dj-claims-hex-streaming-release-delayed-over-album-cover-dispute/",
+        "https://www.sikayetvar.com/en/distrokid-us/distrokid-keeps-my-release-stuck-in-processing-how-can-i-fix-distribution-delays-q-37297"
+      ]
+    },
+    {
+      "id": "mus-splits-collab-friction",
+      "item": "Royalty splits / producer collaboration",
+      "complaint": "Distributor splits cover only master income from that one distributor, collaborators must accept an invite (or the owner pays $10/yr for them) before earnings are released, and publishing splits stay on informal split sheets, so disputes freeze PRO payouts.",
+      "failure_mode": "mapping-mismatch",
+      "frequency": 4,
+      "severity": 4,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Record master and publishing splits per song in one place during the session (producer, writers, visual artist fees), get e-signatures before release, and feed the same data to the distributor splits, PRO registrations and payouts, with collaborators paid without having to hold a subscription.",
+      "prior_art": "Mogul, Session Studio, Stem",
+      "sources": [
+        "https://jackrighteous.com/blogs/ai-music-distribution-guide/distrokid-splits-ai-music-creators-split-pay",
+        "https://routenote.com/radar/how-to-fix-music-royalty-split-problems/",
+        "https://www.musicinafrica.net/node/32893",
+        "https://interspacemusic.com/blog/?p=4940"
+      ]
+    },
+    {
+      "id": "mus-tax-double-reporting",
+      "item": "Taxes / 1099s",
+      "complaint": "At tax time, musicians get overlapping 1099-MISC, 1099-NEC and PayPal 1099-K forms for the same royalty and sales income (Bandcamp warns about this), and international artists are confused about W-8BEN withholding.",
+      "failure_mode": "bad-timing",
+      "frequency": 3,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Bring in every payout (distributor, PRO, Bandcamp, PayPal, gig fees) as it happens, tag each by income type and the form it will be reported on, flag duplicates across 1099s, and export a year-end summary for the accountant, plus quarterly estimated tax reminders.",
+      "prior_art": "",
+      "sources": [
+        "https://get.bandcamp.help/en/articles/15263064-will-bandcamp-issue-a-form-for-taxes",
+        "https://musiclibraryreport.com/forums/topic/paypal-1099-k-us-taxes",
+        "https://tipalti.com/blog/1099-for-musicians/",
+        "https://www.soundon.global/forum/distrokid-payout-tax-form"
+      ]
+    },
+    {
+      "id": "mus-fan-data-platform-fragility",
+      "item": "Fan CRM / direct-to-fan platforms",
+      "complaint": "Artists cannot reach their own fans: Spotify keeps listener contact data (criticized by M. Shadows), and platforms artists depend on for fan relationships wear out (Bandcamp lost about half its staff after the Songtradr sale and had more engineering layoffs in 2026; Bandsintown fan alerts have had outages).",
+      "failure_mode": "wears-out-early",
+      "frequency": 4,
+      "severity": 4,
+      "annoyance": 4,
+      "workaround": 2,
+      "feasibility": 4,
+      "redesign": "Make the artist-owned fan list the core record: every smart link, pre-save, show RSVP and merch sale collects consented contact info into one list the artist can export at any time; run backup exports of Bandcamp and Bandsintown data on a schedule.",
+      "prior_art": "Laylo, Bandzoogle, Ampwall",
+      "sources": [
+        "https://www.digitalmusicnews.com/2024/04/07/m-shadows-calls-out-spotify-fan-data/",
+        "https://www.hypebot.com/artists-need-an-independent-email-management-service/",
+        "https://www.hypebot.com/new-bandcamp-layoffs-why-artists-are-worried-and-where-to-turn/",
+        "https://musosoup.com/blog/bandcamp-confirms-engineering-layoffs-independent-artists-concerns",
+        "https://status.bandsintown.com/incidents/vp9y5g5rcy87"
+      ]
+    },
+    {
+      "id": "art-payout-reserves-holds",
+      "item": "Marketplace / tip-jar payments (Etsy, Ko-fi via PayPal)",
+      "complaint": "Etsy payment reserves and PayPal holds on Ko-fi commissions lock up a share of an artist's sales for up to 21-45 days, often with no clear reason given and sometimes by mistake.",
+      "failure_mode": "last-mile-waste",
+      "frequency": 4,
+      "severity": 4,
+      "annoyance": 5,
+      "workaround": 3,
+      "feasibility": 2,
+      "redesign": "Show a per-order 'money timeline' (earned, held, why, release date, what unlocks it). Prompt for proof of delivery on digital commissions automatically, and route new artists to direct-card processors so no reserve applies.",
+      "prior_art": "Ko-fi with Stripe (direct card payouts)",
+      "sources": [
+        "https://community.etsy.com/t5/Technical-Issues/Reserve-Funds-is-a-Punishment/m-p/147824080",
+        "https://fashionunited.uk/news/business/etsy-accused-of-withholding-payments-from-sellers/2023073170840",
+        "https://www.valueaddedresource.net/etsy-holding-payments-in-error/",
+        "https://help.ko-fi.com/hc/en-us/articles/4417462197521-Why-are-my-PayPal-funds-on-hold"
+      ]
+    },
+    {
+      "id": "art-etsy-suspension-no-reason",
+      "item": "Online marketplaces (Etsy)",
+      "complaint": "Shops are suspended permanently without warning or a stated reason, and appeals go unanswered or are denied with no explanation, cutting off an artist's income overnight.",
+      "failure_mode": "bad-timing",
+      "frequency": 3,
+      "severity": 5,
+      "annoyance": 5,
+      "workaround": 4,
+      "feasibility": 3,
+      "redesign": "Keep the artist's customer list, listings, images and order history mirrored in a portable home shop. Offer one-click 'reopen elsewhere', and email buyers of pending orders automatically if a marketplace channel goes dark.",
+      "prior_art": "Self-hosted storefronts (Big Cartel, Shopify)",
+      "sources": [
+        "https://community.etsy.com/t5/Technical-Issues/Etsy-Shop-Suspension-and-No-response-to-Appeals/td-p/144336014",
+        "https://community.etsy.com/t5/Technical-Issues/My-Shop-Was-Permanently-Suspended-Without-Warning-Hoping-for-a/m-p/148191815",
+        "https://community.etsy.com/t5/Technical-Issues/Shop-currently-suspended-without-explanation-or-warning/td-p/142964267"
+      ]
+    },
+    {
+      "id": "art-etsy-offsite-ads-lockin",
+      "item": "Online marketplaces (Etsy Offsite Ads)",
+      "complaint": "Etsy automatically enrolls sellers in Offsite Ads and takes a 12-15% cut of attributed orders on top of other fees, and once a shop crosses $10k in sales it can never opt out again.",
+      "failure_mode": "seller-first",
+      "frequency": 4,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Make all paid promotion opt-in. Show the true per-order take rate (listing, transaction, processing and ad fees) before checkout and in a margin report, and let artists set a ceiling on total fees per sale.",
+      "prior_art": "",
+      "sources": [
+        "https://help.etsy.com/hc/articles/360000338367",
+        "https://www.ecommercebytes.com/2020/03/14/etsy-enrolls-all-sellers-in-its-new-offsite-ads-program/",
+        "https://www.scavengerlife.com/forums/topic/etsy-announces-its-found-a-new-way-to-gouge-sellers/"
+      ]
+    },
+    {
+      "id": "art-redbubble-fees-threshold",
+      "item": "Print-on-demand shops (Redbubble)",
+      "complaint": "Redbubble's tiered account fees eat a large share of small artists' earnings, and the $20 payout threshold keeps whatever is left stuck in the account.",
+      "failure_mode": "last-mile-waste",
+      "frequency": 4,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Pay out any balance on request with no minimum, charge no fixed account fees, and send a monthly statement that shows gross sales, each deduction and net pay so fee creep can't happen unnoticed.",
+      "prior_art": "INPRNT / direct POD integrations (Printful, Gelato) on the artist's own store",
+      "sources": [
+        "https://help.redbubble.com/hc/articles/360027407652",
+        "https://www.illustratorsaustralia.com/news/fears-for-tiers-at-redbubble/",
+        "https://www.smartcustomer.com/reviews/www.redbubble.com"
+      ]
+    },
+    {
+      "id": "art-pod-stolen-designs",
+      "item": "Print-on-demand shops (Redbubble, Teespring, bot shops)",
+      "complaint": "Bots and resellers lift artists' work onto print-on-demand shirts, and under the DMCA the artist has to find and report every listing one by one, often only to see it re-uploaded.",
+      "failure_mode": "seller-first",
+      "frequency": 4,
+      "severity": 4,
+      "annoyance": 5,
+      "workaround": 4,
+      "feasibility": 3,
+      "redesign": "Register the artist's catalog once (perceptual hashes), watch major POD and marketplace sites for matches, and pre-fill batched takedown notices. Track re-uploads and show takedown status in one place.",
+      "prior_art": "Red Points (paid brand protection); hash-matching some POD sites use on upload",
+      "sources": [
+        "https://itsartlaw.org/2024/03/13/the-redbubble-of-legal-protections-for-digital-art-marketplaces/",
+        "https://printandpromomarketing.com/article/teespring-has-a-stolen-designs-problem/",
+        "https://www.plagiarismtoday.com/?p=32051"
+      ]
+    },
+    {
+      "id": "art-ai-scraping-portfolio-optout",
+      "item": "Portfolio sites and social platforms (Squarespace, Meta)",
+      "complaint": "Artists can't tell whether their portfolio is protected from AI training: Squarespace turned AI crawler access on by default and its toggle covers only a few named crawlers, while Meta gives most non-EU users no opt-out at all.",
+      "failure_mode": "mapping-mismatch",
+      "frequency": 4,
+      "severity": 4,
+      "annoyance": 5,
+      "workaround": 4,
+      "feasibility": 4,
+      "redesign": "Block AI training crawlers by default while still allowing search indexing. Show a plain-language 'who can use my images' panel listing each crawler and its status, and keep robots/ai.txt, metadata and optional Glaze-style cloaking up to date automatically.",
+      "prior_art": "Format (blocks AI crawlers by default); Cara",
+      "sources": [
+        "https://www.websitebuilderexpert.com/news/squarespace-ai-data-opt-out/",
+        "https://80.lv/articles/website-builder-squarespace-scrapes-your-websites-for-ai-training-and-you-can-t-stop-it/",
+        "https://www.digitalcameraworld.com/tech/social-media/is-meta-about-to-scrape-photography-websites-to-train-ai-meta-delays-terms-update-after-huge-backlash-from-creators",
+        "https://tech.slashdot.org/story/24/06/06/2014232/artists-are-deleting-instagram-for-new-app-cara-in-protest-of-meta-ai-scraping"
+      ]
+    },
+    {
+      "id": "art-open-call-fee-black-hole",
+      "item": "Open calls / juried shows / grants (CaFÉ, Submittable, entry-fee calls)",
+      "complaint": "Artists pay entry fees for calls that accept 2-8% of applicants and hear nothing back except a silent rejection or a press release, so it feels like throwing money into a black hole.",
+      "failure_mode": "no-feedback",
+      "frequency": 4,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 4,
+      "feasibility": 3,
+      "redesign": "Keep one tracker for every submission with fees paid, deadlines, status and result dates. Show each call's historical acceptance rate and whether it gives feedback, and add up fees spent against wins so artists can drop calls with poor odds.",
+      "prior_art": "Zealous, Picter (call platforms); CaFÉ status page",
+      "sources": [
+        "https://hyperallergic.com/why-are-we-paying-for-the-privilege-of-rejection.md",
+        "https://blog.picter.com/rica-cerbarano-on-the-issues-and-complexities-of-open-calls/",
+        "https://zealous.co/about/insights/the-truth-about-application-fees-in-the-arts/",
+        "https://sculpture.org/blogpost/1860266/349874/Entry-Fees-for-Juried-Exhibitions"
+      ]
+    },
+    {
+      "id": "art-commission-ghosting-scope-creep",
+      "item": "Commission / client work management (invoicing, contracts)",
+      "complaint": "Clients vanish once the art is delivered and the invoice goes out, and small extra requests pile up into unpaid scope creep because nothing records what was agreed.",
+      "failure_mode": "last-mile-waste",
+      "frequency": 5,
+      "severity": 4,
+      "annoyance": 5,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Turn the brief into a scoped contract with deposit, kill fee and included revision count. Release watermarked proofs and unwatermarked finals only against milestone payments, and price each extra change request for the client to approve before work starts.",
+      "prior_art": "VGen milestones; Bonsai / HoneyBook contracts and invoices",
+      "sources": [
+        "https://www.creativeboom.com/tips/clients-from-hell-how-to-navigate-nightmarish-scenarios-as-a-freelancer/",
+        "https://blog.promise.legal/commission-contract-artists-ip-scope-creep-kill-fee/",
+        "https://community.upwork.com/t5/Freelancers/My-clients-just-dissaperead-and-didn-t-pay-me-for-half-of-the/m-p/807736"
+      ]
+    },
+    {
+      "id": "art-vgen-dispute-opacity",
+      "item": "Commission marketplaces (VGen)",
+      "complaint": "VGen's dispute process is opaque: when a commission goes wrong, support's decision can't be predicted or appealed, and it largely defers to each artist's own terms, so both buyers and artists feel unprotected.",
+      "failure_mode": "no-feedback",
+      "frequency": 2,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 3,
+      "redesign": "Lock in a shared, structured agreement at checkout (deliverables, revisions, refund rules per milestone). Hold disputes against that record with a visible timeline and stated outcome criteria, not ad-hoc support messages.",
+      "prior_art": "Escrow-style milestone payments (VGen, Upwork)",
+      "sources": [
+        "https://ca.trustpilot.com/review/vgen.co",
+        "https://pl.trustpilot.com/review/vgen.co"
+      ]
+    },
+    {
+      "id": "art-patreon-apple-billing-churn",
+      "item": "Memberships (Patreon iOS)",
+      "complaint": "Apple's 30% in-app fee and Patreon's repeatedly reversed billing deadlines (three policy reversals in 18 months) keep forcing creators to re-plan pricing and migrate their billing.",
+      "failure_mode": "wears-out-early",
+      "frequency": 3,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 3,
+      "redesign": "Send members to web checkout by default. Show the artist's net per member by payment channel, and keep membership pricing and billing dates stable no matter which app store changes its rules.",
+      "prior_art": "Ko-fi memberships; web-only member checkouts",
+      "sources": [
+        "https://www.tubefilter.com/2026/01/29/patreon-apple-app-store-fee-dispute-subscription-billing-change/",
+        "https://www.macrumors.com/2026/01/28/patreon-apple-tax/?mode=reply",
+        "https://techcrunch.com/2024/08/12/apple-says-patreon-must-switch-to-its-billing-system-or-risk-removal-from-app-store"
+      ]
+    },
+    {
+      "id": "art-instagram-reach-collapse",
+      "item": "Social platforms (Instagram)",
+      "complaint": "Instagram keeps reweighting toward Reels and video, so artists' still-image posts and carousels reach a shrinking, unpredictable share of their own followers.",
+      "failure_mode": "wears-out-early",
+      "frequency": 5,
+      "severity": 4,
+      "annoyance": 5,
+      "workaround": 3,
+      "feasibility": 3,
+      "redesign": "Treat social as top-of-funnel only: every post links to an owned mailing list or RSS feed the artist controls. Post once to many networks and compare reach per network so a single algorithm change can't wipe out the audience.",
+      "prior_art": "Cara; newsletter tools (Substack, Buttondown)",
+      "sources": [
+        "https://petapixel.com/2022/10/28/instagram-head-says-reach-of-reels-and-photos-has-been-rebalanced",
+        "https://streetartcities.substack.com/p/why-instagram-no-longer-works-for",
+        "https://techcrunch.com/2024/04/30/instagram-is-updating-its-ranking-systems-to-surface-more-content-from-smaller-original-creators"
+      ]
+    },
+    {
+      "id": "art-album-art-uncredited-unpaid",
+      "item": "Collaboration with musicians (album art, Spotify Canvas visuals)",
+      "complaint": "Cover and Canvas artists often go uncredited because streaming platforms have no field for visual artists, and some report being paid late or not at all after their art is already in promotion.",
+      "failure_mode": "one-size-fits-all",
+      "frequency": 3,
+      "severity": 4,
+      "annoyance": 4,
+      "workaround": 4,
+      "feasibility": 3,
+      "redesign": "Provide a music-artwork agreement covering usage (cover, merch, Canvas, ads), credit line and payment before high-res files are released. Generate a credit and metadata snippet for distributors and send a reminder when a release goes live without the credit.",
+      "prior_art": "SoundBetter Canvas marketplace",
+      "sources": [
+        "https://community.spotify.com/t5/Other-Podcasts-Partners-etc/Spotify-Visuals-Don-t-Credit-Artists/m-p/5027982/highlight/true",
+        "https://www.metalsucks.net/?p=347421",
+        "https://djbooth.net/features/2016-03-25-young-thug-stole-art-slime-season-3-album-cover"
+      ]
+    },
+    {
+      "id": "art-tax-1099k-confusion",
+      "item": "Taxes / admin (1099-K, multi-platform income)",
+      "complaint": "Artists who sell across Etsy, PayPal and POD sites get 1099-K forms that report gross rather than net amounts, sometimes duplicated, under thresholds that kept changing, and the confusion lands at tax time.",
+      "failure_mode": "bad-timing",
+      "frequency": 4,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Import payouts from each platform all year, reconcile gross against fees against net, flag duplicate 1099-Ks, set aside self-employment tax estimates every quarter, and export a ready Schedule C summary.",
+      "prior_art": "Craftybase; QuickBooks Self-Employed",
+      "sources": [
+        "https://kiplinger.com/taxes/etsy-ebay-want-irs-1099-k-relief",
+        "https://www.ecommercebytes.com/?p=8827",
+        "https://claimyr.com/government-services/irs/Do-I-need-to-pay-taxes-on-my-PayPal-art-commission-invoices/2025-04-11"
+      ]
+    },
+    {
+      "id": "art-behance-opaque-visibility",
+      "item": "Portfolio communities (Behance)",
+      "complaint": "Behance artists report shadow bans for 'suspicious activity' with no explanation, unclear curation and Pro lead distribution, and view analytics locked behind a paid tier.",
+      "failure_mode": "no-feedback",
+      "frequency": 3,
+      "severity": 3,
+      "annoyance": 4,
+      "workaround": 3,
+      "feasibility": 4,
+      "redesign": "Give free, full analytics (views, referrers, who saved the work). Explain in plain language when a project is demoted or excluded from discovery, with a clear way to fix or appeal it.",
+      "prior_art": "Self-hosted portfolios with analytics (Cargo, Format)",
+      "sources": [
+        "https://community.adobe.com/questions-606/my-behance-profile-received-a-shadow-ban-due-to-alleged-suspicious-activity-but-i-did-not-use-any-third-party-promotion-i-would-like-clarification-and-a-timeline-for-resolution-1557000",
+        "https://community.adobe.com/questions-712/seeking-transparency-behance-pro-leads-and-curation-criteria-1552525",
+        "https://community.adobe.com/t5/creative-cloud-services-discussions/behance-is-not-free-everyone/m-p/14350273"
+      ]
+    }
+  ]
+}
