@@ -37,7 +37,7 @@ button{font-family:inherit}
 
 <nav aria-label="Main" style="flex: 1 1 200px; display: flex; flex-direction: column; gap: 4px;">
 <sc-for list="{{nav}}" as="n" hint-placeholder-count="6">
-<button type="button" style="{{n.style}}">{{n.label}}</button>
+<a href="{{n.href}}" style="{{n.style}}">{{n.label}}</a>
 </sc-for>
 <div style="margin-top: 16px; padding: 16px; background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 14px;">
 <div style="font-size: 13px; font-weight: 600;">How the agents work</div>
@@ -92,7 +92,7 @@ button{font-family:inherit}
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
 
 <section aria-labelledby="money-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
-<h2 id="money-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Where your money is</h2>
+<h2 id="money-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;"><a href="Money.dc.html" style="color: #15161C; text-decoration: none;">Where your money is →</a></h2>
 <p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">This quarter, every source in one place</p>
 <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
 <sc-for list="{{moneyTotals}}" as="t" hint-placeholder-count="3">
@@ -170,7 +170,7 @@ button{font-family:inherit}
 </section>
 
 <section aria-labelledby="guard-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
-<h2 id="guard-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Protection</h2>
+<h2 id="guard-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;"><a href="Protection.dc.html" style="color: #15161C; text-decoration: none;">Protection →</a></h2>
 <p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">Your work, your profile and your account, watched daily</p>
 <ul style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
 <sc-for list="{{guard}}" as="g" hint-placeholder-count="3">
@@ -276,10 +276,12 @@ class Component extends DCLogic {
       };
     });
 
-    const navLabels = ['Today', mode === 'musician' ? 'Catalog: songs' : mode === 'artist' ? 'Catalog: works' : 'Catalog', 'Opportunities', 'Money', 'Launches', 'Collabs'];
+    const navLabels = ['Today', mode === 'musician' ? 'Catalog: songs' : mode === 'artist' ? 'Catalog: works' : 'Catalog', 'Opportunities', 'Money', 'Protection', 'Launches', 'Collabs'];
+    const navHref = { Money: 'Money.dc.html', Protection: 'Protection.dc.html' };
     const nav = navLabels.map((label, i) => ({
       label,
-      style: 'min-height: 44px; text-align: left; padding: 0 14px; border-radius: 10px; border: 0; cursor: pointer; font-size: 14px; ' +
+      href: navHref[label] || '#',
+      style: 'display: flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 10px; text-decoration: none; font-size: 14px; ' +
         (i === 0 ? 'background: #FFFFFF; color: #15161C; font-weight: 600; box-shadow: 0 1px 2px rgba(21,22,28,0.08);' : 'background: transparent; color: #3F424D; font-weight: 500;')
     }));
 

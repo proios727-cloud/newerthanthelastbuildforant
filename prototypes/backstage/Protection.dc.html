@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Backstage: Protection</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F2F3F5}
+a{color:#3B34E0}a:hover{color:#2A23B8}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F2F3F5; color: #15161C; font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.5;">
+
+<header style="background: #15161C; color: #FFFFFF;">
+<div style="max-width: 1320px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: space-between;">
+<div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+<a href="Main.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 500;">← Today</a>
+<span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px;">Backstage</span>
+<span style="font-size: 12px; color: #C9CBD3; border: 1px solid #3A3C46; border-radius: 999px; padding: 2px 10px;">Prototype · demo data</span>
+</div>
+<div role="group" aria-label="Workspace discipline" style="display: flex; gap: 4px; background: #23242C; border-radius: 12px; padding: 4px;">
+<sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+<button type="button" onClick="{{m.pick}}" aria-pressed="{{m.pressed}}" style="{{m.style}}">{{m.label}}</button>
+</sc-for>
+</div>
+</div>
+</header>
+
+<main style="max-width: 1320px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 24px;">
+
+<section style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px;">
+<div>
+<p style="margin: 0; font-size: 13px; color: #5B5E6B;">Checked daily · {{modeLine}}</p>
+<h1 style="margin: 4px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: 34px; line-height: 1.15; letter-spacing: -0.02em;">Protection</h1>
+</div>
+<div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+<span style="{{summaryStyle}}">{{summary}}</span>
+<a href="Money.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid #D3D6DD; background: #FFFFFF; color: #15161C; text-decoration: none; font-size: 14px; font-weight: 500;">← Money</a>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; align-items: start;">
+
+<section aria-labelledby="ai-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="ai-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Who can use your work</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">AI training crawlers are blocked by default. Search engines can still find you.</p>
+<ul style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column;">
+<sc-for list="{{crawlers}}" as="c" hint-placeholder-count="6">
+<li style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid #ECEEF2;">
+<div style="min-width: 0;">
+<div style="font-size: 14px; font-weight: 500;">{{c.name}}</div>
+<div style="font-size: 12px; color: #5B5E6B;">{{c.purpose}}</div>
+</div>
+<button type="button" onClick="{{c.toggle}}" aria-pressed="{{c.pressed}}" aria-label="{{c.aria}}" style="{{c.style}}">{{c.label}}</button>
+</li>
+</sc-for>
+</ul>
+<div style="margin-top: 12px; padding: 12px; border-radius: 12px; background: #F2F3F5; font-size: 13px; color: #3F424D;">Applied through your robots.txt, ai.txt and image metadata. Kept up to date as new crawlers appear.</div>
+</section>
+
+<sc-if value="{{showArtist}}" hint-placeholder-val="{{true}}">
+<section aria-labelledby="watch-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="watch-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Stolen-art watch</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">Your catalog is fingerprinted once, then marketplaces are scanned for copies</p>
+<ul style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+<sc-for list="{{matches}}" as="w" hint-placeholder-count="4">
+<li style="padding: 12px; border: 1px solid #ECEEF2; border-radius: 12px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+<div style="width: 44px; height: 44px; border-radius: 8px; background: #E2E4E9; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #5B5E6B;">img</div>
+<div style="flex: 1 1 180px; min-width: 0;">
+<div style="font-size: 14px; font-weight: 500;">{{w.title}}</div>
+<div style="font-size: 13px; color: #5B5E6B;">{{w.where}} · {{w.note}}</div>
+</div>
+<span style="{{w.statusStyle}}">{{w.statusText}}</span>
+<sc-if value="{{w.canAct}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{w.act}}" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 0; background: #3B34E0; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer;">{{w.actLabel}}</button>
+</sc-if>
+</li>
+</sc-for>
+</ul>
+<sc-if value="{{showBatch}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{fileAll}}" style="margin-top: 16px; min-height: 44px; padding: 0 18px; border-radius: 10px; border: 1px solid #D3D6DD; background: #FFFFFF; color: #15161C; font-size: 14px; font-weight: 500; cursor: pointer;">File all open takedowns in one batch</button>
+</sc-if>
+</section>
+</sc-if>
+
+<sc-if value="{{showMusician}}" hint-placeholder-val="{{true}}">
+<section aria-labelledby="spike-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="spike-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Stream health</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">Daily streams for "[Single title]", watched for bot-like spikes that can trigger a takedown</p>
+<div role="img" aria-label="{{spikeAria}}" style="margin-top: 16px; height: 96px; display: flex; align-items: flex-end; gap: 4px; padding: 8px; background: #F7F8FA; border-radius: 12px;">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="14">
+<span style="{{b.style}}"></span>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 12px; color: #5B5E6B; margin-top: 4px;"><span>14 days ago</span><span>Today</span></div>
+<div style="{{spikeBoxStyle}}">
+<div style="font-size: 14px; font-weight: 600;">{{spikeTitle}}</div>
+<div style="font-size: 13px; margin-top: 2px;">{{spikeNote}}</div>
+</div>
+<div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+<button type="button" onClick="{{toggleSpike}}" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #D3D6DD; background: #FFFFFF; color: #15161C; font-size: 14px; font-weight: 500; cursor: pointer;">{{spikeToggleLabel}}</button>
+<button type="button" onClick="{{buildPack}}" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 0; background: #15161C; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer;">Build appeal pack</button>
+</div>
+<sc-if value="{{packOpen}}" hint-placeholder-val="{{false}}">
+<div style="margin-top: 12px; padding: 14px; border: 1px solid #E2E4E9; border-radius: 12px;">
+<div style="font-size: 14px; font-weight: 600;">Appeal pack ready</div>
+<ul style="margin: 8px 0 0; padding-left: 18px; font-size: 13px; color: #3F424D;">
+<li>Timeline of daily streams with sources by city and playlist</li>
+<li>Receipts for every paid promo and playlist service you used</li>
+<li>Your saves-to-streams ratio compared with your last 3 releases</li>
+<li>A cover letter for your distributor, waiting for your approval</li>
+</ul>
+</div>
+</sc-if>
+</section>
+
+<section aria-labelledby="release-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="release-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Release checks</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">Caught before delivery, not after release day</p>
+<ul style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+<sc-for list="{{checks}}" as="k" hint-placeholder-count="4">
+<li style="display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid #ECEEF2; border-radius: 12px;">
+<span style="{{k.dotStyle}}"></span>
+<div style="flex: 1; min-width: 0;">
+<div style="display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;"><span style="font-size: 14px; font-weight: 500;">{{k.name}}</span><span style="{{k.statusStyle}}">{{k.status}}</span></div>
+<div style="font-size: 13px; color: #5B5E6B;">{{k.note}}</div>
+</div>
+</li>
+</sc-for>
+</ul>
+</section>
+</sc-if>
+
+<sc-if value="{{showArtist}}" hint-placeholder-val="{{true}}">
+<section aria-labelledby="backup-h" style="background: #15161C; color: #FFFFFF; border-radius: 18px; padding: 24px;">
+<h2 id="backup-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">If a platform shuts you out</h2>
+<p style="margin: 4px 0 0; font-size: 14px; color: #C9CBD3;">Your listings, images, buyers and open orders are mirrored to a home shop you own.</p>
+<dl style="margin: 16px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+<div><dt style="font-size: 12px; color: #C9CBD3;">Last synced</dt><dd style="margin: 0; font-size: 15px; font-weight: 600;">Today, 06:00</dd></div>
+<div><dt style="font-size: 12px; color: #C9CBD3;">Listings mirrored</dt><dd style="margin: 0; font-size: 15px; font-weight: 600;">48 of 48</dd></div>
+<div><dt style="font-size: 12px; color: #C9CBD3;">Buyers you can email</dt><dd style="margin: 0; font-size: 15px; font-weight: 600;">312, with consent</dd></div>
+<div><dt style="font-size: 12px; color: #C9CBD3;">Open orders</dt><dd style="margin: 0; font-size: 15px; font-weight: 600;">3</dd></div>
+</dl>
+<sc-if value="{{reopenIdle}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{reopen}}" style="margin-top: 16px; min-height: 44px; padding: 0 18px; border-radius: 10px; border: 0; background: #FFFFFF; color: #15161C; font-size: 14px; font-weight: 600; cursor: pointer;">Preview "reopen elsewhere"</button>
+</sc-if>
+<sc-if value="{{reopenShown}}" hint-placeholder-val="{{false}}">
+<p style="margin: 16px 0 0; padding: 12px; border-radius: 10px; background: #23242C; font-size: 14px;">Your home shop goes live with all 48 listings, and buyers with open orders get an email explaining where to find you. Nothing is sent until you approve it.</p>
+</sc-if>
+</section>
+</sc-if>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"startMode":{"editor":"enum","default":"both","options":["artist","musician","both"]},"$preview":{"width":1440,"height":1700}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: null, allowed: {}, matchState: {}, spike: false, pack: false, reopen: false };
+  }
+
+  renderVals() {
+    const mode = this.state.mode ?? this.props.startMode ?? 'both';
+    const showArtist = mode !== 'musician';
+    const showMusician = mode !== 'artist';
+
+    const modes = [['artist', 'Artist'], ['musician', 'Musician'], ['both', 'Both']].map(([id, label]) => {
+      const on = id === mode;
+      return {
+        label, pressed: on ? 'true' : 'false',
+        pick: () => this.setState({ mode: id }),
+        style: 'min-height: 44px; padding: 0 16px; border-radius: 9px; border: 0; cursor: pointer; font-size: 14px; font-weight: 600; ' +
+          (on ? 'background: #FFFFFF; color: #15161C;' : 'background: transparent; color: #C9CBD3;')
+      };
+    });
+
+    const crawlerDefs = [
+      { id: 'gptbot', name: 'GPTBot', purpose: 'OpenAI model training', ai: true },
+      { id: 'claudebot', name: 'ClaudeBot', purpose: 'Anthropic model training', ai: true },
+      { id: 'gext', name: 'Google-Extended', purpose: 'Google AI training (separate from Search)', ai: true },
+      { id: 'ccbot', name: 'CCBot', purpose: 'Common Crawl, a public dataset used to train many models', ai: true },
+      { id: 'meta', name: 'Meta-ExternalAgent', purpose: 'Meta AI training', ai: true },
+      { id: 'search', name: 'Search engines', purpose: 'Googlebot and Bingbot, so people can find you', ai: false }
+    ];
+    const allowed = this.state.allowed;
+    const crawlers = crawlerDefs.map((c) => {
+      const isAllowed = c.ai ? !!allowed[c.id] : !allowed[c.id + ':blocked'];
+      const key = c.ai ? c.id : c.id + ':blocked';
+      return {
+        name: c.name, purpose: c.purpose,
+        label: isAllowed ? 'Allowed' : 'Blocked',
+        pressed: isAllowed ? 'false' : 'true',
+        aria: c.name + ': ' + (isAllowed ? 'allowed, select to block' : 'blocked, select to allow'),
+        toggle: () => this.setState({ allowed: Object.assign({}, this.state.allowed, { [key]: !this.state.allowed[key] }) }),
+        style: 'min-height: 44px; min-width: 96px; padding: 0 14px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 600; ' +
+          (isAllowed ? 'border: 1.5px solid #15803D; background: #E7F6EC; color: #15803D;' : 'border: 1.5px solid #15161C; background: #15161C; color: #FFFFFF;')
+      };
+    });
+    const aiOpen = crawlerDefs.filter((c) => c.ai && allowed[c.id]).length;
+
+    const ms = this.state.matchState;
+    const matchDefs = [
+      { id: 'm1', title: 'T-shirt using "[Artwork title]"', where: '[Print-on-demand site A]', start: 'found', note: 'Found yesterday' },
+      { id: 'm2', title: 'Phone case using "[Artwork title]"', where: '[Marketplace B]', start: 'filed', note: 'Takedown filed 3 days ago' },
+      { id: 'm3', title: 'Poster using "[Series name] #2"', where: '[Print-on-demand site A]', start: 'reupload', note: 'Removed, then uploaded again by a new seller' },
+      { id: 'm4', title: 'Sticker using "[Artwork title]"', where: '[Print-on-demand site C]', start: 'removed', note: 'Removed after 4 days' }
+    ];
+    const stMeta = {
+      found: { text: 'Copy found', color: '#C2410C', bg: '#FDECE3', act: 'File takedown' },
+      reupload: { text: 'Re-uploaded', color: '#C2410C', bg: '#FDECE3', act: 'Refile' },
+      filed: { text: 'Takedown filed', color: '#3F424D', bg: '#ECEEF2' },
+      removed: { text: 'Removed', color: '#15803D', bg: '#E7F6EC' }
+    };
+    const matches = matchDefs.map((m) => {
+      const st = ms[m.id] || m.start;
+      const meta = stMeta[st];
+      return {
+        title: m.title, where: m.where,
+        note: ms[m.id] === 'filed' ? 'Takedown notice pre-filled and filed just now' : m.note,
+        statusText: meta.text,
+        statusStyle: 'font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; color: ' + meta.color + '; background: ' + meta.bg + ';',
+        canAct: !!meta.act, actLabel: meta.act || '',
+        act: () => this.setState({ matchState: Object.assign({}, this.state.matchState, { [m.id]: 'filed' }) })
+      };
+    });
+    const openMatches = matchDefs.filter((m) => { const s = ms[m.id] || m.start; return s === 'found' || s === 'reupload'; });
+    const fileAll = () => {
+      const next = Object.assign({}, this.state.matchState);
+      openMatches.forEach((m) => { next[m.id] = 'filed'; });
+      this.setState({ matchState: next });
+    };
+
+    const spike = this.state.spike;
+    const base = [820, 860, 900, 870, 940, 980, 1010, 990, 1050, 1080, 1060, 1120, 1150, 1170];
+    const series = spike ? base.slice(0, 12).concat([6400, 7100]) : base;
+    const max = Math.max.apply(null, series);
+    const bars = series.map((v, i) => ({
+      style: 'flex: 1; border-radius: 4px 4px 0 0; height: ' + Math.max(6, Math.round((v / max) * 76)) + 'px; background: ' + (spike && i >= 12 ? '#C2410C' : '#8F8BFF') + ';'
+    }));
+
+    const dotS = (c) => 'width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; margin-top: 6px; background: ' + c + ';';
+    const statS = (c) => 'font-size: 12px; font-weight: 600; color: ' + c + ';';
+    const checks = [
+      { name: 'Artist profile IDs', note: 'Your Spotify and Apple artist IDs, and each featured artist\'s, are attached to the delivery.', status: 'Verified', c: '#15803D' },
+      { name: 'Cover art rules', note: 'No store logos, no pictured physical format, and the text matches the metadata.', status: 'Passed', c: '#15803D' },
+      { name: 'Splits and registrations', note: 'The PRO and MLC registrations for "[Song title]" are still missing.', status: 'Action needed', c: '#C2410C' },
+      { name: 'Editorial pitch window', note: 'Pitch at least 7 days before release. Deadline: [date].', status: '9 days left', c: '#3F424D' }
+    ].map((k) => Object.assign({}, k, { dotStyle: dotS(k.c), statusStyle: statS(k.c) }));
+
+    let issues = 0;
+    if (showArtist) issues += openMatches.length;
+    if (showMusician) issues += 1 + (spike ? 1 : 0);
+    if (aiOpen) issues += 0;
+    const summary = issues === 0 ? 'All clear' : issues + (issues === 1 ? ' item needs you' : ' items need you');
+
+    return {
+      modes, crawlers, matches, bars, checks, showArtist, showMusician, fileAll,
+      showBatch: openMatches.length > 1,
+      summary,
+      summaryStyle: 'font-size: 13px; font-weight: 600; border-radius: 999px; padding: 6px 12px; ' + (issues === 0 ? 'color: #15803D; background: #E7F6EC;' : 'color: #9A3412; background: #FDECE3;'),
+      modeLine: { artist: 'Artist workspace', musician: 'Musician workspace', both: 'Artist + musician workspace' }[mode],
+      spikeAria: spike ? 'Daily streams rising slowly, then jumping about six times in the last two days' : 'Daily streams rising steadily over 14 days with no spikes',
+      spikeTitle: spike ? 'Unusual spike: 6× normal in 48 hours' : 'No bot-like spikes',
+      spikeNote: spike ? 'Mostly from one city and one playlist you didn\'t pitch to. Build the appeal pack now, before the distributor flags it.' : 'Growth matches your pitched playlists and saves. Your promo receipts are logged.',
+      spikeBoxStyle: 'margin-top: 12px; padding: 12px; border-radius: 12px; ' + (spike ? 'background: #FDECE3; color: #9A3412;' : 'background: #E7F6EC; color: #14532D;'),
+      spikeToggleLabel: spike ? 'Show a normal week' : 'Simulate a bot spike',
+      toggleSpike: () => this.setState({ spike: !this.state.spike }),
+      packOpen: this.state.pack,
+      buildPack: () => this.setState({ pack: true }),
+      reopenIdle: !this.state.reopen,
+      reopenShown: this.state.reopen,
+      reopen: () => this.setState({ reopen: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

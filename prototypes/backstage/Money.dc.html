@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Backstage: Money</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F2F3F5}
+a{color:#3B34E0}a:hover{color:#2A23B8}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F2F3F5; color: #15161C; font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.5;">
+
+<header style="background: #15161C; color: #FFFFFF;">
+<div style="max-width: 1320px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: space-between;">
+<div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+<a href="Main.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 500;">← Today</a>
+<span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px;">Backstage</span>
+<span style="font-size: 12px; color: #C9CBD3; border: 1px solid #3A3C46; border-radius: 999px; padding: 2px 10px;">Prototype · demo data</span>
+</div>
+<div role="group" aria-label="Workspace discipline" style="display: flex; gap: 4px; background: #23242C; border-radius: 12px; padding: 4px;">
+<sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+<button type="button" onClick="{{m.pick}}" aria-pressed="{{m.pressed}}" style="{{m.style}}">{{m.label}}</button>
+</sc-for>
+</div>
+</div>
+</header>
+
+<main style="max-width: 1320px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 24px;">
+
+<section style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px;">
+<div>
+<p style="margin: 0; font-size: 13px; color: #5B5E6B;">This quarter · {{modeLine}}</p>
+<h1 style="margin: 4px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: 34px; line-height: 1.15; letter-spacing: -0.02em;">Money</h1>
+</div>
+<a href="Protection.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid #D3D6DD; background: #FFFFFF; color: #15161C; text-decoration: none; font-size: 14px; font-weight: 500;">Protection →</a>
+</section>
+
+<section aria-label="Totals" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="4">
+<button type="button" onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="{{t.style}}">
+<span style="display: block; font-size: 13px; color: #5B5E6B;">{{t.label}}</span>
+<span style="display: block; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #15161C;">{{t.value}}</span>
+<span style="display: block; font-size: 12px; color: #5B5E6B;">{{t.sub}}</span>
+</button>
+</sc-for>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
+
+<section aria-labelledby="ledger-h" style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+<h2 id="ledger-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Every source, one ledger</h2>
+<span style="font-size: 13px; color: #5B5E6B;">{{filterLine}} · select a row to see why</span>
+</div>
+<ul style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+<li>
+<button type="button" onClick="{{r.pick}}" aria-pressed="{{r.pressed}}" style="{{r.style}}">
+<span style="display: flex; flex-direction: column; min-width: 0; flex: 1; text-align: left;">
+<span style="font-size: 14px; font-weight: 600; color: #15161C;">{{r.source}}</span>
+<span style="font-size: 13px; color: #5B5E6B;">{{r.reason}}</span>
+</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0;">
+<span style="font-size: 15px; font-weight: 600; color: #15161C;">{{r.amountText}}</span>
+<span style="{{r.statusStyle}}">{{r.statusText}}</span>
+</span>
+</button>
+</li>
+</sc-for>
+</ul>
+<sc-if value="{{noRows}}" hint-placeholder-val="{{false}}">
+<p style="margin: 16px 0 0; font-size: 14px; color: #5B5E6B;">Nothing in this view.</p>
+</sc-if>
+</section>
+
+<aside aria-labelledby="detail-h" style="flex: 1 1 340px; min-width: 0; background: #15161C; color: #FFFFFF; border-radius: 18px; padding: 24px;">
+<p style="margin: 0; font-size: 12px; font-weight: 600; color: #C9CBD3; text-transform: uppercase; letter-spacing: 0.06em;">Money timeline</p>
+<h2 id="detail-h" style="margin: 6px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px;">{{sel.source}}</h2>
+<p style="margin: 4px 0 0; font-size: 28px; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">{{sel.amountText}}</p>
+<ol style="list-style: none; margin: 20px 0 0; padding: 0;">
+<sc-for list="{{sel.steps}}" as="s" hint-placeholder-count="3">
+<li style="display: flex; gap: 12px;">
+<div style="display: flex; flex-direction: column; align-items: center; width: 16px;">
+<span style="{{s.dotStyle}}"></span>
+<span style="flex: 1; width: 2px; background: #3A3C46; min-height: 22px;"></span>
+</div>
+<div style="padding-bottom: 14px;">
+<div style="font-size: 14px; font-weight: 600;">{{s.label}}</div>
+<div style="font-size: 13px; color: #C9CBD3;">{{s.note}}</div>
+</div>
+</li>
+</sc-for>
+</ol>
+<div style="border-top: 1px solid #3A3C46; padding-top: 16px;">
+<div style="font-size: 13px; color: #C9CBD3;">What unlocks it</div>
+<div style="font-size: 14px; margin-top: 2px;">{{sel.unlock}}</div>
+</div>
+<sc-if value="{{sel.hasAction}}" hint-placeholder-val="{{true}}">
+<sc-if value="{{sel.actionOpen}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{sel.act}}" style="margin-top: 16px; width: 100%; min-height: 48px; border-radius: 10px; border: 0; background: #FFFFFF; color: #15161C; font-size: 15px; font-weight: 600; cursor: pointer;">{{sel.action}}</button>
+</sc-if>
+<sc-if value="{{sel.actionDone}}" hint-placeholder-val="{{false}}">
+<p style="margin: 16px 0 0; padding: 12px; border-radius: 10px; background: #1F3A2A; color: #B7F0C8; font-size: 14px; font-weight: 500;">Drafted and added to your approval queue on Today.</p>
+</sc-if>
+</sc-if>
+</aside>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
+
+<sc-if value="{{showRecon}}" hint-placeholder-val="{{true}}">
+<section aria-labelledby="recon-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="recon-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Streams vs. statements</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">Spotify for Artists counts matched against your distributor statements, month by month</p>
+<div style="margin-top: 16px; overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 420px;">
+<thead>
+<tr style="text-align: left; color: #5B5E6B; font-size: 12px;">
+<th scope="col" style="padding: 8px 8px 8px 0; font-weight: 600;">Month</th>
+<th scope="col" style="padding: 8px; font-weight: 600; text-align: right;">Counted</th>
+<th scope="col" style="padding: 8px; font-weight: 600; text-align: right;">Paid on</th>
+<th scope="col" style="padding: 8px 0 8px 8px; font-weight: 600;">Read</th>
+</tr>
+</thead>
+<tbody>
+<sc-for list="{{recon}}" as="c" hint-placeholder-count="4">
+<tr style="border-top: 1px solid #ECEEF2;">
+<td style="padding: 10px 8px 10px 0; font-weight: 500;">{{c.month}}</td>
+<td style="padding: 10px 8px; text-align: right;">{{c.counted}}</td>
+<td style="padding: 10px 8px; text-align: right;">{{c.paid}}</td>
+<td style="padding: 10px 0 10px 8px;"><span style="{{c.readStyle}}">{{c.read}}</span></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+<sc-if value="{{queryOpen}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{sendQuery}}" style="margin-top: 16px; min-height: 44px; padding: 0 18px; border-radius: 10px; border: 0; background: #3B34E0; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer;">Draft a query about August</button>
+</sc-if>
+<sc-if value="{{queryDone}}" hint-placeholder-val="{{false}}">
+<p style="margin: 16px 0 0; font-size: 14px; font-weight: 500; color: #15803D;">Query drafted with the month, territory and stream counts attached. It's waiting in your approval queue.</p>
+</sc-if>
+</section>
+</sc-if>
+
+<section aria-labelledby="tax-h" style="background: #FFFFFF; border: 1px solid #E2E4E9; border-radius: 18px; padding: 24px;">
+<h2 id="tax-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Tax, handled as you go</h2>
+<p style="margin: 4px 0 0; font-size: 13px; color: #5B5E6B;">Every payout tagged by the form it will be reported on</p>
+<div style="margin-top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+<div style="background: #F2F3F5; border-radius: 12px; padding: 12px;">
+<div style="font-size: 12px; color: #5B5E6B;">Set aside this quarter</div>
+<div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700;">{{taxSetAside}}</div>
+<div style="font-size: 12px; color: #5B5E6B;">at your chosen [rate]%</div>
+</div>
+<div style="background: #F2F3F5; border-radius: 12px; padding: 12px;">
+<div style="font-size: 12px; color: #5B5E6B;">Next estimated payment</div>
+<div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700;">[Date]</div>
+<div style="font-size: 12px; color: #5B5E6B;">reminder 14 days before</div>
+</div>
+</div>
+<ul style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{taxFlags}}" as="f" hint-placeholder-count="2">
+<li style="display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid #ECEEF2; border-radius: 12px;">
+<span style="{{f.dotStyle}}"></span>
+<div><div style="font-size: 14px; font-weight: 500;">{{f.title}}</div><div style="font-size: 13px; color: #5B5E6B;">{{f.note}}</div></div>
+</li>
+</sc-for>
+</ul>
+<button type="button" style="margin-top: 16px; min-height: 44px; padding: 0 18px; border-radius: 10px; border: 1px solid #D3D6DD; background: #FFFFFF; color: #15161C; font-size: 14px; font-weight: 500; cursor: pointer;">Export year-end summary</button>
+</section>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"startMode":{"editor":"enum","default":"both","options":["artist","musician","both"]},"$preview":{"width":1440,"height":1700}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: null, filter: 'all', selected: null, done: {}, queried: false };
+  }
+
+  ledger() {
+    return [
+      { id: 'prints', kind: 'artist', source: 'Print shop sales', amount: 1240, status: 'paid', reason: 'Paid out weekly',
+        steps: [['Earned', 'Sales from Oct 1 to Oct 27', 'done'], ['Cleared', 'Processor fees taken off: $41', 'done'], ['Paid', 'In your bank account on [date]', 'done']],
+        unlock: 'Nothing. This money is yours.' },
+      { id: 'deposit', kind: 'artist', source: 'Commission deposit: [Client]', amount: 600, status: 'stuck', reason: 'Brief agreed, but no deposit invoice sent',
+        steps: [['Agreed', 'Scope and 2 revision rounds confirmed in chat', 'done'], ['Invoiced', 'Not sent yet', 'now'], ['Paid', 'Net-14 after the invoice', 'next']],
+        unlock: 'Send the 50% deposit invoice. Finals stay locked until the balance is paid.', action: 'Draft the deposit invoice' },
+      { id: 'reserve', kind: 'artist', source: 'Marketplace reserve', amount: 420, status: 'stuck', reason: 'Held as a new-shop reserve',
+        steps: [['Earned', '6 orders delivered', 'done'], ['Held', 'Reserve applies to new shops', 'now'], ['Released', 'Scheduled for [date]', 'next']],
+        unlock: 'Proof of delivery for digital orders usually shortens the hold.', action: 'Send proof of delivery' },
+      { id: 'license', kind: 'artist', source: 'License: [Brand]', amount: 900, status: 'onway', reason: 'Offer received, waiting on your reply',
+        steps: [['Requested', 'Inbound request 3 days ago', 'done'], ['Quoted', 'A draft at your rate card is ready', 'now'], ['Paid', 'On signature', 'next']],
+        unlock: 'Approve the license draft. AI training is excluded by default.', action: 'Review the license draft' },
+      { id: 'streams', kind: 'musician', source: 'Streaming (distributor)', amount: 310, status: 'onway', reason: 'Reported, paid with the next statement',
+        steps: [['Streamed', 'Jul–Oct plays counted', 'done'], ['Reported', 'Stores report about 2 months behind', 'done'], ['Paid', 'Next statement on [date]', 'next']],
+        unlock: 'Nothing to do. It arrives on its normal cycle.' },
+      { id: 'pro', kind: 'musician', source: 'Performance royalties', amount: null, status: 'stuck', reason: '"[Song title]" not registered with your PRO',
+        steps: [['Performed', 'Played on radio and at 4 shows', 'done'], ['Registered', 'Missing with your PRO', 'now'], ['Paid', 'Next PRO distribution', 'next']],
+        unlock: 'Register the work with the co-writer split (50/50).', action: 'Register with my PRO' },
+      { id: 'mlc', kind: 'musician', source: 'Streaming mechanicals', amount: null, status: 'stuck', reason: '1 song not registered with the MLC',
+        steps: [['Streamed', 'Mechanicals owed on every stream', 'done'], ['Matched', 'Unmatched, so nothing is paid', 'now'], ['Paid', 'Monthly once matched', 'next']],
+        unlock: 'Register the song with the MLC, using its ISRC and ISWC linked.', action: 'Register with the MLC' },
+      { id: 'live', kind: 'musician', source: 'Live: [Venue] show', amount: 750, status: 'paid', reason: 'Guarantee plus door split',
+        steps: [['Played', '[Date]', 'done'], ['Settled', 'Settlement sheet signed', 'done'], ['Paid', 'Bank transfer received', 'done']],
+        unlock: 'Nothing. This money is yours. A setlist report to your PRO is drafted.' },
+      { id: 'merch', kind: 'musician', source: 'Bandcamp and merch', amount: 515, status: 'paid', reason: 'Paid out per sale',
+        steps: [['Sold', '38 orders', 'done'], ['Cleared', 'Fees taken off: $64', 'done'], ['Paid', 'In your bank account', 'done']],
+        unlock: 'Nothing. This money is yours.' }
+    ];
+  }
+
+  renderVals() {
+    const mode = this.state.mode ?? this.props.startMode ?? 'both';
+    const filter = this.state.filter;
+    const done = this.state.done;
+    const fmt = (n) => '$' + n.toLocaleString('en-US');
+    const statusMeta = {
+      paid: { text: 'Paid', color: '#15803D' },
+      onway: { text: 'On the way', color: '#5B5E6B' },
+      stuck: { text: 'Stuck', color: '#C2410C' }
+    };
+
+    const modes = [['artist', 'Artist'], ['musician', 'Musician'], ['both', 'Both']].map(([id, label]) => {
+      const on = id === mode;
+      return {
+        label, pressed: on ? 'true' : 'false',
+        pick: () => this.setState({ mode: id, selected: null }),
+        style: 'min-height: 44px; padding: 0 16px; border-radius: 9px; border: 0; cursor: pointer; font-size: 14px; font-weight: 600; ' +
+          (on ? 'background: #FFFFFF; color: #15161C;' : 'background: transparent; color: #C9CBD3;')
+      };
+    });
+
+    const inMode = this.ledger().filter((r) => mode === 'both' || r.kind === mode);
+    const sum = (st) => inMode.filter((r) => r.status === st && r.amount != null).reduce((a, r) => a + r.amount, 0);
+    const unknown = inMode.filter((r) => r.status === 'stuck' && r.amount == null).length;
+
+    const tileDefs = [
+      { id: 'all', label: 'Everything', value: fmt(sum('paid') + sum('onway') + sum('stuck')), sub: inMode.length + ' sources' },
+      { id: 'paid', label: 'Paid', value: fmt(sum('paid')), sub: 'In your account' },
+      { id: 'onway', label: 'On the way', value: fmt(sum('onway')), sub: 'Normal timing, nothing to do' },
+      { id: 'stuck', label: 'Stuck', value: fmt(sum('stuck')), sub: unknown ? 'plus ' + unknown + ' unregistered, so amount unknown' : 'Each one has a fix' }
+    ];
+    const tiles = tileDefs.map((t) => {
+      const on = t.id === filter;
+      return Object.assign({}, t, {
+        pressed: on ? 'true' : 'false',
+        pick: () => this.setState({ filter: t.id, selected: null }),
+        style: 'text-align: left; cursor: pointer; padding: 16px; border-radius: 14px; background: #FFFFFF; min-height: 44px; ' +
+          (on ? 'border: 2px solid #3B34E0;' : 'border: 2px solid #E2E4E9;')
+      });
+    });
+
+    const visible = inMode.filter((r) => filter === 'all' || r.status === filter);
+    const selId = this.state.selected ?? (visible[0] && visible[0].id);
+    const rows = visible.map((r) => {
+      const on = r.id === selId;
+      const m = statusMeta[r.status];
+      return {
+        source: r.source, reason: r.reason,
+        amountText: r.amount == null ? 'Unknown' : fmt(r.amount),
+        statusText: done[r.id] ? 'Fix drafted' : m.text,
+        statusStyle: 'font-size: 12px; font-weight: 600; color: ' + (done[r.id] ? '#3B34E0' : m.color) + ';',
+        pressed: on ? 'true' : 'false',
+        pick: () => this.setState({ selected: r.id }),
+        style: 'width: 100%; display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 12px; cursor: pointer; min-height: 56px; ' +
+          (on ? 'background: #EEEDFD; border: 1px solid #3B34E0;' : 'background: #FFFFFF; border: 1px solid #ECEEF2;')
+      };
+    });
+
+    const base = visible.find((r) => r.id === selId) || inMode[0];
+    const dot = { done: 'background: #4ADE80;', now: 'background: #F59E6B; box-shadow: 0 0 0 4px rgba(245,158,107,0.25);', next: 'background: transparent; border: 2px solid #6B6E7A;' };
+    const sel = {
+      source: base.source,
+      amountText: base.amount == null ? 'Amount unknown' : fmt(base.amount),
+      steps: base.steps.map(([label, note, st]) => ({ label, note, dotStyle: 'width: 14px; height: 14px; border-radius: 999px; box-sizing: border-box; margin-top: 3px; flex-shrink: 0; ' + dot[st] })),
+      unlock: base.unlock,
+      hasAction: !!base.action,
+      action: base.action || '',
+      actionOpen: !!base.action && !done[base.id],
+      actionDone: !!base.action && !!done[base.id],
+      act: () => this.setState({ done: Object.assign({}, this.state.done, { [base.id]: true }) })
+    };
+
+    const readStyle = (k) => 'display: inline-block; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 10px; ' +
+      (k === 'ok' ? 'color: #15803D; background: #E7F6EC;' : k === 'lag' ? 'color: #3F424D; background: #ECEEF2;' : 'color: #9A3412; background: #FDECE3;');
+    const recon = [
+      { month: 'July', counted: '41,200', paid: '41,050', read: 'Matches (non-royalty plays)', k: 'ok' },
+      { month: 'August', counted: '38,900', paid: '35,100', read: '3,800 streams missing', k: 'gap' },
+      { month: 'September', counted: '44,300', paid: '—', read: 'Not reported yet (normal)', k: 'lag' },
+      { month: 'October', counted: '47,800', paid: '—', read: 'Not reported yet (normal)', k: 'lag' }
+    ].map((c) => Object.assign({}, c, { readStyle: readStyle(c.k) }));
+
+    const flagDot = (c) => 'width: 10px; height: 10px; border-radius: 999px; margin-top: 6px; flex-shrink: 0; background: ' + c + ';';
+    const artistFlags = [{ title: 'Possible duplicate 1099-K', note: 'Sales through PayPal may appear on both the marketplace and PayPal forms. 14 orders are tagged so you can check them.', dotStyle: flagDot('#C2410C') }];
+    const musicianFlags = [{ title: 'Bandcamp and PayPal overlap', note: 'Bandcamp sales paid through PayPal can show up on two forms. They are tagged so your accountant sees them once.', dotStyle: flagDot('#C2410C') }];
+    const okFlag = { title: 'Gross vs. net reconciled', note: 'Each platform payout is split into its sales, fees and net amount.', dotStyle: flagDot('#15803D') };
+    const taxFlags = (mode === 'artist' ? artistFlags : mode === 'musician' ? musicianFlags : [artistFlags[0], musicianFlags[0]]).concat([okFlag]);
+    const taxSetAside = { artist: '$370', musician: '$290', both: '$660' }[mode];
+
+    return {
+      modes, tiles, rows, sel, recon, taxFlags, taxSetAside,
+      noRows: rows.length === 0,
+      filterLine: { all: 'All sources', paid: 'Paid', onway: 'On the way', stuck: 'Stuck' }[filter],
+      modeLine: { artist: 'Artist workspace', musician: 'Musician workspace', both: 'Artist + musician workspace' }[mode],
+      showRecon: mode !== 'artist',
+      queryOpen: !this.state.queried,
+      queryDone: this.state.queried,
+      sendQuery: () => this.setState({ queried: true })
+    };
+  }
+}
+</script>
+</body>
+</html>
