@@ -1,6 +1,6 @@
-# Review 2026-11-02  (BTCUSDT 15m, last 168h)
+# Review 2026-11-03  (BTCUSDT 15m, last 168h)
 
-- Log integrity: OK (2 records)
+- Log integrity: OK (7 records)
 - Drex errors: {'regime': 1}
 - No closed trades
 
@@ -39,4 +39,4 @@ Not enough candles yet
 ## Threshold changes: none (current take 0.65, regime 0.6)
 
 ## Question version in use: 1
-Worst regime misses written to review-2026-11-02-packet.json for question rewriting.
+Worst regime misses written to review-2026-11-03-packet.json for question rewriting.
