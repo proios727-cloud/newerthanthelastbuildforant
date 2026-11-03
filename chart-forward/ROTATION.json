@@ -1,0 +1,13 @@
+{
+  "decisions_logged": 1,
+  "waiting_for_first_fill": [
+    "2026-11-02"
+  ],
+  "periods": [],
+  "completed_periods": 0,
+  "months_beat_basket": 0,
+  "cumulative": {
+    "rule": 0.0,
+    "basket": 0.0
+  }
+}
