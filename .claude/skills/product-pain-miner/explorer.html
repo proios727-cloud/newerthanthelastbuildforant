@@ -1,0 +1,366 @@
+<title>Pain to Redesign Index</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: inspection sheet. Summary strip, then the failure-mode matrix beside the pain/feasibility plot, then the ranked defect list. */
+:root {
+  --paper: #f2f4f3;
+  --sheet: #ffffff;
+  --ink: #17201d;
+  --muted: #5a6964;
+  --line: #d3dcd8;
+  --faint: #e6ebe9;
+  --accent: #c2410c;
+  --accent-ink: #ffffff;
+  --heat: #c2410c;
+  --dot-off: #c3cdc9;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #111614; --sheet: #182019; --ink: #e5ebe8; --muted: #95a59f; --line: #2b3632;
+    --faint: #1f2925; --accent: #fb8a4c; --accent-ink: #1a0f08; --heat: #fb8a4c; --dot-off: #3a4742;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #111614; --sheet: #182019; --ink: #e5ebe8; --muted: #95a59f; --line: #2b3632;
+  --faint: #1f2925; --accent: #fb8a4c; --accent-ink: #1a0f08; --heat: #fb8a4c; --dot-off: #3a4742;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5;
+}
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px;
+}
+h1, h2 { font-family: var(--display); font-weight: 700; letter-spacing: .01em; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1; }
+h2 { font-size: 22px; text-transform: uppercase; letter-spacing: .06em; }
+.lede { color: var(--muted); max-width: 68ch; margin: 8px 0 0; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+header { display: grid; gap: 18px; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px 32px; }
+.stat { display: grid; }
+.stat b { font-family: var(--display); font-size: 34px; font-weight: 600; line-height: 1.05; }
+.stat span { font-size: 13px; color: var(--muted); }
+
+.controls { display: grid; gap: 12px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--paper); padding-block: 12px; border-bottom: 1px solid var(--line); }
+@media (max-width: 860px) { .controls { position: static; } }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row > .label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); min-width: 78px; }
+.chip {
+  font: 500 13px var(--body); color: var(--ink); background: var(--sheet); border: 1px solid var(--line);
+  border-radius: 999px; padding: 4px 12px; cursor: pointer;
+}
+.chip:hover { border-color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chip:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+input[type="search"], select {
+  font: 14px var(--body); color: var(--ink); background: var(--sheet); border: 1px solid var(--line);
+  border-radius: 6px; padding: 6px 10px; min-width: 0;
+}
+input[type="search"] { flex: 1 1 220px; }
+.toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); cursor: pointer; }
+.reset { font: 500 13px var(--body); background: none; border: none; color: var(--accent); cursor: pointer; padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; }
+
+.panels { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 860px) { .panels { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.panel p.note { margin: 0; font-size: 13px; color: var(--muted); }
+
+.matrix-wrap { overflow-x: auto; }
+table.matrix { border-collapse: separate; border-spacing: 3px; width: 100%; min-width: 500px; font-size: 13px; }
+.matrix th { font: 500 10px var(--mono); text-transform: uppercase; letter-spacing: .03em; color: var(--muted); padding: 4px 2px; text-align: center; }
+.matrix th.rowh { text-align: left; font: 500 13px var(--body); text-transform: none; letter-spacing: 0; color: var(--ink); white-space: nowrap; }
+.matrix th button, .matrix td button { all: unset; cursor: pointer; display: block; width: 100%; }
+.matrix th button:hover { color: var(--accent); }
+.matrix td { padding: 0; }
+.matrix td button {
+  text-align: center; border-radius: 4px; padding: 7px 0; font: 500 13px var(--mono); font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.matrix td button.zero { color: var(--dot-off); }
+.matrix td button.sel { outline: 2px solid var(--ink); outline-offset: -2px; }
+.matrix td.total { font: 600 13px var(--mono); text-align: center; color: var(--ink); }
+
+.plot { position: relative; }
+.plot svg { width: 100%; height: auto; display: block; overflow: visible; }
+.plot .axis text { fill: var(--muted); font: 11px var(--mono); }
+.plot .grid line { stroke: var(--faint); }
+.plot .quad { fill: var(--accent); opacity: .07; }
+.plot .quadlabel { fill: var(--accent); font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.plot circle { cursor: pointer; stroke: var(--sheet); stroke-width: 2; transition: r .12s; }
+.plot circle.on { fill: var(--accent); }
+.plot circle.off { fill: var(--dot-off); }
+.plot circle:hover, .plot circle.hot { r: 8; }
+.tip {
+  position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); border-radius: 6px;
+  padding: 8px 10px; font-size: 12px; line-height: 1.35; max-width: 240px; transform: translate(-50%, calc(-100% - 12px));
+}
+.tip b { display: block; font-weight: 600; }
+
+.listhead { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: baseline; }
+.count { font-size: 13px; color: var(--muted); }
+ol.defects { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.defect {
+  background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px;
+  display: grid; grid-template-columns: 48px minmax(0, 1fr) 112px; gap: 4px 18px;
+}
+.defect.flash { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 620px) { .defect { grid-template-columns: 36px minmax(0, 1fr); } .defect .score { grid-column: 2; justify-items: start; } }
+.rank { font-family: var(--display); font-size: 28px; font-weight: 600; color: var(--muted); line-height: 1; }
+.defect .main { display: grid; gap: 6px; min-width: 0; }
+.defect h3 { margin: 0; font: 600 17px var(--body); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 4px; background: var(--faint); color: var(--muted); }
+.tag.nuis { background: none; border: 1px dashed var(--muted); }
+.complaint { margin: 0; color: var(--muted); }
+.fix { margin: 0; }
+.fix::before { content: "Redesign"; display: block; font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 2px; }
+.score { display: grid; justify-items: end; align-content: start; gap: 2px; }
+.score b { font-family: var(--display); font-size: 36px; font-weight: 700; line-height: 1; color: var(--ink); }
+.score span { font: 11px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+details { font-size: 13px; }
+summary { cursor: pointer; color: var(--muted); width: fit-content; }
+.dims { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px 16px; margin: 10px 0; }
+.dim { display: grid; gap: 3px; }
+.dim span { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.pips { display: flex; gap: 3px; }
+.pips i { width: 16px; height: 6px; border-radius: 3px; background: var(--faint); }
+.pips i.f { background: var(--ink); }
+.dim.lead .pips i.f { background: var(--accent); }
+.sources { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 2px; }
+.sources a { color: var(--ink); overflow-wrap: anywhere; }
+.prior { margin: 6px 0 0; color: var(--muted); }
+.empty { padding: 32px; text-align: center; color: var(--muted); background: var(--sheet); border: 1px dashed var(--line); border-radius: 10px; }
+footer { font-size: 13px; color: var(--muted); max-width: 72ch; }
+@media (prefers-reduced-motion: reduce) { .plot circle { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">product-pain-miner · cross-category view</div>
+    <h1>Pain to Redesign Index</h1>
+    <p class="lede">Public complaints about everyday household items, scored and paired with a concrete redesign. Opportunity ranks fixes by how much an item bothers people and how cheap the fix is. Filter by room or by the design failure behind the complaint.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <section class="controls" aria-label="Filters">
+    <div class="row" id="cat-row"><span class="label">Category</span></div>
+    <div class="row" id="mode-row"><span class="label">Failure</span></div>
+    <div class="row">
+      <span class="label">Find</span>
+      <input type="search" id="q" placeholder="Search items, complaints, redesigns" aria-label="Search">
+      <select id="sort" aria-label="Sort by">
+        <option value="opp">Sort: opportunity</option>
+        <option value="pain">Sort: pain</option>
+        <option value="feasibility">Sort: easiest fix</option>
+        <option value="severity">Sort: real harm</option>
+        <option value="annoyance">Sort: annoyance</option>
+      </select>
+      <label class="toggle"><input type="checkbox" id="nuis"> Nuisance-led only</label>
+      <button class="reset" id="reset" type="button">Clear filters</button>
+    </div>
+  </section>
+
+  <div class="panels">
+    <section class="panel" aria-labelledby="m-h">
+      <h2 id="m-h">Where each failure shows up</h2>
+      <p class="note">Count of complaints by design failure and category. Select a cell, row or column to filter.</p>
+      <div class="matrix-wrap"><table class="matrix" id="matrix"></table></div>
+    </section>
+    <section class="panel" aria-labelledby="p-h">
+      <h2 id="p-h">Pain vs. ease of fix</h2>
+      <p class="note">Each dot is one complaint. Top right means high pain and a cheap fix. Select a dot to jump to it.</p>
+      <div class="plot" id="plot"></div>
+    </section>
+  </div>
+
+  <section aria-labelledby="l-h" style="display:grid;gap:14px">
+    <div class="listhead">
+      <h2 id="l-h">Ranked complaints</h2>
+      <span class="count" id="count"></span>
+    </div>
+    <ol class="defects" id="list"></ol>
+  </section>
+
+  <footer>
+    <p><b>How scores work.</b> Each complaint is scored 1–5 on frequency, harm (severity), annoyance, how hard it is to work around, and how buildable the fix is. Pain = frequency × the higher of harm and annoyance × workaround, scaled to 0–100, so a daily nuisance counts as much as real harm. Opportunity = pain × feasibility ÷ 5. Scores are judgement calls made from the linked sources, not review counts.</p>
+    <p>Generated from the skill's datasets on 2026-11-03.</p>
+  </footer>
+</div>
+
+<script>
+const DATA = {"modes": {"no-feedback": "No feedback", "mapping-mismatch": "Mapping mismatch", "seller-first": "Seller-first", "last-mile-waste": "Last-mile waste", "bad-timing": "Bad timing", "one-size-fits-all": "One size fits all", "wears-out-early": "Wears out early"}, "entries": [{"id": "shower-controls-unreadable", "item": "Shower valves & controls", "complaint": "Every shower works differently; people can't tell which way is hot, how to switch tub to shower, or where the control is", "failure_mode": "mapping-mismatch", "frequency": 4, "severity": 3, "annoyance": 5, "workaround": 3, "feasibility": 4, "redesign": "One control turns the shower on and off and a separate dial sets the temperature, marked in degrees with a blue-to-red gradient. The diverter is a clearly marked lever on the same plate. All controls sit near the door so they can be reached without stepping under the water", "prior_art": "Thermostatic valves with degree scales (common in Japanese hotels)", "sources": ["https://www.johndcook.com/blog/2008/08/07/bad-user-interface-design-hotel-showers/", "https://onemileatatime.com/a-rant-about-hotel-showers/", "https://yourmileagemayvary.com/2019/03/20/my-latest-travel-pet-peeve-left-me-all-wet/", "https://juliebestry.com/2025/11/03/when-your-european-hotel-room-feels-like-an-escape-room-conquer-confusing-showers-a-c-and-light-switches/"], "category": "bathroom", "pain": 48, "opp": 38}, {"id": "exhaust-fan-leaves-moisture", "item": "Bathroom exhaust fans", "complaint": "The fan sounds like it's working but doesn't remove moisture (it's undersized, has a clogged grille, or is switched off too soon), which leads to mold and peeling paint", "failure_mode": "no-feedback", "frequency": 4, "severity": 4, "annoyance": 3, "workaround": 3, "feasibility": 4, "redesign": "A built-in humidity sensor runs the fan until the room's humidity returns to normal, and an LED on the switch shows airflow as OK, weak (clean the grille) or blocked", "prior_art": "Humidity-sensing fans (Panasonic WhisperSense, Broan)", "sources": ["https://dev.to/michael_groover_1fe970a66/why-your-bathroom-exhaust-fan-is-running-but-not-removing-moisture-288a", "https://siouxcityjournal.com/special-section/local/larger-exhaust-fan-can-prevent-mold-in-bathroom/article_76160d3f-6617-558f-9bb1-891a37f854fc.html", "https://www.homedepot.com/p/Panasonic-Whisper-Mighty-Pick-A-Flow-70-90-CFM-Ceiling-Wall-Bathroom-Exhaust-Fan-Energy-Star-with-9-in-x-9-in-Grille-Footprint-RG-M79A/320467425"], "category": "bathroom", "pain": 38, "opp": 30}, {"id": "exhaust-fan-noise", "item": "Bathroom exhaust fans", "complaint": "Older fans get loud (often around 4 sones), and parts loosen and rattle with age, so people avoid running them", "failure_mode": "wears-out-early", "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "A 0.5 sone or quieter motor in rubber-isolated mounts with captive screws that can't vibrate loose; the motor swaps out from the room side without removing the housing", "prior_art": null, "sources": ["https://www.touchstoneenergy.com/why-your-bathroom-fan-so-loud", "https://www.appliancepartspros.com/b/?p=19653"], "category": "bathroom", "pain": 29, "opp": 23}, {"id": "shower-caddy-suction-rust", "item": "Shower caddies", "complaint": "Suction cups let go on textured tile and the caddy crashes down; wire caddies sold as rust-resistant rust within months", "failure_mode": "wears-out-early", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "Solid aluminum or plastic caddy with no welds, mounted by tension pole or adhesive plate rather than suction, with open slotted shelves that drain completely", "prior_art": "Tension-pole caddies; powder-coated or aluminum caddies", "sources": ["https://www.target.com/p/bathroom-shower-caddy-black-made-by-design-8482/-/A-53806199", "https://fakespot.com/product/joseph-joseph-easystore-corner-shower-caddy-2-pack-no-mirror-white", "https://canadiantire.ca/en/pdp/squiggle-shower-caddy-satin-nickel-25-in-0635929p.html", "https://www.fakespot.com/product/zenna-home-7546nsp-expandable-over-the-showerhead-caddy-chrome"], "category": "bathroom", "pain": 38, "opp": 30}, {"id": "toothbrush-holder-sludge", "item": "Toothbrush holders", "complaint": "Water and toothpaste pool in the closed bottom of cup-style holders, turning into slime that is hard to reach and clean", "failure_mode": "last-mile-waste", "frequency": 4, "severity": 3, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "Open-bottom or wall-mounted holder that grips each brush by the neck so it hangs head-up with nothing beneath it to collect water, made of a single dishwasher-safe part", "prior_art": "Bottomless and wall-clip holders", "sources": ["https://www.mumsnet.com/talk/_chat/5196418-toothbrush-holders-that-dont-become-disgusting", "https://patents.justia.com/patent/7097050", "https://thangs.com/designer/Gazzaladra/post/Toothbrush%20holder%20V1-V4-2698", "https://www.aol.com/articles/clean-toothbrush-holder-safely-why-140000496.html"], "category": "bathroom", "pain": 26, "opp": 26}, {"id": "shampoo-conditioner-lookalike", "item": "Shampoo & conditioner bottles", "complaint": "The two bottles are nearly identical and labeled in tiny type, so without glasses in a dim shower people can't tell them apart", "failure_mode": "one-size-fits-all", "frequency": 3, "severity": 1, "annoyance": 3, "workaround": 2, "feasibility": 5, "redesign": "An industry-wide tactile code (raised stripes for shampoo, dots for conditioner, plain for body wash) plus contrasting cap colors", "prior_art": "Herbal Essences tactile bottles", "sources": ["https://world.hey.com/jz/designers-what-on-earth-is-going-on-with-shampoo-bottles-7f956f0d", "https://www.henshaws.org.uk/hints-and-tips/trick-to-distinguish-shampoo-from-conditioner/", "https://www.today.com/today/amp/tdna139799"], "category": "bathroom", "pain": 14, "opp": 14}, {"id": "shower-liner-mold", "item": "Shower curtain liners", "complaint": "Pink slime and mildew grow in the damp folds of the liner, which then has to be washed or thrown away", "failure_mode": "wears-out-early", "frequency": 4, "severity": 3, "annoyance": 4, "workaround": 2, "feasibility": 4, "redesign": "A quick-drying, machine-washable fabric liner on a rod that stays open so the liner hangs flat and dries without folds, with a removable weighted hem", "prior_art": "Machine-washable fabric liners", "sources": ["https://www.apartmenttherapy.com/shower-curtain-liner-mold-37384412", "https://www.bobvila.com/articles/pink-mold-in-shower.md", "https://www.utmb.edu/utmb/news-article/utmb-news/2025/04/10/here's-how-often-you-should-actually-replace-your-shower-curtain--according-to-microbiologists"], "category": "bathroom", "pain": 26, "opp": 21}, {"id": "shower-liner-billows", "item": "Shower curtain liners", "complaint": "The liner billows inward and sticks to the person showering", "failure_mode": "one-size-fits-all", "frequency": 3, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "A weighted hem plus magnets placed where they meet a steel tub, sold standard on every liner, and a curved rod that pushes the liner outward", "prior_art": "Weighted or magnetic liners; curved shower rods", "sources": ["https://www.wayfair.com/bed-bath/pdp/kenney-liner-lbkl1162.html", "https://www.apartmenttherapy.com/shower-curtain-liner-amazon-36765785"], "category": "bathroom", "pain": 19, "opp": 19}, {"id": "tp-holder-spring-rod", "item": "Toilet paper holders", "complaint": "Swapping the roll on a spring-loaded rod takes two hands, and the spring fails or the arm falls off", "failure_mode": "wears-out-early", "frequency": 3, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "An open, single-arm holder the roll slides onto with one hand, with no spring or detachable rod", "prior_art": "Single-post holders; Roto holder", "sources": ["https://www.perigold.com/bath/pdp/kohler-occasion-pivoting-toilet-paper-holder-p110226644.html", "https://www.aol.com/articles/mans-invention-upgrades-familiar-toilet-193000986.html", "https://patents.justia.com/patent/20020134881"], "category": "bathroom", "pain": 19, "opp": 19}, {"id": "low-flow-toilet-clogs", "item": "Low-flow toilets", "complaint": "Older low-flow models with narrow trapways clog and need double flushing (much less common with newer models)", "failure_mode": "one-size-fits-all", "frequency": 2, "severity": 3, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "A wide trapway and glazed bowl as standard, with the independently tested flush score (MaP grams) printed on the box", "prior_art": "WaterSense-certified toilets; MaP testing", "sources": ["https://www.pmmag.com/articles/87270-high-marks-for-low-flow-toilets", "https://www.epa.gov/sites/production/files/2017-03/documents/ws-flushfact-vs-fiction.pdf", "https://terrylove.com/against_the_flow.htm"], "category": "bathroom", "pain": 19, "opp": 15}, {"id": "fitted-sheet-pops-off", "item": "Fitted sheets", "complaint": "Corners pop off overnight because pocket depths aren't standardized, the elastic is only at the corners, and toppers or adjustable bases add height or bend the mattress", "failure_mode": "one-size-fits-all", "frequency": 4, "severity": 1, "annoyance": 5, "workaround": 3, "feasibility": 5, "redesign": "Elastic sewn all the way around the hem, plus a measured pocket depth printed on the label with a 'fits mattress X–Y in.' range that includes toppers", "prior_art": "All-around-elastic sheets; zip-on encasement sheets", "sources": ["https://simbasleep.com/blogs/night-life/fitted-sheet-depths-explained-how-to-get-the-right-fit", "https://mattressmiracle.ca/blogs/mattress-miracle-blog/how-to-keep-fitted-sheets-tight-on-bed-guide", "https://www.idealhome.co.uk/bedroom/how-do-i-keep-my-fitted-sheet-from-coming-off", "https://engineerfix.com/why-does-my-fitted-sheet-keep-coming-off/"], "category": "bedroom", "pain": 48, "opp": 48}, {"id": "duvet-insert-bunches", "item": "Duvets & duvet covers", "complaint": "The insert slides and bunches inside the cover overnight, because nothing holds it in place and insert and cover sizes don't match", "failure_mode": "one-size-fits-all", "frequency": 4, "severity": 1, "annoyance": 4, "workaround": 3, "feasibility": 5, "redesign": "Snap tabs at all four corners and the middle of each edge on every insert and cover, with matched sizes labeled 'insert fits cover X'", "prior_art": "Corner ties; zip-in duvet systems", "sources": ["https://hushblankets.com/blogs/sleep/how-to-keep-duvet-in-place", "https://www.californiadesignden.com/blogs/bedding/keep-duvet-cover-from-bunching", "https://sleepiverse.com/articles/how-to-prevent-duvet-bunching-in-duvet-cover/", "https://www.dreamcloudsleep.com/posts/duvet-insert-guide"], "category": "bedroom", "pain": 38, "opp": 38}, {"id": "duvet-cover-hard-to-change", "item": "Duvets & duvet covers", "complaint": "Getting the insert into the cover is a two-person job unless you know the 'burrito' trick, because both far corners have to be held at once", "failure_mode": "one-size-fits-all", "frequency": 4, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 4, "redesign": "A cover that zips open on three sides and lies flat like a sandwich, so the insert is laid in and zipped closed with no turning inside out", "prior_art": "Three-sided zip duvet covers", "sources": ["https://mattressmiracle.ca/blogs/mattress-miracle-blog/duvet-burrito-method-cover-easy-trick-guide", "https://www.insidehook.com/design/best-duvet-cover-hack-pippen-house-zippered-system/amp", "https://amerisleep.com/blog/how-to-put-on-a-duvet-cover/"], "category": "bedroom", "pain": 26, "opp": 21}, {"id": "pillow-clumps-after-wash", "item": "Pillows", "complaint": "Fiberfill pillows come out of the wash lumpy and flat even when the care tag is followed, so many people stop washing them", "failure_mode": "wears-out-early", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "Fill sewn into several baffled chambers so it can't migrate, inside a zippered washable outer shell, so the cover is washed often and the fill rarely", "prior_art": "Baffle-box pillows; zippered pillow protectors", "sources": ["https://www.grandforksherald.com/newsmd/high-quality-pillows-survive-better-in-the-wash", "https://www.mumsnet.com/talk/housekeeping/1763101-Manky-pillows", "https://www.hunker.com/12577742/how-to-fix-a-lumpy-pillow-after-washing/", "https://casper.com/blogs/article/how-to-fix-a-lumpy-pillow"], "category": "bedroom", "pain": 38, "opp": 30}, {"id": "mattress-sags-early", "item": "Mattresses", "complaint": "Foam mattresses sag into body impressions within a few years, and warranty claims fail on high depth thresholds", "failure_mode": "wears-out-early", "frequency": 4, "severity": 3, "annoyance": 4, "workaround": 4, "feasibility": 3, "redesign": "A zippered case with separate comfort layers that can be rotated or swapped, plus a printed foam-density spec and a sag gauge in the box", "prior_art": "Mattresses with replaceable or flippable comfort layers", "sources": ["https://www.consumeraffairs.com/furniture/tempurpedic.html?page=3", "https://www.goodbed.com/mattresses/serta/reviews/?page=48", "https://www.thesleepjudge.com/tempur-pedic-complaints/", "https://forum.livingwithfibro.org/t/help-with-recommendations/1530"], "category": "bedroom", "pain": 51, "opp": 31}, {"id": "memory-foam-sleeps-hot", "item": "Mattresses", "complaint": "Memory foam traps body heat and sleepers wake up sweaty, even on models marketed with cooling gel", "failure_mode": "one-size-fits-all", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 3, "redesign": "An open-cell or coil comfort layer with side vents, plus a tested 'sleeps warm / neutral / cool' rating on the label instead of 'cooling gel' marketing", "prior_art": "Hybrid coil mattresses", "sources": ["https://www.goodbed.com/mattress-line/serta-icomfort-pre-2017/reviews/?page=13", "https://www.consumeraffairs.com/furniture/sealy_mattress.html?page=6", "https://www.thesleepjudge.com/review/saatva-mattress-review/comments/"], "category": "bedroom", "pain": 38, "opp": 23}, {"id": "bright-clock-display", "item": "Bedside clocks & chargers", "complaint": "Clock displays and charging lights are too bright for a dark room, and dimming offers only two or three still-bright steps, so people tape over them", "failure_mode": "bad-timing", "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "A warm red or amber display that dims smoothly to fully off, shows the time on a tap, and has charging lights that switch off once the room is dark", "prior_art": null, "sources": ["https://www.curbly.com/9898-how-to-calm-your-alarm-clock-s-display-and-sleep-better-for-25-cents", "https://community.autism.org.uk/f/miscellaneous-and-chat/47282/alarm-clocks-with-dim-letters", "https://decor.lazada.sg/sleep-friendly-led-digital-clocks-key-features-for-bedroom-use-20260806/"], "category": "bedroom", "pain": 19, "opp": 19}, {"id": "dresser-drawer-bottoms", "item": "Dressers", "complaint": "Thin particle-board or cardboard drawer bottoms bow and fall out, and runners stick or let drawers drop onto each other", "failure_mode": "wears-out-early", "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "Plywood drawer bottoms seated in a groove on all four sides, with metal ball-bearing slides as standard even on flat-pack dressers", "prior_art": null, "sources": ["https://arayofsunlight.com/how-to-fix-a-drawer-bottom-that-falls-out/", "https://woodgears.ca/dresser/from_junk.html", "https://www.hometalk.com/44342877/diy/diy", "https://windowhardwaredirect.com/blogs/news/how-to-stop-dresser-drawers-from-falling-out-practical-tips-and-solutions"], "category": "bedroom", "pain": 29, "opp": 23}, {"id": "brush-roll-hair-wrap", "item": "Vacuum brush rolls", "complaint": "Hair and thread wind tightly around the brush roll and its ends until it stops spinning, so it has to be cut free with scissors", "failure_mode": "wears-out-early", "frequency": 5, "severity": 2, "annoyance": 5, "workaround": 3, "feasibility": 4, "redesign": "A tapered or comb-guarded brush roll that pushes hair toward a built-in cutter, sealed end caps that hair can't wind into, and a roll that pops out without tools", "prior_art": "Dyson conical brush bar; Shark anti-wrap rolls", "sources": ["https://www.bestcordlessvacuumguide.com/how-to-remove-hair-wrap-from-a-brushroll/", "https://www.onegoodthingbyjillee.com/remove-hair-from-vacuum-brush-roll/", "https://bbbprograms.org/media/newsroom/decisions/shark-vertex-vacuum", "https://newsroom.sharkninja.com/zero-m-technology-a-high-performance-vacuum-innovation-designed-to-defend-against-hair-wrap/"], "category": "cleaning", "pain": 60, "opp": 48}, {"id": "kitchen-sponge-stinks", "item": "Kitchen sponges", "complaint": "Sponges start to smell and harbor bacteria within days, yet most people keep them for a month or more because nothing shows when one is spent", "failure_mode": "no-feedback", "frequency": 5, "severity": 3, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "A quick-drying sponge with a color strip that fades after about a week of wetting, sold in a draining holder that keeps it off the wet sink edge", "prior_art": "Silicone scrubbers; draining sponge holders", "sources": ["https://reviewed.com/cooking/features/how-often-you-should-change-your-kitchen-sponge", "https://komonews.com/news/consumer/kitchen-sponge-smell-funky-replace-it", "https://www.idealhome.co.uk/house-manual/cleaning/cleaning-experts-dish-sponge-warning", "https://www.phillymag.com/2017/08/02/how-often-replace-kitchen-sponge/"], "category": "cleaning", "pain": 32, "opp": 32}, {"id": "robot-vacuum-stuck", "item": "Robot vacuums", "complaint": "The robot snags on socks, cords and rug tassels or wedges under low furniture, so owners tidy the floor before every run", "failure_mode": "one-size-fits-all", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 3, "redesign": "A front camera that recognizes and steers around small soft objects, a height sensor that checks clearance before driving under furniture, and a brush that reverses to release a snag", "prior_art": "Camera-based obstacle avoidance on premium models", "sources": ["https://justadadapproved.com/why-do-robot-vacuums-get-stuck-on-cords-socks-and-rug-tassels/", "https://www.tomsguide.com/home/smart-home/why-does-my-robot-vacuum-keep-getting-stuck-5-simple-ways-to-fix-it", "https://forums.wyze.com/t/wyze-vacuum-what-you-need-to-know-before-buying-one/171159", "https://www.mumsnet.com/talk/am_i_being_unreasonable/5550658-to-ask-if-your-robot-hoover-or-hoover-mop-works"], "category": "cleaning", "pain": 38, "opp": 23}, {"id": "mop-bucket-wringer", "item": "Mops & mop buckets", "complaint": "Wringers leave the mop dripping or don't fit the bucket, pads fray or catch, and buckets tip and spill dirty water", "failure_mode": "wears-out-early", "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "Separate clean and dirty tanks in a wide-based bucket, with a wringer molded into the bucket rather than clipped on, a pouring spout, and pads that attach by a full-width hook strip instead of tabs", "prior_art": null, "sources": ["https://www.productreview.com.au/listings/vileda-easy-wring-mop-bucket", "https://www.webstaurantstore.com/product-reviews/274MOPBCKTBL.html", "https://www.lowes.com/reviews/libman-1283-mops/5005975923?offset=100", "https://es.trustpilot.com/review/mop-pro.co?page=7"], "category": "cleaning", "pain": 29, "opp": 23}, {"id": "stick-vac-trigger-hold", "item": "Cordless stick vacuums", "complaint": "The trigger has to be held down the whole time and can't be locked on, which makes hands sore during longer cleans", "failure_mode": "one-size-fits-all", "frequency": 3, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "A click-on/click-off button with an auto-pause when the vacuum stands upright or the floor head lifts off the floor, so battery is saved without a held trigger", "prior_art": "Stick vacuums with on/off switches; Dyson's later button models", "sources": ["https://published1.consumer.org.nz/products/stick-vacuum-cleaners/guide", "https://forums.wyze.com/t/stick-vacuum/202003"], "category": "cleaning", "pain": 19, "opp": 19}, {"id": "stick-vac-battery-sealed", "item": "Cordless stick vacuums", "complaint": "The battery is built in, runs far short of the box claim on max power, and when it wears out replacing the whole vacuum is cheaper", "failure_mode": "wears-out-early", "frequency": 3, "severity": 3, "annoyance": 4, "workaround": 4, "feasibility": 4, "redesign": "A battery that clicks out with standard cells, runtime printed for each power mode (not only eco), and a spare battery that charges in the dock", "prior_art": "Click-in removable batteries on some stick vacuums", "sources": ["https://published1.consumer.org.nz/products/stick-vacuum-cleaners/guide"], "category": "cleaning", "pain": 38, "opp": 30}, {"id": "spray-bottle-clogs", "item": "Trigger spray bottles", "complaint": "Nozzles clog with dried cleaner, seals wear so the trigger sputters, and the last inch can't be sprayed because the tube no longer reaches", "failure_mode": "last-mile-waste", "frequency": 4, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "A weighted pickup tube that follows the liquid to the lowest point, a nozzle that closes when you twist it off, and a trigger head that unscrews to move onto a refill bottle", "prior_art": "Weighted-tube sprayers; refill-and-reuse cleaner bottles", "sources": ["https://www.hunker.com/12398310/how-to-fix-a-spray-bottle-that-isnt-spraying/", "https://www.hometalk.com/30508348/q-why-do-spray-bottles-stop-working-and-what-can-you-do-about-it", "https://www.cromwell.co.uk/shop/cleaning-and-hygiene/spray-bottles/c/080203"], "category": "cleaning", "pain": 26, "opp": 26}, {"id": "tool-batteries-locked-in", "item": "Cordless power tool batteries", "complaint": "Every brand, and sometimes each line within a brand, uses its own battery, so switching brands means buying new batteries and chargers", "failure_mode": "seller-first", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 4, "feasibility": 2, "redesign": "A shared battery connector standard across brands, with each brand competing on the tool itself", "prior_art": "Cordless Alliance System; Power X Change; Bosch Amp Share", "sources": ["https://toolguyd.com/universal-cordless-power-tool-battery/", "https://lawnmowerforum.com/threads/the-insanity-of-battery-incompatibility.16310/exportthread", "https://www.alltools.com.au/blog/2021/power-tool-batteries-are-interchangeable", "https://ukworkshop.co.uk/threads/battery-compatibility.146494"], "category": "garage", "pain": 51, "opp": 20}, {"id": "garage-door-left-open", "item": "Garage door openers", "complaint": "Nothing tells you the door was left open overnight, and built-in alerts are missing, fixed at an hour, or don't fire", "failure_mode": "no-feedback", "frequency": 3, "severity": 3, "annoyance": 3, "workaround": 3, "feasibility": 5, "redesign": "A light on the wall button that stays lit while the door is open, plus an opener setting that auto-closes after a set time or after dark", "prior_art": "Timer-to-close features; camera-based open-door alerts", "sources": ["https://forums.wyze.com/t/garage-door-left-open-notification/37016", "https://community.smartthings.com/t/garage-door-open-ness-detection-alert/12097", "https://www.techradar.com/home/smart-home/googles-nest-cameras-will-now-alert-you-if-you-left-the-garage-door-open", "https://forums.wyze.com/t/garage-door-notification-if-door-is-open-at-specific-time-and-for-time-duration/233941"], "category": "garage", "pain": 22, "opp": 22}, {"id": "garage-keypad-dies", "item": "Garage door keypads & remotes", "complaint": "Keypads and remotes stop working with no warning, usually a dead battery, lost pairing or lock mode, and each brand resets differently", "failure_mode": "no-feedback", "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "A low-battery blink on the keypad weeks ahead, and an opener light that shows when lock mode is on", "prior_art": null, "sources": ["https://ahs.com/home-matters/repair-maintenance/how-to-troubleshoot-a-garage-door-keypad", "https://www.libertyhomeguard.com/troubleshooting-your-garage-door-keypad", "https://www.smarthomeperfected.com/garage-door-keypad-not-working/", "https://www.trunetto.com/troubleshooting/garage-doors/liftmaster/liftmaster-wireless-keypad-not-working-reset-reprogram"], "category": "garage", "pain": 19, "opp": 19}, {"id": "pegboard-hooks-fall-out", "item": "Pegboard hooks", "complaint": "Thin 1/8-inch hooks wobble in 1/4-inch holes and fall out every time a tool is taken down", "failure_mode": "wears-out-early", "frequency": 3, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "Hooks with a twist-lock tab that snaps behind the board, sized to the hole, and sold in the same kit as the board", "prior_art": "Locking pegboard hooks; steel pegboard systems", "sources": ["https://www.garagejournal.com/forum/threads/peg-board-hardware-advice.1304/", "https://wallcontrol.com/blogs/wall-storage-organization-blog/how-to-prevent-pegboard-hooks-from-falling-out-or-sagging-a-durable-solution-for-organized-wall-storage", "https://grassrootsmotorsports.com/forum/grm/how-do-you-pegboard/140927/page1"], "category": "garage", "pain": 19, "opp": 19}, {"id": "extension-cord-tangles", "item": "Extension cords", "complaint": "Long cords twist and kink into a tangle when coiled, and the kinks damage the wire inside", "failure_mode": "wears-out-early", "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "A flat cord that coils without twisting, with a built-in strap and a lit end that shows the cord is live", "prior_art": "Flat cords; lighted-end extension cords", "sources": ["https://blogs.popularwoodworking.com/review/how-to-roll-up-an-extension-cord", "https://www.thisoldhouse.com/tools/21015253/proper-use-and-storage-of-extension-cords", "https://www.monoprice.com/p/resources/smart-ways-to-store-extension-cords-safely-and-efficiently"], "category": "garage", "pain": 29, "opp": 23}, {"id": "nonstick-coating-peels", "item": "Nonstick pans & air-fryer baskets", "complaint": "Coating flakes within weeks or months, sometimes after one wash; users worry about eating the flakes", "failure_mode": "wears-out-early", "frequency": 5, "severity": 4, "annoyance": 4, "workaround": 3, "feasibility": 3, "redesign": "Swappable coated insert on a durable stainless or cast body, a wear-indicator layer that changes color before bare metal shows, and an honest 'replace insert by' lifespan on the box", "prior_art": "Stainless or carbon-steel baskets; replaceable-liner air fryers", "sources": ["https://www.usa.philips.com/c-f/XC000003636/the-coating-of-my-philips-airfryer-s-pan-or-basket-peels-off", "https://www.consumeraffairs.com/homeowners/t_fal.html?page=2", "https://www.thedailymeal.com/2231189/common-customer-praises-complaints-ninja-kitchen-appliances/"], "category": "kitchen", "pain": 48, "opp": 29}, {"id": "air-fryer-basket-cleaning", "item": "Basket-style air fryers", "complaint": "Mesh and crevices trap grease; the basket is hard to fully clean", "failure_mode": "wears-out-early", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "Flat perforated tray with no mesh and no internal seams, rounded inside corners, and a lift-out drip pan that goes in the dishwasher", "prior_art": null, "sources": ["https://www.tastingtable.com/2280139/disadvantages-basket-style-air-fryer/", "https://www.thedailymeal.com/2231189/common-customer-praises-complaints-ninja-kitchen-appliances/"], "category": "kitchen", "pain": 38, "opp": 30}, {"id": "stove-knob-mapping", "item": "Stovetop controls", "complaint": "A row of knobs controls a 2×2 grid of burners, so people turn on the wrong burner", "failure_mode": "mapping-mismatch", "frequency": 4, "severity": 4, "annoyance": 4, "workaround": 2, "feasibility": 4, "redesign": "Arrange the knobs in the same 2×2 pattern as the burners, and add a lit 'hot' ring on the knob of each active burner", "prior_art": "Staggered-knob ranges; induction hobs with per-zone touch controls", "sources": ["https://sketchplanations.com/mapping", "https://peterme.com/archives/00000209.html"], "category": "kitchen", "pain": 26, "opp": 21}, {"id": "plastic-wrap-cutter", "item": "Plastic wrap / cling film", "complaint": "The serrated cutter loses the film's edge, the wrap clings to itself, and the blade cuts fingers", "failure_mode": "seller-first", "frequency": 4, "severity": 2, "annoyance": 5, "workaround": 3, "feasibility": 5, "redesign": "A refillable slide-cutter box with a guide that holds the cut edge at the slot, plus standard refill core sizes", "prior_art": "Slide-cutter dispensers (tested by Cook's Illustrated)", "sources": ["https://www.cooksillustrated.com/articles/524-testing-plastic-wrap-dispensers", "https://pitmaster.amazingribs.com/forum/other-aa/430788-totally-annoyed-with-plastic-wrap-serrated-cutter-for-dispensing", "https://fox6now.com/real-milwaukee/do-plastic-food-wraps-frustrate-you-the-chic-wrap-promises-to-help-but-does-it-work"], "category": "kitchen", "pain": 48, "opp": 48}, {"id": "peel-off-lids", "item": "Peel-off lids (yogurt, tins)", "complaint": "The tab tears off or the foil rips partway, and food splashes or the user gets cut", "failure_mode": "seller-first", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 4, "redesign": "A full-width pull ring bonded through the whole seal, a rolled safe edge on tins, and a peel line that guides the tear around the rim", "prior_art": null, "sources": ["https://www.creativebloq.com/news/everyday-product-design-fails"], "category": "kitchen", "pain": 26, "opp": 21}, {"id": "snack-bags-no-reseal", "item": "Snack & chip bags", "complaint": "Once opened, the bag can't be resealed and the food goes stale", "failure_mode": "seller-first", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 4, "redesign": "A peel-and-press adhesive reseal strip below the tear line on every family-size bag", "prior_art": "Resealable cheese and deli packs", "sources": ["https://www.creativebloq.com/news/everyday-product-design-fails"], "category": "kitchen", "pain": 26, "opp": 21}, {"id": "storage-container-lids", "item": "Food storage containers", "complaint": "Locking tabs snap off and lids stop sealing or don't fit", "failure_mode": "wears-out-early", "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "A gasket and lid in one piece with no hinged tabs; one lid size for each footprint across the whole set; replacement lids sold separately", "prior_art": null, "sources": ["https://www.chowhound.com/2095661/kitchen-items-avoid-buying/"], "category": "kitchen", "pain": 29, "opp": 23}, {"id": "fridge-icemaker-line", "item": "French-door refrigerators", "complaint": "Water and icemaker lines run through usable space, freeze, or take up shelf room", "failure_mode": "one-size-fits-all", "frequency": 2, "severity": 3, "annoyance": 3, "workaround": 4, "feasibility": 3, "redesign": "Run the water and icemaker lines inside the cabinet wall with a heated sleeve, and give the icemaker a removable module", "prior_art": null, "sources": ["https://www.tastingtable.com/2121884/kitchen-design-horrors-reddit"], "category": "kitchen", "pain": 19, "opp": 11}, {"id": "worktop-lighting-shadows", "item": "Kitchen lighting", "complaint": "Ceiling lights sit behind the cook and throw shadows onto the worktop", "failure_mode": "one-size-fits-all", "frequency": 3, "severity": 2, "annoyance": 3, "workaround": 3, "feasibility": 5, "redesign": "Wall cabinets sold with an integrated under-cabinet LED channel and plug-through wiring as standard, not as an add-on", "prior_art": null, "sources": ["https://www.which.co.uk/news/article/things-people-regret-most-about-their-kitchens-aLAkj2Y8Kgcp"], "category": "kitchen", "pain": 22, "opp": 22}, {"id": "front-load-gasket-mold", "item": "Front-load washers", "complaint": "Water and detergent sit in the door gasket folds after every load, growing mold and a musty smell that gets into clean clothes", "failure_mode": "last-mile-waste", "frequency": 5, "severity": 3, "annoyance": 5, "workaround": 3, "feasibility": 3, "redesign": "A gasket with no folds that slopes to drain holes, plus a short fan-dry run after each cycle that blows out the drum and gasket, so no one has to wipe it down or leave the door open", "prior_art": "LG's redesigned gasket with drain holes; machines with drum-dry or auto-vent features", "sources": ["https://www.consumerreports.org/cro/news/2009/12/mold-and-odor-issues-for-some-front-loading-washing-machines-spur-class-actions/index.htm", "https://www.nbcnews.com/business/consumer/front-loader-odor-stinky-washer-class-action-lawsuit-finally-settled-n609316", "https://laundry.reviewed.com/news/supreme-court-wont-hear-moldy-washing-machine-suit", "https://www.ksat.com/consumer/2016/09/08/people-complain-of-smelly-washing-machines"], "category": "laundry", "pain": 60, "opp": 36}, {"id": "dryer-hidden-lint", "item": "Clothes dryers", "complaint": "Lint gets past the filter and builds up behind the drum or in the vent, where owners can't see or reach it, until it starts a fire", "failure_mode": "no-feedback", "frequency": 3, "severity": 5, "annoyance": 2, "workaround": 4, "feasibility": 3, "redesign": "A sealed lint path with no gaps around the filter, an airflow sensor that warns on the display when the vent is restricted, and a front panel that comes off without tools to reach the area behind the drum", "prior_art": "Dryers with clogged-vent warnings", "sources": ["https://www.classaction.org/lg-dryer-fires-lawsuit", "https://caselaw.findlaw.com/tx-supreme-court/1505499.html", "https://www.foxnews.com/real-estate/dryers-get-better-at-letting-you-know-lint-is-blocking-the-vent", "https://www.cpsc.gov/s3fs-public/clothes_1.pdf"], "category": "laundry", "pain": 48, "opp": 29}, {"id": "detergent-cap-dose-lines", "item": "Liquid detergent caps", "complaint": "Faint or confusing fill lines inside the cap lead people to use too much detergent, which wastes money and leaves residue on clothes and in the machine", "failure_mode": "seller-first", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "High-contrast dose lines molded on the outside of the cap with load-size words, and a full cap equal to one normal dose so 'fill it up' is correct", "prior_art": "Pump dispensers; pre-measured pods", "sources": ["https://www.consumerreports.org/cro/news/2009/06/some-laundry-detergent-caps-can-lead-to-overdosing/index.htm", "https://www.consumerreports.org/cro/news/2012/02/confusing-caps-don-t-oversuds-your-duds/index.htm", "https://consumerreports.org/cro/magazine/2012/03/detergent-doses-ultra-confusing/index.htm", "https://packagingstrategies.com/articles/91263-some-laundry-detergent-caps-can-lead-to-overdosing"], "category": "laundry", "pain": 26, "opp": 26}, {"id": "end-of-cycle-chime", "item": "Washer & dryer chimes", "complaint": "The end-of-cycle chime is very loud by default, is silenced with hidden button combinations that differ by model, and some beeps can't be turned off at all", "failure_mode": "bad-timing", "frequency": 4, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 5, "redesign": "A labeled volume control on the panel (off, low, high) that also mutes button beeps, with quiet hours that switch the chime to a light or phone notification overnight", "prior_art": null, "sources": ["https://www.lg.com/us/support/help-library/how-to-turn-onoff-the-washer-chime--20154464592039", "https://www.coolblue.de/en/advice/adjust-end-signal-tune-of-samsung-washing-machine.html", "https://us.community.samsung.com:443/t5/Washers-and-Dryers/How-to-turn-off-end-of-cycle-chime-on-washer/m-p/2166860", "https://www.cyclechat.net/threads/bosch-washing-machine-help.73906"], "category": "laundry", "pain": 26, "opp": 26}, {"id": "sheets-ball-up", "item": "Bedding in washers & dryers", "complaint": "Fitted sheets and duvet covers wad into a damp ball that swallows socks and small items and comes out wet in the middle", "failure_mode": "one-size-fits-all", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 3, "redesign": "A bedding cycle that reverses the drum direction to keep the load from wadding up, and fitted sheets with corner snaps that clip together before washing", "prior_art": "Reverse-tumble dryers; anti-wad sheet clips", "sources": ["https://www.whirlpool.com/blog/washers-and-dryers/how-to-stop-sheets-from-balling-up-in-the-dryer.html", "https://automaticwasher.org/threads/beko-heat-pump-dpu-8360w-tangling-bedding-into-a-ball.50409", "https://www.hunker.com/1930585/how-to-prevent-sheets-balling-up-in-dryer-tricks"], "category": "laundry", "pain": 38, "opp": 23}, {"id": "care-label-symbols", "item": "Clothing care labels", "complaint": "More than three dozen care symbols that most people can't read, so clothes get shrunk or ruined in the wash", "failure_mode": "no-feedback", "frequency": 4, "severity": 3, "annoyance": 3, "workaround": 3, "feasibility": 4, "redesign": "Plain-words care instructions printed on the inside seam (for example, 'Wash cold · Hang dry · No bleach') next to the symbols, with no scratchy sewn-in tag", "prior_art": null, "sources": ["https://laundryandcleaningnews.com/news/carelabel-confusion", "https://www.cleveland19.com/story/34535670/what-do-the-laundry-symbols-mean-on-clothes-tags", "https://blogs.extension.iastate.edu/answerline/2016/01/21/confused-by-clothing-care-labels/"], "category": "laundry", "pain": 29, "opp": 23}, {"id": "propane-tank-no-gauge", "item": "Grill propane tanks", "complaint": "Tanks have no fuel gauge, so the grill runs out mid-cook; add-on gauges are unreliable or restrict gas flow", "failure_mode": "no-feedback", "frequency": 4, "severity": 2, "annoyance": 5, "workaround": 3, "feasibility": 4, "redesign": "A tank collar or grill foot with a built-in scale that shows the fuel left in hours of cooking, plus a warning when roughly one cook remains", "prior_art": "Bluetooth propane tank scales", "sources": ["https://www.techhive.com/article/599718/gaswatch-propane-tank-scale-alerts-your-mobile-phone-when-you-run-low-on-fuel.html", "https://www.the-diy-life.com/how-to-tell-how-much-propane-is-in-your-gas-grill/", "https://boards.straightdope.com/t/how-well-do-propane-grill-gas-guages-work/584032", "https://pitmaster.amazingribs.com/forum/fuels-discussion-not-for-grills-and-smokers/gas-aa/1261403-propane-tank-questions"], "category": "outdoor", "pain": 48, "opp": 38}, {"id": "expandable-hose-bursts", "item": "Garden hoses", "complaint": "Lightweight expandable hoses burst, split or leak at the connector within a season, and buyers return two or three in a row", "failure_mode": "wears-out-early", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "A reinforced strain-relief sleeve where the hose meets each fitting, and connectors that unscrew so a failed end can be replaced without throwing out the hose", "prior_art": "Repairable-connector hoses; reinforced 'connector protector' designs", "sources": ["https://www.consumerreports.org/cro/news/2015/08/do-the-new-expandable-hoses-still-spring-a-leak/index.htm", "https://www.foxbusiness.com/features/flexible-garden-hoses-get-mixed-reviews-from-our-readers", "https://www.samsclub.com/reviews/product/3172440067?page=70", "https://www.wtkr.com/2013/06/10/dont-waste-your-money-expandable-garden-hoses"], "category": "outdoor", "pain": 38, "opp": 30}, {"id": "trimmer-line-spool", "item": "String trimmers", "complaint": "Overpriced proprietary spools jam or weld the line to itself, so the head has to be opened and rewound mid-job", "failure_mode": "seller-first", "frequency": 4, "severity": 1, "annoyance": 5, "workaround": 3, "feasibility": 4, "redesign": "A load-through head that takes cut lengths of standard line, with no spool to wind and no proprietary refills", "prior_art": "Fixed-line and load-through trimmer heads", "sources": ["https://www.lowes.com/reviews/kobalt-29473-string-trimmer-line/50189095", "https://www.ebay.com/urw/Ryobi+AC14RL3A+.065+line+String+Replacement+Spool/product-reviews/4013759338", "https://www.sawdustzone.org/forum/discussions/around-the-coffee-pot/55440-what-is-the-trick-to-respooling-my-lawn-trimmer", "https://sawmillcreek.org/goto/post?id=3048016"], "category": "outdoor", "pain": 48, "opp": 38}, {"id": "mower-wont-start-old-gas", "item": "Gas lawn mowers", "complaint": "After winter storage the mower won't start, because ethanol fuel left in the carburetor goes stale and gums it up", "failure_mode": "bad-timing", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 3, "redesign": "A fuel shutoff that runs the carburetor dry when the engine stops, plus a sealed tank that drains to a cap for storage", "prior_art": "Fuel shutoff valves; run-dry storage routines", "sources": ["https://jackssmallengines.com/diy/lawn-mower-wont-start", "https://carycitizenarchive.com/2017/03/01/gardening-ethanol-is-killing-your-lawn-mower/", "https://www.bangordailynews.com/2011/05/15/business/ethanol-and-small-engines/", "https://blog.amsoil.ca/lawnmower-wont-start-do-this/"], "category": "outdoor", "pain": 38, "opp": 23}, {"id": "patio-cushions-fade-mildew", "item": "Patio cushions", "complaint": "Cushions fade within weeks to a year and grow mildew when left out, so they have to be carried inside after every rain", "failure_mode": "wears-out-early", "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "Solution-dyed fabric over open-cell drain-through foam with a mesh bottom panel, so cushions dry in place instead of holding water", "prior_art": "Solution-dyed acrylic covers; quick-dry reticulated foam", "sources": ["https://www.wayfair.ca/outdoor/pdp/ivy-bronx-6-piece-patio-lounge-set-with-cushions-poly-rattan-grey-c000314741.html", "https://www.christmascentral.com/blog/how-to-care-for-your-patio-furniture-cushions/", "https://help.bbqguys.com/hc/en-us/articles/10320282114203-Pacific-Casual-Lakeview-Outdoor-Fabric-Care-and-Use"], "category": "outdoor", "pain": 29, "opp": 23}, {"id": "clamshell-wrap-rage", "item": "Clamshell blister packs", "complaint": "Sealed plastic clamshells need scissors or a knife to open, and opening them sends thousands of people a year to the emergency room with cuts", "failure_mode": "seller-first", "frequency": 4, "severity": 4, "annoyance": 5, "workaround": 3, "feasibility": 4, "redesign": "A paperboard sleeve with a pull-strip perforation, with anti-theft moved to a peg tag or electronic security tag instead of welded plastic", "prior_art": "Retailer frustration-free packaging programs", "sources": ["https://amednews.com/article/20081222/health/312229981/2/", "https://www.ajc.com/news/the-news/KvqeCLjGxKu0nfZaeZR4zK", "https://www.nbcdfw.com/news/local/retailers-cutting-out-hard-to-open-packaging/1846122/", "https://www.anildash.com/2006/12/06/ten_thousand_fi"], "category": "packaging", "pain": 48, "opp": 38}, {"id": "child-resistant-caps-seniors", "item": "Child-resistant pill bottles", "complaint": "Push-and-twist caps are painful or impossible for people with arthritis, leading to missed doses or bottles left open", "failure_mode": "one-size-fits-all", "frequency": 4, "severity": 3, "annoyance": 4, "workaround": 3, "feasibility": 4, "redesign": "Keep child resistance but change how it's beaten: a two-button squeeze spaced for adult-length fingers, with a large textured grip, instead of grip strength plus a twist", "prior_art": "Purdue's Sera two-button container; Arthritis Foundation ease-of-use commendation", "sources": ["https://www.purdue.edu/newsroom/releases/2020/Q2/child-resistant-pill-container-designed-for-grandparents,-arthritis-patients.html", "https://www.disabled-world.com/assistivedevices/household/snapslide.php", "https://hg.gatech.edu/node/250531", "https://stars.library.ucf.edu/scopus2000/4326/"], "category": "packaging", "pain": 38, "opp": 30}, {"id": "oversized-shipping-boxes", "item": "Online-order shipping boxes", "complaint": "Tiny items arrive in huge boxes stuffed with filler, wasting cardboard and space for recycling", "failure_mode": "seller-first", "frequency": 4, "severity": 1, "annoyance": 4, "workaround": 4, "feasibility": 4, "redesign": "Boxes cut to the item's size at packing, or padded mailers for small items, and items shipped in their own retail box when it's sturdy enough", "prior_art": "Amazon's on-demand right-sized boxes; ships-in-own-container program", "sources": ["https://www.ctvnews.ca/toronto/article/consumers-question-oversized-boxes-used-for-shipping-tiny-items/", "https://www.daytondailynews.com/business/why-amazon-packages-tiny-items-huge-boxes/EsjSv6iSXK9cSnNEmpQ6HL", "https://www.esmmagazine.com/packaging-design/amazon-draws-criticism-for-excessive-packaging-use-22612", "https://www.engadget.com/2019/08/01/amazon-sellers-packaging-rules/?cid=15730"], "category": "packaging", "pain": 51, "opp": 41}, {"id": "slack-fill-air", "item": "Chip bags & snack boxes", "complaint": "Bags and boxes are half empty, so buyers feel they're paying for air, especially after shrinkflation cuts", "failure_mode": "seller-first", "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 4, "feasibility": 4, "redesign": "Packages sized to the contents, a printed 'contents settle to here' fill line or a clear window, and the price per ounce printed on the front", "prior_art": null, "sources": ["https://dailyhive.com/vancouver/canadians-call-out-loblaw-chip-shrinkflation", "https://nbcnewyork.com/news/local/wise-foods-sued-customers-say-theyre-cheated-of-chips-bags-contain-too-much-air/90397", "https://www.foodnavigator.com/Article/2025/07/08/pepsico-sued-over-popcorners-packaging-and-slack-fill-claims/", "https://wcpo.com/money/consumer/dont-waste-your-money/why-are-so-many-packages-half-filled-with-air"], "category": "packaging", "pain": 51, "opp": 41}, {"id": "cereal-liner-tears", "item": "Cereal box liners", "complaint": "The inner bag rips unevenly down the side when opened, spills cereal into the box, and can't be reclosed", "failure_mode": "seller-first", "frequency": 4, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 4, "redesign": "A liner with a laser-scored tear line across the top and a press-to-close zipper, with the box flap shaped to hold it shut", "prior_art": "Cheerios with Ziploc PantrySeal", "sources": ["https://patents.justia.com/patent/6355286", "https://choice.community/t/food-packaging-problems-which-products-give-you-wrap-rage/23478", "https://jamierubin.net/2021/03/25/every-package-is-resealable/", "https://www.foxnews.com/food-drink/cheerios-makes-major-change-cereal-boxes-after-years-consumer-complaints"], "category": "packaging", "pain": 26, "opp": 21}, {"id": "zipper-bags-fail", "item": "Resealable zipper bags", "complaint": "The zipper tracks don't line up or come apart, and the easy-open tab tears off, so the bag never truly seals", "failure_mode": "wears-out-early", "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 4, "redesign": "A slider zipper that forces both tracks together, and a color change between the two tracks that shows when the bag is fully sealed", "prior_art": "Slider-zipper storage bags", "sources": ["https://www.samsclub.com/reviews/product/2570070423?page=2", "https://www.1news.co.nz/2022/10/11/fair-go-customer-finds-glad-snaplock-bags-failing-to-seal/", "https://lemmy.johnnei.org/post/512290"], "category": "packaging", "pain": 19, "opp": 15}, {"id": "recycling-labels-confusing", "item": "Recycling labels", "complaint": "Recycling symbols are misread (the Green Dot is taken to mean recyclable), so many people guess or put packaging in the general waste", "failure_mode": "no-feedback", "frequency": 4, "severity": 2, "annoyance": 3, "workaround": 3, "feasibility": 5, "redesign": "A plain-words label for each part, such as 'Box: recycle · Film: general waste · Cap: leave on', in place of codes and look-alike logos", "prior_art": "OPRL / How2Recycle part-by-part labels", "sources": ["https://www.which.co.uk/news/article/the-plastic-people-still-recycle-incorrectly-does-it-matter-a7IkC4g3G490", "https://reading.ac.uk/news/2023/Research-News/New-survey-shows-consumer-confusion-still-hindering-recycling", "https://www.recyclingtoday.com/recycling-packaging-symbols-uk-survey-plastic-glass", "https://www.packaging-gateway.com/news/recycling-symbols-found-confuse-uk-consumers"], "category": "packaging", "pain": 29, "opp": 29}]};
+const MODES = DATA.modes;
+const E = DATA.entries;
+const CATS = [...new Set(E.map(e => e.category))].sort();
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const nuisance = e => e.annoyance > e.severity;
+const modeOrder = Object.keys(MODES).map(m => [m, E.filter(e => e.failure_mode === m).length])
+  .filter(([, n]) => n).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([m]) => m);
+
+const state = { cat: null, mode: null, q: "", sort: "opp", nuis: false };
+try {
+  const saved = JSON.parse(localStorage.getItem("pain-index-sort") || "null");
+  if (saved && ["opp","pain","feasibility","severity","annoyance"].includes(saved)) state.sort = saved;
+} catch (_) {}
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function stats() {
+  const n = E.length, nu = E.filter(nuisance).length;
+  $("stats").innerHTML = [
+    [n, "complaints"], [CATS.length, "categories"], [modeOrder.length, "design failures"],
+    [Math.round(nu / n * 100) + "%", "led by annoyance, not harm"],
+  ].map(([b, s]) => `<div class="stat"><b class="num">${b}</b><span>${s}</span></div>`).join("");
+}
+
+function chips() {
+  const mk = (row, key, items, label) => {
+    const r = $(row);
+    r.querySelectorAll(".chip").forEach(c => c.remove());
+    [[null, "All"], ...items.map(v => [v, label(v)])].forEach(([v, text]) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.textContent = text;
+      b.setAttribute("aria-pressed", String(state[key] === v));
+      b.onclick = () => { state[key] = state[key] === v ? null : v; render(); };
+      r.appendChild(b);
+    });
+  };
+  mk("cat-row", "cat", CATS, cap);
+  mk("mode-row", "mode", modeOrder, m => MODES[m]);
+}
+
+function filtered() {
+  const q = state.q.trim().toLowerCase();
+  return E.filter(e =>
+    (!state.cat || e.category === state.cat) &&
+    (!state.mode || e.failure_mode === state.mode) &&
+    (!state.nuis || nuisance(e)) &&
+    (!q || [e.item, e.complaint, e.redesign, e.prior_art, e.category, MODES[e.failure_mode]].join(" ").toLowerCase().includes(q))
+  ).sort((a, b) => (b[state.sort] - a[state.sort]) || (b.opp - a.opp) || (b.pain - a.pain) || a.id.localeCompare(b.id));
+}
+
+function matrix() {
+  const max = Math.max(...modeOrder.flatMap(m => CATS.map(c => E.filter(e => e.failure_mode === m && e.category === c).length)));
+  const cell = (m, c) => {
+    const n = E.filter(e => e.failure_mode === m && e.category === c).length;
+    const pct = n ? Math.round(14 + (n / max) * 56) : 0;
+    const sel = state.mode === m && state.cat === c ? " sel" : "";
+    const bg = n ? `background:color-mix(in oklab, var(--heat) ${pct}%, var(--sheet))` : "background:var(--faint)";
+    return `<td><button type="button" class="${n ? "" : "zero"}${sel}" style="${bg}" data-m="${m}" data-c="${c}" aria-label="${MODES[m]} in ${c}: ${n}">${n || "·"}</button></td>`;
+  };
+  $("matrix").innerHTML =
+    `<thead><tr><th></th>${CATS.map(c => `<th><button type="button" data-c="${c}">${cap(c)}</button></th>`).join("")}<th>Total</th></tr></thead><tbody>` +
+    modeOrder.map(m => `<tr><th class="rowh"><button type="button" data-m="${m}">${MODES[m]}</button></th>${CATS.map(c => cell(m, c)).join("")}<td class="total">${E.filter(e => e.failure_mode === m).length}</td></tr>`).join("") +
+    `</tbody>`;
+  $("matrix").querySelectorAll("button").forEach(b => b.onclick = () => {
+    const m = b.dataset.m || null, c = b.dataset.c || null;
+    if (m && c) { const same = state.mode === m && state.cat === c; state.mode = same ? null : m; state.cat = same ? null : c; }
+    else if (m) state.mode = state.mode === m ? null : m;
+    else state.cat = state.cat === c ? null : c;
+    render();
+  });
+}
+
+function plot(shown) {
+  const W = 520, H = 330, L = 44, R = 14, T = 14, B = 40;
+  const x = v => L + (v / 100) * (W - L - R);
+  const y = v => T + (5 - v) / 4 * (H - T - B);
+  const ids = new Set(shown.map(e => e.id));
+  const jitter = (s) => { let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return ((h % 1000) / 1000 - .5); };
+  let g = `<rect class="quad" x="${x(50)}" y="${y(5) - 8}" width="${x(100) - x(50)}" height="${y(3.5) - y(5) + 8}" rx="6"/>`;
+  g += `<text class="quadlabel" x="${x(100) - 6}" y="${y(5) + 6}" text-anchor="end">Quick wins</text>`;
+  g += `<g class="grid">${[0, 20, 40, 60, 80, 100].map(v => `<line x1="${x(v)}" x2="${x(v)}" y1="${T}" y2="${H - B}"/>`).join("")}${[1, 2, 3, 4, 5].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/>`).join("")}</g>`;
+  g += `<g class="axis">${[0, 20, 40, 60, 80, 100].map(v => `<text x="${x(v)}" y="${H - B + 16}" text-anchor="middle">${v}</text>`).join("")}`;
+  g += `${[1, 2, 3, 4, 5].map(v => `<text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`).join("")}`;
+  g += `<text x="${(L + W - R) / 2}" y="${H - 4}" text-anchor="middle">Pain (0–100)</text>`;
+  g += `<text transform="translate(12 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">Ease of fix (1–5)</text></g>`;
+  const order = [...E].sort((a, b) => Number(ids.has(a.id)) - Number(ids.has(b.id)));
+  g += order.map(e => {
+    const cx = x(e.pain) + jitter(e.id) * 10, cy = y(e.feasibility) + jitter(e.id + "y") * 22;
+    return `<circle class="${ids.has(e.id) ? "on" : "off"}" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5.5" data-id="${e.id}" tabindex="${ids.has(e.id) ? 0 : -1}" role="button" aria-label="${esc(e.item)}: pain ${e.pain}, ease ${e.feasibility}, opportunity ${e.opp}"/>`;
+  }).join("");
+  $("plot").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scatter plot of pain against ease of fix">${g}</svg><div class="tip" id="tip" hidden></div>`;
+  const tip = $("tip"), box = $("plot");
+  box.querySelectorAll("circle").forEach(c => {
+    const e = E.find(v => v.id === c.dataset.id);
+    const show = () => {
+      const r = c.getBoundingClientRect(), b = box.getBoundingClientRect();
+      tip.innerHTML = `<b>${esc(e.item)}</b>${cap(e.category)} · ${MODES[e.failure_mode]}<br>Pain ${e.pain} · Ease ${e.feasibility} · Opp. ${e.opp}`;
+      tip.style.left = Math.min(Math.max(r.left - b.left + r.width / 2, 120), b.width - 120) + "px";
+      tip.style.top = (r.top - b.top) + "px"; tip.hidden = false;
+    };
+    c.addEventListener("mouseenter", show); c.addEventListener("focus", show);
+    c.addEventListener("mouseleave", () => tip.hidden = true); c.addEventListener("blur", () => tip.hidden = true);
+    const go = () => jump(e.id);
+    c.addEventListener("click", go); c.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); go(); } });
+  });
+}
+
+function jump(id) {
+  if (!filtered().some(e => e.id === id)) { Object.assign(state, { cat: null, mode: null, q: "", nuis: false }); $("q").value = ""; $("nuis").checked = false; render(); }
+  const el = document.getElementById("d-" + id);
+  if (!el) return;
+  el.querySelector("details").open = true;
+  el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+  el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+}
+
+function pips(n) { return `<div class="pips">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= n ? "f" : ""}"></i>`).join("")}</div>`; }
+
+function list(shown) {
+  $("count").textContent = shown.length === E.length ? `All ${E.length} complaints` : `${shown.length} of ${E.length} complaints`;
+  if (!shown.length) { $("list").innerHTML = `<li class="empty">No complaints match these filters. Clear a filter to see more.</li>`; return; }
+  $("list").innerHTML = shown.map((e, i) => {
+    const lead = e.annoyance > e.severity ? "annoyance" : "severity";
+    const dims = [["frequency", "How often"], ["severity", "Real harm"], ["annoyance", "Annoyance"], ["workaround", "Hard to avoid"], ["feasibility", "Ease of fix"]]
+      .map(([k, l]) => `<div class="dim${k === lead ? " lead" : ""}"><span>${l} · ${e[k]}/5</span>${pips(e[k])}</div>`).join("");
+    const src = e.sources.map(u => { let h = u; try { h = new URL(u).hostname.replace(/^www\./, ""); } catch (_) {} return `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(h)}</a></li>`; }).join("");
+    return `<li class="defect" id="d-${e.id}">
+      <div class="rank num">${i + 1}</div>
+      <div class="main">
+        <h3>${esc(e.item)}</h3>
+        <div class="tags"><span class="tag">${cap(e.category)}</span><span class="tag">${MODES[e.failure_mode]}</span>${nuisance(e) ? `<span class="tag nuis">Nuisance-led</span>` : ""}</div>
+        <p class="complaint">${esc(e.complaint)}</p>
+        <p class="fix">${esc(e.redesign)}</p>
+        <details><summary>Scores and ${e.sources.length} source${e.sources.length > 1 ? "s" : ""}</summary>
+          <div class="dims">${dims}</div>
+          ${e.prior_art ? `<p class="prior">Prior art: ${esc(e.prior_art)}</p>` : ""}
+          <ol class="sources">${src}</ol>
+        </details>
+      </div>
+      <div class="score"><b class="num">${e.opp}</b><span>Opportunity</span><span class="num">Pain ${e.pain}</span></div>
+    </li>`;
+  }).join("");
+}
+
+function render() {
+  const shown = filtered();
+  chips(); matrix(); plot(shown); list(shown);
+}
+
+$("q").addEventListener("input", ev => { state.q = ev.target.value; render(); });
+$("sort").value = state.sort;
+$("sort").addEventListener("change", ev => { state.sort = ev.target.value; try { localStorage.setItem("pain-index-sort", JSON.stringify(state.sort)); } catch (_) {} render(); });
+$("nuis").addEventListener("change", ev => { state.nuis = ev.target.checked; render(); });
+$("reset").addEventListener("click", () => { Object.assign(state, { cat: null, mode: null, q: "", nuis: false }); $("q").value = ""; $("nuis").checked = false; render(); });
+
+stats(); render();
+</script>
