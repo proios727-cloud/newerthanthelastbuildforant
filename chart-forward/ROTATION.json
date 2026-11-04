@@ -1,13 +1,26 @@
 {
   "decisions_logged": 1,
-  "waiting_for_first_fill": [
-    "2026-11-02"
+  "waiting_for_first_fill": [],
+  "periods": [
+    {
+      "decided": "2026-11-02",
+      "from": "2026-11-03",
+      "to": "2026-11-03",
+      "picks": [
+        "XLE",
+        "XLP",
+        "XLV"
+      ],
+      "complete": false,
+      "rule": -0.00266,
+      "basket": -0.00184,
+      "excess": -0.00082
+    }
   ],
-  "periods": [],
   "completed_periods": 0,
   "months_beat_basket": 0,
   "cumulative": {
-    "rule": 0.0,
-    "basket": 0.0
+    "rule": -0.00266,
+    "basket": -0.00184
   }
 }
