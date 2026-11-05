@@ -36,6 +36,15 @@ class MergeTests(unittest.TestCase):
         self.assertEqual([r[0] for r in rows], ["2026-11-02T00:00:00+00:00", "2026-11-02T02:00:00+00:00"])
 
 
+class RowsFormatTests(unittest.TestCase):
+    def test_rows_and_columns_formats_agree(self):
+        m = load("tv_ohlcv_to_csv")
+        bars = [{"t": 1793889000, "o": 1.0, "h": 2.0, "l": 0.5, "c": 1.5, "v": 10},
+                {"t": 1793975400, "o": 1.5, "h": 2.5, "l": 1.0, "c": 2.0, "v": 20}]
+        cols = {k: [b[k] for b in bars] for k in ("t", "o", "h", "l", "c", "v")}
+        self.assertEqual(m.rows_from({"bars": bars}, True), m.rows_from({"bars": cols}, True))
+
+
 class PositionsCsvTests(unittest.TestCase):
     def test_fill_without_instrument_id_does_not_crash(self):
         m = load("positions_csv")
