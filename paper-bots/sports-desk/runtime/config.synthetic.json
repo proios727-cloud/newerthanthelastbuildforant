@@ -1,0 +1,34 @@
+{
+  "max_odds_requests_per_day": 100,
+  "mappings": [
+    {
+      "ticker": "SYNTHETIC-NFL-TEAM-A",
+      "sport": "americanfootball_nfl",
+      "event_id": "synthetic-event",
+      "outcome": "Team A",
+      "market_type": "h2h",
+      "side": "yes",
+      "expected_outcomes": [
+        "Team A",
+        "Team B"
+      ],
+      "independent_bookmakers": [
+        "synthetic-book-a",
+        "synthetic-book-b"
+      ],
+      "settlement_verified": true,
+      "rules_note": "SYNTHETIC fixture: exhaustive binary settlement; no real event",
+      "fee_verified": true,
+      "fee_note": "SYNTHETIC $0.02 per-contract reserve, not actual exchange fee",
+      "fee_per_contract": 0.02,
+      "exit_fee_per_contract": 0.02,
+      "uncertainty_margin": 0.05,
+      "minimum_edge": 0.03,
+      "profit_target_per_contract": 0.05,
+      "max_book_age_seconds": 5,
+      "max_source_age_seconds": 120,
+      "max_spread": 0.03,
+      "flatten_before_start_seconds": 600
+    }
+  ]
+}

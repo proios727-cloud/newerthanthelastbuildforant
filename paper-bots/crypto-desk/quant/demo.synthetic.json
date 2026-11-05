@@ -1,0 +1,38 @@
+{
+  "label": "SYNTHETIC PAPER DATA: hypothetical probabilities, fees and fills; no live data or orders",
+  "depth_fill": {
+    "quantity": "10",
+    "average_ask": "0.50",
+    "total_cost": "5.00",
+    "worst_ask": "0.50"
+  },
+  "decision": {
+    "accepted": true,
+    "conservative_probability": 0.65,
+    "effective_cost": 0.52,
+    "edge": 0.13,
+    "reason": "eligible for paper review"
+  },
+  "risk_size": {
+    "contracts": 19,
+    "spend": 9.88,
+    "quarter_kelly_fraction": 0.06770833333333334
+  },
+  "no_vig_reference": {
+    "home": 0.5384615384615385,
+    "away": 0.46153846153846156
+  },
+  "aligned_correlated_joint": 0.5,
+  "realized_exit_pnl": [
+    "0.30",
+    "0.15"
+  ],
+  "position": {
+    "market": "SYNTHETIC-NO-REAL-MARKET",
+    "side": "yes",
+    "remaining": "0",
+    "unit_cost": "0.50",
+    "unallocated_entry_fee": "0.00",
+    "realized_pnl": "0.45"
+  }
+}

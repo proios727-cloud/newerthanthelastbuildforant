@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+config.local.json
+runtime/config.local.json
+*.sqlite*
+*.db*
+*.lock
+__pycache__/
+*.pyc
+runtime/state/
+runtime/HALT
+logs/
