@@ -4,7 +4,8 @@
 #   scripts/forward_feed.sh start    # fresh worktrees of the base branch and shadow-data, stamp the start time, list symbols
 #   ... the Claude session calls Alpha Vantage TIME_SERIES_DAILY once per listed symbol ...
 #   scripts/forward_feed.sh finish   # save tonight's results, run the forward test, commit and push shadow-data, report,
-#                                    # and write the dashboard's files to $FEED_DIR/dash and the review to $FEED_DIR/REVIEW.md
+#                                    # and write the dashboard's files to $FEED_DIR/dash, the review to $FEED_DIR/REVIEW.md
+#                                    # and the weekly digest to $FEED_DIR/DIGEST.md
 # Run from any checkout of the repo. BASE (default claude/great-keller-rf23ab) picks the code; FEED_DIR (default
 # /tmp/chart-feed) holds the worktrees between the two steps. DRY_RUN=1 runs everything but the commit and push.
 set -euo pipefail
@@ -71,6 +72,7 @@ PY
   [ -f "$F/data/chart-forward/BRIEF.md" ] && cp "$F/data/chart-forward/BRIEF.md" "$F/BRIEF.md"
   python3 "$F/code/scripts/forward_dashboard.py" "$F/data/chart-forward" "$F/dash" >/dev/null
   python3 "$F/code/scripts/rotation_review.py" "$F/data/chart-forward" "$F/REVIEW.md" || true   # exit 1 = a flag to read
+  python3 "$F/code/scripts/forward_digest.py" "$F/data/chart-forward" "$F/DIGEST.md" || echo "digest failed" >&2   # the Friday report; never blocks cleanup
   cd "$REPO"
   git -C "$REPO" worktree remove --force "$F/data"
   git -C "$REPO" worktree remove --force "$F/code"
