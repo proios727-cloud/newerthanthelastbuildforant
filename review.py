@@ -47,9 +47,11 @@ def realized_regime(path: list[dict], atr_now: float) -> str:
     net = abs(c[-1] - c0)
     travel = np.abs(np.diff(np.concatenate([[c0], c]))).sum()
     excursion = max(h.max() - c0, c0 - l.min())
-    if excursion >= 4 * atr_now or (h - l).max() >= 3 * atr_now:
+    directional = net >= 2 * atr_now and net / max(travel, 1e-9) >= 0.35
+    # A large move is PANIC only when it is disorderly; a large, efficient one-way move is a trend.
+    if (excursion >= 4 * atr_now or (h - l).max() >= 3 * atr_now) and not directional:
         return "PANIC"
-    if net >= 2 * atr_now and net / max(travel, 1e-9) >= 0.35:
+    if directional:
         return "TRENDING"
     return "CHOPPY"
 

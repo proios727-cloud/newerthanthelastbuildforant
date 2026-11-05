@@ -1,14 +1,14 @@
 {
-  "version": 2,
+  "version": 3,
   "notes": "Edited only by the nightly review (step 8). Every log line records the version it was asked with.",
   "regime": {
     "regime": {
       "type": "choice",
-      "instructions": "Image 1 is the BTCUSDT chart (candles, EMA20 blue, EMA50 orange, volume) beside the order book depth within 1% of mid. The state holds the same candle and book metrics as numbers. Classify the regime for the NEXT 12 candles (3 hours on 15m). TRENDING means price is expected to travel at least 2x ATR in one direction over that window with little back-and-forth; ADX alone is not enough. When in doubt between TRENDING and CHOPPY, choose CHOPPY.",
+      "instructions": "Image 1 is the BTCUSDT chart (candles, EMA20 blue, EMA50 orange, volume) beside the order book depth within 1% of mid. The state holds the same candle and book metrics as numbers. Classify the regime for the NEXT 12 candles (3 hours on 15m). TRENDING means price is expected to travel at least 2x ATR in one direction over that window with little back-and-forth; ADX alone is not enough. Watch for a squeeze: a tightly coiled market often releases into a large one-way move. Prefer CHOPPY only for an ordinary range, not for a coil.",
       "criteria": {
-        "TRENDING": "Strong, energetic directional move likely to carry at least 2x ATR in the next 12 candles: ADX above 25 AND EMA20/EMA50 separation above ~0.4% and widening, Bollinger width expanding (roughly above 1%), volume at or above its average (vol_ratio_vs_50 >= 1), and the order book not leaning against the move (imbalance near zero or on the trend's side). A slow grind with high ADX but low realized volatility, narrow bands, below-average volume or an opposing book is NOT trending.",
-        "CHOPPY": "Range-bound, mean-reverting or a low-energy drift unlikely to travel 2x ATR in the next 12 candles: EMAs flat, interleaved or separated by less than ~0.3%, Bollinger width narrow (under ~1%), realized volatility subdued, volume below average, or the book leaning against the recent direction. This includes quiet one-sided grinds even when ADX reads above 25.",
-        "PANIC": "Disorderly stress: sudden large range candles, ATR far above its recent average, volume spike, fast drawdown or squeeze, spread widening or one side of the book thinning out. Signals become unreliable."
+        "TRENDING": "Expected to carry at least 2x ATR in one direction in the next 12 candles. Either (a) an energetic move already under way: ADX above 25 AND EMA20/EMA50 separation above ~0.4% and widening, Bollinger width expanding (roughly above 1%), volume at or above average, book not leaning against it; or (b) a squeeze about to release: Bollinger width very narrow (under ~0.9%) while ADX is very high (above ~40) and volume is picking up from its lows (vol_ratio_vs_50 rising toward 0.7 or more).",
+        "CHOPPY": "An ordinary range or low-energy drift unlikely to travel 2x ATR in the next 12 candles: EMAs flat, interleaved or separated by less than ~0.3%, ADX moderate (roughly 20-35), volume well below average (vol_ratio_vs_50 under ~0.5), bands not unusually tight, or the book leaning against the recent direction. A tight coil with very high ADX and rising volume is NOT choppy; it is a squeeze (see TRENDING).",
+        "PANIC": "Disorderly stress: price likely to swing 4x ATR or more, or print a single candle of 3x ATR or more, WITHOUT a clean one-way path (whipsaw, a sudden drop and snap-back, a liquidation cascade). Signs: ATR jumping far above its recent average, a volume spike, a fast drawdown, spread widening or one side of the book thinning out. A large but orderly one-way rally or selloff is TRENDING, not PANIC."
       }
     }
   },
