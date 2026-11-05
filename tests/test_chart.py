@@ -520,6 +520,10 @@ class UpdateTests(unittest.TestCase):
         self.assertAlmostEqual(t["daily"][-1]["rule_net"], round(0.9997 * (1 + rule) - 1, 5))
         self.assertAlmostEqual(t["daily"][-1]["basket_net"], round(0.9997 * (1 + basket) - 1, 5))
         self.assertAlmostEqual(t["status"][0]["excess_net"], round(0.9997 * (rule - basket), 5))
+        checks = {r["check"]: r["pass"] for r in t["review"]}
+        self.assertTrue(checks["Rule settings unchanged"] is False)          # this toy decision logs no rule
+        self.assertFalse(checks["Paper tickets"])                              # and no tickets
+        self.assertEqual(t["status"][0]["review_flags"], sum(not v for v in checks.values()))
 
     def test_rotation_review_flags_tampered_decisions(self):
         import importlib.util
