@@ -1,6 +1,6 @@
 name: regime-bot
 # PAPER only: BTC regime-switching bot (code on the `regime-bot` branch). Never places real orders.
-# Runs ~5.25h shifts; an hourly trigger keeps one shift queued so the next starts as soon as one ends.
+# Runs ~5.25h shifts back to back: each shift dispatches the next when it ends; the hourly trigger is a fallback.
 # State (decision log, paper account, snapshots) persists on the `regime-bot-state` branch.
 on:
   schedule:
@@ -15,6 +15,7 @@ concurrency:
   cancel-in-progress: false
 permissions:
   contents: write
+  actions: write
 jobs:
   shift:
     runs-on: ubuntu-latest
@@ -63,3 +64,8 @@ jobs:
           git diff --cached --quiet && { echo "no state changes"; exit 0; }
           git commit -qm "state $(date -u +%Y-%m-%dT%H:%MZ)"
           for i in 1 2 3; do git push origin HEAD:regime-bot-state && break; sleep $((i*5)); done
+      - name: Start next shift
+        if: always() && (github.event_name == 'schedule' || github.event.inputs.hours == '' || github.event.inputs.hours == '5.25')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run regime-bot.yml --repo "${{ github.repository }}" --ref "${{ github.event.repository.default_branch }}" -f hours=5.25 || echo "dispatch failed; hourly trigger will start the next shift"
