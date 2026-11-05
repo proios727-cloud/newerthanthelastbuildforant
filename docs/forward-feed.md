@@ -20,6 +20,10 @@ and the second run is a no-op that only spends quota.
 
 `DRY_RUN=1 scripts/forward_feed.sh finish` does everything except the commit and the push.
 
+**Monthly review.** On a decision night, `scripts/rotation_review.py` re-derives the picks from the stored bars and
+checks the rule's settings, the paper tickets and the data, then writes a one-page pass/flag review with blank sign-off
+lines (the `rotation-review` skill says how to read each flag). A green review is not an approval.
+
 **Dashboard.** `finish` also writes `status.json`, `daily.json`, `holdings.json` and `ranking.json` to `/tmp/chart-feed/dash`
 (`scripts/forward_dashboard.py`). The nightly session uploads each to the "Rotation forward test" dashboard
 (https://claude.ai/artifact/MwqaBqfuJKoaefxeq2a7SW) and points the dataset of the same name at the new file. The

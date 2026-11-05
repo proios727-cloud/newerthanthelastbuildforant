@@ -516,6 +516,44 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual([h["fund"] for h in t["holdings"]], ["AAA", "CCC"])
         self.assertEqual(t["status"][0]["picks"], "AAA CCC")
 
+    def test_rotation_review_flags_tampered_decisions(self):
+        import importlib.util
+        import shutil
+        from datetime import date, timedelta
+        from chart.forward import rotation_signal
+        spec = importlib.util.spec_from_file_location("rr", pathlib.Path(__file__).parents[1] / "scripts" / "rotation_review.py")
+        rr = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(rr)
+        d = pathlib.Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: shutil.rmtree(d))
+        (d / "etf").mkdir()
+        days, t = [], date(2026, 7, 1)
+        while t <= date(2026, 11, 4):
+            if t.weekday() < 5:
+                days.append(t.isoformat())
+            t += timedelta(days=1)
+        drift = {"AAA": 0.004, "BBB": -0.001, "CCC": 0.002, "DDD": 0.001}
+        for sym, g in drift.items():
+            rows = "".join(f"{day},{100 * (1 + g) ** i:.4f},{100 * (1 + g) ** i:.4f},{100 * (1 + g) ** i:.4f},{100 * (1 + g) ** i:.4f},100\n"
+                           for i, day in enumerate(days))
+            (d / "etf" / f"{sym}.csv").write_text("date,open,high,low,close,volume\n" + rows)
+        bars = {f.stem: [b for b in chart.load_csv(f) if b.ts[:10] <= "2026-11-02"] for f in (d / "etf").glob("*.csv")}
+        dec = rotation_signal(bars, lookback=60, top=3)
+        (d / "DOCTOR.json").write_text(json.dumps({"ok": True, "problems": [], "data": {}}))
+        close = {s: bars[s][-1].close for s in dec["picks"]}
+        tickets = {"as_of": dec["as_of"], "picks": dec["picks"], "kept": [], "tickets": [
+            {"symbol": s, "side": "buy", "qty": int(5000 // close[s]), "limit": round(close[s] * 1.005, 2)} for s in dec["picks"]]}
+        (d / "rotation_tickets.jsonl").write_text(json.dumps(tickets) + "\n")
+        (d / "rotation.jsonl").write_text(json.dumps(dec) + "\n")
+        _, checks, _ = rr.review(d)
+        self.assertTrue(all(ok for _, ok, _ in checks), checks)
+        self.assertEqual(dec["picks"], ["AAA", "CCC", "DDD"])
+        (d / "rotation.jsonl").write_text(json.dumps({**dec, "picks": ["AAA", "BBB", "CCC"], "late": True}) + "\n")
+        tickets["tickets"][0]["qty"] += 1
+        (d / "rotation_tickets.jsonl").write_text(json.dumps(tickets) + "\n")
+        flagged = {name for name, ok, _ in rr.review(d)[1] if not ok}
+        self.assertEqual(flagged, {"Recorded on time", "Picks recompute", "Paper tickets"})
+
 class AdjustTests(unittest.TestCase):
     def test_split_adjust_divides_only_earlier_bars(self):
         from chart.adjust import split_adjust
