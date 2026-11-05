@@ -105,13 +105,16 @@ def render(dec, checks, ctx):
         done = [p for p in rot.get("periods", []) if p.get("complete")]
         out += ["", "## Record so far", ""]
         if done:
-            out += ["| Month decided | Held | Rule | Basket | Rule − basket |", "|---|---|---|---|---|"]
-            out += [f"| {p['decided']} | {' '.join(p['picks']) or 'cash'} | {pct(p['rule'])} | {pct(p['basket'])} | {pct(p['excess'])} |" for p in done]
+            out += ["| Month decided | Held | Rule | Basket | Rule − basket | After costs |", "|---|---|---|---|---|---|"]
+            out += [f"| {p['decided']} | {' '.join(p['picks']) or 'cash'} | {pct(p['rule'])} | {pct(p['basket'])} | {pct(p['excess'])} "
+                    f"| {pct(p.get('excess_net'))} |" for p in done]
             out += ["", f"Months ahead of the basket: {rot.get('months_beat_basket', 0)} of {len(done)}."]
         else:
             out += ["No completed month yet."]
         cum = rot.get("cumulative", {})
-        out += [f"Since the first fill, through {ctx['latest']}: rule {pct(cum.get('rule'))}, basket {pct(cum.get('basket'))}.", "",
+        out += [f"Since the first fill, through {ctx['latest']}: rule {pct(cum.get('rule'))}, basket {pct(cum.get('basket'))}"
+                + (f"; after {rot.get('cost_bps_per_side', 0):g} bp a side, rule {pct(cum.get('rule_net'))}, basket {pct(cum.get('basket_net'))}"
+                   if "rule_net" in cum else "") + ".", "",
                 "## Context", "",
                 f"- **Defensive variant (cash below the basket's 200-session average):** "
                 + (f"holds {', '.join(tr['picks']) or 'cash'}." if tr else "not logged."),

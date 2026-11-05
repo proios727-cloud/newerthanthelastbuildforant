@@ -506,7 +506,9 @@ class UpdateTests(unittest.TestCase):
         rule = (12 / 10 + 6 / 5) / 2 - 1
         basket = (12 / 10 + 18 / 20 + 6 / 5) / 3 - 1
         (d / "ROTATION.json").write_text(json.dumps({"periods": [{"decided": "2026-11-02", "from": "2026-11-03", "to": "2026-11-04",
-                                                                  "picks": ["AAA", "CCC"]}], "cumulative": {"rule": rule, "basket": basket}}))
+                                                                  "picks": ["AAA", "CCC"], "traded": 1.0}], "cost_bps_per_side": 3.0,
+                                                     "cumulative": {"rule": rule, "basket": basket,
+                                                                    "rule_net": 0.9997 * (1 + rule) - 1, "basket_net": 0.9997 * (1 + basket) - 1}}))
         (d / "DOCTOR.json").write_text(json.dumps({"ok": True, "problems": [], "data": {"x": {"newest_bar": "2026-11-04"}},
                                                    "next_rotation_decision": "2026-12-01", "days_to_decision": 26}))
         t = fd.build(d)
@@ -515,6 +517,9 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual([r["fund"] for r in t["ranking"]], ["AAA", "CCC", "BBB"])
         self.assertEqual([h["fund"] for h in t["holdings"]], ["AAA", "CCC"])
         self.assertEqual(t["status"][0]["picks"], "AAA CCC")
+        self.assertAlmostEqual(t["daily"][-1]["rule_net"], round(0.9997 * (1 + rule) - 1, 5))
+        self.assertAlmostEqual(t["daily"][-1]["basket_net"], round(0.9997 * (1 + basket) - 1, 5))
+        self.assertAlmostEqual(t["status"][0]["excess_net"], round(0.9997 * (rule - basket), 5))
 
     def test_rotation_review_flags_tampered_decisions(self):
         import importlib.util
@@ -748,6 +753,24 @@ class RotationForwardTests(unittest.TestCase):
         self.assertEqual(p["from"], start)
         a = {x.ts: x for x in b["A"]}; dd = {x.ts: x for x in b["D"]}
         self.assertAlmostEqual(p["rule"], round(((a[p["to"]].close / a[start].open - 1) + (dd[p["to"]].close / dd[start].open - 1)) / 2, 5))
+
+    def test_report_charges_costs_on_traded_weight(self):
+        from chart.forward import report_rotation
+        b = self.basket()
+        log = os.path.join(tempfile.mkdtemp(), "rot.jsonl")
+        ts = [x.ts for x in b["A"]]
+        rows = [{"as_of": ts[60], "basket": list(b), "picks": ["A", "D"]},
+                {"as_of": ts[70], "basket": list(b), "picks": ["A", "B", "D"]}]
+        pathlib.Path(log).write_text("".join(json.dumps(r) + "\n" for r in rows))
+        r = report_rotation(b, log, cost_bps=10)
+        p0, p1 = r["periods"]
+        self.assertEqual((p0["traded"], round(p1["traded"], 4)), (1.0, round(2 / 3, 4)))   # A and D -1/6, B +1/3
+        self.assertAlmostEqual(p0["rule_net"], round(0.999 * (1 + p0["rule"]) - 1, 5), places=4)
+        self.assertAlmostEqual(p1["rule_net"], round((1 - 0.001 * 2 / 3) * (1 + p1["rule"]) - 1, 5), places=4)
+        self.assertAlmostEqual(p0["basket_net"], round(0.999 * (1 + p0["basket"]) - 1, 5), places=4)
+        self.assertEqual(p1["basket_net"], p1["basket"])                  # the basket trades once, at the first fill
+        self.assertLess(r["cumulative"]["rule_net"], r["cumulative"]["rule"])
+        self.assertEqual(report_rotation(b, log, cost_bps=0)["cumulative"]["rule_net"], r["cumulative"]["rule"])
 
     def test_late_decision_day_bar_is_still_recorded_and_flagged(self):
         from chart.forward import record_rotation
