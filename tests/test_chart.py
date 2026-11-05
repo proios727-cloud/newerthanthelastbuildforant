@@ -471,6 +471,16 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual(sorted(good), ["QQQ", "SPY"])      # SPY's later failed retry doesn't drop its good fetch
         self.assertEqual(bad, {"IWM": "not entitled"})
 
+        # --since: an earlier night's good fetch must not stand in for tonight's failure
+        stamp = lambda ts, line: json.dumps({**json.loads(line), "timestamp": ts})
+        nights = [stamp("2026-11-03T00:43:00Z", use("e", "XLK")), stamp("2026-11-03T00:43:01Z", res("e", json.dumps({"result": self.AV}))),
+                  stamp("2026-11-04T00:43:00Z", use("f", "XLK")),
+                  stamp("2026-11-04T00:43:01Z", res("f", json.dumps({"error": {"message": "25 requests per day"}})))]
+        self.assertEqual(sorted(avt.extract(nights)[0]), ["XLK"])
+        good, bad = avt.extract(nights, since="2026-11-04T00:00:00Z")
+        self.assertEqual(good, {})
+        self.assertEqual(bad, {"XLK": "25 requests per day"})
+
 
 class AdjustTests(unittest.TestCase):
     def test_split_adjust_divides_only_earlier_bars(self):
