@@ -67,7 +67,7 @@ if log.exists() and log.read_text().strip():
 print(json.dumps(out, indent=2))
 PY
   # Keep tonight's brief outside the worktrees so the session can quote it on a decision night, and write the
-  # forward-test dashboard's four files (status, daily, holdings, ranking) to $F/dash for upload.
+  # forward-test dashboard's five files (status, daily, holdings, ranking, review) to $F/dash for upload.
   [ -f "$F/data/chart-forward/BRIEF.md" ] && cp "$F/data/chart-forward/BRIEF.md" "$F/BRIEF.md"
   python3 "$F/code/scripts/forward_dashboard.py" "$F/data/chart-forward" "$F/dash" >/dev/null
   python3 "$F/code/scripts/rotation_review.py" "$F/data/chart-forward" "$F/REVIEW.md" || true   # exit 1 = a flag to read

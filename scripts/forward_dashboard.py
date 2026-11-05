@@ -1,10 +1,11 @@
 """Export the forward paper test as row files for the forward-test dashboard (docs/forward-feed.md).
 
-Reads a chart-forward folder (the `shadow-data` branch) and writes four JSON arrays of row objects:
+Reads a chart-forward folder (the `shadow-data` branch) and writes five JSON arrays of row objects:
   status.json    one row: latest bar, data health, next decision, regime flag, paper period totals
   daily.json     one row per session since the first fill: rule and basket, cumulative, before and after costs
   holdings.json  one row per fund the rule holds now: its ticket and its return since the fill
   ranking.json   one row per basket fund: momentum at the last decision and whether the rule holds it
+  review.json    one row per check of the monthly review (scripts/rotation_review.py) of the last decision
 The paper return is the equal-weight return from the fill day's open, as `chart forward rotation-report` computes it, so
 the latest daily row matches ROTATION.json; the `_net` columns take off each period's cost at its fill. Research only: nothing here previews, places or approves an order.
     python3 scripts/forward_dashboard.py CHART_FORWARD_DIR OUT_DIR
@@ -15,6 +16,9 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 from chart import load_csv  # noqa: E402
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import rotation_review  # noqa: E402
 
 
 def _jsonl(path):
@@ -81,6 +85,10 @@ def build(d):
     ranking = [{"rank": i + 1, "fund": s, "momentum": m, "held": s in held}
                for i, (s, m) in enumerate(sorted(last.get("momentum", {}).items(), key=lambda kv: -kv[1]))]
 
+    dec, checks, _ = rotation_review.review(d)
+    review = [{"decided": dec["as_of"] if dec else None, "check": name, "pass": ok, "detail": detail}
+              for name, ok, detail in checks]
+
     cum = rotation.get("cumulative", {})
     status = [{"latest_bar": latest, "data_ok": doctor["ok"], "problems": len(doctor["problems"]),
                "next_decision": doctor.get("next_rotation_decision"), "days_to_decision": doctor.get("days_to_decision"),
@@ -91,8 +99,9 @@ def build(d):
                "excess_net": None if cum.get("rule_net") is None else round(cum["rule_net"] - cum["basket_net"], 5),
                "cost_bps": rotation.get("cost_bps_per_side"),
                "regime_hold": overlay.get("hold"), "spy_vs_avg": overlay.get("close_vs_average_now"),
-               "trend200_picks": " ".join(trend[-1].get("picks", [])) if trend else ""}]
-    return {"status": status, "daily": daily, "holdings": holdings, "ranking": ranking}
+               "trend200_picks": " ".join(trend[-1].get("picks", [])) if trend else "",
+               "review_flags": sum(not r["pass"] for r in review), "review_checks": len(review)}]
+    return {"status": status, "daily": daily, "holdings": holdings, "ranking": ranking, "review": review}
 
 
 def main(argv):
