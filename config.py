@@ -60,6 +60,9 @@ class Config:
     slippage_bps: float = 2.0
     limit_ttl_candles: int = 2
 
+    # Regime risk switch (paper core sleeve)
+    core_cooloff: int = 96  # candles blocked from re-entry after a PANIC exit (96 = 1 day on 15m)
+
     # Strategy params
     breakout_lookback: int = 20
     atr_period: int = 14

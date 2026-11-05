@@ -92,6 +92,10 @@ class Bot:
         self.journal.log("regime", regime=regime, p=rp, probs=probs, model=ra.get("model"),
                          request_id=ra.get("request_id"), usage=ra.get("usage"), candle=cf, book=bf, **base)
         log.info("candle %s close %.2f  regime %s p=%.3f  %s", k["t"], k["c"], regime, rp, probs)
+        try:
+            self.core_step(k, p_panic, base)
+        except Exception as e:  # the core sleeve must never stop the main cycle
+            self.journal.log("error", stage="core", error=repr(e), **base)
 
         # Step 4: PANIC = hands off (and optionally flatten)
         if p_panic >= cfg.panic_threshold:
@@ -147,6 +151,31 @@ class Bot:
             self._event(ev, k["t"])
         b.save()
         return True
+
+    def core_step(self, k: dict, p_panic: float, base: dict):
+        """Regime risk switch (paper): hold BTC while the daily EMA20 > EMA50; Drex PANIC exits and blocks re-entry
+        for `core_cooloff` candles. A separate paper account from the playbooks (state key "core")."""
+        from features import ema
+        from risk_switch import CoreSleeve
+        import numpy as np
+        cfg, b = self.cfg, self.broker
+        daily = self.bx.closed_candles(cfg.symbol, "1d", 60)
+        dc = np.array([d["c"] for d in daily])
+        trend_up = bool(ema(dc, 20)[-1] > ema(dc, 50)[-1])
+        core = b.s.setdefault("core", {"block": 0, "sleeve": None})
+        sl = CoreSleeve(core["sleeve"], cfg.starting_equity, cfg.fee_bps, cfg.slippage_bps, min_hold=96)
+        panic = p_panic >= cfg.panic_threshold
+        core["block"] = cfg.core_cooloff if panic else max(0, core["block"] - 1)
+        want = trend_up and core["block"] == 0
+        probs = {"PANIC": 1.0} if panic else ({"TRENDING": 1.0} if want else {"CHOPPY": 0.0})
+        ev = sl.step(k["c"], probs, want, cfg.panic_threshold)
+        core["sleeve"] = sl.s
+        core["value"] = round(sl.value(k["c"]), 2)
+        if ev:
+            why = "PANIC exit" if panic else ("daily uptrend" if want else "daily downtrend" if not trend_up else "cool-off")
+            self.journal.log("core", **ev, reason=why, trend_up=trend_up, p_panic=p_panic, **base)
+            ping(cfg, f"CORE {ev['from']:.0%} -> {ev['to']:.0%} BTC ({why})",
+                 f"at {ev['price']:,.2f}  core value {ev['value']:,.2f}  [paper]")
 
     def maybe_review(self):
         """Step 8, run inside the worker (it owns the disk): once per UTC day after review_hour_utc."""
