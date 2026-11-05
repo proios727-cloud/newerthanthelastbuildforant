@@ -1,0 +1,33 @@
+name: forward-watchdog
+# Missed-run alert for the forward paper test (docs/forward-feed.md). Weekday mornings, before the open, it reads the
+# `shadow-data` branch and fails (so GitHub emails the repo's watchers) when the newest stored bar is more than 2
+# weekdays old, i.e. at least two nightly runs were missed, or when one fund lags the rest. Read-only: no key, no push.
+on:
+  schedule:
+    - cron: "47 13 * * 1-5"     # 09:47 EDT / 08:47 EST
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Fetch shadow-data
+        run: |
+          git fetch -q --depth 1 origin shadow-data
+          git worktree add -q --detach /tmp/shadow FETCH_HEAD
+      - name: Check the stored bars
+        run: |
+          D=/tmp/shadow/chart-forward
+          python -m chart doctor "$D/data" "$D/etf" --feed connector --max-stale 2 > /tmp/doctor.json && {
+            python -c "import json; d=json.load(open('/tmp/doctor.json'))['data']; print('ok:', {k.split('/')[-1]: v['newest_bar'] for k, v in d.items()})"
+            exit 0
+          }
+          python -c "import json; [print('::error::' + p) for p in json.load(open('/tmp/doctor.json'))['problems']]"
+          echo "::error::The nightly forward feed has missed runs. Check the scheduled Claude task or the chart-forward workflow (docs/forward-feed.md)."
+          exit 1

@@ -2,11 +2,11 @@
 
 Reads a chart-forward folder (the `shadow-data` branch) and writes four JSON arrays of row objects:
   status.json    one row: latest bar, data health, next decision, regime flag, paper period totals
-  daily.json     one row per session since the first fill: rule and basket, cumulative
+  daily.json     one row per session since the first fill: rule and basket, cumulative, before and after costs
   holdings.json  one row per fund the rule holds now: its ticket and its return since the fill
   ranking.json   one row per basket fund: momentum at the last decision and whether the rule holds it
 The paper return is the equal-weight return from the fill day's open, as `chart forward rotation-report` computes it, so
-the latest daily row matches ROTATION.json. Research only: nothing here previews, places or approves an order.
+the latest daily row matches ROTATION.json; the `_net` columns take off each period's cost at its fill. Research only: nothing here previews, places or approves an order.
     python3 scripts/forward_dashboard.py CHART_FORWARD_DIR OUT_DIR
 """
 import json
@@ -51,15 +51,20 @@ def build(d):
     bars = _bars(d / "etf", basket) if basket else {}
     latest = max((v["newest_bar"] for v in doctor["data"].values()), default="")
 
-    daily, rule_base, basket_base = [], 1.0, 1.0
-    for p in rotation["periods"]:
+    cost = rotation.get("cost_bps_per_side", 0) / 1e4
+    daily, rule_base, basket_base, rule_nb, basket_nb = [], 1.0, 1.0, 1.0, 1.0
+    for k, p in enumerate(rotation["periods"]):
         rule = _path(bars, p["picks"], p["from"], p["to"]) if p["picks"] else []
         base = _path(bars, basket, p["from"], p["to"])
+        rule_fee, basket_fee = 1 - cost * p.get("traded", 0), 1 - cost * (1 if k == 0 else 0)   # paid at the fill
         for (day, r), (_, b) in zip(rule, base):
             daily.append({"day": day, "decided": p["decided"], "rule": round(rule_base * (1 + r) - 1, 5),
-                          "basket": round(basket_base * (1 + b) - 1, 5)})
+                          "basket": round(basket_base * (1 + b) - 1, 5),
+                          "rule_net": round(rule_nb * rule_fee * (1 + r) - 1, 5),
+                          "basket_net": round(basket_nb * basket_fee * (1 + b) - 1, 5)})
         if rule and base:
             rule_base, basket_base = rule_base * (1 + rule[-1][1]), basket_base * (1 + base[-1][1])
+            rule_nb, basket_nb = rule_nb * rule_fee * (1 + rule[-1][1]), basket_nb * basket_fee * (1 + base[-1][1])
 
     holdings = []
     if rotation["periods"]:
@@ -82,6 +87,9 @@ def build(d):
                "decided": last.get("as_of"), "picks": " ".join(last.get("picks", [])),
                "rule": cum.get("rule"), "basket": cum.get("basket"),
                "excess": None if cum.get("rule") is None else round(cum["rule"] - cum["basket"], 5),
+               "rule_net": cum.get("rule_net"), "basket_net": cum.get("basket_net"),
+               "excess_net": None if cum.get("rule_net") is None else round(cum["rule_net"] - cum["basket_net"], 5),
+               "cost_bps": rotation.get("cost_bps_per_side"),
                "regime_hold": overlay.get("hold"), "spy_vs_avg": overlay.get("close_vs_average_now"),
                "trend200_picks": " ".join(trend[-1].get("picks", [])) if trend else ""}]
     return {"status": status, "daily": daily, "holdings": holdings, "ranking": ranking}

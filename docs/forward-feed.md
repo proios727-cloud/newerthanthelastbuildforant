@@ -48,3 +48,13 @@ data checks and the SPY regime flag.
 - `chart doctor --feed connector` skips the key check and still flags stale or lagging files.
 
 Research only: neither feed previews, fills or places an order.
+
+**Costs.** `ROTATION.json` scores each period before and after costs: 3 bp a side (the 1 bp fee and 2 bp slippage the
+backtests charge), paid at each fill on the weight the decision trades (`traded`: 1.0 for the first fill, the sum of
+weight changes after that). The basket pays one side once, at the first fill. The `_net` fields carry these figures into
+the dashboard and the monthly review; the gross fields are unchanged.
+
+**Missed-run alert.** `.github/workflows/forward-watchdog.yml` runs weekday mornings (09:47 New York in summer, 08:47 in
+winter). It reads `shadow-data` and fails, so GitHub emails you, when the newest stored bar is more than 2 weekdays old
+(two nightly runs missed) or one fund lags the rest. It needs no key and pushes nothing. A market holiday counts as a
+weekday, so a run missed next to a holiday alerts one morning earlier.
