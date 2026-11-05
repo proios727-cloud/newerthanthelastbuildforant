@@ -1,0 +1,190 @@
+{
+  "rule": {
+    "lookback": 60,
+    "hold": 21,
+    "top": 2,
+    "buffer": 0,
+    "trend": 0
+  },
+  "costs": [
+    {
+      "fee_bps": 1,
+      "slippage_bps": 2,
+      "rule": {
+        "lookback": 60,
+        "hold": 21,
+        "top": 2,
+        "buffer": 0,
+        "trend": 0
+      },
+      "days": 21,
+      "cagr": {
+        "min": 0.096797,
+        "median": 0.156069,
+        "max": 0.231944
+      },
+      "max_drawdown": {
+        "worst": -0.159554,
+        "median": -0.127798
+      },
+      "sharpe_median": 0.962359,
+      "trades_median": 24,
+      "days_calmar_at_least_hold": 17,
+      "hold": {
+        "cagr": 0.116705,
+        "max_drawdown": -0.127569,
+        "sharpe": 1.003315,
+        "calmar": 0.914843
+      }
+    },
+    {
+      "fee_bps": 10,
+      "slippage_bps": 10,
+      "rule": {
+        "lookback": 60,
+        "hold": 21,
+        "top": 2,
+        "buffer": 0,
+        "trend": 0
+      },
+      "days": 21,
+      "cagr": {
+        "min": 0.076407,
+        "median": 0.133846,
+        "max": 0.207607
+      },
+      "max_drawdown": {
+        "worst": -0.166575,
+        "median": -0.13204
+      },
+      "sharpe_median": 0.853361,
+      "trades_median": 24,
+      "days_calmar_at_least_hold": 13,
+      "hold": {
+        "cagr": 0.115775,
+        "max_drawdown": -0.127569,
+        "sharpe": 0.996027,
+        "calmar": 0.907554
+      }
+    },
+    {
+      "fee_bps": 25,
+      "slippage_bps": 25,
+      "rule": {
+        "lookback": 60,
+        "hold": 21,
+        "top": 2,
+        "buffer": 0,
+        "trend": 0
+      },
+      "days": 21,
+      "cagr": {
+        "min": 0.041433,
+        "median": 0.101956,
+        "max": 0.165833
+      },
+      "max_drawdown": {
+        "worst": -0.178829,
+        "median": -0.146292
+      },
+      "sharpe_median": 0.634802,
+      "trades_median": 24,
+      "days_calmar_at_least_hold": 5,
+      "hold": {
+        "cagr": 0.114138,
+        "max_drawdown": -0.127569,
+        "sharpe": 0.982971,
+        "calmar": 0.894721
+      }
+    }
+  ],
+  "without": [
+    {
+      "dropped": "GLD",
+      "rule": {
+        "lookback": 60,
+        "hold": 21,
+        "top": 2,
+        "buffer": 0,
+        "trend": 0
+      },
+      "days": 21,
+      "cagr": {
+        "min": 0.027932,
+        "median": 0.118929,
+        "max": 0.185442
+      },
+      "max_drawdown": {
+        "worst": -0.228336,
+        "median": -0.189759
+      },
+      "sharpe_median": 0.773906,
+      "trades_median": 25,
+      "days_calmar_at_least_hold": 9,
+      "hold": {
+        "cagr": 0.107557,
+        "max_drawdown": -0.146372,
+        "sharpe": 0.905644,
+        "calmar": 0.734823
+      }
+    },
+    {
+      "dropped": "TLT",
+      "rule": {
+        "lookback": 60,
+        "hold": 21,
+        "top": 2,
+        "buffer": 0,
+        "trend": 0
+      },
+      "days": 21,
+      "cagr": {
+        "min": 0.098722,
+        "median": 0.157084,
+        "max": 0.240417
+      },
+      "max_drawdown": {
+        "worst": -0.159554,
+        "median": -0.127668
+      },
+      "sharpe_median": 0.962359,
+      "trades_median": 24,
+      "days_calmar_at_least_hold": 18,
+      "hold": {
+        "cagr": 0.128873,
+        "max_drawdown": -0.137466,
+        "sharpe": 1.044409,
+        "calmar": 0.93749
+      }
+    },
+    {
+      "dropped": "XLK",
+      "rule": {
+        "lookback": 60,
+        "hold": 21,
+        "top": 2,
+        "buffer": 0,
+        "trend": 0
+      },
+      "days": 21,
+      "cagr": {
+        "min": 0.087302,
+        "median": 0.146732,
+        "max": 0.233393
+      },
+      "max_drawdown": {
+        "worst": -0.171239,
+        "median": -0.13023
+      },
+      "sharpe_median": 0.981202,
+      "trades_median": 23,
+      "days_calmar_at_least_hold": 17,
+      "hold": {
+        "cagr": 0.100161,
+        "max_drawdown": -0.117948,
+        "sharpe": 0.895938,
+        "calmar": 0.849194
+      }
+    }
+  ]
+}
