@@ -20,7 +20,9 @@ An 8-seat agent desk that researches, sizes, and risk-checks trades around the c
 | `fund/feed.py` | Live data loop: plans which symbols are due, fetches within the request budget, marks the ledger. |
 | `fund/scan.py` | Quant Scanner seat: ranked momentum, mean-reversion and breakout signals, the signal book, and the thesis gate. |
 | `fund/__main__.py` | The command-line tool (see below). Its state lives in `ledger/`. |
-| `tests/` | 56 unit tests: `python3 -m unittest -v` |
+| `chart/intraday.py` | Intraday session backtester (opening-range breakout, gap fade, walk-forward). Data: `chart/data/intraday/`, sources: `docs/intraday-data.md`. **Verdict: reject** (`research/intraday-orb/VERDICT.md`). |
+| `chart/breakout.py` | 4-hour trend breakout with an ATR stop, vs buy and hold. Data: `chart/data/crypto/4h/` (BTC, ETH). **Verdict: reject** (`research/crypto-breakout/VERDICT.md`). Daily 2017–2023 test: halves drawdowns but fails the pre-registered bar on trade count (`research/crypto-breakout-daily/VERDICT.md`). |
+| `tests/` | unit tests: `python3 -m unittest -v` |
 
 ```bash
 python3 scripts/build_board.py desk.json --out board.html
@@ -150,3 +152,117 @@ Every hop has a timeout and a rule for what happens on failure (see `handoffs` i
 4. **Feed upgrade** (gate 2) and **broker connector** (gate 5) remain blocked on your side.
 
 This desk supports decisions. It is not investment advice, and nothing in it executes trades.
+
+## Dashboard
+
+`python scripts/build_dashboard.py` writes `dashboard.html`: one page showing all four desks (fund limits, SPY gamma map, Kalshi quotes and fill scenarios, sportsbook signals), computed by the desks' own code. CI builds it on every push.
+
+## Live Kalshi scan (read-only)
+
+`python -m kalshi.feed --series KXBTC15M KXETH15M [--log shadow.jsonl]` reads open markets from Kalshi's public API (no key), shows the top of book and the maker pair the desk would rest, and logs it. It only sends GET requests. Markets stay unquoted until TypeSafe verifies their settlement rules. Needs `api.elections.kalshi.com` allowed in the network policy.
+
+## Desks in this repo
+
+Four desks share one TypeSafe judgment layer. Strategy notes and the Heatseeker signal ledger from 456CASH are in `docs/`. Everything runs in paper or shadow mode; nothing places a bet or an order.
+
+| Path | Desk | TypeSafe judgment | Policy in code |
+|---|---|---|---|
+| `fund/` | Trading (equities + crypto) | `fund/catalyst.py`: material headline risk (Noul) and direction (Choice) | A live answer with p ≥ 0.80 blocks opening size; exits are never blocked |
+| `options/` | Options Greeks and GEX map (ported from 456CASH) | none yet | Black-Scholes Greeks, implied vol, dealer-gamma walls, king node and flip from recorded SPY chains in `options/data/chains/` |
+| `kalshi/` | Kalshi 15-min BTC/ETH maker | `kalshi/settlement.py`: the rules settle on CF Benchmarks for the stated window (Noul) | Quote a market only after a live yes with p ≥ 0.90; LIVE mode is refused |
+| `sportsbook/` | Sportsbook line tracker (ported from 456CASH) | `sportsbook/cause.py`: why the line moved (Choice) | A move counts as sharp only when no news explains it |
+
+`judge/` holds the questions and clients. Without credentials, `judge.from_env()` returns a stub whose answers never count as confident, so every desk behaves as it did before. To go live, set `TYPESAFE_API_KEY`, `TYPESAFE_API_URL` and `TYPESAFE_LIVE=1`, and allow the API host in the network policy. Before that, check `judge.HttpClient` against the [TypeSafe API docs](https://docs.typesafe.ai/api.md); its request format has not been verified.
+
+## GM toxicity desk (`gmdesk/`)
+
+Glosten-Milgrom × Avellaneda-Stoikov market-making research on Kalshi 15-minute BTC/ETH markets, built
+from the `skills/gm-toxicity-mm` skill. Read-only: it records public trades, calibrates a VPIN toxicity
+signal out of sample, replays both quoters with fees, and runs a live shadow. **It places no orders.**
+
+```bash
+python3 -m gmdesk.record backfill --series KXETH15M --markets 120   # stage 1 (data/ is git-ignored)
+python3 -m gmdesk.analyze --series KXETH15M                         # stage 2 gate
+python3 -m gmdesk.replay  --series KXETH15M                         # stage 3 gate
+python3 -m gmdesk.shadow run --series KXETH15M --minutes 240        # stage 4 (live, no orders)
+python3 -m gmdesk.shadow report data/gm/shadow_KXETH15M.jsonl --replay data/gm/replay_KXETH15M.json
+python3 -m gmdesk.board_data                                        # board Real-tape data
+```
+
+## Router doctor (`skills/router-doctor/`)
+
+Read-only home Wi-Fi diagnosis, plus an agent workflow for tuning the router one approved change at a time. It's the safe version of the viral "Claude Code fixed my router" post. Run it on a machine on your home network; a cloud session can't reach your router.
+
+```bash
+python3 skills/router-doctor/scripts/router_doctor.py diagnose --out router_report.json  # verdict + channel congestion
+python3 skills/router-doctor/scripts/router_doctor.py diagnose --router eero              # eero: advice as eero app steps
+python3 skills/router-doctor/scripts/router_doctor.py watch --minutes 10                  # catch on-and-off drops
+python3 skills/router-doctor/scripts/router_doctor.py keychain-cmd --user admin          # store router password in the OS keychain
+```
+
+**Windows, no install:** double-click `skills/router-doctor/windows/Check-WiFi.bat`. It watches the router and the internet for a few minutes, tracks the Wi-Fi band and signal, then saves a verdict report (`WiFi-Check-*.txt` plus a CSV) to the Desktop.
+
+## Charting engine and RE Studio
+
+| Path | What it is |
+|---|---|
+| `chart/` | Indicator engine (SMA, EMA, Wilder RMA, RSI, MACD, Bollinger, ATR) and a bar backtester that fills on the next bar's open, so it never looks ahead. Pure stdlib. Built from published definitions; see `chart/SPEC.md`. |
+| `chart/sweep.py` | Parameter sweep, single-split walk-forward, and **rolling walk-forward**: settings are re-picked before every 10-bar test block using only earlier bars, and the blocks are stitched into one continuous out-of-sample run against buy-and-hold. |
+| `chart/strategies.py` | Trend-filtered RSI dips, MACD with a trend filter, Bollinger reversion, Donchian breakout. |
+| `chart/rotate.py` | Basket momentum rotation (hold the strongest symbol, or cash), scored against an equal-weight basket. |
+| `chart/scan.py` | Quant-seat bridge: rolling walk-forward of all 6 strategies on each `chart/data/<SYMBOL>.csv` in the desk universe, plus the basket rotation, emitted as a `signal_list` with a candidate flag and the reasons it was rejected. Research only. |
+| `chart/data/` | Daily bars for the desk's 8 equities, 2023-10-02 → 2026-10-26 (770 sessions each), mostly from ThetaData. Sources, the NVDA split adjustment and the two recorded bad-print fixes are in `chart/data/SOURCES.md`. |
+| `chart/data/etf/` | Research universe: 11 Select Sector SPDRs plus TLT and GLD, same span. Splits, dropped bad rows and vendor gaps are in `chart/data/SOURCES.md`. |
+| `chart/dividends.py`, `chart/data/tr/`, `chart/data/etf_tr/` | Total-return copies of the daily files (dividends back-adjusted; `python3 -m chart dividends SRC DST`). Use them for research verdicts; the raw folders stay the source for live prices. |
+| `chart/data/weekly/`, `chart/longrun.py` | The same 13 ETFs as weekly total-return bars back to 1999–2018 (Alpha Vantage weekly adjusted, free tier). `python3 -m chart longrun` runs the rotation rule and its variants over 2004–2026 and breaks results out by stress window (2008, 2011, 2015–16, 2018, 2020, 2022). |
+| `chart/report.py`, `chart/report_page.html` | `python3 -m chart report Stocks=chart/data ETFs=chart/data/etf --rotation chart/data/etf --longrun chart/data/weekly --forward <shadow-data dir> --overlay chart/data/weekly_desk/SPY.csv chart/data/tr/SPY.csv --out scorecard.html` writes a self-contained scorecard: verdicts, stats, each strategy's out-of-sample curve against holding, the rotation rule's forward log, stress tests and long history, and the SPY trend-overlay verdict with today's flag. `scripts/build_dashboard.py` shows the flag and the latest rotation picks on the desk dashboard. |
+| `chart/robust.py` | `python3 -m chart stress chart/data/etf [--buffer N] [--trend N]` stress-tests a rotation rule from every rebalance day, at several cost levels, and with key funds removed; `--buffer` adds hysteresis, `--trend` a basket trend filter. |
+| `chart/doctor.py` | `python3 -m chart doctor` is the forward job's preflight. It checks the Alpha Vantage key, how stale each data folder is and whether any file lags, and gives the next rotation decision date. It exits 1 on any problem. |
+| `chart/overlay.py` | `python3 -m chart overlay <csv> [--months 10] [--status]`: a monthly trend overlay on one fund (hold above its N-month average, else cash), with stress windows and the scan's risk-filter verdict. |
+| `docs/research-log.md` | Every research finding in order, with the corrections; the README keeps only the current conclusions. |
+| `chart/validate.py`, `chart/adjust.py` | Data checks (order, bad prints, one-day jumps, cross-vendor closes) and split/correction handling. |
+| `chart/forward.py`, `chart/update.py` | Forward paper test: log each day's signals before the open, score them as bars arrive. Monthly rotation decisions also get paper tickets and a one-page `BRIEF.md` (`chart forward rotation-brief`). `.github/workflows/chart-forward.yml` runs it every weekday on the `shadow-data` branch (needs the `ALPHAVANTAGE_API_KEY` secret). |
+| `tests/test_chart.py` | Oracle cases from the spec, including a test that checks the tests can fail and a check that the test slice can't influence parameter choice. |
+| `docs/re-studio.md` | Reference for the AI reverse-engineering stack (REA, Ghidra, jadx, Frida…): install, engines, workflows, prompts, legal guardrails. |
+| `.claude/skills/re-studio/` | Project skill: scope gate → evidence → SPEC.md → clean-room build → oracle loop. |
+| `.claude/skills/strategy-vetting/` | Project skill: the test protocol any strategy idea goes through before the forward log: fixed rule → total-return data → walk-forward → every rebalance day and cost ladder → 20-year weekly history by crash → multiple-testing check → one-page verdict. |
+
+```bash
+python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1
+python3 -m chart backtest prices.csv --strategy rsi_revert --rsi-n 14 --lo 30 --hi 70
+python3 -m chart walkforward chart/data/SPY.csv --strategy sma_cross --train 0.7
+python3 -m chart walkforward chart/data/SPY.csv --strategy bollinger_revert --rolling
+python3 -m chart scan --out ledger/signals.json      # 1-year train, monthly blocks, 1 bp fee + 2 bp slippage
+python3 -m chart validate chart/data/*.csv
+python3 -m chart forward record && python3 -m chart forward report
+python3 -m chart longrun                              # rotation rule 2004-2026, weekly total return, by regime
+python3 -m chart doctor                               # forward-job preflight
+```
+
+### Current conclusions (Oct 2026)
+
+All on total-return data, after costs, checked over 20+ years of weekly bars. The full history, including claims later
+corrected, is in `docs/research-log.md`. New ideas go through `.claude/skills/strategy-vetting/`.
+
+| Question | Answer | Evidence |
+|---|---|---|
+| Does any strategy beat holding? | **No.** None of the 48 weekly tests on the desk stocks; 2 of 78 on the ETFs (XLRE mean reversion), about what chance produces. | `chart longrun --strategies` |
+| ETF momentum rotation (60-day, top 3, monthly) | **No return edge** over two decades (9.0% vs 10.0%/yr). It halved the worst drawdown, mostly in 2008. Paper log only, with a 200-day trend variant alongside. | `docs/rotation-sleeve.md` |
+| Trend filters (SMA cross, Donchian, MACD) | **Risk filters at a cost:** they cut drawdowns on about a third of assets and always give up 1–14 points a year. Specific 2023–26 pairings mostly don't carry over. | `chart longrun --strategies` |
+| Desk-level overlay: SPY above its 10-month average | **Crash insurance:** −21% worst drawdown vs −55% since 2000, but about 6 points a year behind holding since 2009. Logged as a regime flag, not on the book. | `research/trend-overlay/VERDICT.md` |
+| Price-only vs total return | Price-only data understated the basket by about 1.9%/yr and overstated the rotation edge by a third. Research verdicts now use `chart/data/tr/` and `chart/data/etf_tr/`. | `chart/dividends.py` |
+
+The forward paper log (`chart-forward` workflow, needs the `ALPHAVANTAGE_API_KEY` secret) is the evidence that counts next.
+
+The CSV needs `date, open, high, low, close[, volume]` in ascending order. Backtest results are research output, not investment advice.
+
+## Skill: product-pain-miner
+
+`.claude/skills/product-pain-miner/` turns public complaints about everyday items into ranked redesign concepts. Each category is a JSON dataset (`data/<category>.json`, every entry sourced), and the ranked report (`reports/<category>.md`) is generated from it. Ask Claude to "run product-pain-miner on bathroom" to add a category, or to "refresh kitchen" to update one.
+
+```bash
+python3 .claude/skills/product-pain-miner/scripts/pain_index.py .claude/skills/product-pain-miner/data/kitchen.json \
+  --out .claude/skills/product-pain-miner/reports/kitchen.md
+```
+
+The script refuses datasets without sources or with invalid scores, and the tests fail if a report is out of date.

@@ -10,3 +10,5 @@ jobs:
           python-version: "3.11"
       - run: python -m unittest -v
       - run: python scripts/build_board.py desk.json
+      - run: python scripts/build_dashboard.py --out /tmp/dashboard.html
+      - run: for f in .claude/skills/product-pain-miner/data/*.json; do python .claude/skills/product-pain-miner/scripts/pain_index.py "$f"; done

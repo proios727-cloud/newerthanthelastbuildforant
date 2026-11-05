@@ -1,0 +1,60 @@
+{
+  "symbol": "SPY",
+  "spot": 753.905,
+  "captured_at": "2026-08-03T14:12:00Z",
+  "source": "Robinhood live option quotes (put wing)",
+  "contracts": [
+    {
+      "strike": 746.0,
+      "expiration": "2026-08-03",
+      "option_type": "put",
+      "bid": 0.1,
+      "ask": 0.11,
+      "mark": 0.105,
+      "bid_size": 2659,
+      "ask_size": 1140,
+      "iv": 0.24952,
+      "delta": -0.052669,
+      "gamma": 0.021746,
+      "theta": -0.11,
+      "vega": 0.021273,
+      "open_interest": 6295,
+      "volume": 32238
+    },
+    {
+      "strike": 748.0,
+      "expiration": "2026-08-03",
+      "option_type": "put",
+      "bid": 0.16,
+      "ask": 0.17,
+      "mark": 0.165,
+      "bid_size": 820,
+      "ask_size": 2102,
+      "iv": 0.220016,
+      "delta": -0.084989,
+      "gamma": 0.035781,
+      "theta": -0.17,
+      "vega": 0.030793,
+      "open_interest": 5032,
+      "volume": 55492
+    },
+    {
+      "strike": 750.0,
+      "expiration": "2026-08-03",
+      "option_type": "put",
+      "bid": 0.25,
+      "ask": 0.26,
+      "mark": 0.255,
+      "bid_size": 1152,
+      "ask_size": 765,
+      "iv": 0.1847,
+      "delta": -0.139428,
+      "gamma": 0.060723,
+      "theta": -0.26,
+      "vega": 0.043927,
+      "open_interest": 2775,
+      "volume": 93234
+    }
+  ],
+  "snapshot_date": "2026-08-03"
+}

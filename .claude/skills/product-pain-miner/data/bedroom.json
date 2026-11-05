@@ -1,0 +1,121 @@
+{
+  "category": "bedroom",
+  "updated": "2026-11-02",
+  "entries": [
+    {
+      "id": "fitted-sheet-pops-off",
+      "item": "Fitted sheets",
+      "complaint": "Corners pop off overnight because pocket depths aren't standardized, the elastic is only at the corners, and toppers or adjustable bases add height or bend the mattress",
+      "failure_mode": "one-size-fits-all",
+      "frequency": 4, "severity": 1, "annoyance": 5, "workaround": 3, "feasibility": 5,
+      "redesign": "Elastic sewn all the way around the hem, plus a measured pocket depth printed on the label with a 'fits mattress X–Y in.' range that includes toppers",
+      "prior_art": "All-around-elastic sheets; zip-on encasement sheets",
+      "sources": [
+        "https://simbasleep.com/blogs/night-life/fitted-sheet-depths-explained-how-to-get-the-right-fit",
+        "https://mattressmiracle.ca/blogs/mattress-miracle-blog/how-to-keep-fitted-sheets-tight-on-bed-guide",
+        "https://www.idealhome.co.uk/bedroom/how-do-i-keep-my-fitted-sheet-from-coming-off",
+        "https://engineerfix.com/why-does-my-fitted-sheet-keep-coming-off/"
+      ]
+    },
+    {
+      "id": "duvet-insert-bunches",
+      "item": "Duvets & duvet covers",
+      "complaint": "The insert slides and bunches inside the cover overnight, because nothing holds it in place and insert and cover sizes don't match",
+      "failure_mode": "one-size-fits-all",
+      "frequency": 4, "severity": 1, "annoyance": 4, "workaround": 3, "feasibility": 5,
+      "redesign": "Snap tabs at all four corners and the middle of each edge on every insert and cover, with matched sizes labeled 'insert fits cover X'",
+      "prior_art": "Corner ties; zip-in duvet systems",
+      "sources": [
+        "https://hushblankets.com/blogs/sleep/how-to-keep-duvet-in-place",
+        "https://www.californiadesignden.com/blogs/bedding/keep-duvet-cover-from-bunching",
+        "https://sleepiverse.com/articles/how-to-prevent-duvet-bunching-in-duvet-cover/",
+        "https://www.dreamcloudsleep.com/posts/duvet-insert-guide"
+      ]
+    },
+    {
+      "id": "duvet-cover-hard-to-change",
+      "item": "Duvets & duvet covers",
+      "complaint": "Getting the insert into the cover is a two-person job unless you know the 'burrito' trick, because both far corners have to be held at once",
+      "failure_mode": "one-size-fits-all",
+      "frequency": 4, "severity": 1, "annoyance": 4, "workaround": 2, "feasibility": 4,
+      "redesign": "A cover that zips open on three sides and lies flat like a sandwich, so the insert is laid in and zipped closed with no turning inside out",
+      "prior_art": "Three-sided zip duvet covers",
+      "sources": [
+        "https://mattressmiracle.ca/blogs/mattress-miracle-blog/duvet-burrito-method-cover-easy-trick-guide",
+        "https://www.insidehook.com/design/best-duvet-cover-hack-pippen-house-zippered-system/amp",
+        "https://amerisleep.com/blog/how-to-put-on-a-duvet-cover/"
+      ]
+    },
+    {
+      "id": "pillow-clumps-after-wash",
+      "item": "Pillows",
+      "complaint": "Fiberfill pillows come out of the wash lumpy and flat even when the care tag is followed, so many people stop washing them",
+      "failure_mode": "wears-out-early",
+      "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4,
+      "redesign": "Fill sewn into several baffled chambers so it can't migrate, inside a zippered washable outer shell, so the cover is washed often and the fill rarely",
+      "prior_art": "Baffle-box pillows; zippered pillow protectors",
+      "sources": [
+        "https://www.grandforksherald.com/newsmd/high-quality-pillows-survive-better-in-the-wash",
+        "https://www.mumsnet.com/talk/housekeeping/1763101-Manky-pillows",
+        "https://www.hunker.com/12577742/how-to-fix-a-lumpy-pillow-after-washing/",
+        "https://casper.com/blogs/article/how-to-fix-a-lumpy-pillow"
+      ]
+    },
+    {
+      "id": "mattress-sags-early",
+      "item": "Mattresses",
+      "complaint": "Foam mattresses sag into body impressions within a few years, and warranty claims fail on high depth thresholds",
+      "failure_mode": "wears-out-early",
+      "frequency": 4, "severity": 3, "annoyance": 4, "workaround": 4, "feasibility": 3,
+      "redesign": "A zippered case with separate comfort layers that can be rotated or swapped, plus a printed foam-density spec and a sag gauge in the box",
+      "prior_art": "Mattresses with replaceable or flippable comfort layers",
+      "sources": [
+        "https://www.consumeraffairs.com/furniture/tempurpedic.html?page=3",
+        "https://www.goodbed.com/mattresses/serta/reviews/?page=48",
+        "https://www.thesleepjudge.com/tempur-pedic-complaints/",
+        "https://forum.livingwithfibro.org/t/help-with-recommendations/1530"
+      ]
+    },
+    {
+      "id": "memory-foam-sleeps-hot",
+      "item": "Mattresses",
+      "complaint": "Memory foam traps body heat and sleepers wake up sweaty, even on models marketed with cooling gel",
+      "failure_mode": "one-size-fits-all",
+      "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 3,
+      "redesign": "An open-cell or coil comfort layer with side vents, plus a tested 'sleeps warm / neutral / cool' rating on the label instead of 'cooling gel' marketing",
+      "prior_art": "Hybrid coil mattresses",
+      "sources": [
+        "https://www.goodbed.com/mattress-line/serta-icomfort-pre-2017/reviews/?page=13",
+        "https://www.consumeraffairs.com/furniture/sealy_mattress.html?page=6",
+        "https://www.thesleepjudge.com/review/saatva-mattress-review/comments/"
+      ]
+    },
+    {
+      "id": "bright-clock-display",
+      "item": "Bedside clocks & chargers",
+      "complaint": "Clock displays and charging lights are too bright for a dark room, and dimming offers only two or three still-bright steps, so people tape over them",
+      "failure_mode": "bad-timing",
+      "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 2, "feasibility": 5,
+      "redesign": "A warm red or amber display that dims smoothly to fully off, shows the time on a tap, and has charging lights that switch off once the room is dark",
+      "sources": [
+        "https://www.curbly.com/9898-how-to-calm-your-alarm-clock-s-display-and-sleep-better-for-25-cents",
+        "https://community.autism.org.uk/f/miscellaneous-and-chat/47282/alarm-clocks-with-dim-letters",
+        "https://decor.lazada.sg/sleep-friendly-led-digital-clocks-key-features-for-bedroom-use-20260806/"
+      ]
+    },
+    {
+      "id": "dresser-drawer-bottoms",
+      "item": "Dressers",
+      "complaint": "Thin particle-board or cardboard drawer bottoms bow and fall out, and runners stick or let drawers drop onto each other",
+      "failure_mode": "wears-out-early",
+      "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4,
+      "redesign": "Plywood drawer bottoms seated in a groove on all four sides, with metal ball-bearing slides as standard even on flat-pack dressers",
+      "sources": [
+        "https://arayofsunlight.com/how-to-fix-a-drawer-bottom-that-falls-out/",
+        "https://woodgears.ca/dresser/from_junk.html",
+        "https://www.hometalk.com/44342877/diy/diy",
+        "https://windowhardwaredirect.com/blogs/news/how-to-stop-dresser-drawers-from-falling-out-practical-tips-and-solutions"
+      ]
+    }
+  ]
+}

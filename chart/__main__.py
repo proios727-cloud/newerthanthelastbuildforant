@@ -1,0 +1,298 @@
+"""python3 -m chart backtest prices.csv --strategy sma_cross --fast 10 --slow 30 --fee-bps 1
+python3 -m chart walkforward chart/data/SPY.csv --strategy rsi_revert --train 0.7
+python3 -m chart walkforward chart/data/SPY.csv --strategy bollinger_revert --rolling
+python3 -m chart scan --out ledger/signals.json
+python3 -m chart forward record      # once a day, after the close and before the next open
+python3 -m chart forward report
+python3 -m chart validate chart/data/SPY.csv
+python3 -m chart doctor chart/data chart/data/etf   # preflight: API key, data freshness, next rotation decision
+python3 -m chart longrun                            # the rotation rule over 2004-2026 weekly bars, by regime
+python3 -m chart longrun chart/data/weekly_desk --strategies   # six strategies, 20+ years, weekly
+python3 -m chart dividends chart/data chart/data/tr  # total-return copies (dividends back-adjusted)
+python3 -m chart overlay chart/data/weekly_desk/SPY.csv   # 10-month trend overlay, 2000-2026, by crash
+python3 -m chart intraday chart/data/intraday/15m          # ORB + gap fade, every variant and walk-forward
+python3 -m chart breakout chart/data/crypto/4h/*.csv       # 4h trend breakout with ATR stop vs buy and hold
+python3 -m chart signals research/heatseeker/signals.jsonl --csv out.csv   # score the forward signal journal
+"""
+import argparse
+import json
+import pathlib
+
+from . import STRATEGIES, backtest, load_csv
+from .scan import scan
+from .sweep import GRIDS, rolling_walk_forward, walk_forward
+
+
+def _round(x):
+    if isinstance(x, float):
+        return round(x, 6)
+    if isinstance(x, dict):
+        return {k: _round(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_round(v) for v in x]
+    return x
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(prog="chart")
+    sub = p.add_subparsers(dest="cmd", required=True)
+    b = sub.add_parser("backtest", help="run a strategy over an OHLC CSV")
+    b.add_argument("csv")
+    b.add_argument("--strategy", choices=sorted(STRATEGIES), default="sma_cross")
+    b.add_argument("--fast", type=int, default=10)
+    b.add_argument("--slow", type=int, default=30)
+    b.add_argument("--rsi-n", type=int, default=14)
+    b.add_argument("--lo", type=float, default=30)
+    b.add_argument("--hi", type=float, default=70)
+    b.add_argument("--fee-bps", type=float, default=0.0)
+    b.add_argument("--slippage-bps", type=float, default=0.0)
+    b.add_argument("--periods-per-year", type=int, default=252)
+    w = sub.add_parser("walkforward", help="choose params on the train slice, score them on the test slice")
+    w.add_argument("csv")
+    w.add_argument("--strategy", choices=sorted(GRIDS), default="sma_cross")
+    w.add_argument("--train", type=float, default=0.7, help="single split: fraction of bars to train on")
+    w.add_argument("--rolling", action="store_true", help="re-pick params before every test block instead")
+    w.add_argument("--min-train", type=int, default=252)
+    w.add_argument("--test", type=int, default=21)
+    w.add_argument("--fee-bps", type=float, default=0.0)
+    w.add_argument("--slippage-bps", type=float, default=0.0)
+    s = sub.add_parser("scan", help="walk-forward every universe CSV in a folder and print the desk signal_list")
+    s.add_argument("folder", nargs="?", default="chart/data")
+    s.add_argument("--min-train", type=int, default=252, help="bars before the first test block (default: 1 year)")
+    s.add_argument("--test", type=int, default=21, help="bars per test block (default: 1 month)")
+    s.add_argument("--fee-bps", type=float, default=1.0)
+    s.add_argument("--slippage-bps", type=float, default=2.0)
+    s.add_argument("--out", help="also write the JSON here")
+    s.add_argument("--all", action="store_true",
+                   help="research mode: scan every CSV in the folder, not only symbols in desk.json's universe")
+    f = sub.add_parser("forward", help="log today's scan before the open, or score logged signals")
+    f.add_argument("action", choices=("record", "report", "rotation-record", "rotation-report", "rotation-replay",
+                                      "rotation-tickets", "rotation-brief"))
+    f.add_argument("folder", nargs="?", default="chart/data")
+    f.add_argument("--log", help="signal log path (default ledger/signals.jsonl)")
+    f.add_argument("--tickets", help="rotation-tickets: ticket log path (default ledger/rotation_tickets.jsonl)")
+    f.add_argument("--nav", type=float, help="rotation-tickets: paper NAV (default desk.json starting_nav)")
+    f.add_argument("--trend-log", help="rotation-brief: the defensive variant's log, to show its call")
+    f.add_argument("--doctor", help="rotation-brief: a `chart doctor` JSON file, to list blockers")
+    f.add_argument("--overlay", help="rotation-brief: a `chart overlay --status` JSON file, for the regime flag")
+    f.add_argument("--trend", type=int, default=0, help="rotation-record/replay: basket trend filter length (sessions)")
+    f.add_argument("--buffer", type=int, default=0, help="rotation-record/replay: hysteresis band")
+    it = sub.add_parser("intraday", help="opening-range breakout and gap fade on intraday bars (research/intraday-orb)")
+    it.add_argument("folder", nargs="?", default="chart/data/intraday/15m")
+    it.add_argument("--symbols", default="SPY,QQQ")
+    it.add_argument("--json", help="also write the full report as JSON here")
+    bo = sub.add_parser("breakout", help="20-bar breakout over EMA200, 10-bar-low exit, 2xATR stop (research/crypto-breakout)")
+    bo.add_argument("csv", nargs="+")
+    bo.add_argument("--json", help="also write the full report as JSON here")
+    bo.add_argument("--daily", action="store_true", help="daily bars: 365 bars a year (default: 4h, 2190)")
+    bo.add_argument("--end", help="drop bars after this date (YYYY-MM-DD)")
+    bo.add_argument("--window", action="append", default=[], metavar="NAME:START:END",
+                    help="report strategy vs buy and hold over a dated window, e.g. 2022bear:2022-01-01:2022-12-31")
+    sg = sub.add_parser("signals", help="score a forward signal journal against 15-minute bars (chart/signals.py)")
+    sg.add_argument("journal")
+    sg.add_argument("--bars", default="chart/data/intraday/15m")
+    sg.add_argument("--csv", help="also write one row per signal here (for the dashboard)")
+    u = sub.add_parser("update", help="append the latest Alpha Vantage daily bars (needs ALPHAVANTAGE_API_KEY)")
+    u.add_argument("folder", nargs="?", default="chart/data")
+    u.add_argument("--all", action="store_true", help="update every CSV in the folder, not only desk.json equities")
+    u.add_argument("--from-dir", help="read <SYMBOL>.csv Alpha Vantage daily files from this folder instead of the API")
+    r = sub.add_parser("report", help="write the visual scorecard (.html) or its data (.json)")
+    r.add_argument("folders", nargs="+", help="NAME=FOLDER pairs, e.g. Stocks=chart/data")
+    r.add_argument("--out", required=True)
+    r.add_argument("--rotation", help="ETF folder for the rotation-rule panel (stress spread + live-calendar replay)")
+    r.add_argument("--longrun", help="weekly folder for the long-history panel, e.g. chart/data/weekly")
+    r.add_argument("--forward", help="folder holding ROTATION.json / ROTATION_TREND200.json from shadow-data")
+    r.add_argument("--longrun-scan", nargs="*", default=(), help="weekly folders for the 20-year strategy panel")
+    r.add_argument("--overlay", nargs="+", metavar="CSV",
+                   help="trend-overlay panel: weekly CSV, then optionally a daily CSV for today's flag")
+    st = sub.add_parser("stress", help="stress-test a basket rotation rule across rebalance days, costs and universes")
+    st.add_argument("folder", nargs="?", default="chart/data/etf")
+    st.add_argument("--lookback", type=int, default=60)
+    st.add_argument("--hold", type=int, default=21)
+    st.add_argument("--top", type=int, default=3)
+    st.add_argument("--buffer", type=int, default=0, help="hysteresis: keep a held fund while it ranks in the top TOP+BUFFER")
+    st.add_argument("--trend", type=int, default=0, help="cash when the equal-weight basket is below its TREND-bar average")
+    lr = sub.add_parser("longrun", help="the rotation rule over two decades of weekly total-return bars, by regime")
+    lr.add_argument("folder", nargs="?", default="chart/data/weekly")
+    lr.add_argument("--out", help="also write the JSON here")
+    lr.add_argument("--strategies", action="store_true",
+                    help="instead: walk-forward the six single-asset strategies on the folder's weekly bars")
+    ov = sub.add_parser("overlay", help="monthly trend overlay on one fund (hold above its N-month average, else cash)")
+    ov.add_argument("csv")
+    ov.add_argument("--months", type=int, default=10)
+    ov.add_argument("--week", type=int, default=-1, help="decision bar within the month: -1 last (default), 0 first")
+    ov.add_argument("--cash-rate", type=float, default=0.0, help="yearly yield on cash while out (default 0)")
+    ov.add_argument("--cash", help="CSV of a T-bill fund (e.g. chart/data/cash/BIL.csv) whose return cash earns while out")
+    ov.add_argument("--status", action="store_true", help="only print the latest decision and distance from the average")
+    dv = sub.add_parser("dividends", help="write total-return (dividend back-adjusted) copies of a folder's CSVs")
+    dv.add_argument("src")
+    dv.add_argument("dst")
+    dr = sub.add_parser("doctor", help="preflight for the forward job: API key, data freshness, next rotation decision")
+    dr.add_argument("folders", nargs="*", default=["chart/data", "chart/data/etf"])
+    dr.add_argument("--max-stale", type=int, default=3, help="weekdays the newest bar may lag today (default 3)")
+    dr.add_argument("--feed", choices=["key", "connector"], default="key",
+                    help="connector: bars come from the Claude connector feed, so skip the API key check")
+    v = sub.add_parser("validate", help="sanity-check OHLC CSVs, optionally against an overlapping reference")
+    v.add_argument("csv", nargs="+")
+    v.add_argument("--ref", help="reference CSV whose overlapping closes must match")
+    a = p.parse_args(argv)
+    if a.cmd == "forward":
+        from fund import config
+        from . import forward
+        cfg = config.load()
+        uni = cfg.universe
+        if a.action.startswith("rotation-"):
+            bars = {p.stem.upper(): load_csv(p) for p in sorted(pathlib.Path(a.folder).glob("*.csv"))}
+            log = a.log or forward.ROTATION_LOG
+            rule = {k: v for k, v in (("trend", a.trend), ("buffer", a.buffer)) if v}
+            if a.action == "rotation-brief":
+                doc = json.loads(pathlib.Path(a.doctor).read_text()) if a.doctor else None
+                ovl = json.loads(pathlib.Path(a.overlay).read_text()) if a.overlay else None
+                text = forward.rotation_brief(bars, log, a.tickets or forward.TICKETS_LOG, a.trend_log, doc, ovl)
+                print(text or "no decision logged yet")
+            elif a.action == "rotation-tickets":
+                row = forward.rotation_tickets(bars, log, a.tickets or forward.TICKETS_LOG,
+                                               nav=a.nav or cfg.starting_nav, weight_pct=cfg.limits.max_position_pct)
+                print(json.dumps(row, indent=2) if row else "no new decision to ticket")
+            elif a.action == "rotation-replay":
+                print(json.dumps(forward.replay_rotation(bars, **rule), indent=2))
+            elif a.action == "rotation-record":
+                sig = forward.record_rotation(bars, log, **rule)
+                print(json.dumps(sig, indent=2) if sig else "not a decision day, or already recorded")
+            else:
+                print(json.dumps(forward.report_rotation(bars, log), indent=2))
+            return
+        log = a.log or forward.LOG
+        if a.action == "record":
+            row = forward.record(scan(pathlib.Path(a.folder).glob("*.csv"), uni, min_train=252, test=21,
+                                     fee_bps=1, slippage_bps=2), log)
+            print(json.dumps(row, indent=2) if row else "already recorded for this as-of date")
+        else:
+            print(json.dumps(forward.report(log, folder=a.folder, universe=uni), indent=2))
+        return
+    if a.cmd == "intraday":
+        from .intraday import format_report, report
+        rep = report(a.folder, tuple(a.symbols.split(",")))
+        print(format_report(rep))
+        if a.json:
+            pathlib.Path(a.json).write_text(json.dumps(_round(rep), indent=1))
+        return
+    if a.cmd == "breakout":
+        from .breakout import format_report as fmt_bo, report as report_bo
+        wins = [tuple(w.split(":")) for w in a.window]
+        rep = report_bo(a.csv, ppy=365 if a.daily else 6 * 365, end=a.end, windows=wins,
+                        interval="1D" if a.daily else "4h")
+        print(fmt_bo(rep))
+        if a.json:
+            pathlib.Path(a.json).write_text(json.dumps(_round(rep), indent=1))
+        return
+    if a.cmd == "signals":
+        import csv as _csv
+        from .signals import score_journal, summary as sig_summary
+        res = score_journal(a.journal, a.bars)
+        if a.csv:
+            with open(a.csv, "w", newline="") as f:
+                w = _csv.DictWriter(f, fieldnames=list(res[0]) if res else ["id"])
+                w.writeheader()
+                w.writerows({k: ("" if v is None else round(v, 4) if isinstance(v, float) else v) for k, v in r.items()}
+                            for r in res)
+        print(json.dumps({"summary": _round(sig_summary(res)), "signals": _round(res)}, indent=1))
+        return
+    if a.cmd == "update":
+        from fund import config
+        from .update import update
+        uni = ({f.stem.upper(): {"asset": "equity"} for f in pathlib.Path(a.folder).glob("*.csv")} if a.all
+               else config.load().universe)
+        print(json.dumps(update(a.folder, uni, source=a.from_dir), indent=2))
+        return
+    if a.cmd == "report":
+        from .report import build, render_html
+        groups = dict(x.split("=", 1) for x in a.folders)
+        data = build(groups, rotation_folder=a.rotation, longrun_folder=a.longrun, forward_dir=a.forward,
+                     longrun_scan=a.longrun_scan, overlay=a.overlay)
+        text = render_html(data) if a.out.endswith(".html") else json.dumps(data, separators=(",", ":"))
+        pathlib.Path(a.out).write_text(text, encoding="utf-8")
+        print(f"wrote {a.out}")
+        return
+    if a.cmd == "stress":
+        from .robust import stress
+        bars = {f.stem.upper(): load_csv(f) for f in sorted(pathlib.Path(a.folder).glob("*.csv"))}
+        print(json.dumps(_round(stress(bars, {"lookback": a.lookback, "hold": a.hold, "top": a.top,
+                                                   "buffer": a.buffer, "trend": a.trend})), indent=2))
+        return
+    if a.cmd == "longrun":
+        from .longrun import run, strategy_scan
+        res = strategy_scan(a.folder) if a.strategies else run(a.folder)
+        if a.strategies:
+            res.pop("rows")
+        text = json.dumps(res, indent=2, ensure_ascii=False)
+        if a.out:
+            pathlib.Path(a.out).write_text(text + "\n", encoding="utf-8")
+        print(text)
+        return
+    if a.cmd == "overlay":
+        from . import overlay
+        bars = load_csv(a.csv)
+        if a.status:
+            print(json.dumps(overlay.status(bars, a.months), indent=2))
+            return
+        weekly = len({b.ts[:7] for b in bars}) * 6 > len(bars)          # fewer than ~6 bars a month: weekly data
+        start = min(overlay.decisions(bars, 12, -1))
+        r = overlay.run(bars, a.months, a.week, start, cash_rate=a.cash_rate, ppy=52 if weekly else 252,
+                        cash=load_csv(a.cash) if a.cash else None)
+        keep = ("cagr", "max_drawdown", "calmar", "sharpe", "exposure", "n_trades")
+        print(json.dumps(_round({"from": r["dates"][0], "to": r["dates"][-1],
+                                 "overlay": {k: r["stats"][k] for k in keep},
+                                 "hold": {k: r["hold"][k] for k in keep[:4]}, **overlay.verdict(r),
+                                 "stress_windows": overlay.windows(r), "status": overlay.status(bars, a.months)}),
+                         indent=2, ensure_ascii=False))
+        return
+    if a.cmd == "dividends":
+        from .dividends import apply
+        print(json.dumps(apply(a.src, a.dst), indent=2))
+        return
+    if a.cmd == "doctor":
+        from .doctor import check
+        res = check(a.folders, max_stale=a.max_stale, feed=a.feed)
+        print(json.dumps(res, indent=2, ensure_ascii=False))
+        raise SystemExit(0 if res["ok"] else 1)
+    if a.cmd == "validate":
+        from .validate import check
+        res = [check(c, a.ref) for c in a.csv]
+        print(json.dumps(res, indent=2))
+        raise SystemExit(0 if all(r["ok"] for r in res) else 1)
+    if a.cmd == "walkforward":
+        costs = {"fee_bps": a.fee_bps, "slippage_bps": a.slippage_bps}
+        if a.rolling:
+            wf = rolling_walk_forward(load_csv(a.csv), a.strategy, min_train=a.min_train, test=a.test, **costs)
+        else:
+            wf = walk_forward(load_csv(a.csv), a.strategy, train_frac=a.train, **costs)
+            wf.pop("signals")
+        print(json.dumps(_round(wf), indent=2))
+        return
+    if a.cmd == "scan":
+        from fund import config
+        files = sorted(pathlib.Path(a.folder).glob("*.csv"))
+        uni = {f.stem.upper(): {"asset": "equity"} for f in files} if a.all else config.load().universe
+        res = scan(files, uni, min_train=a.min_train, test=a.test,
+                   fee_bps=a.fee_bps, slippage_bps=a.slippage_bps)
+        text = json.dumps(res, indent=2)
+        if a.out:
+            pathlib.Path(a.out).write_text(text + "\n")
+        print(text)
+        return
+
+    bars = load_csv(a.csv)
+    close = [x.close for x in bars]
+    if a.strategy == "sma_cross":
+        sig = STRATEGIES["sma_cross"](close, a.fast, a.slow)
+    else:
+        sig = STRATEGIES["rsi_revert"](close, a.rsi_n, a.lo, a.hi)
+    r = backtest(bars, sig, a.fee_bps, a.slippage_bps, periods_per_year=a.periods_per_year)
+    print(json.dumps({"bars": len(bars), "strategy": a.strategy,
+                      "stats": {k: round(v, 6) for k, v in r.stats.items()},
+                      "final_equity": round(r.equity[-1], 2) if r.equity else None}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

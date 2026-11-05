@@ -1,0 +1,74 @@
+name: chart-forward
+# Forward paper test for the chart scan. Research only: it never previews, fills or places an order.
+# Weekdays, 2.5-3.5 hours after the close: append the day's bars, log the scan's signals and, on the first session of
+# each month, the ETF rotation rule's picks (plus paper order tickets for desk review), all before the next open; keep
+# everything on the `shadow-data` branch under chart-forward/. The steps live in scripts/forward_run.sh.
+# Two feeds (docs/forward-feed.md): with the ALPHAVANTAGE_API_KEY secret this job fetches the bars itself (8 stocks +
+# 13 ETFs = 21 requests, inside the free 25/day); without it the job skips with a notice, and the Claude connector feed
+# (a scheduled Claude task) runs the same script and pushes to shadow-data instead.
+on:
+  schedule:
+    - cron: "37 23 * * 1-5"     # 19:37 EDT / 18:37 EST: late enough for the vendor's daily bar in both seasons
+  workflow_dispatch:
+concurrency:
+  group: shadow-data-writer
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  forward:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preflight (API key)
+        id: pre
+        env:
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+        run: |
+          if [ -z "$ALPHAVANTAGE_API_KEY" ]; then
+            echo "::notice::No ALPHAVANTAGE_API_KEY secret: skipping. The Claude connector feed updates shadow-data instead (docs/forward-feed.md)."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          python -m chart doctor chart/data chart/data/etf --max-stale 100000 > /tmp/doctor.json || {
+            python -c "import json; [print('::error::' + p) for p in json.load(open('/tmp/doctor.json'))['problems']]"
+            exit 1
+          }
+          echo "run=true" >> "$GITHUB_OUTPUT"
+      - name: Check out shadow-data
+        if: steps.pre.outputs.run == 'true'
+        run: |
+          git config user.name "chart-forward"
+          git config user.email "chart-forward@users.noreply.github.com"
+          if git fetch origin shadow-data; then
+            git worktree add --detach /tmp/data FETCH_HEAD
+          else
+            git worktree add --detach /tmp/data
+            git -C /tmp/data checkout -q --orphan shadow-data
+            git -C /tmp/data rm -rfq .
+          fi
+      - name: Update bars, record signals, report
+        if: steps.pre.outputs.run == 'true'
+        env:
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+        run: scripts/forward_run.sh /tmp/data
+      - name: Push to shadow-data
+        if: steps.pre.outputs.run == 'true'
+        run: |
+          cd /tmp/data
+          git add chart-forward
+          git diff --cached --quiet && { echo "nothing new"; exit 0; }
+          git commit -qm "chart forward $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git push origin HEAD:shadow-data && exit 0
+            git pull -q --rebase origin shadow-data
+          done
+          exit 1
+      - name: Fail if bars are stale
+        if: steps.pre.outputs.run == 'true'
+        run: |
+          python -c "import json, sys; d = json.load(open('/tmp/data/chart-forward/DOCTOR.json')); [print('::error::' + p) for p in d['problems']]; sys.exit(not d['ok'])"

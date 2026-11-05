@@ -1,0 +1,80 @@
+{
+  "category": "outdoor",
+  "updated": "2026-11-03",
+  "entries": [
+    {
+      "id": "propane-tank-no-gauge",
+      "item": "Grill propane tanks",
+      "complaint": "Tanks have no fuel gauge, so the grill runs out mid-cook; add-on gauges are unreliable or restrict gas flow",
+      "failure_mode": "no-feedback",
+      "frequency": 4, "severity": 2, "annoyance": 5, "workaround": 3, "feasibility": 4,
+      "redesign": "A tank collar or grill foot with a built-in scale that shows the fuel left in hours of cooking, plus a warning when roughly one cook remains",
+      "prior_art": "Bluetooth propane tank scales",
+      "sources": [
+        "https://www.techhive.com/article/599718/gaswatch-propane-tank-scale-alerts-your-mobile-phone-when-you-run-low-on-fuel.html",
+        "https://www.the-diy-life.com/how-to-tell-how-much-propane-is-in-your-gas-grill/",
+        "https://boards.straightdope.com/t/how-well-do-propane-grill-gas-guages-work/584032",
+        "https://pitmaster.amazingribs.com/forum/fuels-discussion-not-for-grills-and-smokers/gas-aa/1261403-propane-tank-questions"
+      ]
+    },
+    {
+      "id": "expandable-hose-bursts",
+      "item": "Garden hoses",
+      "complaint": "Lightweight expandable hoses burst, split or leak at the connector within a season, and buyers return two or three in a row",
+      "failure_mode": "wears-out-early",
+      "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4,
+      "redesign": "A reinforced strain-relief sleeve where the hose meets each fitting, and connectors that unscrew so a failed end can be replaced without throwing out the hose",
+      "prior_art": "Repairable-connector hoses; reinforced 'connector protector' designs",
+      "sources": [
+        "https://www.consumerreports.org/cro/news/2015/08/do-the-new-expandable-hoses-still-spring-a-leak/index.htm",
+        "https://www.foxbusiness.com/features/flexible-garden-hoses-get-mixed-reviews-from-our-readers",
+        "https://www.samsclub.com/reviews/product/3172440067?page=70",
+        "https://www.wtkr.com/2013/06/10/dont-waste-your-money-expandable-garden-hoses"
+      ]
+    },
+    {
+      "id": "trimmer-line-spool",
+      "item": "String trimmers",
+      "complaint": "Overpriced proprietary spools jam or weld the line to itself, so the head has to be opened and rewound mid-job",
+      "failure_mode": "seller-first",
+      "frequency": 4, "severity": 1, "annoyance": 5, "workaround": 3, "feasibility": 4,
+      "redesign": "A load-through head that takes cut lengths of standard line, with no spool to wind and no proprietary refills",
+      "prior_art": "Fixed-line and load-through trimmer heads",
+      "sources": [
+        "https://www.lowes.com/reviews/kobalt-29473-string-trimmer-line/50189095",
+        "https://www.ebay.com/urw/Ryobi+AC14RL3A+.065+line+String+Replacement+Spool/product-reviews/4013759338",
+        "https://www.sawdustzone.org/forum/discussions/around-the-coffee-pot/55440-what-is-the-trick-to-respooling-my-lawn-trimmer",
+        "https://sawmillcreek.org/goto/post?id=3048016"
+      ]
+    },
+    {
+      "id": "mower-wont-start-old-gas",
+      "item": "Gas lawn mowers",
+      "complaint": "After winter storage the mower won't start, because ethanol fuel left in the carburetor goes stale and gums it up",
+      "failure_mode": "bad-timing",
+      "frequency": 4, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 3,
+      "redesign": "A fuel shutoff that runs the carburetor dry when the engine stops, plus a sealed tank that drains to a cap for storage",
+      "prior_art": "Fuel shutoff valves; run-dry storage routines",
+      "sources": [
+        "https://jackssmallengines.com/diy/lawn-mower-wont-start",
+        "https://carycitizenarchive.com/2017/03/01/gardening-ethanol-is-killing-your-lawn-mower/",
+        "https://www.bangordailynews.com/2011/05/15/business/ethanol-and-small-engines/",
+        "https://blog.amsoil.ca/lawnmower-wont-start-do-this/"
+      ]
+    },
+    {
+      "id": "patio-cushions-fade-mildew",
+      "item": "Patio cushions",
+      "complaint": "Cushions fade within weeks to a year and grow mildew when left out, so they have to be carried inside after every rain",
+      "failure_mode": "wears-out-early",
+      "frequency": 3, "severity": 2, "annoyance": 4, "workaround": 3, "feasibility": 4,
+      "redesign": "Solution-dyed fabric over open-cell drain-through foam with a mesh bottom panel, so cushions dry in place instead of holding water",
+      "prior_art": "Solution-dyed acrylic covers; quick-dry reticulated foam",
+      "sources": [
+        "https://www.wayfair.ca/outdoor/pdp/ivy-bronx-6-piece-patio-lounge-set-with-cushions-poly-rattan-grey-c000314741.html",
+        "https://www.christmascentral.com/blog/how-to-care-for-your-patio-furniture-cushions/",
+        "https://help.bbqguys.com/hc/en-us/articles/10320282114203-Pacific-Casual-Lakeview-Outdoor-Fabric-Care-and-Use"
+      ]
+    }
+  ]
+}
