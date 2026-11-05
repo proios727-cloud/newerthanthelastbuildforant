@@ -31,6 +31,11 @@ dashboard shows paper results against the basket by session, the current holding
 data checks, the SPY regime flag, and the monthly review's checks for the last decision with its sign-off order
 (analyst, Risk Officer, trader). The sign-offs are never filled from the feed.
 
+**Weekly digest.** `finish` also writes `/tmp/chart-feed/DIGEST.md` (`scripts/forward_digest.py`): the last 7 days
+up to the newest bar, with rule vs basket for the week and since the first fill, before and after costs; weekdays with
+no bar (a missed run or a market holiday); data checks; the monthly review's flags; and the next decision. The nightly
+session posts it in full on Fridays.
+
 **Limits of the connector feed:**
 - **Quota:** 21 calls against the free tier's 25. The 25 count over a **rolling 24 hours**, not per calendar day, so a
   run that starts earlier or calls faster than the night before hits the cap before last night's calls expire (seen on
