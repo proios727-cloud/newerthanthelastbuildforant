@@ -25,7 +25,7 @@ Hold: XLE, XLP, XLV · basket +0.9% vs its average
 
 ## Market regime flag (SPY vs its 10-month average)
 
-Above: hold as of 2026-10-30; now +2.7% vs the average. Information only: not on the book (research/trend-overlay/VERDICT.md).
+Above: hold as of 2026-10-30; now +4.2% vs the average. Information only: not on the book (research/trend-overlay/VERDICT.md).
 
 ## Forward record (live log)
 

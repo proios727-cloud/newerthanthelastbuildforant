@@ -2,9 +2,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/data/AAPL.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -12,9 +12,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/data/AMD.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -22,9 +22,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/data/IWM.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -32,9 +32,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/data/MSFT.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -42,9 +42,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/data/NVDA.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -52,9 +52,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/data/QQQ.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -62,9 +62,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/data/SPY.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -72,9 +72,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/data/TSLA.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -82,9 +82,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/GLD.csv",
     "ok": true,
-    "bars": 775,
+    "bars": 776,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -92,9 +92,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/TLT.csv",
     "ok": true,
-    "bars": 775,
+    "bars": 776,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -102,9 +102,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLB.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -112,9 +112,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLC.csv",
     "ok": true,
-    "bars": 774,
+    "bars": 775,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -122,9 +122,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLE.csv",
     "ok": true,
-    "bars": 775,
+    "bars": 776,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -132,9 +132,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLF.csv",
     "ok": true,
-    "bars": 775,
+    "bars": 776,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -142,9 +142,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLI.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -152,9 +152,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLK.csv",
     "ok": true,
-    "bars": 775,
+    "bars": 776,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -162,9 +162,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLP.csv",
     "ok": true,
-    "bars": 775,
+    "bars": 776,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -172,9 +172,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLRE.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -182,9 +182,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLU.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -192,9 +192,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLV.csv",
     "ok": true,
-    "bars": 774,
+    "bars": 775,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -202,9 +202,9 @@
   {
     "file": "/tmp/fwd-data/chart-forward/etf/XLY.csv",
     "ok": true,
-    "bars": 776,
+    "bars": 777,
     "from": "2023-10-02",
-    "to": "2026-11-03",
+    "to": "2026-11-04",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []

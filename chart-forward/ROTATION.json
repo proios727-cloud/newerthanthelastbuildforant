@@ -5,22 +5,22 @@
     {
       "decided": "2026-11-02",
       "from": "2026-11-03",
-      "to": "2026-11-03",
+      "to": "2026-11-04",
       "picks": [
         "XLE",
         "XLP",
         "XLV"
       ],
       "complete": false,
-      "rule": -0.00266,
-      "basket": -0.00184,
-      "excess": -0.00082
+      "rule": 0.00285,
+      "basket": 0.01544,
+      "excess": -0.01259
     }
   ],
   "completed_periods": 0,
   "months_beat_basket": 0,
   "cumulative": {
-    "rule": -0.00266,
-    "basket": -0.00184
+    "rule": 0.00285,
+    "basket": 0.01544
   }
 }
