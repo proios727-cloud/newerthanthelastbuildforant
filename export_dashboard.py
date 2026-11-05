@@ -11,6 +11,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+import numpy as np
+
 from binance import INTERVAL_MS, Binance
 from config import Config
 from features import arrays, atr
@@ -65,6 +67,34 @@ def main(decisions: str, paper: str, out: str) -> None:
                      "blocked_by": "; ".join(g.get("reasons") or []) or None, "outcome": outcome,
                      "replay_r": round(r_of(s, outcome), 2), "pnl": e["pnl"] if e else None})
 
+    # Regime risk switch: three $10k paper portfolios replayed on the bot's real Drex calls (same code as the live core sleeve)
+    from features import ema
+    from risk_switch import CoreSleeve
+    day_ms = 86_400_000
+    dk = Binance(cfg.binance_base)._get("/api/v3/klines", symbol=cfg.symbol, interval="1d",
+                                        startTime=(regimes[0]["candle_t"] if regimes else start) - 80 * day_ms, limit=1000)
+    dts, dcl = np.array([k[0] for k in dk]), np.array([float(k[4]) for k in dk])
+    e20, e50 = ema(dcl, 20), ema(dcl, 50)
+    hold = CoreSleeve(None, cfg.starting_equity, cfg.fee_bps, cfg.slippage_bps)
+    trend = CoreSleeve(None, cfg.starting_equity, cfg.fee_bps, cfg.slippage_bps, min_hold=96)
+    core = CoreSleeve(None, cfg.starting_equity, cfg.fee_bps, cfg.slippage_bps, min_hold=96)
+    block, compare = 0, []
+    for n_, r in enumerate(regimes):
+        px, t = r["candle"]["close"], r["candle_t"]
+        j = int(np.searchsorted(dts, t - day_ms, side="right")) - 1  # last daily candle fully closed before t
+        up = bool(e20[j] > e50[j]) if j >= 0 else False
+        if n_ == 0:
+            hold.step(px, {"TRENDING": 1.0}, True)
+        p_panic = float(r["probs"].get("PANIC", 0))
+        panic = p_panic >= cfg.panic_threshold
+        block = cfg.core_cooloff if panic else max(0, block - 1)
+        trend.step(px, {"TRENDING": 1.0} if up else {"CHOPPY": 0.0}, up)
+        want = up and block == 0
+        core.step(px, {"PANIC": 1.0} if panic else ({"TRENDING": 1.0} if want else {"CHOPPY": 0.0}), want, cfg.panic_threshold)
+        compare.append({"time": iso(t), "close": px, "hold": round(hold.value(px), 2), "trend": round(trend.value(px), 2),
+                        "switch": round(core.value(px), 2), "switch_exposure": core.s["exposure"],
+                        "trend_exposure": trend.s["exposure"], "daily_uptrend": int(up), "p_panic": round(p_panic, 4)})
+
     pos = state.get("position")
     paper_rows = [{"equity": round(state["equity"], 2), "start_equity": cfg.starting_equity,
                    "closed_trades": state["closed_trades"], "open_position": pos["side"] if pos else "none",
@@ -73,13 +103,15 @@ def main(decisions: str, paper: str, out: str) -> None:
                    "drex_errors": sum(r["kind"] == "drex_error" for r in rows),
                    "hands_off": sum(r["kind"] == "hands_off" for r in rows),
                    "shifts": sum(r["kind"] == "start" for r in rows),
+                   "core_live_value": (state.get("core") or {}).get("value"),
+                   "core_live_exposure": ((state.get("core") or {}).get("sleeve") or {}).get("exposure"),
                    "exported": iso(int(time.time() * 1000))}]
 
     o = Path(out)
     o.mkdir(parents=True, exist_ok=True)
-    for name, data in (("regime_calls", calls), ("signals", sigs), ("paper", paper_rows)):
+    for name, data in (("regime_calls", calls), ("signals", sigs), ("paper", paper_rows), ("switch_compare", compare)):
         (o / f"{name}.json").write_text(json.dumps(data))
-    print(f"regime_calls {len(calls)} (scored {sum(c['actual'] is not None for c in calls)}), signals {len(sigs)}, paper 1")
+    print(f"regime_calls {len(calls)} (scored {sum(c['actual'] is not None for c in calls)}), signals {len(sigs)}, paper 1, switch_compare {len(compare)}")
 
 
 if __name__ == "__main__":
