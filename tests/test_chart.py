@@ -488,6 +488,34 @@ class UpdateTests(unittest.TestCase):
             path = pathlib.Path(__file__).parents[1] / "scripts" / name
             self.assertEqual(subprocess.run(["bash", "-n", str(path)]).returncode, 0, name)
 
+    def test_dashboard_export_matches_rotation_report(self):
+        import importlib.util
+        import shutil
+        spec = importlib.util.spec_from_file_location("fd", pathlib.Path(__file__).parents[1] / "scripts" / "forward_dashboard.py")
+        fd = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(fd)
+        d = pathlib.Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: shutil.rmtree(d))
+        (d / "etf").mkdir()
+        px = {"AAA": [(10, 11), (11, 12)], "BBB": [(20, 19), (19, 18)], "CCC": [(5, 5), (5, 6)]}
+        for sym, rows in px.items():
+            body = "".join(f"2026-11-0{i + 3},{o},{max(o, c)},{min(o, c)},{c},100\n" for i, (o, c) in enumerate(rows))
+            (d / "etf" / f"{sym}.csv").write_text("date,open,high,low,close,volume\n" + body)
+        (d / "rotation.jsonl").write_text(json.dumps({"as_of": "2026-11-02", "basket": ["AAA", "BBB", "CCC"],
+                                                       "momentum": {"AAA": 0.2, "BBB": -0.1, "CCC": 0.05}, "picks": ["AAA", "CCC"]}) + "\n")
+        rule = (12 / 10 + 6 / 5) / 2 - 1
+        basket = (12 / 10 + 18 / 20 + 6 / 5) / 3 - 1
+        (d / "ROTATION.json").write_text(json.dumps({"periods": [{"decided": "2026-11-02", "from": "2026-11-03", "to": "2026-11-04",
+                                                                  "picks": ["AAA", "CCC"]}], "cumulative": {"rule": rule, "basket": basket}}))
+        (d / "DOCTOR.json").write_text(json.dumps({"ok": True, "problems": [], "data": {"x": {"newest_bar": "2026-11-04"}},
+                                                   "next_rotation_decision": "2026-12-01", "days_to_decision": 26}))
+        t = fd.build(d)
+        self.assertAlmostEqual(t["daily"][-1]["rule"], round(rule, 5))
+        self.assertAlmostEqual(t["daily"][-1]["basket"], round(basket, 5))
+        self.assertEqual([r["fund"] for r in t["ranking"]], ["AAA", "CCC", "BBB"])
+        self.assertEqual([h["fund"] for h in t["holdings"]], ["AAA", "CCC"])
+        self.assertEqual(t["status"][0]["picks"], "AAA CCC")
+
 class AdjustTests(unittest.TestCase):
     def test_split_adjust_divides_only_earlier_bars(self):
         from chart.adjust import split_adjust

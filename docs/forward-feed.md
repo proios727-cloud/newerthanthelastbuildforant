@@ -20,6 +20,12 @@ and the second run is a no-op that only spends quota.
 
 `DRY_RUN=1 scripts/forward_feed.sh finish` does everything except the commit and the push.
 
+**Dashboard.** `finish` also writes `status.json`, `daily.json`, `holdings.json` and `ranking.json` to `/tmp/chart-feed/dash`
+(`scripts/forward_dashboard.py`). The nightly session uploads each to the "Rotation forward test" dashboard
+(https://claude.ai/artifact/MwqaBqfuJKoaefxeq2a7SW) and points the dataset of the same name at the new file. The
+dashboard shows paper results against the basket by session, the current holdings and tickets, the momentum ranking,
+data checks and the SPY regime flag.
+
 **Limits of the connector feed:**
 - **Quota:** 21 calls against the free tier's 25. The 25 count over a **rolling 24 hours**, not per calendar day, so a
   run that starts earlier or calls faster than the night before hits the cap before last night's calls expire (seen on
