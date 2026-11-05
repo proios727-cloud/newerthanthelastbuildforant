@@ -1,0 +1,1260 @@
+{
+ "live": {
+  "lookback_weeks": 12,
+  "top": 3,
+  "baskets": [
+   {
+    "basket": "11 funds, Nov 2004 \u2192",
+    "funds": [
+     "GLD",
+     "TLT",
+     "XLB",
+     "XLE",
+     "XLF",
+     "XLI",
+     "XLK",
+     "XLP",
+     "XLU",
+     "XLV",
+     "XLY"
+    ],
+    "variants": [
+     {
+      "label": "Adopted rule",
+      "params": {},
+      "from": "2005-03-11",
+      "to": "2026-10-23",
+      "years": [
+       {
+        "year": "2005",
+        "rule": 0.0798,
+        "basket": 0.0752
+       },
+       {
+        "year": "2006",
+        "rule": 0.1363,
+        "basket": 0.1074
+       },
+       {
+        "year": "2007",
+        "rule": 0.2261,
+        "basket": 0.1112
+       },
+       {
+        "year": "2008",
+        "rule": -0.0688,
+        "basket": -0.2889
+       },
+       {
+        "year": "2009",
+        "rule": 0.1087,
+        "basket": 0.2765
+       },
+       {
+        "year": "2010",
+        "rule": 0.0879,
+        "basket": 0.0896
+       },
+       {
+        "year": "2011",
+        "rule": 0.068,
+        "basket": 0.0916
+       },
+       {
+        "year": "2012",
+        "rule": 0.0268,
+        "basket": 0.1619
+       },
+       {
+        "year": "2013",
+        "rule": 0.218,
+        "basket": 0.165
+       },
+       {
+        "year": "2014",
+        "rule": 0.1204,
+        "basket": 0.1423
+       },
+       {
+        "year": "2015",
+        "rule": -0.1511,
+        "basket": -0.0696
+       },
+       {
+        "year": "2016",
+        "rule": 0.2397,
+        "basket": 0.1911
+       },
+       {
+        "year": "2017",
+        "rule": 0.1857,
+        "basket": 0.1769
+       },
+       {
+        "year": "2018",
+        "rule": -0.0159,
+        "basket": -0.0628
+       },
+       {
+        "year": "2019",
+        "rule": 0.2343,
+        "basket": 0.2701
+       },
+       {
+        "year": "2020",
+        "rule": 0.007,
+        "basket": 0.1465
+       },
+       {
+        "year": "2021",
+        "rule": 0.1624,
+        "basket": 0.1865
+       },
+       {
+        "year": "2022",
+        "rule": -0.0918,
+        "basket": -0.0328
+       },
+       {
+        "year": "2023",
+        "rule": 0.0928,
+        "basket": 0.1043
+       },
+       {
+        "year": "2024",
+        "rule": 0.1309,
+        "basket": 0.1877
+       },
+       {
+        "year": "2025",
+        "rule": 0.0753,
+        "basket": 0.1824
+       },
+       {
+        "year": "2026",
+        "rule": 0.1963,
+        "basket": 0.1165
+       }
+      ],
+      "cagr": 0.0903,
+      "basket_cagr": 0.0998,
+      "drawdown": -0.2803,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 138,
+      "months": 259,
+      "swaps_per_month": 1.29,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.0872,
+       "20bp": 0.0697
+      },
+      "regimes": [
+       {
+        "regime": "2008 crash",
+        "rule": -0.1431,
+        "basket": -0.3389,
+        "months": 18
+       },
+       {
+        "regime": "2011 debt scare",
+        "rule": 0.0074,
+        "basket": 0.0279,
+        "months": 6
+       },
+       {
+        "regime": "2015\u201316 slump",
+        "rule": -0.0317,
+        "basket": -0.0002,
+        "months": 8
+       },
+       {
+        "regime": "2018 Q4",
+        "rule": -0.0763,
+        "basket": -0.0774,
+        "months": 3
+       },
+       {
+        "regime": "2020 Covid crash",
+        "rule": -0.0904,
+        "basket": -0.089,
+        "months": 3
+       },
+       {
+        "regime": "2022 bear",
+        "rule": -0.0609,
+        "basket": -0.0831,
+        "months": 10
+       }
+      ]
+     },
+     {
+      "label": "Hysteresis: top 4",
+      "params": {
+       "buffer": 1
+      },
+      "from": "2005-03-11",
+      "to": "2026-10-23",
+      "years": 21.6,
+      "cagr": 0.0887,
+      "basket_cagr": 0.0998,
+      "drawdown": -0.2778,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 138,
+      "months": 259,
+      "swaps_per_month": 1.08,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.0861,
+       "20bp": 0.0714
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248150 days",
+      "params": {
+       "trend": 30
+      },
+      "from": "2005-03-11",
+      "to": "2026-10-23",
+      "years": 21.6,
+      "cagr": 0.083,
+      "basket_cagr": 0.0998,
+      "drawdown": -0.1405,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 131,
+      "months": 259,
+      "swaps_per_month": 1.19,
+      "cash_months": 49,
+      "net_cagr": {
+       "3bp": 0.0801,
+       "20bp": 0.0639
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248200 days",
+      "params": {
+       "trend": 40
+      },
+      "from": "2005-03-11",
+      "to": "2026-10-23",
+      "years": 21.6,
+      "cagr": 0.095,
+      "basket_cagr": 0.0998,
+      "drawdown": -0.1809,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 135,
+      "months": 259,
+      "swaps_per_month": 1.19,
+      "cash_months": 39,
+      "net_cagr": {
+       "3bp": 0.0921,
+       "20bp": 0.0759
+      }
+     }
+    ]
+   },
+   {
+    "basket": "13 funds, Jul 2018 \u2192",
+    "funds": [
+     "GLD",
+     "TLT",
+     "XLB",
+     "XLC",
+     "XLE",
+     "XLF",
+     "XLI",
+     "XLK",
+     "XLP",
+     "XLRE",
+     "XLU",
+     "XLV",
+     "XLY"
+    ],
+    "variants": [
+     {
+      "label": "Adopted rule",
+      "params": {},
+      "from": "2018-10-12",
+      "to": "2026-10-23",
+      "years": [
+       {
+        "year": "2018",
+        "rule": -0.084,
+        "basket": -0.0748
+       },
+       {
+        "year": "2019",
+        "rule": 0.2276,
+        "basket": 0.275
+       },
+       {
+        "year": "2020",
+        "rule": -0.0448,
+        "basket": 0.14
+       },
+       {
+        "year": "2021",
+        "rule": 0.1651,
+        "basket": 0.2001
+       },
+       {
+        "year": "2022",
+        "rule": -0.0918,
+        "basket": -0.0714
+       },
+       {
+        "year": "2023",
+        "rule": 0.1216,
+        "basket": 0.1309
+       },
+       {
+        "year": "2024",
+        "rule": 0.1126,
+        "basket": 0.1984
+       },
+       {
+        "year": "2025",
+        "rule": 0.1327,
+        "basket": 0.1776
+       },
+       {
+        "year": "2026",
+        "rule": 0.1787,
+        "basket": 0.1007
+       }
+      ],
+      "cagr": 0.0827,
+      "basket_cagr": 0.1281,
+      "drawdown": -0.256,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 52,
+      "months": 96,
+      "swaps_per_month": 1.26,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.0797,
+       "20bp": 0.0626
+      },
+      "regimes": [
+       {
+        "regime": "2018 Q4",
+        "rule": -0.084,
+        "basket": -0.0748,
+        "months": 3
+       },
+       {
+        "regime": "2020 Covid crash",
+        "rule": -0.1427,
+        "basket": -0.0933,
+        "months": 3
+       },
+       {
+        "regime": "2022 bear",
+        "rule": -0.0609,
+        "basket": -0.1231,
+        "months": 10
+       }
+      ]
+     },
+     {
+      "label": "Hysteresis: top 4",
+      "params": {
+       "buffer": 1
+      },
+      "from": "2018-10-12",
+      "to": "2026-10-23",
+      "years": 8.0,
+      "cagr": 0.0948,
+      "basket_cagr": 0.1281,
+      "drawdown": -0.2434,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 57,
+      "months": 96,
+      "swaps_per_month": 1.07,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.0922,
+       "20bp": 0.0776
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248150 days",
+      "params": {
+       "trend": 30
+      },
+      "from": "2018-10-12",
+      "to": "2026-10-23",
+      "years": 8.0,
+      "cagr": 0.1085,
+      "basket_cagr": 0.1281,
+      "drawdown": -0.1511,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 52,
+      "months": 96,
+      "swaps_per_month": 1.18,
+      "cash_months": 15,
+      "net_cagr": {
+       "3bp": 0.1056,
+       "20bp": 0.0896
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248200 days",
+      "params": {
+       "trend": 40
+      },
+      "from": "2018-10-12",
+      "to": "2026-10-23",
+      "years": 8.0,
+      "cagr": 0.1164,
+      "basket_cagr": 0.1281,
+      "drawdown": -0.1511,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 53,
+      "months": 96,
+      "swaps_per_month": 1.21,
+      "cash_months": 13,
+      "net_cagr": {
+       "3bp": 0.1135,
+       "20bp": 0.0971
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "A": {
+  "lookback_weeks": 24,
+  "top": 3,
+  "baskets": [
+   {
+    "basket": "11 funds, Nov 2004 \u2192",
+    "funds": [
+     "GLD",
+     "TLT",
+     "XLB",
+     "XLE",
+     "XLF",
+     "XLI",
+     "XLK",
+     "XLP",
+     "XLU",
+     "XLV",
+     "XLY"
+    ],
+    "variants": [
+     {
+      "label": "Adopted rule",
+      "params": {},
+      "from": "2005-06-10",
+      "to": "2026-10-23",
+      "years": [
+       {
+        "year": "2005",
+        "rule": 0.1209,
+        "basket": 0.094
+       },
+       {
+        "year": "2006",
+        "rule": 0.0384,
+        "basket": 0.1074
+       },
+       {
+        "year": "2007",
+        "rule": 0.1921,
+        "basket": 0.1112
+       },
+       {
+        "year": "2008",
+        "rule": 0.1013,
+        "basket": -0.2889
+       },
+       {
+        "year": "2009",
+        "rule": 0.1535,
+        "basket": 0.2765
+       },
+       {
+        "year": "2010",
+        "rule": 0.0026,
+        "basket": 0.0896
+       },
+       {
+        "year": "2011",
+        "rule": 0.0589,
+        "basket": 0.0916
+       },
+       {
+        "year": "2012",
+        "rule": 0.0286,
+        "basket": 0.1619
+       },
+       {
+        "year": "2013",
+        "rule": 0.3426,
+        "basket": 0.165
+       },
+       {
+        "year": "2014",
+        "rule": 0.0766,
+        "basket": 0.1423
+       },
+       {
+        "year": "2015",
+        "rule": -0.1104,
+        "basket": -0.0696
+       },
+       {
+        "year": "2016",
+        "rule": 0.1562,
+        "basket": 0.1911
+       },
+       {
+        "year": "2017",
+        "rule": 0.1656,
+        "basket": 0.1769
+       },
+       {
+        "year": "2018",
+        "rule": -0.0826,
+        "basket": -0.0628
+       },
+       {
+        "year": "2019",
+        "rule": 0.1534,
+        "basket": 0.2701
+       },
+       {
+        "year": "2020",
+        "rule": 0.1666,
+        "basket": 0.1465
+       },
+       {
+        "year": "2021",
+        "rule": 0.1606,
+        "basket": 0.1865
+       },
+       {
+        "year": "2022",
+        "rule": 0.113,
+        "basket": -0.0328
+       },
+       {
+        "year": "2023",
+        "rule": 0.0679,
+        "basket": 0.1043
+       },
+       {
+        "year": "2024",
+        "rule": 0.2291,
+        "basket": 0.1877
+       },
+       {
+        "year": "2025",
+        "rule": 0.0631,
+        "basket": 0.1824
+       },
+       {
+        "year": "2026",
+        "rule": 0.087,
+        "basket": 0.1165
+       }
+      ],
+      "cagr": 0.1026,
+      "basket_cagr": 0.1019,
+      "drawdown": -0.1523,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 120,
+      "months": 256,
+      "swaps_per_month": 0.91,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.1004,
+       "20bp": 0.088
+      },
+      "regimes": [
+       {
+        "regime": "2008 crash",
+        "rule": -0.0059,
+        "basket": -0.3389,
+        "months": 18
+       },
+       {
+        "regime": "2011 debt scare",
+        "rule": 0.032,
+        "basket": 0.0279,
+        "months": 6
+       },
+       {
+        "regime": "2015\u201316 slump",
+        "rule": -0.0219,
+        "basket": -0.0002,
+        "months": 8
+       },
+       {
+        "regime": "2018 Q4",
+        "rule": -0.0829,
+        "basket": -0.0774,
+        "months": 3
+       },
+       {
+        "regime": "2020 Covid crash",
+        "rule": -0.1338,
+        "basket": -0.089,
+        "months": 3
+       },
+       {
+        "regime": "2022 bear",
+        "rule": 0.0918,
+        "basket": -0.0831,
+        "months": 10
+       }
+      ]
+     },
+     {
+      "label": "Hysteresis: top 4",
+      "params": {
+       "buffer": 1
+      },
+      "from": "2005-06-10",
+      "to": "2026-10-23",
+      "years": 21.4,
+      "cagr": 0.1016,
+      "basket_cagr": 0.1019,
+      "drawdown": -0.1565,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 125,
+      "months": 256,
+      "swaps_per_month": 0.71,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.0999,
+       "20bp": 0.0903
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248150 days",
+      "params": {
+       "trend": 30
+      },
+      "from": "2005-06-10",
+      "to": "2026-10-23",
+      "years": 21.4,
+      "cagr": 0.0826,
+      "basket_cagr": 0.1019,
+      "drawdown": -0.1734,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 115,
+      "months": 256,
+      "swaps_per_month": 0.92,
+      "cash_months": 49,
+      "net_cagr": {
+       "3bp": 0.0804,
+       "20bp": 0.0679
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248200 days",
+      "params": {
+       "trend": 40
+      },
+      "from": "2005-06-10",
+      "to": "2026-10-23",
+      "years": 21.4,
+      "cagr": 0.0904,
+      "basket_cagr": 0.1019,
+      "drawdown": -0.1523,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 118,
+      "months": 256,
+      "swaps_per_month": 0.91,
+      "cash_months": 39,
+      "net_cagr": {
+       "3bp": 0.0883,
+       "20bp": 0.0759
+      }
+     }
+    ]
+   },
+   {
+    "basket": "13 funds, Jul 2018 \u2192",
+    "funds": [
+     "GLD",
+     "TLT",
+     "XLB",
+     "XLC",
+     "XLE",
+     "XLF",
+     "XLI",
+     "XLK",
+     "XLP",
+     "XLRE",
+     "XLU",
+     "XLV",
+     "XLY"
+    ],
+    "variants": [
+     {
+      "label": "Adopted rule",
+      "params": {},
+      "from": "2019-01-11",
+      "to": "2026-10-23",
+      "years": [
+       {
+        "year": "2019",
+        "rule": 0.17,
+        "basket": 0.275
+       },
+       {
+        "year": "2020",
+        "rule": 0.1666,
+        "basket": 0.14
+       },
+       {
+        "year": "2021",
+        "rule": 0.1699,
+        "basket": 0.2001
+       },
+       {
+        "year": "2022",
+        "rule": 0.113,
+        "basket": -0.0714
+       },
+       {
+        "year": "2023",
+        "rule": 0.1541,
+        "basket": 0.1309
+       },
+       {
+        "year": "2024",
+        "rule": 0.2122,
+        "basket": 0.1984
+       },
+       {
+        "year": "2025",
+        "rule": 0.0582,
+        "basket": 0.1776
+       },
+       {
+        "year": "2026",
+        "rule": 0.0784,
+        "basket": 0.1007
+       }
+      ],
+      "cagr": 0.1434,
+      "basket_cagr": 0.1438,
+      "drawdown": -0.1523,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 46,
+      "months": 93,
+      "swaps_per_month": 1.03,
+      "cash_months": 0,
+      "net_cagr": {
+       "3bp": 0.141,
+       "20bp": 0.1269
+      },
+      "regimes": [
+       {
+        "regime": "2020 Covid crash",
+        "rule": -0.1338,
+        "basket": -0.0933,
+        "months": 3
+       },
+       {
+        "regime": "2022 bear",
+        "rule": 0.0918,
+        "basket": -0.1231,
+        "months": 10
+       }
+      ]
+     },
+     {
+      "label": "Hysteresis: top 4",
+      "params": {
+       "buffer": 1
+      },
+      "from": "2019-01-11",
+      "to": "2026-10-23",
+      "years": 7.8,
+      "cagr": 0.1164,
+      "basket_cagr": 0.1438,
+      "drawdown": -0.1547,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 44,
+      "months": 93,
+      "swaps_per_month": 0.77,
+      "cash_months": 0,
+      "net_cagr": {
+       "3bp": 0.1145,
+       "20bp": 0.104
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248150 days",
+      "params": {
+       "trend": 30
+      },
+      "from": "2019-01-11",
+      "to": "2026-10-23",
+      "years": 7.8,
+      "cagr": 0.118,
+      "basket_cagr": 0.1438,
+      "drawdown": -0.1092,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 45,
+      "months": 93,
+      "swaps_per_month": 1.0,
+      "cash_months": 15,
+      "net_cagr": {
+       "3bp": 0.1156,
+       "20bp": 0.102
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248200 days",
+      "params": {
+       "trend": 40
+      },
+      "from": "2019-01-11",
+      "to": "2026-10-23",
+      "years": 7.8,
+      "cagr": 0.1257,
+      "basket_cagr": 0.1438,
+      "drawdown": -0.1092,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 45,
+      "months": 93,
+      "swaps_per_month": 1.03,
+      "cash_months": 13,
+      "net_cagr": {
+       "3bp": 0.1232,
+       "20bp": 0.1092
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "B": {
+  "lookback_weeks": 12,
+  "top": 2,
+  "baskets": [
+   {
+    "basket": "11 funds, Nov 2004 \u2192",
+    "funds": [
+     "GLD",
+     "TLT",
+     "XLB",
+     "XLE",
+     "XLF",
+     "XLI",
+     "XLK",
+     "XLP",
+     "XLU",
+     "XLV",
+     "XLY"
+    ],
+    "variants": [
+     {
+      "label": "Adopted rule",
+      "params": {},
+      "from": "2005-03-11",
+      "to": "2026-10-23",
+      "years": [
+       {
+        "year": "2005",
+        "rule": 0.0852,
+        "basket": 0.0752
+       },
+       {
+        "year": "2006",
+        "rule": 0.0894,
+        "basket": 0.1074
+       },
+       {
+        "year": "2007",
+        "rule": 0.31,
+        "basket": 0.1112
+       },
+       {
+        "year": "2008",
+        "rule": -0.0121,
+        "basket": -0.2889
+       },
+       {
+        "year": "2009",
+        "rule": 0.1111,
+        "basket": 0.2765
+       },
+       {
+        "year": "2010",
+        "rule": 0.0833,
+        "basket": 0.0896
+       },
+       {
+        "year": "2011",
+        "rule": 0.08,
+        "basket": 0.0916
+       },
+       {
+        "year": "2012",
+        "rule": -0.0059,
+        "basket": 0.1619
+       },
+       {
+        "year": "2013",
+        "rule": 0.1852,
+        "basket": 0.165
+       },
+       {
+        "year": "2014",
+        "rule": 0.1321,
+        "basket": 0.1423
+       },
+       {
+        "year": "2015",
+        "rule": -0.1431,
+        "basket": -0.0696
+       },
+       {
+        "year": "2016",
+        "rule": 0.2869,
+        "basket": 0.1911
+       },
+       {
+        "year": "2017",
+        "rule": 0.2054,
+        "basket": 0.1769
+       },
+       {
+        "year": "2018",
+        "rule": -0.0684,
+        "basket": -0.0628
+       },
+       {
+        "year": "2019",
+        "rule": 0.2025,
+        "basket": 0.2701
+       },
+       {
+        "year": "2020",
+        "rule": -0.0246,
+        "basket": 0.1465
+       },
+       {
+        "year": "2021",
+        "rule": 0.2137,
+        "basket": 0.1865
+       },
+       {
+        "year": "2022",
+        "rule": -0.1295,
+        "basket": -0.0328
+       },
+       {
+        "year": "2023",
+        "rule": 0.1395,
+        "basket": 0.1043
+       },
+       {
+        "year": "2024",
+        "rule": 0.131,
+        "basket": 0.1877
+       },
+       {
+        "year": "2025",
+        "rule": 0.1179,
+        "basket": 0.1824
+       },
+       {
+        "year": "2026",
+        "rule": 0.1707,
+        "basket": 0.1165
+       }
+      ],
+      "cagr": 0.0932,
+      "basket_cagr": 0.0998,
+      "drawdown": -0.3242,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 136,
+      "months": 259,
+      "swaps_per_month": 0.99,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.0896,
+       "20bp": 0.0694
+      },
+      "regimes": [
+       {
+        "regime": "2008 crash",
+        "rule": -0.0082,
+        "basket": -0.3389,
+        "months": 18
+       },
+       {
+        "regime": "2011 debt scare",
+        "rule": -0.0155,
+        "basket": 0.0279,
+        "months": 6
+       },
+       {
+        "regime": "2015\u201316 slump",
+        "rule": -0.0134,
+        "basket": -0.0002,
+        "months": 8
+       },
+       {
+        "regime": "2018 Q4",
+        "rule": -0.0849,
+        "basket": -0.0774,
+        "months": 3
+       },
+       {
+        "regime": "2020 Covid crash",
+        "rule": -0.0883,
+        "basket": -0.089,
+        "months": 3
+       },
+       {
+        "regime": "2022 bear",
+        "rule": -0.1035,
+        "basket": -0.0831,
+        "months": 10
+       }
+      ]
+     },
+     {
+      "label": "Hysteresis: top 4",
+      "params": {
+       "buffer": 1
+      },
+      "from": "2005-03-11",
+      "to": "2026-10-23",
+      "years": 21.6,
+      "cagr": 0.0891,
+      "basket_cagr": 0.0998,
+      "drawdown": -0.2797,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 134,
+      "months": 259,
+      "swaps_per_month": 0.81,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.0862,
+       "20bp": 0.0698
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248150 days",
+      "params": {
+       "trend": 30
+      },
+      "from": "2005-03-11",
+      "to": "2026-10-23",
+      "years": 21.6,
+      "cagr": 0.0899,
+      "basket_cagr": 0.0998,
+      "drawdown": -0.1675,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 132,
+      "months": 259,
+      "swaps_per_month": 0.9,
+      "cash_months": 49,
+      "net_cagr": {
+       "3bp": 0.0867,
+       "20bp": 0.0684
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248200 days",
+      "params": {
+       "trend": 40
+      },
+      "from": "2005-03-11",
+      "to": "2026-10-23",
+      "years": 21.6,
+      "cagr": 0.1016,
+      "basket_cagr": 0.0998,
+      "drawdown": -0.2072,
+      "basket_drawdown": -0.4617,
+      "months_ahead": 134,
+      "months": 259,
+      "swaps_per_month": 0.9,
+      "cash_months": 39,
+      "net_cagr": {
+       "3bp": 0.0984,
+       "20bp": 0.08
+      }
+     }
+    ]
+   },
+   {
+    "basket": "13 funds, Jul 2018 \u2192",
+    "funds": [
+     "GLD",
+     "TLT",
+     "XLB",
+     "XLC",
+     "XLE",
+     "XLF",
+     "XLI",
+     "XLK",
+     "XLP",
+     "XLRE",
+     "XLU",
+     "XLV",
+     "XLY"
+    ],
+    "variants": [
+     {
+      "label": "Adopted rule",
+      "params": {},
+      "from": "2018-10-12",
+      "to": "2026-10-23",
+      "years": [
+       {
+        "year": "2018",
+        "rule": -0.0849,
+        "basket": -0.0748
+       },
+       {
+        "year": "2019",
+        "rule": 0.1845,
+        "basket": 0.275
+       },
+       {
+        "year": "2020",
+        "rule": -0.0246,
+        "basket": 0.14
+       },
+       {
+        "year": "2021",
+        "rule": 0.2518,
+        "basket": 0.2001
+       },
+       {
+        "year": "2022",
+        "rule": -0.1295,
+        "basket": -0.0714
+       },
+       {
+        "year": "2023",
+        "rule": 0.1238,
+        "basket": 0.1309
+       },
+       {
+        "year": "2024",
+        "rule": 0.0332,
+        "basket": 0.1984
+       },
+       {
+        "year": "2025",
+        "rule": 0.1123,
+        "basket": 0.1776
+       },
+       {
+        "year": "2026",
+        "rule": 0.1707,
+        "basket": 0.1007
+       }
+      ],
+      "cagr": 0.0715,
+      "basket_cagr": 0.1281,
+      "drawdown": -0.3242,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 51,
+      "months": 96,
+      "swaps_per_month": 1.01,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.0679,
+       "20bp": 0.0473
+      },
+      "regimes": [
+       {
+        "regime": "2018 Q4",
+        "rule": -0.0849,
+        "basket": -0.0748,
+        "months": 3
+       },
+       {
+        "regime": "2020 Covid crash",
+        "rule": -0.0883,
+        "basket": -0.0933,
+        "months": 3
+       },
+       {
+        "regime": "2022 bear",
+        "rule": -0.1035,
+        "basket": -0.1231,
+        "months": 10
+       }
+      ]
+     },
+     {
+      "label": "Hysteresis: top 4",
+      "params": {
+       "buffer": 1
+      },
+      "from": "2018-10-12",
+      "to": "2026-10-23",
+      "years": 8.0,
+      "cagr": 0.0925,
+      "basket_cagr": 0.1281,
+      "drawdown": -0.2797,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 48,
+      "months": 96,
+      "swaps_per_month": 0.78,
+      "cash_months": 1,
+      "net_cagr": {
+       "3bp": 0.0896,
+       "20bp": 0.0737
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248150 days",
+      "params": {
+       "trend": 30
+      },
+      "from": "2018-10-12",
+      "to": "2026-10-23",
+      "years": 8.0,
+      "cagr": 0.1049,
+      "basket_cagr": 0.1281,
+      "drawdown": -0.1675,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 51,
+      "months": 96,
+      "swaps_per_month": 0.94,
+      "cash_months": 15,
+      "net_cagr": {
+       "3bp": 0.1015,
+       "20bp": 0.0824
+      }
+     },
+     {
+      "label": "Basket trend filter \u2248200 days",
+      "params": {
+       "trend": 40
+      },
+      "from": "2018-10-12",
+      "to": "2026-10-23",
+      "years": 8.0,
+      "cagr": 0.113,
+      "basket_cagr": 0.1281,
+      "drawdown": -0.1675,
+      "basket_drawdown": -0.1658,
+      "months_ahead": 52,
+      "months": 96,
+      "swaps_per_month": 0.95,
+      "cash_months": 13,
+      "net_cagr": {
+       "3bp": 0.1096,
+       "20bp": 0.0902
+      }
+     }
+    ]
+   }
+  ]
+ }
+}
