@@ -1,0 +1,38 @@
+name: regime-bot-eval
+# Research only: tests the regime bot's TAKE question on replayed historical setups. Never places orders.
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Days of history"
+        default: "14"
+      max:
+        description: "Setups to ask Drex about"
+        default: "24"
+permissions:
+  contents: write
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NACE_API_KEY: ${{ secrets.NACE_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: regime-bot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run TAKE test
+        run: python eval_take.py --days "${{ inputs.days }}" --max "${{ inputs.max }}" | tee take_eval.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Save result to regime-bot-reviews
+        run: |
+          git config user.name "regime-bot"
+          git config user.email "regime-bot@users.noreply.github.com"
+          git fetch origin regime-bot-reviews
+          git worktree add --detach /tmp/rev FETCH_HEAD
+          mkdir -p /tmp/rev/reviews && cp take_eval.md "/tmp/rev/reviews/take-eval-$(date -u +%Y-%m-%d).md"
+          cd /tmp/rev && git add -A && git commit -qm "TAKE question test $(date -u +%FT%H:%MZ)" && git push origin HEAD:regime-bot-reviews
