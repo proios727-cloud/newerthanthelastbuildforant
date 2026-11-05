@@ -482,6 +482,12 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual(bad, {"XLK": "25 requests per day"})
 
 
+    def test_feed_scripts_parse(self):
+        import subprocess
+        for name in ("forward_feed.sh", "forward_run.sh"):
+            path = pathlib.Path(__file__).parents[1] / "scripts" / name
+            self.assertEqual(subprocess.run(["bash", "-n", str(path)]).returncode, 0, name)
+
 class AdjustTests(unittest.TestCase):
     def test_split_adjust_divides_only_earlier_bars(self):
         from chart.adjust import split_adjust
