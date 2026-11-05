@@ -524,6 +524,19 @@ class UpdateTests(unittest.TestCase):
         self.assertTrue(checks["Rule settings unchanged"] is False)          # this toy decision logs no rule
         self.assertFalse(checks["Paper tickets"])                              # and no tickets
         self.assertEqual(t["status"][0]["review_flags"], sum(not v for v in checks.values()))
+        spec = importlib.util.spec_from_file_location("fdg", pathlib.Path(__file__).parents[1] / "scripts" / "forward_digest.py")
+        fdg = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(fdg)
+        text = fdg.digest(d)
+        self.assertIn(f"| This week | {rule:+.2%} | {basket:+.2%} |", text)
+        self.assertIn("Sessions this week:** 2, none missing", text)
+        self.assertIn("flagged: Rule settings unchanged", text)
+        (d / "etf" / "AAA.csv").write_text((d / "etf" / "AAA.csv").read_text() + "2026-11-06,12,12,12,12,100\n")
+        for sym in ("BBB", "CCC"):                                      # 11-05 missing for every fund
+            (d / "etf" / f"{sym}.csv").write_text((d / "etf" / f"{sym}.csv").read_text() + "2026-11-06,6,6,6,6,100\n")
+        (d / "ROTATION.json").write_text((d / "ROTATION.json").read_text().replace('"to": "2026-11-04"', '"to": "2026-11-06"'))
+        (d / "DOCTOR.json").write_text((d / "DOCTOR.json").read_text().replace("2026-11-04", "2026-11-06"))
+        self.assertIn("no bar for 2026-11-05", fdg.digest(d))
 
     def test_rotation_review_flags_tampered_decisions(self):
         import importlib.util
