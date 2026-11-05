@@ -401,6 +401,31 @@
         "asset": "crypto",
         "group": "Alt L1"
       }
+    },
+    "feed": {
+      "provider": "alphavantage",
+      "key_env": "ALPHAVANTAGE_API_KEY",
+      "daily_requests": 25,
+      "min_interval_sec": 1.2,
+      "cadence_sec": {
+        "crypto": 900,
+        "equity": 1800
+      },
+      "backoff_sec": 60
+    },
+    "scan": {
+      "window": 20,
+      "min_obs": 21,
+      "momentum_lookback": 8,
+      "momentum_min_pct": 0.5,
+      "z_entry": 2.0,
+      "stop_sigma": 2.0,
+      "reward_risk": 2.0,
+      "risk_per_trade_pct": 0.5,
+      "max_signals": 5,
+      "allow_short": true,
+      "signal_ttl_min": 15,
+      "thesis_ttl_min": 30
     }
   }
 }
