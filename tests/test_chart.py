@@ -471,6 +471,88 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual(sorted(good), ["QQQ", "SPY"])      # SPY's later failed retry doesn't drop its good fetch
         self.assertEqual(bad, {"IWM": "not entitled"})
 
+        # --since: an earlier night's good fetch must not stand in for tonight's failure
+        stamp = lambda ts, line: json.dumps({**json.loads(line), "timestamp": ts})
+        nights = [stamp("2026-11-03T00:43:00Z", use("e", "XLK")), stamp("2026-11-03T00:43:01Z", res("e", json.dumps({"result": self.AV}))),
+                  stamp("2026-11-04T00:43:00Z", use("f", "XLK")),
+                  stamp("2026-11-04T00:43:01Z", res("f", json.dumps({"error": {"message": "25 requests per day"}})))]
+        self.assertEqual(sorted(avt.extract(nights)[0]), ["XLK"])
+        good, bad = avt.extract(nights, since="2026-11-04T00:00:00Z")
+        self.assertEqual(good, {})
+        self.assertEqual(bad, {"XLK": "25 requests per day"})
+
+
+    def test_feed_scripts_parse(self):
+        import subprocess
+        for name in ("forward_feed.sh", "forward_run.sh"):
+            path = pathlib.Path(__file__).parents[1] / "scripts" / name
+            self.assertEqual(subprocess.run(["bash", "-n", str(path)]).returncode, 0, name)
+
+    def test_dashboard_export_matches_rotation_report(self):
+        import importlib.util
+        import shutil
+        spec = importlib.util.spec_from_file_location("fd", pathlib.Path(__file__).parents[1] / "scripts" / "forward_dashboard.py")
+        fd = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(fd)
+        d = pathlib.Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: shutil.rmtree(d))
+        (d / "etf").mkdir()
+        px = {"AAA": [(10, 11), (11, 12)], "BBB": [(20, 19), (19, 18)], "CCC": [(5, 5), (5, 6)]}
+        for sym, rows in px.items():
+            body = "".join(f"2026-11-0{i + 3},{o},{max(o, c)},{min(o, c)},{c},100\n" for i, (o, c) in enumerate(rows))
+            (d / "etf" / f"{sym}.csv").write_text("date,open,high,low,close,volume\n" + body)
+        (d / "rotation.jsonl").write_text(json.dumps({"as_of": "2026-11-02", "basket": ["AAA", "BBB", "CCC"],
+                                                       "momentum": {"AAA": 0.2, "BBB": -0.1, "CCC": 0.05}, "picks": ["AAA", "CCC"]}) + "\n")
+        rule = (12 / 10 + 6 / 5) / 2 - 1
+        basket = (12 / 10 + 18 / 20 + 6 / 5) / 3 - 1
+        (d / "ROTATION.json").write_text(json.dumps({"periods": [{"decided": "2026-11-02", "from": "2026-11-03", "to": "2026-11-04",
+                                                                  "picks": ["AAA", "CCC"]}], "cumulative": {"rule": rule, "basket": basket}}))
+        (d / "DOCTOR.json").write_text(json.dumps({"ok": True, "problems": [], "data": {"x": {"newest_bar": "2026-11-04"}},
+                                                   "next_rotation_decision": "2026-12-01", "days_to_decision": 26}))
+        t = fd.build(d)
+        self.assertAlmostEqual(t["daily"][-1]["rule"], round(rule, 5))
+        self.assertAlmostEqual(t["daily"][-1]["basket"], round(basket, 5))
+        self.assertEqual([r["fund"] for r in t["ranking"]], ["AAA", "CCC", "BBB"])
+        self.assertEqual([h["fund"] for h in t["holdings"]], ["AAA", "CCC"])
+        self.assertEqual(t["status"][0]["picks"], "AAA CCC")
+
+    def test_rotation_review_flags_tampered_decisions(self):
+        import importlib.util
+        import shutil
+        from datetime import date, timedelta
+        from chart.forward import rotation_signal
+        spec = importlib.util.spec_from_file_location("rr", pathlib.Path(__file__).parents[1] / "scripts" / "rotation_review.py")
+        rr = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(rr)
+        d = pathlib.Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: shutil.rmtree(d))
+        (d / "etf").mkdir()
+        days, t = [], date(2026, 7, 1)
+        while t <= date(2026, 11, 4):
+            if t.weekday() < 5:
+                days.append(t.isoformat())
+            t += timedelta(days=1)
+        drift = {"AAA": 0.004, "BBB": -0.001, "CCC": 0.002, "DDD": 0.001}
+        for sym, g in drift.items():
+            rows = "".join(f"{day},{100 * (1 + g) ** i:.4f},{100 * (1 + g) ** i:.4f},{100 * (1 + g) ** i:.4f},{100 * (1 + g) ** i:.4f},100\n"
+                           for i, day in enumerate(days))
+            (d / "etf" / f"{sym}.csv").write_text("date,open,high,low,close,volume\n" + rows)
+        bars = {f.stem: [b for b in chart.load_csv(f) if b.ts[:10] <= "2026-11-02"] for f in (d / "etf").glob("*.csv")}
+        dec = rotation_signal(bars, lookback=60, top=3)
+        (d / "DOCTOR.json").write_text(json.dumps({"ok": True, "problems": [], "data": {}}))
+        close = {s: bars[s][-1].close for s in dec["picks"]}
+        tickets = {"as_of": dec["as_of"], "picks": dec["picks"], "kept": [], "tickets": [
+            {"symbol": s, "side": "buy", "qty": int(5000 // close[s]), "limit": round(close[s] * 1.005, 2)} for s in dec["picks"]]}
+        (d / "rotation_tickets.jsonl").write_text(json.dumps(tickets) + "\n")
+        (d / "rotation.jsonl").write_text(json.dumps(dec) + "\n")
+        _, checks, _ = rr.review(d)
+        self.assertTrue(all(ok for _, ok, _ in checks), checks)
+        self.assertEqual(dec["picks"], ["AAA", "CCC", "DDD"])
+        (d / "rotation.jsonl").write_text(json.dumps({**dec, "picks": ["AAA", "BBB", "CCC"], "late": True}) + "\n")
+        tickets["tickets"][0]["qty"] += 1
+        (d / "rotation_tickets.jsonl").write_text(json.dumps(tickets) + "\n")
+        flagged = {name for name, ok, _ in rr.review(d)[1] if not ok}
+        self.assertEqual(flagged, {"Recorded on time", "Picks recompute", "Paper tickets"})
 
 class AdjustTests(unittest.TestCase):
     def test_split_adjust_divides_only_earlier_bars(self):
