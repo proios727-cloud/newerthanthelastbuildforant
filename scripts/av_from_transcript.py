@@ -3,9 +3,7 @@
 Connector results land in the session transcript, not on disk, and retyping 100 rows per fund invites errors. This reads
 the transcript and writes each TIME_SERIES_DAILY csv result verbatim, so `chart update --from-dir` gets the vendor's
 bytes. Only results that parse as daily bars are written; errors (rate limit, premium) are listed instead.
-    python3 scripts/av_from_transcript.py OUTDIR [TRANSCRIPT.jsonl] [--since ISO]
-The default transcript is the newest under ~/.claude. --since keeps only results recorded at or after that UTC time, so a
-fund that failed tonight is reported as missing instead of silently reusing an earlier run's bars.
+    python3 scripts/av_from_transcript.py OUTDIR [TRANSCRIPT.jsonl]   # default: the newest transcript under ~/.claude
 """
 import json
 import pathlib
@@ -17,10 +15,10 @@ from _transcript import newest_transcript, tool_results  # noqa: E402
 from chart.update import parse_av_csv  # noqa: E402
 
 
-def extract(lines, since=""):
+def extract(lines):
     """{symbol: csv text} for the last good TIME_SERIES_DAILY result per symbol, and {symbol: error} for the rest."""
     good, bad = {}, {}
-    for _, args, raw in tool_results(lines, lambda n: n.endswith("__TIME_SERIES_DAILY"), since=since):
+    for _, args, raw in tool_results(lines, lambda n: n.endswith("__TIME_SERIES_DAILY")):
         sym = args.get("symbol", "").upper()
         try:
             body = json.loads(raw)
@@ -39,14 +37,9 @@ def extract(lines, since=""):
 
 
 def main(argv):
-    args, since = list(argv[1:]), ""
-    if "--since" in args:
-        i = args.index("--since")
-        since = args[i + 1]
-        del args[i:i + 2]
-    out = pathlib.Path(args[0])
-    src = pathlib.Path(args[1]) if len(args) > 1 else newest_transcript()
-    good, bad = extract(src.read_text().splitlines(), since)
+    out = pathlib.Path(argv[1])
+    src = pathlib.Path(argv[2]) if len(argv) > 2 else newest_transcript()
+    good, bad = extract(src.read_text().splitlines())
     out.mkdir(parents=True, exist_ok=True)
     for sym, text in good.items():
         (out / f"{sym}.csv").write_text(text)
