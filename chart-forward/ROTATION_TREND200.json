@@ -5,22 +5,29 @@
     {
       "decided": "2026-11-02",
       "from": "2026-11-03",
-      "to": "2026-11-04",
+      "to": "2026-11-05",
       "picks": [
         "XLE",
         "XLP",
         "XLV"
       ],
       "complete": false,
-      "rule": 0.00285,
-      "basket": 0.01544,
-      "excess": -0.01259
+      "rule": -0.01778,
+      "basket": -0.00793,
+      "excess": -0.00985,
+      "traded": 1.0,
+      "rule_net": -0.01808,
+      "basket_net": -0.00823,
+      "excess_net": -0.00985
     }
   ],
   "completed_periods": 0,
   "months_beat_basket": 0,
+  "cost_bps_per_side": 3.0,
   "cumulative": {
-    "rule": 0.00285,
-    "basket": 0.01544
+    "rule": -0.01778,
+    "basket": -0.00793,
+    "rule_net": -0.01808,
+    "basket_net": -0.00823
   }
 }

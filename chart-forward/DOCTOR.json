@@ -1,21 +1,21 @@
 {
   "ok": true,
-  "today": "2026-11-05",
+  "today": "2026-11-06",
   "problems": [],
   "data": {
-    "/tmp/fwd-data/chart-forward/data": {
+    "/tmp/chart-feed/data/chart-forward/data": {
       "files": 8,
-      "newest_bar": "2026-11-04",
-      "oldest_last_bar": "2026-11-04",
+      "newest_bar": "2026-11-05",
+      "oldest_last_bar": "2026-11-05",
       "weekdays_behind": 1
     },
-    "/tmp/fwd-data/chart-forward/etf": {
+    "/tmp/chart-feed/data/chart-forward/etf": {
       "files": 13,
-      "newest_bar": "2026-11-04",
-      "oldest_last_bar": "2026-11-04",
+      "newest_bar": "2026-11-05",
+      "oldest_last_bar": "2026-11-05",
       "weekdays_behind": 1
     }
   },
   "next_rotation_decision": "2026-12-01",
-  "days_to_decision": 26
+  "days_to_decision": 25
 }
