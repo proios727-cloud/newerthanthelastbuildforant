@@ -1,164 +1,56 @@
 {
   "confident_regime_misses": [
     {
-      "candle_t": 1793740500000,
-      "called": "TRENDING",
-      "p": 0.9979965894150828,
-      "actual": "PANIC",
-      "q_version": 1,
-      "snapshot": "1793740500000.png",
+      "candle_t": 1793878200000,
+      "called": "CHOPPY",
+      "p": 0.9965885852085253,
+      "actual": "TRENDING",
+      "q_version": 3,
+      "snapshot": "1793878200000.png",
       "candle": {
-        "close": 77894.01,
-        "ret_1": 0.019,
-        "ret_12": 0.288,
-        "ret_48": 1.274,
-        "atr": 144.43,
-        "atr_pct": 0.185,
-        "atr_ratio_vs_100": 0.752,
-        "realized_vol_24_pct": 0.119,
-        "adx14": 46.04,
-        "rsi14": 75.31,
-        "ema20": 77683.93,
-        "ema50": 77485.78,
-        "ema20_slope_pct": 0.138,
-        "bb_mid": 77689.82,
-        "bb_upper": 77911.71,
-        "bb_lower": 77467.92,
-        "bb_width_pct": 0.571,
-        "vol_ratio_vs_50": 0.916,
-        "taker_buy_share": 0.587,
-        "range_pct_last": 0.174,
-        "drawdown_from_48h_high_pct": -0.097
+        "close": 80355.22,
+        "ret_1": 0.104,
+        "ret_12": -0.198,
+        "ret_48": -0.428,
+        "atr": 126.3,
+        "atr_pct": 0.157,
+        "atr_ratio_vs_100": 0.544,
+        "realized_vol_24_pct": 0.116,
+        "adx14": 12.46,
+        "rsi14": 48.04,
+        "ema20": 80400.53,
+        "ema50": 80374.93,
+        "ema20_slope_pct": -0.073,
+        "bb_mid": 80426.04,
+        "bb_upper": 80667.74,
+        "bb_lower": 80184.34,
+        "bb_width_pct": 0.601,
+        "vol_ratio_vs_50": 0.268,
+        "taker_buy_share": 0.681,
+        "range_pct_last": 0.109,
+        "drawdown_from_48h_high_pct": -0.696
       },
       "book": {
-        "best_bid": 77894.0,
-        "best_ask": 77894.01,
-        "mid": 77894.01,
+        "best_bid": 80355.21,
+        "best_ask": 80355.22,
+        "mid": 80355.21,
         "spread_bps": 0.001,
-        "bid_btc_0.1pct": 70.439,
-        "ask_btc_0.1pct": 96.568,
-        "imbalance_0.1pct": -0.156,
-        "bid_btc_0.5pct": 137.716,
-        "ask_btc_0.5pct": 214.238,
-        "imbalance_0.5pct": -0.217,
-        "bid_btc_1.0pct": 154.901,
-        "ask_btc_1.0pct": 297.067,
-        "imbalance_1.0pct": -0.315,
+        "bid_btc_0.1pct": 114.428,
+        "ask_btc_0.1pct": 89.627,
+        "imbalance_0.1pct": 0.122,
+        "bid_btc_0.5pct": 193.32,
+        "ask_btc_0.5pct": 157.418,
+        "imbalance_0.5pct": 0.102,
+        "bid_btc_1.0pct": 244.786,
+        "ask_btc_1.0pct": 219.276,
+        "imbalance_1.0pct": 0.055,
         "largest_bid_wall": {
-          "price": 76800.0,
-          "btc": 10.433
+          "price": 79900.0,
+          "btc": 13.698
         },
         "largest_ask_wall": {
-          "price": 78500.0,
-          "btc": 52.401
-        }
-      }
-    },
-    {
-      "candle_t": 1793746800000,
-      "called": "TRENDING",
-      "p": 0.9959967363643647,
-      "actual": "PANIC",
-      "q_version": 1,
-      "snapshot": "1793746800000.png",
-      "candle": {
-        "close": 77874.0,
-        "ret_1": -0.002,
-        "ret_12": 0.332,
-        "ret_48": 0.878,
-        "atr": 123.53,
-        "atr_pct": 0.159,
-        "atr_ratio_vs_100": 0.669,
-        "realized_vol_24_pct": 0.092,
-        "adx14": 39.19,
-        "rsi14": 58.2,
-        "ema20": 77775.56,
-        "ema50": 77579.58,
-        "ema20_slope_pct": 0.051,
-        "bb_mid": 77762.87,
-        "bb_upper": 78032.42,
-        "bb_lower": 77493.32,
-        "bb_width_pct": 0.693,
-        "vol_ratio_vs_50": 0.504,
-        "taker_buy_share": 0.497,
-        "range_pct_last": 0.14,
-        "drawdown_from_48h_high_pct": -0.242
-      },
-      "book": {
-        "best_bid": 77874.0,
-        "best_ask": 77874.01,
-        "mid": 77874.01,
-        "spread_bps": 0.001,
-        "bid_btc_0.1pct": 63.612,
-        "ask_btc_0.1pct": 106.002,
-        "imbalance_0.1pct": -0.25,
-        "bid_btc_0.5pct": 130.165,
-        "ask_btc_0.5pct": 197.024,
-        "imbalance_0.5pct": -0.204,
-        "bid_btc_1.0pct": 148.847,
-        "ask_btc_1.0pct": 283.214,
-        "imbalance_1.0pct": -0.311,
-        "largest_bid_wall": {
-          "price": 77000.0,
-          "btc": 8.875
-        },
-        "largest_ask_wall": {
-          "price": 78500.0,
-          "btc": 50.099
-        }
-      }
-    },
-    {
-      "candle_t": 1793741400000,
-      "called": "TRENDING",
-      "p": 0.995910746349649,
-      "actual": "PANIC",
-      "q_version": 1,
-      "snapshot": "1793741400000.png",
-      "candle": {
-        "close": 78041.86,
-        "ret_1": 0.19,
-        "ret_12": 0.414,
-        "ret_48": 1.289,
-        "atr": 146.45,
-        "atr_pct": 0.188,
-        "atr_ratio_vs_100": 0.767,
-        "realized_vol_24_pct": 0.108,
-        "adx14": 49.81,
-        "rsi14": 83.08,
-        "ema20": 77718.02,
-        "ema50": 77507.6,
-        "ema20_slope_pct": 0.158,
-        "bb_mid": 77718.16,
-        "bb_upper": 77966.32,
-        "bb_lower": 77469.99,
-        "bb_width_pct": 0.639,
-        "vol_ratio_vs_50": 0.648,
-        "taker_buy_share": 0.675,
-        "range_pct_last": 0.204,
-        "drawdown_from_48h_high_pct": -0.015
-      },
-      "book": {
-        "best_bid": 78062.03,
-        "best_ask": 78062.04,
-        "mid": 78062.04,
-        "spread_bps": 0.001,
-        "bid_btc_0.1pct": 54.098,
-        "ask_btc_0.1pct": 115.581,
-        "imbalance_0.1pct": -0.362,
-        "bid_btc_0.5pct": 117.976,
-        "ask_btc_0.5pct": 204.111,
-        "imbalance_0.5pct": -0.267,
-        "bid_btc_1.0pct": 134.303,
-        "ask_btc_1.0pct": 282.065,
-        "imbalance_1.0pct": -0.355,
-        "largest_bid_wall": {
-          "price": 77000.0,
-          "btc": 8.301
-        },
-        "largest_ask_wall": {
-          "price": 78500.0,
-          "btc": 52.411
+          "price": 81000.0,
+          "btc": 37.125
         }
       }
     },
@@ -166,7 +58,7 @@
       "candle_t": 1793800800000,
       "called": "CHOPPY",
       "p": 0.9948444153355234,
-      "actual": "PANIC",
+      "actual": "TRENDING",
       "q_version": 2,
       "snapshot": "1793800800000.png",
       "candle": {
@@ -213,114 +105,6 @@
         "largest_ask_wall": {
           "price": 79000.0,
           "btc": 26.728
-        }
-      }
-    },
-    {
-      "candle_t": 1793747700000,
-      "called": "TRENDING",
-      "p": 0.9944642718710895,
-      "actual": "PANIC",
-      "q_version": 1,
-      "snapshot": "1793747700000.png",
-      "candle": {
-        "close": 77919.46,
-        "ret_1": 0.058,
-        "ret_12": 0.192,
-        "ret_48": 0.921,
-        "atr": 121.99,
-        "atr_pct": 0.157,
-        "atr_ratio_vs_100": 0.663,
-        "realized_vol_24_pct": 0.09,
-        "adx14": 38.86,
-        "rsi14": 62.88,
-        "ema20": 77789.27,
-        "ema50": 77592.92,
-        "ema20_slope_pct": 0.06,
-        "bb_mid": 77775.34,
-        "bb_upper": 78049.6,
-        "bb_lower": 77501.09,
-        "bb_width_pct": 0.705,
-        "vol_ratio_vs_50": 0.343,
-        "taker_buy_share": 0.505,
-        "range_pct_last": 0.144,
-        "drawdown_from_48h_high_pct": -0.184
-      },
-      "book": {
-        "best_bid": 77919.46,
-        "best_ask": 77919.47,
-        "mid": 77919.46,
-        "spread_bps": 0.001,
-        "bid_btc_0.1pct": 59.368,
-        "ask_btc_0.1pct": 118.938,
-        "imbalance_0.1pct": -0.334,
-        "bid_btc_0.5pct": 120.921,
-        "ask_btc_0.5pct": 216.322,
-        "imbalance_0.5pct": -0.283,
-        "bid_btc_1.0pct": 143.875,
-        "ask_btc_1.0pct": 299.57,
-        "imbalance_1.0pct": -0.351,
-        "largest_bid_wall": {
-          "price": 77000.0,
-          "btc": 8.884
-        },
-        "largest_ask_wall": {
-          "price": 78500.0,
-          "btc": 50.128
-        }
-      }
-    },
-    {
-      "candle_t": 1793745000000,
-      "called": "TRENDING",
-      "p": 0.9936795714750213,
-      "actual": "PANIC",
-      "q_version": 1,
-      "snapshot": "1793745000000.png",
-      "candle": {
-        "close": 77818.01,
-        "ret_1": 0.045,
-        "ret_12": 0.281,
-        "ret_48": 0.979,
-        "atr": 133.64,
-        "atr_pct": 0.172,
-        "atr_ratio_vs_100": 0.716,
-        "realized_vol_24_pct": 0.112,
-        "adx14": 43.52,
-        "rsi14": 52.73,
-        "ema20": 77753.55,
-        "ema50": 77554.97,
-        "ema20_slope_pct": 0.09,
-        "bb_mid": 77742.2,
-        "bb_upper": 78006.28,
-        "bb_lower": 77478.12,
-        "bb_width_pct": 0.679,
-        "vol_ratio_vs_50": 0.314,
-        "taker_buy_share": 0.35,
-        "range_pct_last": 0.129,
-        "drawdown_from_48h_high_pct": -0.314
-      },
-      "book": {
-        "best_bid": 77818.0,
-        "best_ask": 77818.01,
-        "mid": 77818.01,
-        "spread_bps": 0.001,
-        "bid_btc_0.1pct": 60.227,
-        "ask_btc_0.1pct": 87.683,
-        "imbalance_0.1pct": -0.186,
-        "bid_btc_0.5pct": 128.988,
-        "ask_btc_0.5pct": 151.609,
-        "imbalance_0.5pct": -0.081,
-        "bid_btc_1.0pct": 148.47,
-        "ask_btc_1.0pct": 239.091,
-        "imbalance_1.0pct": -0.234,
-        "largest_bid_wall": {
-          "price": 76800.0,
-          "btc": 10.688
-        },
-        "largest_ask_wall": {
-          "price": 78500.0,
-          "btc": 49.57
         }
       }
     },
@@ -382,7 +166,7 @@
       "candle_t": 1793795400000,
       "called": "CHOPPY",
       "p": 0.9933029309151155,
-      "actual": "PANIC",
+      "actual": "TRENDING",
       "q_version": 2,
       "snapshot": "1793795400000.png",
       "candle": {
@@ -433,164 +217,56 @@
       }
     },
     {
-      "candle_t": 1793742300000,
-      "called": "TRENDING",
-      "p": 0.9932393194064718,
-      "actual": "PANIC",
-      "q_version": 1,
-      "snapshot": "1793742300000.png",
+      "candle_t": 1793879100000,
+      "called": "CHOPPY",
+      "p": 0.9925213346386413,
+      "actual": "TRENDING",
+      "q_version": 3,
+      "snapshot": "1793879100000.png",
       "candle": {
-        "close": 77902.52,
-        "ret_1": -0.179,
-        "ret_12": 0.41,
-        "ret_48": 1.073,
-        "atr": 150.4,
-        "atr_pct": 0.193,
-        "atr_ratio_vs_100": 0.792,
+        "close": 80390.01,
+        "ret_1": 0.043,
+        "ret_12": -0.129,
+        "ret_48": -0.142,
+        "atr": 116.71,
+        "atr_pct": 0.145,
+        "atr_ratio_vs_100": 0.504,
         "realized_vol_24_pct": 0.114,
-        "adx14": 53.17,
-        "rsi14": 61.9,
-        "ema20": 77735.59,
-        "ema50": 77523.08,
-        "ema20_slope_pct": 0.155,
-        "bb_mid": 77726.68,
-        "bb_upper": 77987.55,
-        "bb_lower": 77465.81,
-        "bb_width_pct": 0.671,
-        "vol_ratio_vs_50": 0.392,
-        "taker_buy_share": 0.357,
-        "range_pct_last": 0.226,
-        "drawdown_from_48h_high_pct": -0.206
+        "adx14": 11.88,
+        "rsi14": 51.42,
+        "ema20": 80399.53,
+        "ema50": 80375.51,
+        "ema20_slope_pct": -0.058,
+        "bb_mid": 80413.07,
+        "bb_upper": 80632.23,
+        "bb_lower": 80193.91,
+        "bb_width_pct": 0.545,
+        "vol_ratio_vs_50": 0.596,
+        "taker_buy_share": 0.383,
+        "range_pct_last": 0.068,
+        "drawdown_from_48h_high_pct": -0.653
       },
       "book": {
-        "best_bid": 77902.51,
-        "best_ask": 77902.52,
-        "mid": 77902.51,
+        "best_bid": 80387.93,
+        "best_ask": 80387.94,
+        "mid": 80387.93,
         "spread_bps": 0.001,
-        "bid_btc_0.1pct": 67.682,
-        "ask_btc_0.1pct": 117.551,
-        "imbalance_0.1pct": -0.269,
-        "bid_btc_0.5pct": 134.925,
-        "ask_btc_0.5pct": 201.361,
-        "imbalance_0.5pct": -0.198,
-        "bid_btc_1.0pct": 152.34,
-        "ask_btc_1.0pct": 287.446,
-        "imbalance_1.0pct": -0.307,
+        "bid_btc_0.1pct": 93.614,
+        "ask_btc_0.1pct": 112.134,
+        "imbalance_0.1pct": -0.09,
+        "bid_btc_0.5pct": 181.543,
+        "ask_btc_0.5pct": 184.146,
+        "imbalance_0.5pct": -0.007,
+        "bid_btc_1.0pct": 223.67,
+        "ask_btc_1.0pct": 248.412,
+        "imbalance_1.0pct": -0.052,
         "largest_bid_wall": {
-          "price": 77000.0,
-          "btc": 8.482
+          "price": 80000.0,
+          "btc": 7.79
         },
         "largest_ask_wall": {
-          "price": 78500.0,
-          "btc": 50.268
-        }
-      }
-    },
-    {
-      "candle_t": 1793743200000,
-      "called": "TRENDING",
-      "p": 0.9929853308276652,
-      "actual": "PANIC",
-      "q_version": 1,
-      "snapshot": "1793743200000.png",
-      "candle": {
-        "close": 77812.98,
-        "ret_1": -0.115,
-        "ret_12": 0.369,
-        "ret_48": 1.014,
-        "atr": 143.7,
-        "atr_pct": 0.185,
-        "atr_ratio_vs_100": 0.761,
-        "realized_vol_24_pct": 0.116,
-        "adx14": 51.28,
-        "rsi14": 52.06,
-        "ema20": 77742.96,
-        "ema50": 77534.45,
-        "ema20_slope_pct": 0.134,
-        "bb_mid": 77729.81,
-        "bb_upper": 77993.24,
-        "bb_lower": 77466.39,
-        "bb_width_pct": 0.678,
-        "vol_ratio_vs_50": 0.266,
-        "taker_buy_share": 0.375,
-        "range_pct_last": 0.129,
-        "drawdown_from_48h_high_pct": -0.321
-      },
-      "book": {
-        "best_bid": 77812.97,
-        "best_ask": 77812.98,
-        "mid": 77812.98,
-        "spread_bps": 0.001,
-        "bid_btc_0.1pct": 73.671,
-        "ask_btc_0.1pct": 108.108,
-        "imbalance_0.1pct": -0.189,
-        "bid_btc_0.5pct": 139.78,
-        "ask_btc_0.5pct": 175.276,
-        "imbalance_0.5pct": -0.113,
-        "bid_btc_1.0pct": 159.163,
-        "ask_btc_1.0pct": 259.524,
-        "imbalance_1.0pct": -0.24,
-        "largest_bid_wall": {
-          "price": 77000.0,
-          "btc": 8.498
-        },
-        "largest_ask_wall": {
-          "price": 78500.0,
-          "btc": 50.268
-        }
-      }
-    },
-    {
-      "candle_t": 1793745900000,
-      "called": "TRENDING",
-      "p": 0.9925403264682129,
-      "actual": "PANIC",
-      "q_version": 1,
-      "snapshot": "1793745900000.png",
-      "candle": {
-        "close": 77875.86,
-        "ret_1": 0.074,
-        "ret_12": 0.339,
-        "ret_48": 0.959,
-        "atr": 125.76,
-        "atr_pct": 0.161,
-        "atr_ratio_vs_100": 0.678,
-        "realized_vol_24_pct": 0.092,
-        "adx14": 40.8,
-        "rsi14": 58.46,
-        "ema20": 77765.2,
-        "ema50": 77567.55,
-        "ema20_slope_pct": 0.061,
-        "bb_mid": 77753.77,
-        "bb_upper": 78019.97,
-        "bb_lower": 77487.57,
-        "bb_width_pct": 0.685,
-        "vol_ratio_vs_50": 0.206,
-        "taker_buy_share": 0.557,
-        "range_pct_last": 0.096,
-        "drawdown_from_48h_high_pct": -0.24
-      },
-      "book": {
-        "best_bid": 77899.99,
-        "best_ask": 77900.0,
-        "mid": 77899.99,
-        "spread_bps": 0.001,
-        "bid_btc_0.1pct": 61.294,
-        "ask_btc_0.1pct": 120.783,
-        "imbalance_0.1pct": -0.327,
-        "bid_btc_0.5pct": 120.995,
-        "ask_btc_0.5pct": 230.305,
-        "imbalance_0.5pct": -0.311,
-        "bid_btc_1.0pct": 140.004,
-        "ask_btc_1.0pct": 316.028,
-        "imbalance_1.0pct": -0.386,
-        "largest_bid_wall": {
-          "price": 77899.99,
-          "btc": 10.304
-        },
-        "largest_ask_wall": {
-          "price": 78500.0,
-          "btc": 50.098
+          "price": 81000.0,
+          "btc": 38.121
         }
       }
     },
@@ -598,7 +274,7 @@
       "candle_t": 1793799900000,
       "called": "CHOPPY",
       "p": 0.9924415467806438,
-      "actual": "PANIC",
+      "actual": "TRENDING",
       "q_version": 2,
       "snapshot": "1793799900000.png",
       "candle": {
@@ -645,60 +321,6 @@
         "largest_ask_wall": {
           "price": 79000.0,
           "btc": 26.539
-        }
-      }
-    },
-    {
-      "candle_t": 1793744100000,
-      "called": "TRENDING",
-      "p": 0.991962301890284,
-      "actual": "PANIC",
-      "q_version": 1,
-      "snapshot": "1793744100000.png",
-      "candle": {
-        "close": 77782.97,
-        "ret_1": -0.039,
-        "ret_12": 0.222,
-        "ret_48": 0.955,
-        "atr": 138.81,
-        "atr_pct": 0.178,
-        "atr_ratio_vs_100": 0.739,
-        "realized_vol_24_pct": 0.114,
-        "adx14": 48.68,
-        "rsi14": 49.04,
-        "ema20": 77746.77,
-        "ema50": 77544.22,
-        "ema20_slope_pct": 0.109,
-        "bb_mid": 77734.7,
-        "bb_upper": 77998.26,
-        "bb_lower": 77471.13,
-        "bb_width_pct": 0.678,
-        "vol_ratio_vs_50": 0.268,
-        "taker_buy_share": 0.418,
-        "range_pct_last": 0.138,
-        "drawdown_from_48h_high_pct": -0.359
-      },
-      "book": {
-        "best_bid": 77782.97,
-        "best_ask": 77782.98,
-        "mid": 77782.98,
-        "spread_bps": 0.001,
-        "bid_btc_0.1pct": 59.049,
-        "ask_btc_0.1pct": 112.754,
-        "imbalance_0.1pct": -0.313,
-        "bid_btc_0.5pct": 136.704,
-        "ask_btc_0.5pct": 185.418,
-        "imbalance_0.5pct": -0.151,
-        "bid_btc_1.0pct": 161.194,
-        "ask_btc_1.0pct": 283.795,
-        "imbalance_1.0pct": -0.276,
-        "largest_bid_wall": {
-          "price": 76800.0,
-          "btc": 10.688
-        },
-        "largest_ask_wall": {
-          "price": 78500.0,
-          "btc": 50.058
         }
       }
     },
@@ -760,7 +382,7 @@
       "candle_t": 1793798100000,
       "called": "CHOPPY",
       "p": 0.9914227164962244,
-      "actual": "PANIC",
+      "actual": "TRENDING",
       "q_version": 2,
       "snapshot": "1793798100000.png",
       "candle": {
@@ -809,6 +431,384 @@
           "btc": 23.685
         }
       }
+    },
+    {
+      "candle_t": 1793876400000,
+      "called": "CHOPPY",
+      "p": 0.9911276470809073,
+      "actual": "TRENDING",
+      "q_version": 3,
+      "snapshot": "1793876400000.png",
+      "candle": {
+        "close": 80318.67,
+        "ret_1": 0.053,
+        "ret_12": -0.255,
+        "ret_48": -0.27,
+        "atr": 128.93,
+        "atr_pct": 0.161,
+        "atr_ratio_vs_100": 0.553,
+        "realized_vol_24_pct": 0.113,
+        "adx14": 15.97,
+        "rsi14": 42.78,
+        "ema20": 80419.33,
+        "ema50": 80379.91,
+        "ema20_slope_pct": -0.057,
+        "bb_mid": 80448.38,
+        "bb_upper": 80684.37,
+        "bb_lower": 80212.39,
+        "bb_width_pct": 0.587,
+        "vol_ratio_vs_50": 0.539,
+        "taker_buy_share": 0.603,
+        "range_pct_last": 0.126,
+        "drawdown_from_48h_high_pct": -0.741
+      },
+      "book": {
+        "best_bid": 80314.8,
+        "best_ask": 80314.81,
+        "mid": 80314.8,
+        "spread_bps": 0.001,
+        "bid_btc_0.1pct": 70.158,
+        "ask_btc_0.1pct": 120.175,
+        "imbalance_0.1pct": -0.263,
+        "bid_btc_0.5pct": 171.407,
+        "ask_btc_0.5pct": 208.26,
+        "imbalance_0.5pct": -0.097,
+        "bid_btc_1.0pct": 219.895,
+        "ask_btc_1.0pct": 270.367,
+        "imbalance_1.0pct": -0.103,
+        "largest_bid_wall": {
+          "price": 79900.0,
+          "btc": 13.698
+        },
+        "largest_ask_wall": {
+          "price": 81000.0,
+          "btc": 36.9
+        }
+      }
+    },
+    {
+      "candle_t": 1793871900000,
+      "called": "CHOPPY",
+      "p": 0.9903021544734445,
+      "actual": "TRENDING",
+      "q_version": 3,
+      "snapshot": "1793871900000.png",
+      "candle": {
+        "close": 80438.02,
+        "ret_1": 0.174,
+        "ret_12": -0.262,
+        "ret_48": 0.246,
+        "atr": 136.45,
+        "atr_pct": 0.17,
+        "atr_ratio_vs_100": 0.577,
+        "realized_vol_24_pct": 0.128,
+        "adx14": 16.36,
+        "rsi14": 49.4,
+        "ema20": 80465.07,
+        "ema50": 80385.87,
+        "ema20_slope_pct": -0.078,
+        "bb_mid": 80475.58,
+        "bb_upper": 80675.79,
+        "bb_lower": 80275.37,
+        "bb_width_pct": 0.498,
+        "vol_ratio_vs_50": 0.53,
+        "taker_buy_share": 0.401,
+        "range_pct_last": 0.187,
+        "drawdown_from_48h_high_pct": -0.647
+      },
+      "book": {
+        "best_bid": 80438.01,
+        "best_ask": 80438.02,
+        "mid": 80438.01,
+        "spread_bps": 0.001,
+        "bid_btc_0.1pct": 45.203,
+        "ask_btc_0.1pct": 121.255,
+        "imbalance_0.1pct": -0.457,
+        "bid_btc_0.5pct": 117.746,
+        "ask_btc_0.5pct": 204.135,
+        "imbalance_0.5pct": -0.268,
+        "bid_btc_1.0pct": 181.187,
+        "ask_btc_1.0pct": 277.872,
+        "imbalance_1.0pct": -0.211,
+        "largest_bid_wall": {
+          "price": 79900.0,
+          "btc": 12.968
+        },
+        "largest_ask_wall": {
+          "price": 81000.0,
+          "btc": 37.765
+        }
+      }
+    },
+    {
+      "candle_t": 1793799000000,
+      "called": "CHOPPY",
+      "p": 0.9901575951009322,
+      "actual": "TRENDING",
+      "q_version": 2,
+      "snapshot": "1793799000000.png",
+      "candle": {
+        "close": 78391.84,
+        "ret_1": -0.077,
+        "ret_12": -0.176,
+        "ret_48": 1.918,
+        "atr": 202.15,
+        "atr_pct": 0.258,
+        "atr_ratio_vs_100": 0.891,
+        "realized_vol_24_pct": 0.165,
+        "adx14": 38.3,
+        "rsi14": 50.56,
+        "ema20": 78342.5,
+        "ema50": 78041.32,
+        "ema20_slope_pct": 0.021,
+        "bb_mid": 78448.53,
+        "bb_upper": 78737.46,
+        "bb_lower": 78159.6,
+        "bb_width_pct": 0.737,
+        "vol_ratio_vs_50": 0.775,
+        "taker_buy_share": 0.444,
+        "range_pct_last": 0.189,
+        "drawdown_from_48h_high_pct": -0.414
+      },
+      "book": {
+        "best_bid": 78400.0,
+        "best_ask": 78400.01,
+        "mid": 78400.01,
+        "spread_bps": 0.001,
+        "bid_btc_0.1pct": 89.54,
+        "ask_btc_0.1pct": 78.741,
+        "imbalance_0.1pct": 0.064,
+        "bid_btc_0.5pct": 161.868,
+        "ask_btc_0.5pct": 145.217,
+        "imbalance_0.5pct": 0.054,
+        "bid_btc_1.0pct": 198.137,
+        "ask_btc_1.0pct": 248.009,
+        "imbalance_1.0pct": -0.112,
+        "largest_bid_wall": {
+          "price": 78000.0,
+          "btc": 11.164
+        },
+        "largest_ask_wall": {
+          "price": 79000.0,
+          "btc": 27.715
+        }
+      }
+    },
+    {
+      "candle_t": 1793726100000,
+      "called": "TRENDING",
+      "p": 0.9901575854182925,
+      "actual": "CHOPPY",
+      "q_version": 1,
+      "snapshot": "1793726100000.png",
+      "candle": {
+        "close": 77685.29,
+        "ret_1": -0.084,
+        "ret_12": 0.691,
+        "ret_48": 1.244,
+        "atr": 212.46,
+        "atr_pct": 0.273,
+        "atr_ratio_vs_100": 1.015,
+        "realized_vol_24_pct": 0.176,
+        "adx14": 28.34,
+        "rsi14": 60.3,
+        "ema20": 77485.16,
+        "ema50": 77284.08,
+        "ema20_slope_pct": 0.139,
+        "bb_mid": 77497.53,
+        "bb_upper": 77826.67,
+        "bb_lower": 77168.39,
+        "bb_width_pct": 0.849,
+        "vol_ratio_vs_50": 0.586,
+        "taker_buy_share": 0.495,
+        "range_pct_last": 0.134,
+        "drawdown_from_48h_high_pct": -0.259
+      },
+      "book": {
+        "best_bid": 77672.01,
+        "best_ask": 77672.02,
+        "mid": 77672.01,
+        "spread_bps": 0.001,
+        "bid_btc_0.1pct": 71.627,
+        "ask_btc_0.1pct": 108.361,
+        "imbalance_0.1pct": -0.204,
+        "bid_btc_0.5pct": 138.321,
+        "ask_btc_0.5pct": 233.675,
+        "imbalance_0.5pct": -0.256,
+        "bid_btc_1.0pct": 163.602,
+        "ask_btc_1.0pct": 268.21,
+        "imbalance_1.0pct": -0.242,
+        "largest_bid_wall": {
+          "price": 76800.0,
+          "btc": 9.189
+        },
+        "largest_ask_wall": {
+          "price": 78500.0,
+          "btc": 51.867
+        }
+      }
+    },
+    {
+      "candle_t": 1793873700000,
+      "called": "CHOPPY",
+      "p": 0.990096590730613,
+      "actual": "TRENDING",
+      "q_version": 3,
+      "snapshot": "1793873700000.png",
+      "candle": {
+        "close": 80486.99,
+        "ret_1": 0.137,
+        "ret_12": -0.083,
+        "ret_48": -0.223,
+        "atr": 129.38,
+        "atr_pct": 0.161,
+        "atr_ratio_vs_100": 0.551,
+        "realized_vol_24_pct": 0.129,
+        "adx14": 14.38,
+        "rsi14": 54.25,
+        "ema20": 80459.55,
+        "ema50": 80389.4,
+        "ema20_slope_pct": -0.057,
+        "bb_mid": 80471.12,
+        "bb_upper": 80675.88,
+        "bb_lower": 80266.35,
+        "bb_width_pct": 0.509,
+        "vol_ratio_vs_50": 0.622,
+        "taker_buy_share": 0.47,
+        "range_pct_last": 0.166,
+        "drawdown_from_48h_high_pct": -0.587
+      },
+      "book": {
+        "best_bid": 80486.98,
+        "best_ask": 80486.99,
+        "mid": 80486.99,
+        "spread_bps": 0.001,
+        "bid_btc_0.1pct": 53.661,
+        "ask_btc_0.1pct": 122.816,
+        "imbalance_0.1pct": -0.392,
+        "bid_btc_0.5pct": 114.781,
+        "ask_btc_0.5pct": 212.973,
+        "imbalance_0.5pct": -0.3,
+        "bid_btc_1.0pct": 173.762,
+        "ask_btc_1.0pct": 283.616,
+        "imbalance_1.0pct": -0.24,
+        "largest_bid_wall": {
+          "price": 79900.0,
+          "btc": 12.968
+        },
+        "largest_ask_wall": {
+          "price": 81000.0,
+          "btc": 37.477
+        }
+      }
+    },
+    {
+      "candle_t": 1793720700000,
+      "called": "TRENDING",
+      "p": 0.990096078162114,
+      "actual": "CHOPPY",
+      "q_version": 1,
+      "snapshot": "1793720700000.png",
+      "candle": {
+        "close": 77688.47,
+        "ret_1": 0.104,
+        "ret_12": 0.336,
+        "ret_48": 0.972,
+        "atr": 249.31,
+        "atr_pct": 0.321,
+        "atr_ratio_vs_100": 1.172,
+        "realized_vol_24_pct": 0.159,
+        "adx14": 28.71,
+        "rsi14": 68.89,
+        "ema20": 77351.03,
+        "ema50": 77186.85,
+        "ema20_slope_pct": 0.135,
+        "bb_mid": 77365.41,
+        "bb_upper": 77714.95,
+        "bb_lower": 77015.88,
+        "bb_width_pct": 0.904,
+        "vol_ratio_vs_50": 1.093,
+        "taker_buy_share": 0.566,
+        "range_pct_last": 0.335,
+        "drawdown_from_48h_high_pct": -0.255
+      },
+      "book": {
+        "best_bid": 77700.0,
+        "best_ask": 77700.01,
+        "mid": 77700.01,
+        "spread_bps": 0.001,
+        "bid_btc_0.1pct": 71.206,
+        "ask_btc_0.1pct": 101.003,
+        "imbalance_0.1pct": -0.173,
+        "bid_btc_0.5pct": 121.148,
+        "ask_btc_0.5pct": 234.266,
+        "imbalance_0.5pct": -0.318,
+        "bid_btc_1.0pct": 143.843,
+        "ask_btc_1.0pct": 264.863,
+        "imbalance_1.0pct": -0.296,
+        "largest_bid_wall": {
+          "price": 77700.0,
+          "btc": 9.421
+        },
+        "largest_ask_wall": {
+          "price": 78000.0,
+          "btc": 39.342
+        }
+      }
+    },
+    {
+      "candle_t": 1793877300000,
+      "called": "CHOPPY",
+      "p": 0.9891903140166529,
+      "actual": "TRENDING",
+      "q_version": 3,
+      "snapshot": "1793877300000.png",
+      "candle": {
+        "close": 80272.01,
+        "ret_1": -0.058,
+        "ret_12": -0.387,
+        "ret_48": -0.257,
+        "atr": 132.2,
+        "atr_pct": 0.165,
+        "atr_ratio_vs_100": 0.569,
+        "realized_vol_24_pct": 0.114,
+        "adx14": 14.09,
+        "rsi14": 39.27,
+        "ema20": 80405.3,
+        "ema50": 80375.73,
+        "ema20_slope_pct": -0.064,
+        "bb_mid": 80434.38,
+        "bb_upper": 80677.24,
+        "bb_lower": 80191.52,
+        "bb_width_pct": 0.604,
+        "vol_ratio_vs_50": 0.782,
+        "taker_buy_share": 0.587,
+        "range_pct_last": 0.191,
+        "drawdown_from_48h_high_pct": -0.798
+      },
+      "book": {
+        "best_bid": 80272.0,
+        "best_ask": 80272.01,
+        "mid": 80272.01,
+        "spread_bps": 0.001,
+        "bid_btc_0.1pct": 118.567,
+        "ask_btc_0.1pct": 97.558,
+        "imbalance_0.1pct": 0.097,
+        "bid_btc_0.5pct": 208.842,
+        "ask_btc_0.5pct": 168.434,
+        "imbalance_0.5pct": 0.107,
+        "bid_btc_1.0pct": 242.047,
+        "ask_btc_1.0pct": 228.511,
+        "imbalance_1.0pct": 0.029,
+        "largest_bid_wall": {
+          "price": 79900.0,
+          "btc": 13.698
+        },
+        "largest_ask_wall": {
+          "price": 81000.0,
+          "btc": 37.087
+        }
+      }
     }
   ],
   "takes_that_stopped": [],
@@ -827,19 +827,19 @@
   ],
   "confusion": {
     "CHOPPY": {
-      "CHOPPY": 37,
-      "TRENDING": 5,
-      "PANIC": 12
+      "CHOPPY": 95,
+      "TRENDING": 34,
+      "PANIC": 1
     },
     "TRENDING": {
-      "CHOPPY": 45,
-      "PANIC": 27,
-      "TRENDING": 11
+      "CHOPPY": 58,
+      "PANIC": 10,
+      "TRENDING": 31
     },
     "PANIC": {
-      "PANIC": 7,
-      "TRENDING": 2,
-      "CHOPPY": 1
+      "PANIC": 3,
+      "TRENDING": 7,
+      "CHOPPY": 4
     }
   }
 }
