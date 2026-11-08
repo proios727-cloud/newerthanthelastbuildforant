@@ -6,7 +6,14 @@ description: Study how a feature in an app works and rebuild it as original code
 # RE Studio
 
 Pipeline: **scope → investigate → SPEC.md → build → oracle → retry**.
-Reference for tools, install and links: `docs/re-studio.md`.
+
+References:
+- `docs/re-studio.md` — tools, install and links.
+- `docs/re-studio-repos.md` — verified repo table (stars/license/last-push, verified 2026-11-08) + REA caution.
+- `docs/re-studio-workflow.md` — clean-room two-agent orchestration (evidence agent vs spec-only build agent).
+- `docs/re-studio-mcp.md` — wiring GhidraMCP / ida-pro-mcp / REA into Claude Code.
+
+**REA is untrusted by default:** its repo reports implausible metrics and a piracy pitch. Prefer the trusted-core tools in `docs/re-studio-repos.md`; require explicit approval before any REA install.
 
 ## 0. Scope gate (always first)
 

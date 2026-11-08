@@ -2,6 +2,12 @@
 
 **Pipeline:** `binary → REA (MCP) → SPEC.md → rebuild → oracle → retry`
 
+> **Verified companions** (added 2026-11-08):
+> `docs/re-studio-repos.md` — every repo below checked against GitHub (stars/license/last-push), with a caution on REA.
+> `docs/re-studio-workflow.md` — the clean-room two-agent orchestration.
+> `docs/re-studio-mcp.md` — wiring GhidraMCP / ida-pro-mcp / REA into Claude Code.
+> REA (`morluto/rea`) reports implausible metrics (442,949★ in 7 months) and ships a piracy pitch — treat it as **untrusted**; prefer the trusted-core tools. Details in `re-studio-repos.md`.
+
 ## 01 · Analysis core (the agent drives these)
 | Tool | Role | Repo |
 |---|---|---|
@@ -32,11 +38,11 @@
 |---|---|---|
 | mitmproxy | HTTPS interception proxy | github.com/mitmproxy/mitmproxy |
 | dnSpyEx | .NET debugger/editor (maintained fork) | github.com/dnSpyEx/dnSpy |
-| RAD Debugger | Fast Windows debugger (Epic/RAD) | github.com/EpicGamesExt/raddebugger |
+| RAD Debugger | Fast Windows debugger (Epic/RAD) | github.com/EpicGames/raddebugger |
 
 ## 05 · Indexes & method
 - awesome-ai-reverse-engineering: graded list of about 122 repos (github.com/zhuyansen/…)
-- awesome-reverse-engineering: maintained by the REA author (github.com/morluto/…)
+- awesome-reverse-engineering: established indexes — github.com/alphaSeclab/… (5.2k★), github.com/wtsxDev/reverse-engineering (10.8k★); morluto/… is newer/smaller
 - REA workflows: investigation prompts that ship with REA
 - Clean-room loop: SPEC.md → independent rebuild → oracle diff against the original → iterate
 
