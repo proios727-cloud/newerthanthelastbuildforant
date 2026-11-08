@@ -1,16 +1,16 @@
-# Review 2026-11-07  (BTCUSDT 15m, last 168h)
+# Review 2026-11-08  (BTCUSDT 15m, last 168h)
 
-- Log integrity: OK (428 records)
+- Log integrity: OK (490 records)
 - Drex errors: {'regime': 3}
 - No closed trades
 
 ## Regime calls vs realized (next 12 candles)
-Scored 339; accuracy 59.9%; mean Brier 0.688 (lower is better, 0.667 = uniform)
+Scored 405; accuracy 60.5%; mean Brier 0.681 (lower is better, 0.667 = uniform)
 
 | called \ actual | TRENDING | CHOPPY | PANIC |
 |---|---|---|---|
-| TRENDING | 35 | 63 | 10 |
-| CHOPPY | 39 | 165 | 13 |
+| TRENDING | 44 | 70 | 12 |
+| CHOPPY | 45 | 198 | 22 |
 | PANIC | 7 | 4 | 3 |
 
 ## TAKE / SKIP replay (resolved signals)
@@ -39,5 +39,5 @@ Scored 339; accuracy 59.9%; mean Brier 0.688 (lower is better, 0.667 = uniform)
 
 ## Threshold changes: none (current take 0.65, regime 0.6)
 
-## Question version in use: 3
-Worst regime misses written to review-2026-11-07-packet.json for question rewriting.
+## Question version in use: 4
+Worst regime misses written to review-2026-11-08-packet.json for question rewriting.
