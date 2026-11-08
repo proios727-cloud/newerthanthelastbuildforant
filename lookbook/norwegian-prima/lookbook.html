@@ -621,8 +621,8 @@ p { margin: 0; text-wrap: pretty; }
 // Researched Nov 2026 from NCL pages and cruise-review sites. "Confirm" in a tip means sources disagreed.
 var GUIDE = [
   { id: "onboard", label: "On board now",
-    pick: { name: "Open the app's Activities list, then work down these rankings", why: "Rankings come from critics (Cruise Critic and others) and cruiser forums. Book the highest-ranked dinner you haven't had yet, and use the app's waitlist if it's full. Times change by sailing, so take them from the Norwegian Cruise Line app or the Freestyle Daily." },
-    desks: ["Dining order", "Bars & clubs", "Casino", "Tonight", "Last night", "Disembark day"],
+    pick: { name: "Your 4 nights: Los Lobos, Onda, Hasuki, Cagney's", why: "Dinners are ranked by critics and cruisers and spread across your sailing, Nov 8 to Nov 12. Book all four in the app today. Event times change by sailing, so take them from the Norwegian Cruise Line app or the Freestyle Daily." },
+    desks: ["Sun Nov 8", "Mon Nov 9", "Tue Nov 10", "Wed Nov 11", "Thu Nov 12", "Dining order", "Bars & clubs", "Casino"],
     venues: [
       { name: "1. Onda by Scarpetta", kind: "Italian · specialty", deck: 8, cost: "fee", desks: ["Dining order"], top: true, book: true,
         order: ["Burrata", "Lobster tagliatelle", "Braised octopus"], best: "Critics' and cruisers' favorite on Prima",
@@ -661,22 +661,40 @@ var GUIDE = [
         best: "Blackjack at a 3:2 table with basic strategy", tip: "Bet the craps pass line with odds, or banker at baccarat. Skip side bets." },
       { name: "Before the casino closes", kind: "Last sea night", deck: 6, desks: ["Casino"],
         best: "Collecting what you've earned", tip: "The casino closes in port. On your last night, ask the casino desk about offers, then check your folio for casino charges." },
-      { name: "Plan for tonight", kind: "Evening order", desks: ["Tonight"], top: true,
-        items: ["Sunset at Soleil Bar", "Top-ranked dinner you haven't had", "Show in Prima Theater or The Improv", "Syd Norman's", "Casino or the club"],
-        best: "A full evening", tip: "Book the dinner and show in the app first, then fill in around them." },
-      { name: "If you have a sea day", kind: "Daytime", desks: ["Tonight"],
-        items: ["Speedway early", "The Drop and The Rush", "Infinity Beach or Vibe Beach Club", "Thermal Suite"],
-        best: "Getting the most from a sea day", tip: "Slides and pickleball are quietest before 10 am." },
-      { name: "Last-night checklist", kind: "Before bed", desks: ["Last night"], top: true,
-        items: ["Put bags out by the time on your stateroom letter", "Keep meds, documents and a change of clothes in a carry-on", "Review your folio in the app", "Last drink at Metropolitan or Whiskey Bar"],
-        best: "A smooth departure", tip: "Bags collected overnight don't come back until the terminal." },
-      { name: "Last-night dinner", kind: "Pick one", desks: ["Last night"],
-        best: "Onda if you haven't been, otherwise Cagney's", tip: "Last nights book up fast, so waitlist in the app now." },
-      { name: "Disembarkation morning", kind: "Departure", desks: ["Disembark day"], top: true,
-        items: ["Early breakfast at Surfside Café (Deck 17) or Indulge (Deck 8)", "Clear your cabin by the posted time", "Wait for your group in a lounge, not the hallway", "Self-assist (carry your own bags) is usually first off"],
-        best: "Getting off without stress", tip: "Your group, time and meeting point are in the app or your stateroom letter." },
-      { name: "Settle up", kind: "Folio", desks: ["Disembark day"],
-        best: "Avoiding surprise charges", tip: "Check every charge in the app before you leave. Take disputes to Guest Services on Deck 7." }
+      { name: "Today: book everything", kind: "Embarkation · do this first", desks: ["Sun Nov 8"], top: true, book: true,
+        plan: ["Onda (Mon)", "Hasuki (Tue)", "Cagney's (Wed)", "The Price Is Right LIVE", "A Speedway slot", "Casino tournament seats"],
+        best: "Locking in the best slots", tip: "Book in the Norwegian Cruise Line app on ship Wi-Fi (no package needed). Waitlist anything that's full." },
+      { name: "Sun Nov 8 · Afternoon", kind: "Embarkation day", desks: ["Sun Nov 8"],
+        plan: ["Lunch at Indulge after 1:30 pm, or Hudson's if it's open", "Muster check-in right away", "Walk Ocean Boulevard (Deck 8)", "Sail-away at Soleil Bar or the Observation Lounge"],
+        best: "Getting your bearings", tip: "Skip the Surfside buffet at peak lunch today. It's the busiest meal of the cruise." },
+      { name: "Sun Nov 8 · Evening", kind: "Night 1 of 4", deck: 8, cost: "fee", desks: ["Sun Nov 8"],
+        plan: ["Margarita at Los Lobos", "Dinner: Los Lobos (#2), terrace table", "Show in Prima Theater or The Improv", "Syd Norman's live band"],
+        order: ["Tableside guacamole", "Cochinita pibil"], best: "An easy, fun first night",
+        tip: "If Los Lobos is full, eat at Indulge and move Los Lobos to Tuesday." },
+      { name: "Mon Nov 9 · Day", kind: "Sea day or port: check the app", desks: ["Mon Nov 9"],
+        plan: ["Speedway early", "The Drop and The Rush before 10 am", "Pickleball at The Stadium", "Infinity Beach in the afternoon"],
+        best: "Big rides while lines are short", tip: "On a port day, do this list the next sea day instead." },
+      { name: "Mon Nov 9 · Evening", kind: "Night 2 of 4", deck: 8, cost: "fee", desks: ["Mon Nov 9"], book: true,
+        plan: ["Primadonna at Metropolitan Bar", "Dinner: Onda by Scarpetta (#1)", "The Price Is Right LIVE or Bossa Nova Beat", "Casino: blackjack or a slot tournament"],
+        order: ["Burrata", "Lobster tagliatelle", "Braised octopus"], best: "The best dinner on board",
+        tip: "Going early in the trip leaves you a chance to go back if you love it." },
+      { name: "Tue Nov 10 · Day", kind: "Sea day or port: check the app", desks: ["Tue Nov 10"],
+        plan: ["Thermal Suite or Vibe Beach Club", "Galaxy Pavilion if it rains", "Lunch at Indulge: rotisserie, noodles, tostadas"],
+        best: "A slower day", tip: "Thermal Suite day passes are limited. Ask the spa in the morning." },
+      { name: "Tue Nov 10 · Evening", kind: "Night 3 of 4", deck: 7, cost: "fee", desks: ["Tue Nov 10"], book: true,
+        plan: ["Sunset at Soleil Bar", "Dinner: Hasuki teppanyaki (#4)", "The Improv (late set)", "Prima Theater & Club late-night dancing"],
+        order: ["NY strip", "Seafood combination"], best: "Your big night out",
+        tip: "Not into teppanyaki? Swap in Le Bistro (#5) or Nama." },
+      { name: "Wed Nov 11 · Day", kind: "Last full day", desks: ["Wed Nov 11"],
+        plan: ["Last Speedway run", "Review your bill in the app", "Pack before dinner", "Ask the casino desk about offers"],
+        best: "No last-minute rush", tip: "Your stateroom letter or the app gives the bag-out time and your departure group." },
+      { name: "Wed Nov 11 · Evening", kind: "Night 4 of 4 · last night", deck: 6, cost: "fee", desks: ["Wed Nov 11"], book: true,
+        plan: ["Cocktail at Belvedere Bar", "Dinner: Cagney's Steakhouse (#3)", "Final casino session before it closes", "Nightcap at Whiskey Bar"],
+        order: ["Certified Angus Beef steak"], best: "A dressed-up farewell",
+        tip: "Put bags out before bed. Keep meds, documents, chargers and tomorrow's clothes in a carry-on." },
+      { name: "Thu Nov 12 · Disembarkation", kind: "Departure morning", desks: ["Thu Nov 12"], top: true,
+        plan: ["Early breakfast at Surfside (Deck 17) or Indulge (Deck 8)", "Clear the cabin by the posted time", "Wait for your group in a lounge", "Self-assist (carry your own bags) is usually first off"],
+        best: "A calm exit", tip: "Check your final bill in the app. Take disputes to Guest Services on Deck 7 before you leave." }
     ] },
   { id: "restaurants", label: "Restaurants",
     pick: { name: "Indulge Food Hall for free, Onda by Scarpetta for a splurge", why: "Indulge is the best included food on board: graze the rotisserie, noodles and Latin stalls. For one paid dinner, reviewers rank Onda first. Order the burrata and lobster tagliatelle." },
@@ -897,6 +915,7 @@ var GUIDE = [
   var listEl = document.getElementById("guide-venues");
   var panel = document.getElementById("guide-panel");
   var state = { tab: GUIDE[0].id, desk: "All" };
+  var todayLabel = (function () { var d = new Date(); return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()] + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()] + " " + d.getDate(); })();
   try { var saved = localStorage.getItem("prima-guide-tab"); if (saved && GUIDE.some(function (g) { return g.id === saved; })) state.tab = saved; } catch (e) {}
 
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
@@ -949,6 +968,7 @@ var GUIDE = [
           card.appendChild(p);
         }
         line("On this deck", v.items);
+        line("Plan", v.plan);
         line("Order", v.order);
         line("Drink", v.drink);
         line("Best for", v.best);
@@ -958,7 +978,9 @@ var GUIDE = [
   }
 
   function select(id) {
-    state.tab = id; state.desk = "All";
+    state.tab = id;
+    var c = GUIDE.filter(function (g) { return g.id === id; })[0];
+    state.desk = c && c.desks.indexOf(todayLabel) > -1 ? todayLabel : "All";
     try { localStorage.setItem("prima-guide-tab", id); } catch (e) {}
     render();
     var t = document.getElementById("tab-" + id); if (t) t.focus();
@@ -970,6 +992,8 @@ var GUIDE = [
     if (e.key === "ArrowLeft") { e.preventDefault(); select(GUIDE[(i - 1 + GUIDE.length) % GUIDE.length].id); }
   });
 
+  var firstCat = GUIDE.filter(function (g) { return g.id === state.tab; })[0];
+  if (firstCat && firstCat.desks.indexOf(todayLabel) > -1) state.desk = todayLabel;
   render();
 })();
 </script>
