@@ -41,16 +41,35 @@ verification time. License/role are from the repo itself.
 | awesome-reverse-engineering | morluto/awesome-reverse-engineering | 1,953 | Newer; same owner as REA — see caution |
 | awesome-ai-reverse-engineering | zhuyansen/awesome-ai-reverse-engineering | 91 | Small AI-RE index |
 
-## ⚠️ Caution — verify before you install
+## Clean-room rebuild engines — real, but unvetted (promising tier)
 
-| Tool | Repo | Reported | Why flagged |
+These are *real* open-source tools whose purpose (study an original, rebuild it clean-room)
+matches this skill exactly. They are **not** in trusted-core because their metrics are not
+organically plausible and they are very new — treat them as "evaluate in a sandbox," not
+"depend on."
+
+| Tool | Repo | Reported | Reality |
 |---|---|---|---|
-| REA | morluto/rea | 442,949★ / 109,476 forks, created 2026-04-14, MIT | A 7-month-old niche RE tool showing near-top-of-GitHub metrics is not organically plausible, and its promotion ("make any app free by the afternoon") is a piracy frame. The repo is reachable, but treat the numbers and the pitch as unverified. |
+| Craft Anything | storytold/craft-anything | 22,227★ / 4,383 forks, Apache-2.0 + MIT, created 2026-10-31 | Real, pure-Rust clean-room engine, very active (349+ commits), README says **early alpha**. But 22k stars in ~8 days is not organic. |
+| REA | morluto/rea | 442,949★ / 109,476 forks, MIT, created 2026-04-14 | Reachable MCP RE tool. Metrics are near-top-of-GitHub for a 7-month niche tool — implausible. Promoted with a "make any app free" piracy frame. REA's own README warns copycat repos exist, so if you do try it, confirm the source (morluto/rea, rea.tools, `rea-agents` npm). |
 
-REA's installer (`npx rea-agents@latest setup`) **edits your agent config**. Before running it:
-read the repo and its issues yourself, run it in a disposable VM/container, and prefer the
-trusted-core tools above, which do the same decompile/trace/debug work with no config rewrite.
-The `re-studio` skill already requires your approval before any REA setup — keep it that way.
+**Shared signal:** craft-anything, REA, and the rest of the `storytold` family
+(`photocraft` 77,909★, `pdfcraft` 20,010★, `filmcraft`, `wordcraft` — all created in the last
+few weeks) show the same 10k–80k-stars-in-weeks growth. That pattern is a coordinated-hype /
+trending-campaign signature, not adoption. It doesn't make the code bad — it makes the
+*social proof* worthless. Judge these on the code, in a VM, yourself.
+
+Both ship installers that **edit your agent config** (`npx rea-agents@latest setup`;
+craft-anything registers agents too). Read the repo and issues first, run in a disposable
+VM/container, and prefer the trusted-core tools — they do the same decompile/trace/debug work
+with no config rewrite. The `re-studio` skill requires your approval before any such setup;
+keep it that way.
+
+## ❌ Did not clear verification
+
+| Tool | Repo | Why not |
+|---|---|---|
+| Seep Reverse Lab | angusdevgo/Seep-Reverse-Lab | 2,098★ / 791 forks, GPL-3.0, created 2026-09-23. Small, unknown author; high fork-to-star ratio; framed as an "autonomous authorization-audit / apk-reverse workbench" (CWE-602) whose attribution chain (`Open-tqtylab`, `newliver666/apk-reverse`) is small unknown repos. Authorization-bypass tooling against APKs is exactly where the own-software scope gate matters most. Not vetted; not recommended. |
 
 ## License note for rebuilds
 
