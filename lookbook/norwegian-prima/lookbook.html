@@ -304,6 +304,69 @@ p { margin: 0; text-wrap: pretty; }
   html { scroll-behavior: smooth; }
 }
 
+/* ---------- Venue guide (tabs → desks → picks) ---------- */
+.guide-wrap {
+  padding-top: 32px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.guide {
+  max-width: 1180px; margin: 0 auto; background: var(--paper);
+  box-shadow: 0 1px 2px rgb(10 20 28 / 0.06), 0 18px 48px -24px rgb(10 20 28 / 0.28);
+  padding: 32px 36px 28px; display: grid; gap: 20px;
+}
+.guide-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px 32px; }
+.guide-head h2 { font-size: 1.9rem; }
+.guide-head .deck { font-size: 1rem; max-width: 52ch; }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--rule); overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  appearance: none; background: none; border: 0; cursor: pointer; color: var(--slate);
+  font-family: var(--f-display); font-stretch: 108%; font-weight: 600; font-size: 1rem;
+  padding: 10px 18px 12px; white-space: nowrap; position: relative;
+}
+.tab small { font-family: var(--f-mono); font-weight: 400; font-size: 0.62rem; letter-spacing: 0.08em; margin-left: 6px; color: var(--slate); }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); }
+.tab[aria-selected="true"]::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 2px; background: var(--fjord); }
+.tab:focus-visible, .desk:focus-visible { outline: 2px solid var(--fjord); outline-offset: 2px; }
+.desks { display: flex; flex-wrap: wrap; gap: 6px; }
+.desk {
+  appearance: none; cursor: pointer; background: none; color: var(--slate);
+  border: 1px solid var(--rule); border-radius: 999px; padding: 5px 13px;
+  font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.desk:hover { color: var(--ink); border-color: var(--slate); }
+.desk[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pick {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 18px; align-items: baseline;
+  padding: 14px 16px; border: 1px solid var(--rule); border-left: 3px solid var(--fjord);
+}
+.pick .label { color: var(--fjord); grid-row: span 2; }
+.pick strong { font-family: var(--f-display); font-stretch: 106%; font-weight: 620; font-size: 1.05rem; }
+.pick p { font-size: 0.95rem; color: var(--slate); }
+.venues { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; }
+.venue { padding: 14px 0; border-top: 1px solid var(--rule); display: grid; gap: 5px; align-content: start; min-width: 0; }
+.venue-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.venue h3 { margin: 0; font-size: 1rem; }
+.venue .kind { font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate); }
+.venue p { font-size: 0.92rem; line-height: 1.42; }
+.venue p b { font-family: var(--f-mono); font-weight: 500; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate); margin-right: 6px; }
+.cost { flex: none; font-family: var(--f-mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; border: 1px solid currentColor; }
+.cost.inc { color: var(--good); }
+.cost.fee { color: var(--fjord); }
+.cost.paid { color: var(--avoid); }
+.star-pick { color: var(--fjord); font-family: var(--f-mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.guide-note { font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate); border-top: 1px solid var(--rule); padding-top: 12px; }
+@media (max-width: 900px) { .venues { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) {
+  .guide { padding: 24px 20px 20px; }
+  .venues { grid-template-columns: minmax(0, 1fr); }
+  .pick { grid-template-columns: minmax(0, 1fr); }
+  .pick .label { grid-row: auto; }
+}
+@media print { .guide-wrap { display: none; } }
+
 /* ---------- Print / PDF: one sheet per A4 landscape page ---------- */
 @page { size: 297mm 210mm; margin: 0; }
 @media print {
@@ -326,6 +389,7 @@ p { margin: 0; text-wrap: pretty; }
   <div class="bar-inner">
     <div class="bar-title">The Unfiltered Field Guide · Norwegian Prima</div>
     <nav class="bar-nav" aria-label="Pages">
+      <a href="#guide"><span>★</span>Venue guide</a>
       <a href="#overview"><span>1</span>Overview</a>
       <a href="#dining"><span>2</span>Dining</a>
       <a href="#staterooms"><span>3</span>Staterooms</a>
@@ -335,6 +399,25 @@ p { margin: 0; text-wrap: pretty; }
     </nav>
   </div>
 </header>
+
+<section class="guide-wrap" id="guide" aria-labelledby="guide-title">
+  <div class="guide">
+    <div class="guide-head">
+      <div style="display:grid;gap:10px">
+        <div class="eyebrow">Venue guide</div>
+        <h2 id="guide-title">Where to go, and what to skip</h2>
+      </div>
+      <p class="deck">Pick a category, then narrow it down. Each tab starts with our top pick.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Venue categories" id="guide-tabs"></div>
+    <div id="guide-panel" role="tabpanel" style="display:grid;gap:18px">
+      <div class="desks" id="guide-desks" aria-label="Filter"></div>
+      <div class="pick" id="guide-pick"></div>
+      <div class="venues" id="guide-venues"></div>
+    </div>
+    <p class="guide-note">Venues from NCL's published Prima lineup. Hours, fees and shows change by sailing, so check the NCL app before you go.</p>
+  </div>
+</section>
 
 <main class="book">
 
@@ -531,5 +614,138 @@ p { margin: 0; text-wrap: pretty; }
     img.addEventListener("error", fail);
     if (img.complete && img.naturalWidth === 0) fail();
   });
+})();
+
+// Venue guide. cost: inc = included, fee = specialty fee or dining package, paid = pay per use.
+var GUIDE = [
+  { id: "restaurants", label: "Restaurants",
+    pick: { name: "Indulge Food Hall", why: "The best food you don't pay extra for. Order small plates from the tablet and share. Go before noon or after 1:30 pm." },
+    desks: ["Included", "Specialty", "Date night", "Late & quick"],
+    venues: [
+      { name: "Indulge Food Hall", kind: "Food hall · Deck 8", cost: "inc", desks: ["Included", "Late & quick"], best: "Grazing and variety", tip: "Seats run out at peak. Send one person to hold a table.", top: true },
+      { name: "Hudson's", kind: "Main dining room", cost: "inc", desks: ["Included"], best: "A proper sit-down dinner, no fee", tip: "Ask for a window table when you arrive." },
+      { name: "The Commodore Room", kind: "Main dining room", cost: "inc", desks: ["Included", "Date night"], best: "A quieter included dinner", tip: "Usually easier to get into than Hudson's at 7 pm." },
+      { name: "Surfside Café & Grill", kind: "Buffet", cost: "inc", desks: ["Included", "Late & quick"], best: "Fast breakfast before a port day", tip: "Skip it at lunch on embarkation day." },
+      { name: "The Local Bar & Grill", kind: "Pub · 24 hours", cost: "inc", desks: ["Included", "Late & quick"], best: "Burgers at 2 am", tip: "The reliable fallback when everything else is full." },
+      { name: "Cagney's Steakhouse", kind: "Steakhouse", cost: "fee", desks: ["Specialty", "Date night"], best: "Celebration dinners", tip: "Book on the first night. Prime times go fast." },
+      { name: "Le Bistro", kind: "French", cost: "fee", desks: ["Specialty", "Date night"], best: "A slow, two-hour date night", tip: "Order the classics. This is not a place to rush." },
+      { name: "Onda by Scarpetta", kind: "Coastal Italian", cost: "fee", desks: ["Specialty", "Date night"], best: "Pasta and a long dinner with a view", tip: "Ask for an Ocean Boulevard-side table." },
+      { name: "Palomar", kind: "Mediterranean seafood", cost: "fee", desks: ["Specialty"], best: "A lighter upscale meal", tip: "Good for a lunch-style dinner on a hot day." },
+      { name: "Hasuki", kind: "Teppanyaki", cost: "fee", desks: ["Specialty"], best: "Groups and birthdays", tip: "Communal tables. Book together to sit together." },
+      { name: "Los Lobos", kind: "Mexican", cost: "fee", desks: ["Specialty"], best: "The best value among the specialty restaurants", tip: "A good first specialty meal if you're on a dining package." }
+    ] },
+  { id: "bars", label: "Bars",
+    pick: { name: "Metropolitan Bar", why: "The most interesting cocktail list on board, in a calm room. Start your evening here before dinner." },
+    desks: ["Cocktails", "Whiskey & cigars", "Live music", "Sun & views"],
+    venues: [
+      { name: "Metropolitan Bar", kind: "Cocktail bar", cost: "inc", desks: ["Cocktails"], best: "Pre-dinner cocktails", tip: "Order off the house list, not the standard menu.", top: true },
+      { name: "Penrose Bar", kind: "Atrium bar", cost: "inc", desks: ["Cocktails"], best: "People-watching under the starry ceiling", tip: "Busiest before the shows. Go after 10 pm." },
+      { name: "Whiskey Bar", kind: "Spirits lounge", cost: "inc", desks: ["Whiskey & cigars"], best: "A quiet nightcap", tip: "Ask about flights if you want to try several." },
+      { name: "Humidor Cigar Lounge", kind: "Cigar lounge", cost: "inc", desks: ["Whiskey & cigars"], best: "Cigars indoors", tip: "Skip it if smoke bothers you. It carries." },
+      { name: "Syd Norman's Pour House", kind: "Rock bar · live music", cost: "inc", desks: ["Live music"], best: "Live rock covers", tip: "Arrive before the set. It fills fast." },
+      { name: "Prima Theater & Club", kind: "Nightclub mode", cost: "inc", desks: ["Live music"], best: "Late-night dancing", tip: "The theater turns into a club after the evening shows." },
+      { name: "Observation Lounge", kind: "Forward lounge", cost: "inc", desks: ["Sun & views"], best: "Sail-ins and a quiet afternoon", tip: "The best seat on board for scenery days." },
+      { name: "Vibe Beach Club", kind: "Adults-only sundeck", cost: "paid", desks: ["Sun & views"], best: "A guaranteed lounger on sea days", tip: "Passes are limited. Buy them before you sail." }
+    ] },
+  { id: "fun", label: "Fun & Events",
+    pick: { name: "Prima Speedway", why: "The ship's headline attraction: a three-level go-kart track. It's paid and worth it once. Book an early slot on a sea day." },
+    desks: ["Thrill", "Shows", "Chill"],
+    venues: [
+      { name: "Prima Speedway", kind: "Go-karts · three levels", cost: "paid", desks: ["Thrill"], best: "The one thing you'll talk about later", tip: "Avoid cabins under it. Ride it early.", top: true },
+      { name: "The Drop", kind: "Freefall dry slide", cost: "inc", desks: ["Thrill"], best: "A fast adrenaline hit", tip: "Short queues early in the morning." },
+      { name: "The Rush", kind: "Dual racing slides", cost: "inc", desks: ["Thrill"], best: "Racing a friend", tip: "Go with someone to race side by side." },
+      { name: "Galaxy Pavilion", kind: "VR and simulators", cost: "paid", desks: ["Thrill"], best: "A rainy sea day", tip: "Check the card price before you start." },
+      { name: "Prima Theater & Club", kind: "Production shows", cost: "inc", desks: ["Shows"], best: "Big-production evenings", tip: "Reserve before you sail. It sells out." },
+      { name: "The Improv", kind: "Comedy club", cost: "inc", desks: ["Shows"], best: "A late laugh", tip: "Reserve. Late shows are often adults-only." },
+      { name: "Ocean Boulevard", kind: "Outdoor promenade", cost: "inc", desks: ["Chill"], best: "A sunset walk", tip: "Quietest late in the day." },
+      { name: "Infinity Beach", kind: "Infinity pools", cost: "inc", desks: ["Chill"], best: "A swim with an ocean view", tip: "Loungers go by late morning on sea days." },
+      { name: "Mandara Spa thermal suite", kind: "Spa", cost: "paid", desks: ["Chill"], best: "Escaping the crowds", tip: "Week-long passes are limited. Buy one on day one." }
+    ] },
+  { id: "casino", label: "Casino",
+    pick: { name: "Set a budget, then join Casinos at Sea", why: "NCL's casino rewards program tracks your play and can earn you offers on future cruises. Get your card before your first bet." },
+    desks: ["Tables", "Slots", "Rewards", "House rules"],
+    venues: [
+      { name: "Table games", kind: "Blackjack · roulette · craps", cost: "paid", desks: ["Tables"], best: "Social play", tip: "Tables are quietest and minimums lowest in the morning and afternoon at sea.", top: true },
+      { name: "Poker", kind: "Tournaments vary by sailing", cost: "paid", desks: ["Tables"], best: "Players who know the game", tip: "Check the daily planner for tournament times." },
+      { name: "Slot machines", kind: "Video and reel slots", cost: "paid", desks: ["Slots"], best: "Low-key solo play", tip: "Always insert your rewards card, or your play doesn't count." },
+      { name: "Casinos at Sea card", kind: "Rewards program", cost: "inc", desks: ["Rewards"], best: "Anyone who plans to play", tip: "Sign up at the casino desk on day one. It's free." },
+      { name: "Offers and free play", kind: "Rewards", cost: "inc", desks: ["Rewards"], best: "Regular players", tip: "Check the casino desk for offers before you disembark." },
+      { name: "Open hours", kind: "House rules", cost: "inc", desks: ["House rules"], best: "Planning", tip: "The casino closes while the ship is in port. Sea days are your window." },
+      { name: "Smoking", kind: "House rules", cost: "inc", desks: ["House rules"], best: "Non-smokers", tip: "Ask on board which section, if any, allows smoking, and sit away from it." },
+      { name: "Budget", kind: "House rules", cost: "inc", desks: ["House rules"], best: "Everyone", tip: "Gambling charges go on your room account. Set a daily limit before you sail." }
+    ] }
+];
+
+(function () {
+  var COST = { inc: "Included", fee: "Specialty fee", paid: "Paid" };
+  var tabsEl = document.getElementById("guide-tabs");
+  var desksEl = document.getElementById("guide-desks");
+  var pickEl = document.getElementById("guide-pick");
+  var listEl = document.getElementById("guide-venues");
+  var panel = document.getElementById("guide-panel");
+  var state = { tab: GUIDE[0].id, desk: "All" };
+  try { var saved = localStorage.getItem("prima-guide-tab"); if (saved && GUIDE.some(function (g) { return g.id === saved; })) state.tab = saved; } catch (e) {}
+
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+
+  function render() {
+    var cat = GUIDE.filter(function (g) { return g.id === state.tab; })[0];
+    tabsEl.textContent = "";
+    GUIDE.forEach(function (g) {
+      var b = el("button", "tab", g.label);
+      b.type = "button"; b.id = "tab-" + g.id; b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", g.id === state.tab ? "true" : "false");
+      b.setAttribute("aria-controls", "guide-panel");
+      b.tabIndex = g.id === state.tab ? 0 : -1;
+      b.appendChild(el("small", null, String(g.venues.length)));
+      b.addEventListener("click", function () { select(g.id); });
+      tabsEl.appendChild(b);
+    });
+    panel.setAttribute("aria-labelledby", "tab-" + cat.id);
+
+    desksEl.textContent = "";
+    ["All"].concat(cat.desks).forEach(function (d) {
+      var b = el("button", "desk", d);
+      b.type = "button"; b.setAttribute("aria-pressed", d === state.desk ? "true" : "false");
+      b.addEventListener("click", function () { state.desk = d; render(); });
+      desksEl.appendChild(b);
+    });
+
+    pickEl.textContent = "";
+    pickEl.appendChild(el("span", "label", "Top pick"));
+    pickEl.appendChild(el("strong", null, cat.pick.name));
+    pickEl.appendChild(el("p", null, cat.pick.why));
+
+    listEl.textContent = "";
+    cat.venues.filter(function (v) { return state.desk === "All" || v.desks.indexOf(state.desk) > -1; })
+      .forEach(function (v) {
+        var card = el("article", "venue");
+        var top = el("div", "venue-top");
+        top.appendChild(el("h3", null, v.name));
+        top.appendChild(el("span", "cost " + v.cost, COST[v.cost]));
+        card.appendChild(top);
+        var kind = el("div", "kind", v.kind);
+        if (v.top) { kind.appendChild(document.createTextNode(" · ")); kind.appendChild(el("span", "star-pick", "Top pick")); }
+        card.appendChild(kind);
+        var best = el("p"); best.appendChild(el("b", null, "Best for")); best.appendChild(document.createTextNode(v.best)); card.appendChild(best);
+        var tip = el("p"); tip.appendChild(el("b", null, "Tip")); tip.appendChild(document.createTextNode(v.tip)); card.appendChild(tip);
+        listEl.appendChild(card);
+      });
+  }
+
+  function select(id) {
+    state.tab = id; state.desk = "All";
+    try { localStorage.setItem("prima-guide-tab", id); } catch (e) {}
+    render();
+    var t = document.getElementById("tab-" + id); if (t) t.focus();
+  }
+
+  tabsEl.addEventListener("keydown", function (e) {
+    var i = GUIDE.findIndex(function (g) { return g.id === state.tab; });
+    if (e.key === "ArrowRight") { e.preventDefault(); select(GUIDE[(i + 1) % GUIDE.length].id); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); select(GUIDE[(i - 1 + GUIDE.length) % GUIDE.length].id); }
+  });
+
+  render();
 })();
 </script>
