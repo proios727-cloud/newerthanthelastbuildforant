@@ -356,6 +356,7 @@ p { margin: 0; text-wrap: pretty; }
 .cost.inc { color: var(--good); }
 .cost.fee { color: var(--fjord); }
 .cost.paid { color: var(--avoid); }
+.cost.pkg { color: var(--slate); }
 .star-pick { color: var(--fjord); font-family: var(--f-mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; }
 .guide-note { font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate); border-top: 1px solid var(--rule); padding-top: 12px; }
 @media (max-width: 900px) { .venues { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -415,7 +416,7 @@ p { margin: 0; text-wrap: pretty; }
       <div class="pick" id="guide-pick"></div>
       <div class="venues" id="guide-venues"></div>
     </div>
-    <p class="guide-note">Venues from NCL's published Prima lineup. Hours, fees and shows change by sailing, so check the NCL app before you go.</p>
+    <p class="guide-note">Researched November 2026 from NCL and cruise-review sources. Prices, menus and shows change by sailing, so check the Norwegian Cruise Line app. A tip that says confirm means sources disagreed.</p>
   </div>
 </section>
 
@@ -616,74 +617,305 @@ p { margin: 0; text-wrap: pretty; }
   });
 })();
 
-// Venue guide. cost: inc = included, fee = specialty fee or dining package, paid = pay per use.
+// Venue guide. cost: inc = included, fee = specialty fee, paid = pay per use, pkg = bar prices or drink package.
+// Researched Nov 2026 from NCL pages and cruise-review sites. "Confirm" in a tip means sources disagreed.
 var GUIDE = [
+  { id: "onboard", label: "On board now",
+    pick: { name: "Your 4 nights: Los Lobos, Onda, Hasuki, Cagney's", why: "Dinners are ranked by critics and cruisers and spread across your sailing, Nov 8 to Nov 12. Book all four in the app today. Event times change by sailing, so take them from the Norwegian Cruise Line app or the Freestyle Daily." },
+    desks: ["Sun Nov 8", "Mon Nov 9", "Tue Nov 10", "Wed Nov 11", "Thu Nov 12", "Dining order", "Bars & clubs", "Casino"],
+    venues: [
+      { name: "1. Onda by Scarpetta", kind: "Italian · specialty", deck: 8, cost: "fee", desks: ["Dining order"], top: true, book: true,
+        order: ["Burrata", "Lobster tagliatelle", "Braised octopus"], best: "Critics' and cruisers' favorite on Prima",
+        tip: "If you only have one specialty dinner left, make it this one. Waitlist in the app if it's full." },
+      { name: "2. Los Lobos", kind: "Mexican · specialty", deck: 8, cost: "fee", desks: ["Dining order"], book: true,
+        order: ["Tableside guacamole", "Cochinita pibil"], drink: "Margarita", best: "Forum favorite and the best value",
+        tip: "Ask for the Ocean Boulevard terrace at sunset." },
+      { name: "3. Cagney's Steakhouse", kind: "Steakhouse · specialty", deck: 6, cost: "fee", desks: ["Dining order"], book: true,
+        order: ["Certified Angus Beef steak"], best: "A dressed-up last night", tip: "Collared shirt, long pants, closed-toe shoes." },
+      { name: "4. Hasuki", kind: "Teppanyaki · specialty", deck: 7, cost: "fee", desks: ["Dining order"], book: true,
+        order: ["NY strip", "Seafood combination"], best: "A fun group dinner", tip: "Fixed price, about $60. Book as one party." },
+      { name: "5. Le Bistro", kind: "French · specialty", deck: 7, cost: "fee", desks: ["Dining order"], book: true,
+        order: ["Escargot", "Coq au vin"], best: "A slow, quiet night", tip: "Rich food. Lobster Thermidor costs extra." },
+      { name: "6. Nama · Food Republic", kind: "Sushi · Asian-Latin plates", cost: "fee", desks: ["Dining order"], book: true,
+        best: "Lighter dinners", tip: "Nama on Deck 7 (sit at the counter). Food Republic on Deck 17 (share plates)." },
+      { name: "7. Palomar", kind: "Mediterranean seafood", deck: 17, cost: "fee", desks: ["Dining order"], book: true,
+        best: "Only if you've done the rest", tip: "Reviews are mixed. Cruisers rank Onda and Los Lobos above it." },
+      { name: "Best included: Indulge Food Hall", kind: "Included dining ranking", deck: 8, cost: "inc", desks: ["Dining order"],
+        order: ["Seaside Rotisserie lamb chops", "Nudls dan dan noodles", "Latin Quarter tostadas"],
+        best: "Lunch, or a dinner with no reservation", tip: "Then The Local (24 hours) for late food. Main dining rooms are a reliable sit-down." },
+      { name: "1. Metropolitan Bar", kind: "Pre-dinner cocktails", deck: 7, cost: "pkg", desks: ["Bars & clubs"], top: true,
+        drink: "Primadonna", best: "Starting the night", tip: "On the same deck as the theater and Syd Norman's." },
+      { name: "2. Soleil Bar", kind: "Sunset", deck: 8, cost: "pkg", desks: ["Bars & clubs"],
+        drink: "Tequila Funshine", best: "Golden hour over the wake", tip: "Arrive 20 minutes before sunset (time in the app)." },
+      { name: "3. Penrose Bar", kind: "Atrium", deck: 6, cost: "pkg", desks: ["Bars & clubs"],
+        drink: "Smoked Peach Margarita (on tap)", best: "Before the casino", tip: "Right beside the casino floor." },
+      { name: "4. Syd Norman's Pour House", kind: "Live rock band", deck: 7, cost: "pkg", desks: ["Bars & clubs"],
+        best: "The best nightlife on board", tip: "Check set times in the app and arrive before the first song." },
+      { name: "5. Prima Theater & Club", kind: "Late-night club", deck: 7, cost: "pkg", desks: ["Bars & clubs"],
+        best: "Dancing after the last show", tip: "The theater turns into a club late at night. Look for the club listing in the app." },
+      { name: "6. Whiskey Bar", kind: "Nightcap", cost: "pkg", desks: ["Bars & clubs"],
+        best: "Ending the night quietly", tip: "In the Penrose Atrium (Deck 7 or 8)." },
+      { name: "Tonight's tournaments", kind: "Casino events", deck: 6, cost: "paid", desks: ["Casino"], top: true,
+        best: "Slot, blackjack and bingo tournaments", tip: "Check the app's Activities list or ask the casino desk which tournaments run on your remaining days. Buy seats early." },
+      { name: "Best game", kind: "Strategy", deck: 6, desks: ["Casino"],
+        best: "Blackjack at a 3:2 table with basic strategy", tip: "Bet the craps pass line with odds, or banker at baccarat. Skip side bets." },
+      { name: "Before the casino closes", kind: "Last sea night", deck: 6, desks: ["Casino"],
+        best: "Collecting what you've earned", tip: "The casino closes in port. On your last night, ask the casino desk about offers, then check your folio for casino charges." },
+      { name: "Today: book everything", kind: "Embarkation · do this first", desks: ["Sun Nov 8"], top: true, book: true,
+        plan: ["Onda (Mon)", "Hasuki (Tue)", "Cagney's (Wed)", "The Price Is Right LIVE", "A Speedway slot", "Casino tournament seats"],
+        best: "Locking in the best slots", tip: "Book in the Norwegian Cruise Line app on ship Wi-Fi (no package needed). Waitlist anything that's full." },
+      { name: "Sun Nov 8 · Afternoon", kind: "Embarkation day", desks: ["Sun Nov 8"],
+        plan: ["Lunch at Indulge after 1:30 pm, or Hudson's if it's open", "Muster check-in right away", "Walk Ocean Boulevard (Deck 8)", "Sail-away at Soleil Bar or the Observation Lounge"],
+        best: "Getting your bearings", tip: "Skip the Surfside buffet at peak lunch today. It's the busiest meal of the cruise." },
+      { name: "Sun Nov 8 · Evening", kind: "Night 1 of 4", deck: 8, cost: "fee", desks: ["Sun Nov 8"],
+        plan: ["Margarita at Los Lobos", "Dinner: Los Lobos (#2), terrace table", "Show in Prima Theater or The Improv", "Syd Norman's live band"],
+        order: ["Tableside guacamole", "Cochinita pibil"], best: "An easy, fun first night",
+        tip: "If Los Lobos is full, eat at Indulge and move Los Lobos to Tuesday." },
+      { name: "Mon Nov 9 · Day", kind: "Sea day or port: check the app", desks: ["Mon Nov 9"],
+        plan: ["Speedway early", "The Drop and The Rush before 10 am", "Pickleball at The Stadium", "Infinity Beach in the afternoon"],
+        best: "Big rides while lines are short", tip: "On a port day, do this list the next sea day instead." },
+      { name: "Mon Nov 9 · Evening", kind: "Night 2 of 4", deck: 8, cost: "fee", desks: ["Mon Nov 9"], book: true,
+        plan: ["Primadonna at Metropolitan Bar", "Dinner: Onda by Scarpetta (#1)", "The Price Is Right LIVE or Bossa Nova Beat", "Casino: blackjack or a slot tournament"],
+        order: ["Burrata", "Lobster tagliatelle", "Braised octopus"], best: "The best dinner on board",
+        tip: "Going early in the trip leaves you a chance to go back if you love it." },
+      { name: "Tue Nov 10 · Day", kind: "Sea day or port: check the app", desks: ["Tue Nov 10"],
+        plan: ["Thermal Suite or Vibe Beach Club", "Galaxy Pavilion if it rains", "Lunch at Indulge: rotisserie, noodles, tostadas"],
+        best: "A slower day", tip: "Thermal Suite day passes are limited. Ask the spa in the morning." },
+      { name: "Tue Nov 10 · Evening", kind: "Night 3 of 4", deck: 7, cost: "fee", desks: ["Tue Nov 10"], book: true,
+        plan: ["Sunset at Soleil Bar", "Dinner: Hasuki teppanyaki (#4)", "The Improv (late set)", "Prima Theater & Club late-night dancing"],
+        order: ["NY strip", "Seafood combination"], best: "Your big night out",
+        tip: "Not into teppanyaki? Swap in Le Bistro (#5) or Nama." },
+      { name: "Wed Nov 11 · Day", kind: "Last full day", desks: ["Wed Nov 11"],
+        plan: ["Last Speedway run", "Review your bill in the app", "Pack before dinner", "Ask the casino desk about offers"],
+        best: "No last-minute rush", tip: "Your stateroom letter or the app gives the bag-out time and your departure group." },
+      { name: "Wed Nov 11 · Evening", kind: "Night 4 of 4 · last night", deck: 6, cost: "fee", desks: ["Wed Nov 11"], book: true,
+        plan: ["Cocktail at Belvedere Bar", "Dinner: Cagney's Steakhouse (#3)", "Final casino session before it closes", "Nightcap at Whiskey Bar"],
+        order: ["Certified Angus Beef steak"], best: "A dressed-up farewell",
+        tip: "Put bags out before bed. Keep meds, documents, chargers and tomorrow's clothes in a carry-on." },
+      { name: "Thu Nov 12 · Disembarkation", kind: "Departure morning", desks: ["Thu Nov 12"], top: true,
+        plan: ["Early breakfast at Surfside (Deck 17) or Indulge (Deck 8)", "Clear the cabin by the posted time", "Wait for your group in a lounge", "Self-assist (carry your own bags) is usually first off"],
+        best: "A calm exit", tip: "Check your final bill in the app. Take disputes to Guest Services on Deck 7 before you leave." }
+    ] },
   { id: "restaurants", label: "Restaurants",
-    pick: { name: "Indulge Food Hall", why: "The best food you don't pay extra for. Order small plates from the tablet and share. Go before noon or after 1:30 pm." },
-    desks: ["Included", "Specialty", "Date night", "Late & quick"],
+    pick: { name: "Indulge Food Hall for free, Onda by Scarpetta for a splurge", why: "Indulge is the best included food on board: graze the rotisserie, noodles and Latin stalls. For one paid dinner, reviewers rank Onda first. Order the burrata and lobster tagliatelle." },
+    desks: ["Included", "Indulge stalls", "Specialty", "Date night", "Late & quick"],
     venues: [
-      { name: "Indulge Food Hall", kind: "Food hall · Deck 8", cost: "inc", desks: ["Included", "Late & quick"], best: "Grazing and variety", tip: "Seats run out at peak. Send one person to hold a table.", top: true },
-      { name: "Hudson's", kind: "Main dining room", cost: "inc", desks: ["Included"], best: "A proper sit-down dinner, no fee", tip: "Ask for a window table when you arrive." },
-      { name: "The Commodore Room", kind: "Main dining room", cost: "inc", desks: ["Included", "Date night"], best: "A quieter included dinner", tip: "Usually easier to get into than Hudson's at 7 pm." },
-      { name: "Surfside Café & Grill", kind: "Buffet", cost: "inc", desks: ["Included", "Late & quick"], best: "Fast breakfast before a port day", tip: "Skip it at lunch on embarkation day." },
-      { name: "The Local Bar & Grill", kind: "Pub · 24 hours", cost: "inc", desks: ["Included", "Late & quick"], best: "Burgers at 2 am", tip: "The reliable fallback when everything else is full." },
-      { name: "Cagney's Steakhouse", kind: "Steakhouse", cost: "fee", desks: ["Specialty", "Date night"], best: "Celebration dinners", tip: "Book on the first night. Prime times go fast." },
-      { name: "Le Bistro", kind: "French", cost: "fee", desks: ["Specialty", "Date night"], best: "A slow, two-hour date night", tip: "Order the classics. This is not a place to rush." },
-      { name: "Onda by Scarpetta", kind: "Coastal Italian", cost: "fee", desks: ["Specialty", "Date night"], best: "Pasta and a long dinner with a view", tip: "Ask for an Ocean Boulevard-side table." },
-      { name: "Palomar", kind: "Mediterranean seafood", cost: "fee", desks: ["Specialty"], best: "A lighter upscale meal", tip: "Good for a lunch-style dinner on a hot day." },
-      { name: "Hasuki", kind: "Teppanyaki", cost: "fee", desks: ["Specialty"], best: "Groups and birthdays", tip: "Communal tables. Book together to sit together." },
-      { name: "Los Lobos", kind: "Mexican", cost: "fee", desks: ["Specialty"], best: "The best value among the specialty restaurants", tip: "A good first specialty meal if you're on a dining package." }
+      { name: "Indulge Food Hall", kind: "Food hall · 11 outlets", deck: 8, cost: "inc", desks: ["Included", "Late & quick"], top: true,
+        order: ["Lamb chops at Seaside Rotisserie", "Dan dan noodles at Nudls", "Tostadas at Latin Quarter"], drink: "An on-tap cocktail from Luna Bar inside the hall",
+        best: "Grazing and variety", tip: "Every stall is included except Starbucks and Coco's. Go before noon or after 1:30 pm for a table." },
+      { name: "Seaside Rotisserie", kind: "Indulge stall · grill", deck: 8, cost: "inc", desks: ["Indulge stalls", "Included"],
+        order: ["Lamb chops", "Tenderloin", "Kabobs"], best: "A proper protein fix without a fee", tip: "Order from the tablet and it comes to your table." },
+      { name: "Nudls", kind: "Indulge stall · Asian noodles", deck: 8, cost: "inc", desks: ["Indulge stalls", "Included"],
+        order: ["Dan dan noodles"], best: "A quick, hot lunch", tip: "Pair it with something from Latin Quarter and share." },
+      { name: "Latin Quarter", kind: "Indulge stall · Latin street food", deck: 8, cost: "inc", desks: ["Indulge stalls", "Included"],
+        order: ["Tostadas (crab, tuna or mushroom)", "Guacamole", "Nachos"], best: "Snacking with a drink", tip: "Served from an Airstream-style truck inside the hall." },
+      { name: "Q Texas Smokehouse", kind: "Indulge stall · Texas BBQ", deck: 8, cost: "inc", desks: ["Indulge stalls", "Included"],
+        best: "BBQ at no charge", tip: "Q is a paid restaurant on other NCL ships. On Prima it's an included Indulge stall." },
+      { name: "Tamara", kind: "Indulge stall · Indian", deck: 8, cost: "inc", desks: ["Indulge stalls", "Included"],
+        best: "Vegetarians", tip: "The most vegetarian-friendly stall in the hall." },
+      { name: "The Garden", kind: "Indulge stall · salads", deck: 8, cost: "inc", desks: ["Indulge stalls", "Included"],
+        best: "A light lunch", tip: "Build a salad and add a protein." },
+      { name: "Coco's", kind: "Indulge stall · desserts", deck: 8, cost: "paid", desks: ["Indulge stalls"],
+        best: "A chocolate treat", tip: "One of only two paid counters in Indulge, with Starbucks." },
+      { name: "Hudson's", kind: "Main dining room", deck: 7, cost: "inc", desks: ["Included"],
+        best: "A sit-down dinner without a fee", tip: "The larger of the two main dining rooms. Usually walk-in." },
+      { name: "The Commodore Room", kind: "Main dining room", deck: 6, cost: "inc", desks: ["Included", "Date night"],
+        best: "A quieter included dinner", tip: "Have a cocktail at Belvedere Bar next door first." },
+      { name: "Surfside Café & Grill", kind: "Buffet", deck: 17, cost: "inc", desks: ["Included", "Late & quick"],
+        best: "Fast breakfast before a port day", tip: "Skip it at lunch on embarkation day. Overflow seating is in the Food Republic space." },
+      { name: "The Local Bar & Grill", kind: "Pub · open 24 hours", deck: 8, cost: "inc", desks: ["Included", "Late & quick"],
+        order: ["Chicken wings", "Burger", "Fish and chips"], best: "Food at 2 am", tip: "The reliable fallback when everything else is full." },
+      { name: "Onda by Scarpetta", kind: "Italian", deck: 8, cost: "fee", desks: ["Specialty", "Date night"], book: true,
+        order: ["Burrata", "Braised octopus", "Lobster tagliatelle", "Stromboli bread"], best: "The best specialty meal on board",
+        tip: "Cruise Critic's favorite on Prima. Pricing may now be a fixed cover, so check the app." },
+      { name: "Los Lobos", kind: "Upscale Mexican", deck: 8, cost: "fee", desks: ["Specialty"], book: true,
+        order: ["Tableside guacamole", "Elote", "Carne asada", "Cochinita pibil"], drink: "Margarita",
+        best: "A fun, good-value specialty night", tip: "Ask for a table on the Ocean Boulevard terrace." },
+      { name: "Cagney's Steakhouse", kind: "Steakhouse", deck: 6, cost: "fee", desks: ["Specialty", "Date night"], book: true,
+        order: ["Certified Angus Beef steak"], best: "A classic celebration dinner",
+        tip: "Dress code: collared shirt, long pants, closed-toe shoes." },
+      { name: "Le Bistro", kind: "French", deck: 7, cost: "fee", desks: ["Specialty", "Date night"], book: true,
+        order: ["Escargot", "Coq au vin"], best: "A slow, rich date night",
+        tip: "Lobster Thermidor costs extra even with a dining package." },
+      { name: "Hasuki", kind: "Teppanyaki", deck: 7, cost: "fee", desks: ["Specialty"], book: true,
+        order: ["NY strip", "Seafood combination"], best: "Groups and birthdays",
+        tip: "Fixed price, about $60 in recent reports. Communal tables, so book as one party to sit together." },
+      { name: "Nama Sushi & Sashimi", kind: "Sushi bar", deck: 7, cost: "fee", desks: ["Specialty"], book: true,
+        order: ["Signature rolls"], best: "Sushi lovers", tip: "Sit at the counter." },
+      { name: "Palomar", kind: "Mediterranean seafood", deck: 17, cost: "fee", desks: ["Specialty"], book: true,
+        order: ["Grilled octopus", "Tuna crudo", "Sea scallops"], best: "A lighter seafood dinner",
+        tip: "Reviews are mixed. Most diners rate Onda and Los Lobos higher." },
+      { name: "Food Republic", kind: "Asian-Latin small plates", deck: 17, cost: "fee", desks: ["Specialty"], book: true,
+        best: "Sharing many small plates", tip: "Order several plates for the table." },
+      { name: "The Haven Restaurant", kind: "Haven guests only", deck: 16, cost: "inc", desks: ["Included", "Date night"],
+        best: "Haven guests who want quiet", tip: "Indoor and al fresco seating." }
     ] },
+
   { id: "bars", label: "Bars",
-    pick: { name: "Metropolitan Bar", why: "The most interesting cocktail list on board, in a calm room. Start your evening here before dinner." },
-    desks: ["Cocktails", "Whiskey & cigars", "Live music", "Sun & views"],
+    pick: { name: "Metropolitan Bar: order the Primadonna", why: "NCL's first sustainability-focused bar, with zero-waste cocktails made from kitchen leftovers. Start your evening here before a show on the same deck." },
+    desks: ["Cocktails", "Whiskey & cigars", "Live music", "Sun & views", "Adults-only"],
     venues: [
-      { name: "Metropolitan Bar", kind: "Cocktail bar", cost: "inc", desks: ["Cocktails"], best: "Pre-dinner cocktails", tip: "Order off the house list, not the standard menu.", top: true },
-      { name: "Penrose Bar", kind: "Atrium bar", cost: "inc", desks: ["Cocktails"], best: "People-watching under the starry ceiling", tip: "Busiest before the shows. Go after 10 pm." },
-      { name: "Whiskey Bar", kind: "Spirits lounge", cost: "inc", desks: ["Whiskey & cigars"], best: "A quiet nightcap", tip: "Ask about flights if you want to try several." },
-      { name: "Humidor Cigar Lounge", kind: "Cigar lounge", cost: "inc", desks: ["Whiskey & cigars"], best: "Cigars indoors", tip: "Skip it if smoke bothers you. It carries." },
-      { name: "Syd Norman's Pour House", kind: "Rock bar · live music", cost: "inc", desks: ["Live music"], best: "Live rock covers", tip: "Arrive before the set. It fills fast." },
-      { name: "Prima Theater & Club", kind: "Nightclub mode", cost: "inc", desks: ["Live music"], best: "Late-night dancing", tip: "The theater turns into a club after the evening shows." },
-      { name: "Observation Lounge", kind: "Forward lounge", cost: "inc", desks: ["Sun & views"], best: "Sail-ins and a quiet afternoon", tip: "The best seat on board for scenery days." },
-      { name: "Vibe Beach Club", kind: "Adults-only sundeck", cost: "paid", desks: ["Sun & views"], best: "A guaranteed lounger on sea days", tip: "Passes are limited. Buy them before you sail." }
+      { name: "Metropolitan Bar", kind: "Sustainable cocktails", deck: 7, cost: "pkg", desks: ["Cocktails"], top: true,
+        drink: ["Primadonna (banana-peel syrup, rum, walnut bitters)", "Croissant Mai Tai"], best: "Pre-dinner and pre-show drinks",
+        tip: "Aft starboard. Order off the house list." },
+      { name: "Penrose Bar", kind: "Atrium bar", deck: 6, cost: "pkg", desks: ["Cocktails"],
+        drink: ["Red Bubbles", "Smoked Peach Margarita (on tap)", "Monkey Business (on tap)"], best: "People-watching in the three-deck atrium",
+        tip: "The closest bar to the casino. It has video poker at the bar." },
+      { name: "Belvedere Bar", kind: "Craft-cocktail lounge", deck: 6, cost: "pkg", desks: ["Cocktails"],
+        drink: "Bottled craft cocktails", best: "A dim, grown-up drink", tip: "Next to the Commodore Room. Have a drink here before dinner." },
+      { name: "Luna Bar", kind: "Indulge bar", deck: 8, cost: "pkg", desks: ["Cocktails"],
+        drink: ["Tequila Funshine", "Smoky Dragon"], best: "A drink with your Indulge meal", tip: "Draft beer and on-tap cocktails." },
+      { name: "Soleil Bar", kind: "Outdoor aft bar", deck: 8, cost: "pkg", desks: ["Sun & views"],
+        drink: "Same menu as Luna Bar", best: "Sunset over the wake", tip: "On the Indulge Outdoor Lounge. Arrive 20 minutes before sunset." },
+      { name: "Whiskey Bar", kind: "Whiskey lounge", cost: "pkg", desks: ["Whiskey & cigars"],
+        drink: "American and international whiskeys, whiskey cocktails", best: "A quiet nightcap",
+        tip: "In the Penrose Atrium. Sources put it on Deck 7 or 8, so confirm on board." },
+      { name: "The Humidor Cigar Lounge", kind: "Cigar lounge", cost: "pkg", desks: ["Whiskey & cigars"],
+        best: "Cigars indoors", tip: "Deck 6 or 7 (sources differ). Skip it if smoke bothers you." },
+      { name: "Syd Norman's Pour House", kind: "Rock club · live band", deck: 7, cost: "pkg", desks: ["Live music"],
+        drink: "Beer or a classic. There's no house cocktail menu.", best: "Live rock and sing-alongs", tip: "Arrive before the set. It fills fast." },
+      { name: "Prima Theater & Club", kind: "Nightclub after the shows", deck: 7, cost: "pkg", desks: ["Live music"],
+        best: "Late-night dancing", tip: "The three-deck theater converts into a club late at night." },
+      { name: "Observation Lounge", kind: "Forward lounge", deck: 17, cost: "pkg", desks: ["Sun & views"],
+        best: "Sail-ins and scenery days", tip: "Smaller than on older NCL ships. Uses the atrium menu." },
+      { name: "Vibe Beach Club", kind: "18+ sundeck bar", deck: 17, cost: "paid", desks: ["Adults-only", "Sun & views"],
+        best: "A guaranteed lounger and quiet on sea days",
+        tip: "About $229–300 per person per cruise. Cantilevered hot tubs and cabanas. Passes are limited." },
+      { name: "The Haven Lounge & Bar", kind: "Haven guests only", deck: 16, cost: "pkg", desks: ["Adults-only"],
+        best: "Haven guests", tip: "Private, and quiet most evenings." }
     ] },
+
+  { id: "decks", label: "By deck",
+    pick: { name: "Deck 8 is the heart of the ship", why: "Ocean Boulevard, Indulge, Los Lobos, Onda, Infinity Beach and the glass Oceanwalk are all here. Most of your best hours will be spent on Deck 8." },
+    desks: ["Inside", "Ocean Boulevard", "Top decks"],
+    venues: [
+      { name: "Deck 6", kind: "Casino & lower atrium", desks: ["Inside"],
+        items: ["Casino", "Penrose Atrium & Bar", "Belvedere Bar", "Commodore Room", "Cagney's Steakhouse"],
+        best: "Cagney's for a classic steak night", tip: "The casino runs through the middle of the deck." },
+      { name: "Deck 7", kind: "Dining & shows", desks: ["Inside"],
+        items: ["Hudson's", "Le Bistro", "Nama", "Hasuki", "Metropolitan Bar", "Syd Norman's", "The Improv", "Prima Theater & Club", "Starbucks", "Guest Services"],
+        best: "A Primadonna at Metropolitan Bar, then a show", tip: "Theater forward, restaurants and bars aft." },
+      { name: "Deck 8", kind: "Ocean Boulevard", desks: ["Ocean Boulevard"], top: true,
+        items: ["Ocean Boulevard", "Indulge Food Hall", "Luna & Soleil bars", "Los Lobos", "Onda by Scarpetta", "The Local", "Infinity Beach", "Oceanwalk glass bridges", "The Concourse"],
+        best: "Graze Indulge, then sunset at Soleil Bar", tip: "Walk the full loop once. It's 44,000 sq ft." },
+      { name: "Deck 15", kind: "Kids", desks: ["Top decks"],
+        items: ["Splash Academy"], best: "Kids' club", tip: "There's a gaming wall for older kids." },
+      { name: "Deck 16", kind: "Spa & The Haven", desks: ["Top decks"],
+        items: ["Mandara Spa & Thermal Suite", "Pulse Fitness Center", "Haven Restaurant", "Haven Lounge & Bar", "Haven Sundeck"],
+        best: "A Thermal Suite pass on sea days", tip: "Thermal Suite passes are capped. Buy one on day one." },
+      { name: "Deck 17", kind: "Pool, buffet & lounges", desks: ["Top decks"],
+        items: ["Surfside Café & Grill", "Food Republic", "Palomar", "Observation Lounge", "Galaxy Pavilion", "Vibe Beach Club", "Main pool"],
+        best: "Vibe Beach Club for an adults-only day", tip: "The main pool is smaller than on older ships." },
+      { name: "Deck 18", kind: "Slides & sports", desks: ["Top decks"],
+        items: ["The Drop", "The Rush", "Prima Speedway (lower level)", "The Stadium", "Tee Time mini golf", "The Bull's Eye", "Kids' Aqua Park"],
+        best: "The Drop: a 10-story free-fall slide", tip: "Slides have the shortest queues first thing in the morning." },
+      { name: "Decks 19–20", kind: "Speedway & The Wave", desks: ["Top decks"],
+        items: ["Prima Speedway (upper levels)", "Speedway viewing area", "The Wave", "Sun deck"],
+        best: "Free viewing area over the go-kart track", tip: "The Wave's entrance is on Deck 19 or 20 (sources differ)." }
+    ] },
+
   { id: "fun", label: "Fun & Events",
-    pick: { name: "Prima Speedway", why: "The ship's headline attraction: a three-level go-kart track. It's paid and worth it once. Book an early slot on a sea day." },
-    desks: ["Thrill", "Shows", "Chill"],
+    pick: { name: "Prima Speedway: book it in the app", why: "A three-level go-kart track and the ship's signature attraction. It's $15 a session, or $199 for the 7-day Ultimate package if you'll ride 14+ times." },
+    desks: ["Thrill", "Sports", "Shows", "Wellness", "Family", "Book in app", "App guide"],
     venues: [
-      { name: "Prima Speedway", kind: "Go-karts · three levels", cost: "paid", desks: ["Thrill"], best: "The one thing you'll talk about later", tip: "Avoid cabins under it. Ride it early.", top: true },
-      { name: "The Drop", kind: "Freefall dry slide", cost: "inc", desks: ["Thrill"], best: "A fast adrenaline hit", tip: "Short queues early in the morning." },
-      { name: "The Rush", kind: "Dual racing slides", cost: "inc", desks: ["Thrill"], best: "Racing a friend", tip: "Go with someone to race side by side." },
-      { name: "Galaxy Pavilion", kind: "VR and simulators", cost: "paid", desks: ["Thrill"], best: "A rainy sea day", tip: "Check the card price before you start." },
-      { name: "Prima Theater & Club", kind: "Production shows", cost: "inc", desks: ["Shows"], best: "Big-production evenings", tip: "Reserve before you sail. It sells out." },
-      { name: "The Improv", kind: "Comedy club", cost: "inc", desks: ["Shows"], best: "A late laugh", tip: "Reserve. Late shows are often adults-only." },
-      { name: "Ocean Boulevard", kind: "Outdoor promenade", cost: "inc", desks: ["Chill"], best: "A sunset walk", tip: "Quietest late in the day." },
-      { name: "Infinity Beach", kind: "Infinity pools", cost: "inc", desks: ["Chill"], best: "A swim with an ocean view", tip: "Loungers go by late morning on sea days." },
-      { name: "Mandara Spa thermal suite", kind: "Spa", cost: "paid", desks: ["Chill"], best: "Escaping the crowds", tip: "Week-long passes are limited. Buy one on day one." }
+      { name: "Prima Speedway", kind: "Go-karts · three levels", deck: "18–20", cost: "paid", desks: ["Thrill", "Book in app"], top: true, book: true,
+        best: "The ride you'll talk about later", tip: "$15 a session. Book on embarkation day for the best slots. Avoid cabins directly under it." },
+      { name: "The Drop", kind: "Free-fall dry slide", deck: 18, cost: "inc", desks: ["Thrill"],
+        best: "A pure adrenaline hit", tip: "The floor drops out under you. Go early." },
+      { name: "The Rush", kind: "Twin racing slides", deck: 18, cost: "inc", desks: ["Thrill"],
+        best: "Racing a friend", tip: "Go side by side and see who wins." },
+      { name: "The Wave", kind: "Tidal-wave slide", deck: "19–20", cost: "inc", desks: ["Thrill"],
+        best: "NCL's first tidal-wave slide", tip: "Its name is The Wave, not Tidal Wave." },
+      { name: "Galaxy Pavilion", kind: "VR & simulators", deck: 17, cost: "paid", desks: ["Thrill", "Book in app"], book: true,
+        best: "Rainy or rough sea days", tip: "$9 a game, or about $28 for a day pass (NCL). Reserve popular VR games." },
+      { name: "The Stadium", kind: "Sports court", deck: 18, cost: "inc", desks: ["Sports"],
+        best: "Pickleball, shuffleboard, foosball, subsoccer", tip: "Pickleball gets packed. Go early or at dinner time." },
+      { name: "Tee Time", kind: "9-hole mini golf", deck: 18, cost: "paid", desks: ["Sports", "Family"],
+        best: "An easy family round", tip: "Small fee in most reports (one source says it's free). Confirm on board." },
+      { name: "The Bull's Eye", kind: "Darts", deck: 18, cost: "paid", desks: ["Sports"],
+        best: "A low-key competition", tip: "Hourly fee, about $5 in recent reports. Confirm on board." },
+      { name: "Bossa Nova Beat", kind: "Latin dance show", deck: 7, cost: "inc", desks: ["Shows", "Book in app"], book: true,
+        best: "High-energy dance", tip: "Replaced the Donna Summer musical. Reviews are mixed." },
+      { name: "The Price Is Right LIVE", kind: "Game show", deck: 7, cost: "inc", desks: ["Shows", "Book in app"], book: true,
+        best: "The most fun night in the theater", tip: "Reviewers call it a blast. Reserve a seat." },
+      { name: "The Improv at Sea", kind: "Stand-up comedy", deck: 7, cost: "inc", desks: ["Shows", "Book in app"], book: true,
+        best: "A late laugh", tip: "Late sets are adults-only." },
+      { name: "Syd Norman's live band", kind: "Rock sing-alongs", deck: 7, cost: "inc", desks: ["Shows"],
+        best: "No-reservation nightlife", tip: "Walk in. Arrive before the set." },
+      { name: "Ocean Boulevard & Oceanwalk", kind: "Promenade & glass bridges", deck: 8, cost: "inc", desks: ["Wellness"],
+        best: "A sunset walk", tip: "Stand on the glass bridge over the sea." },
+      { name: "Infinity Beach", kind: "Infinity pools", deck: 8, cost: "inc", desks: ["Wellness"],
+        best: "A swim close to the waterline", tip: "Port and starboard pools. Loungers go by late morning." },
+      { name: "Mandara Spa Thermal Suite", kind: "Spa · 18+", deck: 16, cost: "paid", desks: ["Wellness"],
+        best: "Escaping the crowds", tip: "Charcoal sauna, salt room, ice room and therapy pools. Cruise passes are capped, so buy early." },
+      { name: "Pulse Fitness Center", kind: "Gym", deck: 16, cost: "inc", desks: ["Wellness"],
+        best: "Keeping your routine", tip: "Some classes cost extra." },
+      { name: "Splash Academy", kind: "Kids' club", deck: 15, cost: "inc", desks: ["Family"],
+        best: "Younger kids", tip: "Includes a gaming wall for older kids." },
+      { name: "Teen club (Entourage)", kind: "Teens", cost: "inc", desks: ["Family"],
+        best: "Teens", tip: "Location varies by report (Deck 15 or 18). Ask at Guest Services." },
+      { name: "The Norwegian Cruise Line app", kind: "Your booking tool", desks: ["App guide"],
+        best: "Booking everything", tip: "This is the current app. The old Cruise Norwegian app shut down on 1 Jan 2025." },
+      { name: "Before you sail", kind: "What to book", desks: ["App guide"],
+        best: "Specialty dining, shows, shore excursions, check-in, Wi-Fi", tip: "Book shows and dinners first. They sell out." },
+      { name: "Booking windows", kind: "When it opens", desks: ["App guide"],
+        best: "Planners", tip: "Specialty dining opens 90–125 days before sailing for standard cabins and 130 days for suites and The Haven." },
+      { name: "On board", kind: "No Wi-Fi package needed", desks: ["App guide"],
+        best: "Everyone", tip: "Join the ship's Wi-Fi and the app works without using paid minutes. It does not work over cellular." },
+      { name: "Waitlists", kind: "If something's full", desks: ["App guide"],
+        best: "Sold-out shows and dinners", tip: "Join the waitlist in the app. Spots open up after people cancel." }
     ] },
+
   { id: "casino", label: "Casino",
-    pick: { name: "Set a budget, then join Casinos at Sea", why: "NCL's casino rewards program tracks your play and can earn you offers on future cruises. Get your card before your first bet." },
-    desks: ["Tables", "Slots", "Rewards", "House rules"],
+    pick: { name: "Play blackjack with basic strategy, skip the side bets", why: "Blackjack at a 3:2 table played by the book costs you about 0.5% per hand. Side bets, keno and slots cost many times more. Join Casinos at Sea before your first bet." },
+    desks: ["Events", "Strategy", "Rewards", "House rules"],
     venues: [
-      { name: "Table games", kind: "Blackjack · roulette · craps", cost: "paid", desks: ["Tables"], best: "Social play", tip: "Tables are quietest and minimums lowest in the morning and afternoon at sea.", top: true },
-      { name: "Poker", kind: "Tournaments vary by sailing", cost: "paid", desks: ["Tables"], best: "Players who know the game", tip: "Check the daily planner for tournament times." },
-      { name: "Slot machines", kind: "Video and reel slots", cost: "paid", desks: ["Slots"], best: "Low-key solo play", tip: "Always insert your rewards card, or your play doesn't count." },
-      { name: "Casinos at Sea card", kind: "Rewards program", cost: "inc", desks: ["Rewards"], best: "Anyone who plans to play", tip: "Sign up at the casino desk on day one. It's free." },
-      { name: "Offers and free play", kind: "Rewards", cost: "inc", desks: ["Rewards"], best: "Regular players", tip: "Check the casino desk for offers before you disembark." },
-      { name: "Open hours", kind: "House rules", cost: "inc", desks: ["House rules"], best: "Planning", tip: "The casino closes while the ship is in port. Sea days are your window." },
-      { name: "Smoking", kind: "House rules", cost: "inc", desks: ["House rules"], best: "Non-smokers", tip: "Ask on board which section, if any, allows smoking, and sit away from it." },
-      { name: "Budget", kind: "House rules", cost: "inc", desks: ["House rules"], best: "Everyone", tip: "Gambling charges go on your room account. Set a daily limit before you sail." }
+      { name: "Slot tournaments", kind: "Fleet event", cost: "paid", desks: ["Events"],
+        best: "Slot players", tip: "NCL runs free-play and Winner Take All slot tournaments. Check the app or daily planner for Prima's schedule." },
+      { name: "Blackjack tournaments", kind: "Fleet event", cost: "paid", desks: ["Events"],
+        best: "Table players", tip: "Seats for many tournaments can be bought in advance. Ask at the casino desk on day one." },
+      { name: "Bingo tournaments", kind: "Fleet event", cost: "paid", desks: ["Events"],
+        best: "A social, low-skill game", tip: "NCL advertises large bingo prize pools on select sailings." },
+      { name: "Poker", kind: "Tables and tournaments", cost: "paid", desks: ["Events"],
+        best: "Experienced players", tip: "No dedicated poker room is confirmed on Prima. Ask whether Hold'em tables are running." },
+      { name: "Blackjack", kind: "House edge ~0.5% with basic strategy", desks: ["Strategy"], top: true,
+        best: "The best odds in the room", tip: "Play 3:2 tables only (6:5 roughly triples the edge). Learn a basic-strategy chart. Never take insurance." },
+      { name: "Craps", kind: "Pass line ~1.4%", desks: ["Strategy"],
+        best: "A social, fast game", tip: "Bet pass or come, then take odds, which carry no house edge. Avoid the center proposition bets." },
+      { name: "Baccarat", kind: "Banker ~1.1%", desks: ["Strategy"],
+        best: "Zero-decision play", tip: "Bet banker every hand. Never bet tie (about 14% edge)." },
+      { name: "Roulette", kind: "Double-zero ~5.3%", desks: ["Strategy"],
+        best: "Relaxed play", tip: "Every bet carries the same edge except the five-number bet, which is worse. Treat it as entertainment." },
+      { name: "Video poker", kind: "Check the pay table", desks: ["Strategy"],
+        best: "Patient players", tip: "9/6 Jacks or Better returns about 99.5% with perfect play. Lower pay tables cost much more." },
+      { name: "Three Card Poker", kind: "Ante ~3%, Pair Plus higher", desks: ["Strategy"],
+        best: "Fast, easy play", tip: "Play with a queen-6-4 or better, fold below it. Keep Pair Plus bets small." },
+      { name: "Slots", kind: "Highest edge in the room", desks: ["Strategy"],
+        best: "Fun with a fixed budget", tip: "Always insert your players card, or your play earns nothing." },
+      { name: "Bankroll plan", kind: "Strategy", desks: ["Strategy"],
+        best: "Everyone", tip: "Split your budget across sea days. Stop for the day when one day's share is gone. Charges go on your room account." },
+      { name: "Casinos at Sea Players Club", kind: "Free to join", desks: ["Rewards"],
+        best: "Anyone who plays", tip: "Sign up at the casino desk on day one. Tiers: Pearl, Sapphire, Ruby and Elite. The tier year runs 1 April to 31 March." },
+      { name: "Offers and free play", kind: "Rewards", desks: ["Rewards"],
+        best: "Regular players", tip: "Check the casino desk for offers and future-cruise deals before you disembark." },
+      { name: "Location", kind: "House rules", deck: 6, desks: ["House rules"],
+        best: "Finding it", tip: "Runs through the middle of Deck 6 beside the Penrose Atrium. No casino bar; Penrose Bar is next door." },
+      { name: "Open hours", kind: "House rules", desks: ["House rules"],
+        best: "Planning", tip: "The casino closes while the ship is in port. Sea days and evenings are your window." },
+      { name: "Smoking", kind: "House rules", desks: ["House rules"],
+        best: "Non-smokers", tip: "There's a glass-enclosed smoking section for active players (cigarettes and vapes only, no cigars). Sit away from that corner." }
     ] }
 ];
 
 (function () {
-  var COST = { inc: "Included", fee: "Specialty fee", paid: "Paid" };
+  var COST = { inc: "Included", fee: "Specialty fee", paid: "Paid", pkg: "Drink pkg" };
   var tabsEl = document.getElementById("guide-tabs");
   var desksEl = document.getElementById("guide-desks");
   var pickEl = document.getElementById("guide-pick");
   var listEl = document.getElementById("guide-venues");
   var panel = document.getElementById("guide-panel");
   var state = { tab: GUIDE[0].id, desk: "All" };
+  var todayLabel = (function () { var d = new Date(); return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()] + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()] + " " + d.getDate(); })();
   try { var saved = localStorage.getItem("prima-guide-tab"); if (saved && GUIDE.some(function (g) { return g.id === saved; })) state.tab = saved; } catch (e) {}
 
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
@@ -722,19 +954,33 @@ var GUIDE = [
         var card = el("article", "venue");
         var top = el("div", "venue-top");
         top.appendChild(el("h3", null, v.name));
-        top.appendChild(el("span", "cost " + v.cost, COST[v.cost]));
+        if (v.cost) top.appendChild(el("span", "cost " + v.cost, COST[v.cost]));
         card.appendChild(top);
-        var kind = el("div", "kind", v.kind);
+        var kindText = [v.kind, v.deck ? "Deck " + v.deck : null].filter(Boolean).join(" · ");
+        var kind = el("div", "kind", kindText);
         if (v.top) { kind.appendChild(document.createTextNode(" · ")); kind.appendChild(el("span", "star-pick", "Top pick")); }
+        if (v.book) { kind.appendChild(document.createTextNode(" · ")); kind.appendChild(el("span", "star-pick", "Book in app")); }
         card.appendChild(kind);
-        var best = el("p"); best.appendChild(el("b", null, "Best for")); best.appendChild(document.createTextNode(v.best)); card.appendChild(best);
-        var tip = el("p"); tip.appendChild(el("b", null, "Tip")); tip.appendChild(document.createTextNode(v.tip)); card.appendChild(tip);
+        function line(label, text) {
+          if (!text || (Array.isArray(text) && !text.length)) return;
+          var p = el("p"); p.appendChild(el("b", null, label));
+          p.appendChild(document.createTextNode(Array.isArray(text) ? text.join(" · ") : text));
+          card.appendChild(p);
+        }
+        line("On this deck", v.items);
+        line("Plan", v.plan);
+        line("Order", v.order);
+        line("Drink", v.drink);
+        line("Best for", v.best);
+        line("Tip", v.tip);
         listEl.appendChild(card);
       });
   }
 
   function select(id) {
-    state.tab = id; state.desk = "All";
+    state.tab = id;
+    var c = GUIDE.filter(function (g) { return g.id === id; })[0];
+    state.desk = c && c.desks.indexOf(todayLabel) > -1 ? todayLabel : "All";
     try { localStorage.setItem("prima-guide-tab", id); } catch (e) {}
     render();
     var t = document.getElementById("tab-" + id); if (t) t.focus();
@@ -746,6 +992,8 @@ var GUIDE = [
     if (e.key === "ArrowLeft") { e.preventDefault(); select(GUIDE[(i - 1 + GUIDE.length) % GUIDE.length].id); }
   });
 
+  var firstCat = GUIDE.filter(function (g) { return g.id === state.tab; })[0];
+  if (firstCat && firstCat.desks.indexOf(todayLabel) > -1) state.desk = todayLabel;
   render();
 })();
 </script>
