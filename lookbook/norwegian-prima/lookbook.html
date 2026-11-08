@@ -722,13 +722,24 @@ var GUIDE = [
         var card = el("article", "venue");
         var top = el("div", "venue-top");
         top.appendChild(el("h3", null, v.name));
-        top.appendChild(el("span", "cost " + v.cost, COST[v.cost]));
+        if (v.cost) top.appendChild(el("span", "cost " + v.cost, COST[v.cost]));
         card.appendChild(top);
-        var kind = el("div", "kind", v.kind);
+        var kindText = [v.kind, v.deck ? "Deck " + v.deck : null].filter(Boolean).join(" · ");
+        var kind = el("div", "kind", kindText);
         if (v.top) { kind.appendChild(document.createTextNode(" · ")); kind.appendChild(el("span", "star-pick", "Top pick")); }
+        if (v.book) { kind.appendChild(document.createTextNode(" · ")); kind.appendChild(el("span", "star-pick", "Book in app")); }
         card.appendChild(kind);
-        var best = el("p"); best.appendChild(el("b", null, "Best for")); best.appendChild(document.createTextNode(v.best)); card.appendChild(best);
-        var tip = el("p"); tip.appendChild(el("b", null, "Tip")); tip.appendChild(document.createTextNode(v.tip)); card.appendChild(tip);
+        function line(label, text) {
+          if (!text || (Array.isArray(text) && !text.length)) return;
+          var p = el("p"); p.appendChild(el("b", null, label));
+          p.appendChild(document.createTextNode(Array.isArray(text) ? text.join(" · ") : text));
+          card.appendChild(p);
+        }
+        line("On this deck", v.items);
+        line("Order", v.order);
+        line("Drink", v.drink);
+        line("Best for", v.best);
+        line("Tip", v.tip);
         listEl.appendChild(card);
       });
   }
