@@ -845,18 +845,29 @@
       "outcome": "TARGET",
       "r": 1.1052322837363,
       "book_control": "BUYERS"
+    },
+    {
+      "trade_id": "833c2a9c8a60",
+      "take_p": 0.019774731322283787,
+      "regime_p": 0.7869864611905681,
+      "playbook": "mean_reversion",
+      "decision": "SKIP",
+      "entry": "LIMIT",
+      "outcome": "TARGET",
+      "r": 2.0144659140857364,
+      "book_control": "BALANCED"
     }
   ],
   "confusion": {
     "CHOPPY": {
       "CHOPPY": 198,
-      "TRENDING": 45,
-      "PANIC": 22
+      "TRENDING": 47,
+      "PANIC": 24
     },
     "TRENDING": {
       "CHOPPY": 70,
-      "PANIC": 12,
-      "TRENDING": 44
+      "PANIC": 14,
+      "TRENDING": 45
     },
     "PANIC": {
       "PANIC": 3,
