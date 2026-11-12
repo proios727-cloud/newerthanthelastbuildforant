@@ -47,6 +47,23 @@ def mark(idx, today, picks_path=PICKS, write=True):
     return exits
 
 
+PICK_FIELDS = ["id", "date", "ticker", "expiry", "strike", "ask", "cost", "breakeven", "take_profit_at", "stop_at",
+               "time_exit", "status", "exit", "pnl", "reason", "ticket"]
+
+
+def write_picks_csv(path, picks_path=PICKS):
+    """One row per swing pick, open or closed, for the dashboard's Swing tab."""
+    rows = read_jsonl(picks_path) if pathlib.Path(picks_path).exists() else []
+    closes = {r["close_of"]: r for r in rows if r.get("close_of")}
+    with open(path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=PICK_FIELDS, extrasaction="ignore")
+        w.writeheader()
+        for p in (r for r in rows if not r.get("close_of")):
+            c = closes.get(p["id"], {})
+            w.writerow({**p, "status": "closed" if c else "open", "exit": c.get("exit", ""), "pnl": c.get("pnl", ""),
+                        "reason": c.get("reason", "")})
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--chains", required=True)
@@ -91,6 +108,7 @@ def main(argv=None):
             "iv_rv": round(pick["iv_rv"], 3), "mom20": round(pick["mom20"], 2), "ticket": pick["ticket"],
             "take_profit_at": pick["take_profit_at"], "stop_at": pick["stop_at"], "time_exit": pick["time_exit"],
             "mode": "paper"})
+    write_picks_csv(out / "swing_picks.csv")
     for e in exits:
         print(f"EXIT {e['close_of']}: {e['reason']} · P&L ${e['pnl']:+.0f}")
     for r in ranked:
