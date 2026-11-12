@@ -178,8 +178,10 @@ def open_picks(rows):
     return [r for r in rows if "close_of" not in r and r["id"] not in closed]
 
 
-def pick_expiry(expiries, today, dte=(30, 45)):
-    """The rule's expiry from those available: the earliest 30-45 days out, else the earliest one."""
+def pick_expiry(expiries, today, dte=(30, 45), target=38):
+    """The rule's expiry from those available: the one closest to `target` days out within 30-45 (the earlier on a
+    tie), else the earliest one."""
     t = dt.date.fromisoformat(today)
-    ok = [e for e in sorted(expiries) if dte[0] <= (dt.date.fromisoformat(e) - t).days <= dte[1]]
-    return ok[0] if ok else min(expiries)
+    days = {e: (dt.date.fromisoformat(e) - t).days for e in expiries}
+    ok = [e for e in sorted(expiries) if dte[0] <= days[e] <= dte[1]]
+    return min(ok, key=lambda e: (abs(days[e] - target), e)) if ok else min(expiries)
