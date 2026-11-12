@@ -1,21 +1,23 @@
 {
-  "ok": true,
-  "today": "2026-11-11",
-  "problems": [],
+  "ok": false,
+  "today": "2026-11-12",
+  "problems": [
+    "/tmp/chart-feed/data/chart-forward/data: QQQ end before 2026-11-11; the rotation only uses dates every fund has, so one lagging file stalls it"
+  ],
   "data": {
     "/tmp/chart-feed/data/chart-forward/data": {
       "files": 8,
-      "newest_bar": "2026-11-10",
+      "newest_bar": "2026-11-11",
       "oldest_last_bar": "2026-11-10",
       "weekdays_behind": 1
     },
     "/tmp/chart-feed/data/chart-forward/etf": {
       "files": 13,
-      "newest_bar": "2026-11-10",
-      "oldest_last_bar": "2026-11-10",
+      "newest_bar": "2026-11-11",
+      "oldest_last_bar": "2026-11-11",
       "weekdays_behind": 1
     }
   },
   "next_rotation_decision": "2026-12-01",
-  "days_to_decision": 20
+  "days_to_decision": 19
 }
