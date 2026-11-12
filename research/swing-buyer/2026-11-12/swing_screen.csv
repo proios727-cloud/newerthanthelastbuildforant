@@ -1,0 +1,2 @@
+rank,ticker,status,reason,expiry,dte,strike,ask,bid,delta,oi,cost,breakeven,breakeven_pct,iv30,rv20,iv_rv,mom20,score,spot,earnings,take_profit_at,stop_at,time_exit,ticket,asof
+1,KO,pass,,2026-12-18,36,100.0,1.62,1.52,0.4092,4088,162.0,101.62,3.509,0.1768,0.2081,0.8498,6.3086,7.424,98.175,,2.59,0.81,2026-12-08,BUY TO OPEN 1 KO 2026-12-18 100 CALL · LIMIT 1.62 or better · DAY · cost $162,2026-11-12T17:44:03.578903625Z

@@ -35,3 +35,8 @@ is skipped.
 - `research/swing-buyer/picks.jsonl`: one line per pick; a close is a new line with `close_of`.
 - `research/swing-buyer/<date>/swing_screen.csv`: every ticker with its result or failed filter.
 - Append-only. Never edit or delete a line.
+
+## Amendment 1 (2026-11-12, before any pick was logged)
+The first run chose the 2026-12-11 weekly (29 days) for every name, and its calls were too thin: KO, the only name in an
+uptrend, had a 0.47-delta call with open interest 63. **The expiry is now the standard monthly (third Friday) closest to
+30 days within 21–45.** Everything else is unchanged.

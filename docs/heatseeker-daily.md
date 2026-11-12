@@ -177,7 +177,7 @@ Rule: `research/swing-buyer/RULE.md`. Single long calls, $200 max, one pick a da
 is ordered: the owner enters a pick by hand.
 1. **Collect** with one read-only subagent, for the 10 tickers in the rule:
    - 260 daily bars (`mcp-tv-get-ohlcv`), the spot (`get_equity_quotes`), next earnings (`get_earnings_calendar`);
-   - `get_option_chains` for the expiries, then the one closest to 30 days within 21–45;
+   - `get_option_chains` for the expiries, then the monthly (third Friday) closest to 30 days within 21–45;
    - calls from 5% below spot to 10% above (`get_option_instruments`, `get_option_quotes`);
    - for each open pick, its own contract's quote too.
 2. **Convert:**

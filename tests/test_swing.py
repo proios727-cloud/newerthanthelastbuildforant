@@ -23,6 +23,9 @@ def uptrend(n=80, start=40.0, step=0.12, wiggle=0.9):
 class SwingTests(unittest.TestCase):
     def test_pick_expiry_closest_to_30(self):
         self.assertEqual(S.pick_expiry(["2026-12-04", "2026-12-18"], "2026-11-12"), "2026-12-18")
+        self.assertEqual(S.pick_expiry(["2026-12-11", "2026-12-18"], "2026-11-12"), "2026-12-18")  # weekly skipped
+        self.assertTrue(S.is_monthly("2026-12-18"))
+        self.assertFalse(S.is_monthly("2026-12-11"))
         self.assertIsNone(S.pick_expiry(["2026-11-14"], "2026-11-12"))
 
     def test_pass_picks_delta_nearest_045_under_budget(self):

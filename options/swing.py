@@ -21,11 +21,18 @@ STOP = 0.5
 TIME_EXIT_DTE = 10
 
 
+def is_monthly(expiry):
+    """Standard monthly expiry: the third Friday (day 15-21)."""
+    d = dt.date.fromisoformat(expiry)
+    return d.weekday() == 4 and 15 <= d.day <= 21
+
+
 def pick_expiry(expiries, today, dte=(21, 45), target=30):
-    """Closest to `target` days out within the window (the earlier on a tie), else None."""
+    """The monthly expiry closest to `target` days out within the window (the earlier on a tie), else None
+    (RULE.md amendment 1: weeklies are too thin on these names)."""
     t = dt.date.fromisoformat(today)
     days = {e: (dt.date.fromisoformat(e) - t).days for e in expiries}
-    ok = [e for e in sorted(expiries) if dte[0] <= days[e] <= dte[1]]
+    ok = [e for e in sorted(expiries) if dte[0] <= days[e] <= dte[1] and is_monthly(e)]
     return min(ok, key=lambda e: (abs(days[e] - target), e)) if ok else None
 
 
