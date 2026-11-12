@@ -192,4 +192,6 @@ is ordered: the owner enters a pick by hand.
    python3 scripts/swing_screen.py --chains options/data/chains_swing --bars chart/data/daily_tv/1D \
      --earnings research/swing-buyer/earnings_<date>.json --out research/swing-buyer/<date>
    ```
-4. Commit and push (step 4). Report the pick with its ticket, the backup, open picks with P&L, and any exit hit.
+4. Update the dashboard's Swing tab: upload `swing_screen.csv` and `swing_picks.csv` from `research/swing-buyer/<date>/`
+   to the datasets `swing_screen` and `swing_picks`, as in step 3.
+5. Commit and push (step 4). Report the pick with its ticket, the backup, open picks with P&L, and any exit hit.
