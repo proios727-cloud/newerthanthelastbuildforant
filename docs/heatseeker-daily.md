@@ -37,8 +37,16 @@ follows this file step by step. Nothing here places, previews or cancels an orde
 4. **Write the signals** following the skill's Steps 2–4 and `references/setups.md`:
    - Regime first.
    - Only setups that belong to the regime.
-   - Every gate applied: map confidence (drift < 0.15%), RVOL ≥ 1.4 as `trigger.rvol_min`, no entries in the first
-     15 minutes, and none in the last 10.
+   - Every gate applied: map confidence (see the amendment below), RVOL ≥ 1.4 as `trigger.rvol_min`, no entries in
+     the first 15 minutes, and none in the last 10.
+   - **Amendment 1 (2026-11-12, owner's request; applies from the 2026-11-13 morning run): map-confidence gate.**
+     The skill's 0.15% drift gate failed on every Robinhood-reconstructed map from 11-02 to 11-12 (20 lines, 0 trades).
+     This runbook now overrides it:
+     - drift < 0.15%: `confidence: "stable (drift x%)"`, any tier.
+     - 0.15% ≤ drift ≤ 0.50%: `confidence: "moderate (drift x%)"`, setups allowed but the tier is capped at **B**
+       (take profit at the first node, no runner). Record `"gate_amendment": 1` on the line.
+     - drift > 0.50%, or no open-interest flip to cross-check: no trade, as before.
+     Scoring reports stable and moderate lines separately, so the change can be judged on its own results.
    - Conditional triggers only, each with:
      - a `kind` (one of `close_above`, `close_below`, `reject_below`, `reject_above`);
      - a `level`, plus `after` (the log time, rounded up to the next quarter hour) and `before` (`15:00`);
@@ -162,3 +170,26 @@ ordered: the owner enters picks by hand in a paper account.
      (ArtifactData `update` with `if_version`).
   4. Run both calls once to confirm they answer.
 - The dashboard marks positions live on the owner's own Robinhood connection, read-only. Nothing places orders.
+
+## 8. Swing buyer, paper mode (about 10:45 ET)
+
+Rule: `research/swing-buyer/RULE.md`. Single long calls, $200 max, one pick a day at most. No account is read and nothing
+is ordered: the owner enters a pick by hand.
+1. **Collect** with one read-only subagent, for the 10 tickers in the rule:
+   - 260 daily bars (`mcp-tv-get-ohlcv`), the spot (`get_equity_quotes`), next earnings (`get_earnings_calendar`);
+   - `get_option_chains` for the expiries, then the one closest to 30 days within 21–45;
+   - calls from 5% below spot to 10% above (`get_option_instruments`, `get_option_quotes`);
+   - for each open pick, its own contract's quote too.
+2. **Convert:**
+   ```bash
+   python3 scripts/rh_chain_from_transcript.py <transcript> options/data/chains_swing
+   python3 scripts/tv_from_transcript.py <transcript> /tmp/sb
+   python3 scripts/tv_ohlcv_to_csv.py --all-hours --merge chart/data/daily_tv /tmp/sb/*.json
+   ```
+   Write `research/swing-buyer/earnings_<date>.json`.
+3. **Screen, mark and log:**
+   ```bash
+   python3 scripts/swing_screen.py --chains options/data/chains_swing --bars chart/data/daily_tv/1D \
+     --earnings research/swing-buyer/earnings_<date>.json --out research/swing-buyer/<date>
+   ```
+4. Commit and push (step 4). Report the pick with its ticket, the backup, open picks with P&L, and any exit hit.
