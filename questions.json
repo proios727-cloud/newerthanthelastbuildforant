@@ -1,12 +1,12 @@
 {
-  "version": 4,
+  "version": 5,
   "notes": "Edited only by the nightly review (step 8). Every log line records the version it was asked with.",
   "regime": {
     "regime": {
       "type": "choice",
       "instructions": "Image 1 is the BTCUSDT chart (candles, EMA20 blue, EMA50 orange, volume) beside the order book depth within 1% of mid. The state holds the same candle and book metrics as numbers. Classify the regime for the NEXT 12 candles (3 hours on 15m). TRENDING means price is expected to travel at least 2x ATR in one direction over that window with little back-and-forth; ADX alone is not enough. Two traps: a tightly coiled market often releases into a large one-way move even when ADX is low, and a move that has just printed an outsized spike is usually spent and goes sideways next.",
       "criteria": {
-        "TRENDING": "Expected to carry 2x ATR or more in one direction over the next 12 candles. Either (a) an energetic move not yet stretched: ADX above 25, EMA20/EMA50 gap above ~0.4% and widening, Bollinger width ~1-3%, volume at or above average, book not against it; or (b) a coil about to release: Bollinger width under ~0.7% with volume picking up (vol_ratio_vs_50 toward 0.7+), whatever ADX reads. Not trending right after an outsized move (bands above ~3%, ATR above ~1.5x average, RSI under ~30 or over ~70): it is likely spent.",
+        "TRENDING": "Expected to carry 2x ATR or more in one direction over the next 12 candles. Either (a) an energetic move not yet stretched: ADX above 25, EMA20/EMA50 gap above ~0.4% and widening, Bollinger width ~1-3%, volume at or above average, book not against it; or (b) a coil about to release: Bollinger width under ~0.7% with volume picking up (vol_ratio_vs_50 toward 0.7+), whatever ADX reads. Never TRENDING when the move is already stretched: rsi14 under ~32 or over ~68, or atr_ratio_vs_100 above ~1.1 with price more than ~0.4% off its 48h high; it usually snaps back (CHOPPY, or PANIC if whipsawing).",
         "CHOPPY": "An ordinary range, a low-energy drift, or the pause after an outsized move: EMAs flat or within ~0.3%, ADX roughly 20-35, volume under ~0.5x average with bands not unusually tight, or a just-finished spike (very wide bands, ATR well above average, RSI stretched). A very tight coil (bands under ~0.7%) with volume picking up is NOT choppy (see TRENDING).",
         "PANIC": "Disorderly stress: price likely to swing 4x ATR or more, or print a single candle of 3x ATR or more, WITHOUT a clean one-way path (whipsaw, a sudden drop and snap-back, a liquidation cascade). Signs: ATR jumping far above its recent average, a volume spike, a fast drawdown, spread widening or one side of the book thinning out. A large but orderly one-way rally or selloff is TRENDING, not PANIC."
       }
