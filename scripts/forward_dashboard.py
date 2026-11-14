@@ -1,7 +1,8 @@
 """Export the forward paper test as row files for the forward-test dashboard (docs/forward-feed.md).
 
 Reads a chart-forward folder (the `shadow-data` branch) and writes five JSON arrays of row objects:
-  status.json    one row: latest bar, data health, next decision, regime flag, paper period totals
+  status.json    one row: latest bar, data health, next decision, regime flag, paper period totals, and variant A
+                 (120 sessions, top 3: a paper comparison only) next to the live rule over the same sessions
   daily.json     one row per session since the first fill: rule and basket, cumulative, before and after costs
   holdings.json  one row per fund the rule holds now: its ticket and its return since the fill
   ranking.json   one row per basket fund: momentum at the last decision and whether the rule holds it
@@ -50,6 +51,8 @@ def build(d):
     decisions = _jsonl(d / "rotation.jsonl")
     tickets = {t["as_of"]: t for t in _jsonl(d / "rotation_tickets.jsonl")}
     trend = _jsonl(d / "rotation_trend200.jsonl")
+    v120 = _jsonl(d / "rotation_v120.jsonl")
+    v120_rep = json.loads((d / "ROTATION_V120.json").read_text()) if (d / "ROTATION_V120.json").exists() else {}
     last = decisions[-1] if decisions else {}
     basket = last.get("basket", [])
     bars = _bars(d / "etf", basket) if basket else {}
@@ -90,6 +93,11 @@ def build(d):
               for name, ok, detail in checks]
 
     cum = rotation.get("cumulative", {})
+    # Variant A, paper comparison only: its result since its own first fill, and the live rule's over the same sessions.
+    v120_from = v120_rep["periods"][0]["from"] if v120_rep.get("periods") else None
+    before = next((r for r in reversed(daily) if v120_from and r["day"] < v120_from), None)
+    live_same = (round((1 + daily[-1]["rule_net"]) / (1 + (before["rule_net"] if before else 0)) - 1, 5)
+                 if v120_from and daily and daily[-1]["day"] >= v120_from else None)
     status = [{"latest_bar": latest, "data_ok": doctor["ok"], "problems": len(doctor["problems"]),
                "next_decision": doctor.get("next_rotation_decision"), "days_to_decision": doctor.get("days_to_decision"),
                "decided": last.get("as_of"), "picks": " ".join(last.get("picks", [])),
@@ -100,6 +108,10 @@ def build(d):
                "cost_bps": rotation.get("cost_bps_per_side"),
                "regime_hold": overlay.get("hold"), "spy_vs_avg": overlay.get("close_vs_average_now"),
                "trend200_picks": " ".join(trend[-1].get("picks", [])) if trend else "",
+               "v120_decided": v120[-1]["as_of"] if v120 else None,
+               "v120_picks": " ".join(v120[-1].get("picks", [])) if v120 else "",
+               "v120_from": v120_from, "v120_rule_net": v120_rep.get("cumulative", {}).get("rule_net") if v120_from else None,
+               "v120_live_net_same_span": live_same,
                "review_flags": sum(not r["pass"] for r in review), "review_checks": len(review)}]
     return {"status": status, "daily": daily, "holdings": holdings, "ranking": ranking, "review": review}
 

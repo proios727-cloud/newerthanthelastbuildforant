@@ -1,6 +1,8 @@
 # Verdict: rotation variants (A: 120 sessions, top 3 · B: 60 sessions, top 2)
 
-**Both rejected under the claim fixed in RULE.md.** Neither is shadow-logged; the live rule stays as it is.
+**Both rejected under the claim fixed in RULE.md.** The live rule stays as it is. A is logged on paper from
+2026-12-01 as a comparison only (`rotation_v120.jsonl`, docs/forward-feed.md); that is not adoption, and adopting it
+would need a fresh claim written before its results are seen.
 
 - **B fails on every test.** Over the long history it has a deeper drawdown than the live rule for about the same return.
 - **A fails narrowly.** It beats the live rule over 2004–2026 in both baskets. On the 2023–26 daily data, though, it

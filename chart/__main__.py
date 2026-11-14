@@ -77,6 +77,8 @@ def main(argv=None):
     f.add_argument("--overlay", help="rotation-brief: a `chart overlay --status` JSON file, for the regime flag")
     f.add_argument("--trend", type=int, default=0, help="rotation-record/replay: basket trend filter length (sessions)")
     f.add_argument("--buffer", type=int, default=0, help="rotation-record/replay: hysteresis band")
+    f.add_argument("--lookback", type=int, default=0, help="rotation-record/replay: momentum lookback (default 60)")
+    f.add_argument("--top", type=int, default=0, help="rotation-record/replay: funds held (default 3)")
     it = sub.add_parser("intraday", help="opening-range breakout and gap fade on intraday bars (research/intraday-orb)")
     it.add_argument("folder", nargs="?", default="chart/data/intraday/15m")
     it.add_argument("--symbols", default="SPY,QQQ")
@@ -144,7 +146,7 @@ def main(argv=None):
         if a.action.startswith("rotation-"):
             bars = {p.stem.upper(): load_csv(p) for p in sorted(pathlib.Path(a.folder).glob("*.csv"))}
             log = a.log or forward.ROTATION_LOG
-            rule = {k: v for k, v in (("trend", a.trend), ("buffer", a.buffer)) if v}
+            rule = {k: v for k, v in (("trend", a.trend), ("buffer", a.buffer), ("lookback", a.lookback), ("top", a.top)) if v}
             if a.action == "rotation-brief":
                 doc = json.loads(pathlib.Path(a.doctor).read_text()) if a.doctor else None
                 ovl = json.loads(pathlib.Path(a.overlay).read_text()) if a.overlay else None

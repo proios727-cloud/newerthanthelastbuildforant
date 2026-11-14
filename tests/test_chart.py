@@ -488,6 +488,33 @@ class UpdateTests(unittest.TestCase):
             path = pathlib.Path(__file__).parents[1] / "scripts" / name
             self.assertEqual(subprocess.run(["bash", "-n", str(path)]).returncode, 0, name)
 
+    def test_feed_window_waits_for_last_nights_first_call(self):
+        import importlib.util
+        from datetime import datetime, timezone
+        spec = importlib.util.spec_from_file_location("fw", pathlib.Path(__file__).parents[1] / "scripts" / "feed_window.py")
+        fw = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(fw)
+        now = datetime(2026, 11, 17, 0, 42, tzinfo=timezone.utc)
+        self.assertEqual(fw.fetch_after(None, now)[0], now)                                   # first night: no wait
+        when, _ = fw.fetch_after({"fetch_after": "2026-11-16T00:47:30Z"}, now, margin=180)
+        self.assertEqual(when, datetime(2026, 11, 17, 0, 50, 30, tzinfo=timezone.utc))      # 24 h + 3 min after
+        when, _ = fw.fetch_after({"fetch_after": "2026-11-13T00:48:00Z"}, now)               # after a weekend: go now
+        self.assertEqual(when, now)
+
+    def test_rotation_variant_lookback_is_logged_apart(self):
+        from chart import forward
+        d = pathlib.Path(tempfile.mkdtemp())
+        import datetime
+        dates = [f"2026-{m:02d}-{k:02d}" for m in range(1, 12) for k in range(1, 29) if datetime.date(2026, m, k).weekday() < 5]
+        bars = {}
+        for j, s in enumerate(("AAA", "BBB", "CCC", "DDD")):
+            px = [10 + j + i * 0.01 * (j - 1) for i in range(len(dates))]
+            bars[s] = [Bar(t, p, p, p, p, 100) for t, p in zip(dates, px)]
+        cut = {s: [b for b in v if b.ts <= "2026-11-02"] for s, v in bars.items()}
+        sig = forward.record_rotation(cut, d / "v120.jsonl", lookback=120)
+        self.assertEqual(sig["rule"], {"lookback": 120, "top": 3})
+        self.assertEqual(json.loads((d / "v120.jsonl").read_text())["rule"]["lookback"], 120)
+
     def test_dashboard_export_matches_rotation_report(self):
         import importlib.util
         import shutil
@@ -531,6 +558,16 @@ class UpdateTests(unittest.TestCase):
         self.assertIn(f"| This week | {rule:+.2%} | {basket:+.2%} |", text)
         self.assertIn("Sessions this week:** 2, none missing", text)
         self.assertIn("flagged: Rule settings unchanged", text)
+        self.assertIn("Variant A (120 sessions, top 3), paper comparison only:** first decision due 2026-12-01", text)
+        (d / "rotation_v120.jsonl").write_text(json.dumps({"as_of": "2026-11-03", "picks": ["AAA"]}) + "\n")
+        (d / "ROTATION_V120.json").write_text(json.dumps({"periods": [{"from": "2026-11-04"}], "cumulative": {"rule_net": 0.01}}))
+        st = fd.build(d)["status"][0]
+        first, last = fd.build(d)["daily"]
+        self.assertEqual((st["v120_picks"], st["v120_from"], st["v120_rule_net"]), ("AAA", "2026-11-04", 0.01))
+        self.assertAlmostEqual(st["v120_live_net_same_span"], round((1 + last["rule_net"]) / (1 + first["rule_net"]) - 1, 5))
+        self.assertIn("holding AAA since its 2026-11-03 decision; after costs since 2026-11-04, +1.00%", fdg.digest(d))
+        for f in ("rotation_v120.jsonl", "ROTATION_V120.json"):
+            (d / f).unlink()
         (d / "etf" / "AAA.csv").write_text((d / "etf" / "AAA.csv").read_text() + "2026-11-06,12,12,12,12,100\n")
         for sym in ("BBB", "CCC"):                                      # 11-05 missing for every fund
             (d / "etf" / f"{sym}.csv").write_text((d / "etf" / f"{sym}.csv").read_text() + "2026-11-06,6,6,6,6,100\n")
