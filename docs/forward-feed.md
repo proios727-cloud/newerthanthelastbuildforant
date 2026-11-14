@@ -12,10 +12,13 @@ them, and both run the same script and write to the `shadow-data` branch under `
 and the second run is a no-op that only spends quota.
 
 **The nightly run, step by step:**
-1. `bash <(git show origin/claude/great-keller-rf23ab:scripts/forward_feed.sh) start` prints the 21 symbols.
-2. One `TIME_SERIES_DAILY` call per symbol (`outputsize` compact, `datatype` csv, `return_full_data` true), **one at a
+1. `bash <(git show origin/claude/great-keller-rf23ab:scripts/forward_feed.sh) start` prints the 21 symbols and a
+   `fetch after` time: last night's first call plus 24 hours and 3 minutes (`scripts/feed_window.py`, `MARGIN` seconds).
+2. `scripts/forward_feed.sh wait` sleeps until that time, at most 20 minutes (`WAIT_CAP`), and records when the calls
+   really start. `finish` writes that time to `chart-forward/FEED_RUN.json` for the next night's `start`.
+3. One `TIME_SERIES_DAILY` call per symbol (`outputsize` compact, `datatype` csv, `return_full_data` true), **one at a
    time**. On a "25 requests per day" error, wait about a minute and retry that symbol once (see Quota below).
-3. `scripts/forward_feed.sh finish` (from the same checkout) reports `saved`, `missing`, the doctor's problems, the open
+4. `scripts/forward_feed.sh finish` (from the same checkout) reports `saved`, `missing`, the doctor's problems, the open
    paper period and `decision_tonight`. On a decision night `/tmp/chart-feed/BRIEF.md` holds the brief.
 
 `DRY_RUN=1 scripts/forward_feed.sh finish` does everything except the commit and the push.
@@ -39,7 +42,9 @@ session posts it in full on Fridays.
 **Limits of the connector feed:**
 - **Quota:** 21 calls against the free tier's 25. The 25 count over a **rolling 24 hours**, not per calendar day, so a
   run that starts earlier or calls faster than the night before hits the cap before last night's calls expire (seen on
-  2026-11-05). Waiting a minute frees one slot per call last night made in that minute. More than one call a second is
+  2026-11-05, and on 4 of the next 6 nights). Since 2026-11-16 the `wait` step holds the first call until last night's
+  first call is 24 hours and 3 minutes old; on 2026-11-13 a manual 5-minute wait got all 21. Waiting a minute frees one
+  slot per call last night made in that minute. More than one call a second is
   also refused. A fund that still fails is listed under `missing`; the next night fills the gap, because each call
   returns the last 100 sessions.
 - **Only tonight's results count.** `finish` passes the start time to `av_from_transcript.py --since`, so a failed fund
@@ -54,6 +59,12 @@ session posts it in full on Fridays.
 - `chart doctor --feed connector` skips the key check and still flags stale or lagging files.
 
 Research only: neither feed previews, fills or places an order.
+
+**Variant A on paper.** `forward_run.sh` also logs variant A (120-session momentum, top 3;
+`research/rotation-variants`) in `rotation_v120.jsonl` and scores it in `ROTATION_V120.json`. It is a comparison
+only: no tickets, no brief, and it changes nothing about the live rule. Its first decision is the next decision day
+after it was added (2026-12-01); it is not backfilled. The dashboard's status row and the weekly digest show its
+result since its own first fill next to the live rule's over the same sessions, both after costs.
 
 **Costs.** `ROTATION.json` scores each period before and after costs: 3 bp a side (the 1 bp fee and 2 bp slippage the
 backtests charge), paid at each fill on the weight the decision trades (`traded`: 1.0 for the first fill, the sum of

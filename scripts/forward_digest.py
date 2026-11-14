@@ -58,6 +58,12 @@ def digest(d):
             + ("all {} checks pass.".format(len(review)) if not flags else
                f"{len(flags)} flagged: " + "; ".join(f"{r['check']} ({r['detail']})" for r in flags) + "."),
             f"- **Next decision:** {s['next_decision']}, in {s['days_to_decision']} days.",
+            "- **Variant A (120 sessions, top 3), paper comparison only:** " + (
+                f"holding {s['v120_picks'] or 'cash'} since its {s['v120_decided']} decision; after costs since "
+                f"{s['v120_from']}, {_pct(s['v120_rule_net'])} against the live rule's {_pct(s['v120_live_net_same_span'])}."
+                if s.get("v120_from") else
+                f"logged {s['v120_decided']}, waiting for its first fill." if s.get("v120_decided") else
+                f"first decision due {s['next_decision']}."),
             "- One week says nothing about the rule; the long-history verdict is in docs/rotation-sleeve.md.", ""]
     return "\n".join(out)
 
