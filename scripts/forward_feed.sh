@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 # The Claude connector feed's nightly run in two steps around the fetch (docs/forward-feed.md). Research only: it never
 # previews, fills or places an order.
-#   scripts/forward_feed.sh start    # fresh worktrees of the base branch and shadow-data, stamp the start time, list symbols
+#   scripts/forward_feed.sh start    # fresh worktrees of the base branch and shadow-data, stamp the start time, list symbols,
+#                                    # and work out when the first call may go (scripts/feed_window.py)
+#   scripts/forward_feed.sh wait     # sleep until then (at most WAIT_CAP seconds, default 1200)
 #   ... the Claude session calls Alpha Vantage TIME_SERIES_DAILY once per listed symbol ...
 #   scripts/forward_feed.sh finish   # save tonight's results, run the forward test, commit and push shadow-data, report,
 #                                    # and write the dashboard's files to $FEED_DIR/dash, the review to $FEED_DIR/REVIEW.md
 #                                    # and the weekly digest to $FEED_DIR/DIGEST.md
 # Run from any checkout of the repo. BASE (default claude/great-keller-rf23ab) picks the code; FEED_DIR (default
 # /tmp/chart-feed) holds the worktrees between the two steps. DRY_RUN=1 runs everything but the commit and push.
+# MARGIN (default 180) is how many seconds past 24 hours after last night's first call tonight's first call waits;
+# `finish` records tonight's times in chart-forward/FEED_RUN.json for tomorrow's `start`.
 set -euo pipefail
 BASE="${BASE:-claude/great-keller-rf23ab}"
 F="${FEED_DIR:-/tmp/chart-feed}"
@@ -24,12 +28,25 @@ start)
   date -u +%Y-%m-%dT%H:%M:%SZ > "$F/since"
   echo "started $(cat "$F/since") on $BASE @ $(git -C "$F/code" rev-parse --short HEAD)"
   echo "symbols: $(cd "$F/code" && ls chart/data/*.csv chart/data/etf/*.csv | xargs -n1 basename | sed 's/\.csv$//' | tr '\n' ' ')"
+  python3 "$F/code/scripts/feed_window.py" "$F/data/chart-forward/FEED_RUN.json" "$F/fetch_after" "${MARGIN:-180}"
+  ;;
+wait)
+  [ -f "$F/fetch_after" ] || { echo "run '$0 start' first" >&2; exit 2; }
+  left=$(( $(date -u -d "$(cat "$F/fetch_after")" +%s) - $(date -u +%s) ))
+  cap="${WAIT_CAP:-1200}"
+  if [ "$left" -gt "$cap" ]; then echo "first call due in $left s; waiting only $cap s" >&2; left="$cap"; fi
+  if [ "$left" -gt 0 ]; then sleep "$left"; fi
+  date -u +%Y-%m-%dT%H:%M:%SZ > "$F/fetch_after"     # the time the calls really start, recorded by finish
+  echo "fetch from $(cat "$F/fetch_after")"
   ;;
 finish)
   [ -f "$F/since" ] || { echo "run '$0 start' first" >&2; exit 2; }
   cd "$F/code"
   python3 scripts/av_from_transcript.py "$F/incoming" --since "$(cat "$F/since")" > "$F/saved.json" || true
   scripts/forward_run.sh "$F/data" --from-dir "$F/incoming" > "$F/run.log" 2>&1
+  first="$(cat "$F/fetch_after" 2>/dev/null || cat "$F/since")"    # tonight's first call, for tomorrow's start
+  printf '{"started": "%s", "fetch_after": "%s", "finished": "%s"}\n' "$(cat "$F/since")" "$first" \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$F/data/chart-forward/FEED_RUN.json"
   git -C "$F/data" add chart-forward
   if [ -n "${DRY_RUN:-}" ]; then
     commit="dry run: $(git -C "$F/data" diff --cached --name-only | wc -l) files staged, not committed"
@@ -78,5 +95,5 @@ PY
   git -C "$REPO" worktree remove --force "$F/code"
   ;;
 *)
-  echo "usage: $0 start|finish" >&2; exit 2 ;;
+  echo "usage: $0 start|wait|finish" >&2; exit 2 ;;
 esac

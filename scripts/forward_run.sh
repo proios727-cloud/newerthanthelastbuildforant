@@ -26,6 +26,11 @@ python -m chart forward rotation-record "$D/etf" --trend 200 --log "$D/rotation_
 if [ -s "$D/rotation_trend200.jsonl" ]; then
   python -m chart forward rotation-report "$D/etf" --log "$D/rotation_trend200.jsonl" > "$D/ROTATION_TREND200.json"
 fi
+# Variant A logged alongside on paper for comparison only (research/rotation-variants): 120-session momentum, top 3.
+python -m chart forward rotation-record "$D/etf" --lookback 120 --log "$D/rotation_v120.jsonl"
+if [ -s "$D/rotation_v120.jsonl" ]; then
+  python -m chart forward rotation-report "$D/etf" --log "$D/rotation_v120.jsonl" > "$D/ROTATION_V120.json"
+fi
 python -m chart overlay "$D/data/SPY.csv" --status > "$D/OVERLAY.json"     # regime flag, information only
 python -m chart doctor "$D/data" "$D/etf" --feed "$FEED" > "$D/DOCTOR.json" || true
 if [ -s "$D/rotation.jsonl" ]; then
