@@ -1,23 +1,21 @@
 {
-  "ok": false,
-  "today": "2026-11-13",
-  "problems": [
-    "/tmp/chart-feed/data/chart-forward/data: AAPL end before 2026-11-12; the rotation only uses dates every fund has, so one lagging file stalls it"
-  ],
+  "ok": true,
+  "today": "2026-11-14",
+  "problems": [],
   "data": {
     "/tmp/chart-feed/data/chart-forward/data": {
       "files": 8,
-      "newest_bar": "2026-11-12",
-      "oldest_last_bar": "2026-11-11",
-      "weekdays_behind": 1
+      "newest_bar": "2026-11-13",
+      "oldest_last_bar": "2026-11-13",
+      "weekdays_behind": 0
     },
     "/tmp/chart-feed/data/chart-forward/etf": {
       "files": 13,
-      "newest_bar": "2026-11-12",
-      "oldest_last_bar": "2026-11-12",
-      "weekdays_behind": 1
+      "newest_bar": "2026-11-13",
+      "oldest_last_bar": "2026-11-13",
+      "weekdays_behind": 0
     }
   },
   "next_rotation_decision": "2026-12-01",
-  "days_to_decision": 18
+  "days_to_decision": 17
 }

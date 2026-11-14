@@ -1,17 +1,17 @@
 {
-  "scans_logged": 9,
-  "signals_waiting_for_next_bar": 21,
+  "scans_logged": 10,
+  "signals_waiting_for_next_bar": 15,
   "by_strategy": {
     "bollinger_revert": {
       "1d": {
-        "n": 36,
-        "mean": 0.00588,
-        "hit_rate": 0.778
+        "n": 38,
+        "mean": 0.00414,
+        "hit_rate": 0.737
       },
       "5d": {
-        "n": 20,
-        "mean": 0.01908,
-        "hit_rate": 0.55
+        "n": 26,
+        "mean": 0.0222,
+        "hit_rate": 0.615
       },
       "10d": {
         "n": 0,
@@ -21,14 +21,14 @@
     },
     "donchian_breakout": {
       "1d": {
-        "n": 10,
-        "mean": -0.01294,
-        "hit_rate": 0.5
+        "n": 14,
+        "mean": -0.01372,
+        "hit_rate": 0.429
       },
       "5d": {
-        "n": 6,
-        "mean": -0.00228,
-        "hit_rate": 0.333
+        "n": 7,
+        "mean": -0.00736,
+        "hit_rate": 0.286
       },
       "10d": {
         "n": 0,
@@ -38,9 +38,9 @@
     },
     "macd_trend": {
       "1d": {
-        "n": 14,
-        "mean": -0.00908,
-        "hit_rate": 0.429
+        "n": 18,
+        "mean": -0.01127,
+        "hit_rate": 0.333
       },
       "5d": {
         "n": 7,
@@ -55,14 +55,14 @@
     },
     "momentum_rotation": {
       "1d": {
-        "n": 7,
-        "mean": 0.00448,
-        "hit_rate": 0.714
+        "n": 9,
+        "mean": 0.00205,
+        "hit_rate": 0.556
       },
       "5d": {
-        "n": 4,
-        "mean": 0.02858,
-        "hit_rate": 0.5
+        "n": 5,
+        "mean": 0.0395,
+        "hit_rate": 0.6
       },
       "10d": {
         "n": 0,
@@ -89,14 +89,14 @@
     },
     "rsi_revert": {
       "1d": {
-        "n": 37,
-        "mean": 0.00124,
-        "hit_rate": 0.676
+        "n": 42,
+        "mean": -0.00186,
+        "hit_rate": 0.595
       },
       "5d": {
-        "n": 17,
-        "mean": 0.01073,
-        "hit_rate": 0.529
+        "n": 22,
+        "mean": 0.01339,
+        "hit_rate": 0.591
       },
       "10d": {
         "n": 0,
@@ -106,14 +106,14 @@
     },
     "sma_cross": {
       "1d": {
-        "n": 22,
-        "mean": 0.00059,
-        "hit_rate": 0.591
+        "n": 26,
+        "mean": 0.00011,
+        "hit_rate": 0.538
       },
       "5d": {
-        "n": 9,
-        "mean": 0.02331,
-        "hit_rate": 0.556
+        "n": 11,
+        "mean": 0.0296,
+        "hit_rate": 0.636
       },
       "10d": {
         "n": 0,
