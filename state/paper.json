@@ -7,16 +7,16 @@
   "day_pnl": 0.0,
   "trades_today": 0,
   "cooldown": 0,
-  "last_candle_t": 1794700800000,
+  "last_candle_t": 1794719700000,
   "closed_trades": 0,
   "last_review_day": "2026-11-15",
   "core": {
-    "block": 89,
+    "block": 85,
     "sleeve": {
       "cash": 10000.0,
       "btc": 0.0,
       "exposure": 0.0,
-      "since_change": 584,
+      "since_change": 605,
       "fees": 0.0,
       "trades": 0
     },
