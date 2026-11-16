@@ -96,6 +96,10 @@ class Bot:
             self.core_step(k, p_panic, base)
         except Exception as e:  # the core sleeve must never stop the main cycle
             self.journal.log("error", stage="core", error=repr(e), **base)
+        try:
+            self.desk_step(k, base)
+        except Exception as e:  # shadow desks must never stop the main cycle
+            self.journal.log("error", stage="desks", error=repr(e), **base)
 
         # Step 4: PANIC = hands off (and optionally flatten)
         if p_panic >= cfg.panic_threshold:
@@ -176,6 +180,20 @@ class Bot:
             self.journal.log("core", **ev, reason=why, trend_up=trend_up, p_panic=p_panic, **base)
             ping(cfg, f"CORE {ev['from']:.0%} -> {ev['to']:.0%} BTC ({why})",
                  f"at {ev['price']:,.2f}  core value {ev['value']:,.2f}  [paper]")
+
+    def desk_step(self, k: dict, base: dict):
+        """Shadow paper desks (desks.py): six swing strategies on BTC 4h candles, fixed default settings
+        (walk-forward showed re-tuning hurt). Runs once per closed 4h candle; state key "desks"."""
+        import desks
+        if (k["t"] + 900_000) % desks.BAR_MS:
+            return
+        st = self.broker.s.setdefault("desks", {})
+        for ev in desks.live_step(st, self.cfg, {}, self.cfg.symbol):
+            self.journal.log("desk", **ev, **base)
+            ping(self.cfg, f"DESK {ev['desk']} {ev['from']:.0%} -> {ev['to']:.0%} BTC",
+                 f"at {ev['price']:,.2f}  desk value {ev['value']:,.2f}  [paper]")
+        vals = [d["value"] for d in st.values() if isinstance(d, dict) and "value" in d]
+        self.broker.s["desks_ensemble"] = round(sum(vals) / len(vals), 2) if vals else None
 
     def maybe_review(self):
         """Step 8, run inside the worker (it owns the disk): once per UTC day after review_hour_utc."""
