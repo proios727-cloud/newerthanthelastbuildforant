@@ -45,4 +45,11 @@ assert b.broker.s["position"] is None
 print("PANIC ->", [r["kind"] for r in read(config.STATE_DIR / "decisions.jsonl")][-3:])
 snap = sorted((config.STATE_DIR / "snapshots").glob("*.png"))[-1]; print("snapshot", snap.stat().st_size // 1024, "KiB")
 import shutil; shutil.copy(snap, Path(__file__).resolve().parents[1] / "sample_snapshot.png")
+# Cap holds at the fill price even when the book gaps past the sizing buffer (deterministic, no live data)
+from broker import PaperBroker
+gb = PaperBroker(Config.load(), config.STATE_DIR / "gap_test.json")
+ev = gb.market_entry("LONG", 2000 / (70000 * 1.002), {"asks": [[71000, 1]], "bids": [[70990, 1]]}, 69000, 72000, "gap", 0)
+gn = ev["qty"] * gb.s["position"]["entry"]
+assert gn <= 2000 and ev.get("trimmed_to_cap"), (gn, ev)
+print("gap fill trimmed to cap ✓", round(gn, 2))
 print("ALL PASS")

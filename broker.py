@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import math
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -41,14 +42,23 @@ class PaperBroker:
         return notional * self.cfg.fee_bps / 1e4
 
     def _open(self, side, qty, price, stop, target, signal_id, kind, t):
+        # Enforce the hard notional cap at the actual fill price: sizing used the signal price, and the
+        # live book can have moved past FILL_BUFFER by the time we fill. Only ever shrinks the order.
+        cap = self.s["equity"] * self.cfg.max_position_pct / 100
+        trimmed = qty * price > cap
+        if trimmed:
+            qty = math.floor(cap / price * 1e5) / 1e5
         fee = self._fee(qty * price)
         self.s["equity"] -= fee
         self.s["day_pnl"] -= fee
         self.s["trades_today"] += 1
         self.s["position"] = {"id": signal_id, "side": side, "qty": qty, "entry": price, "stop": stop,
                               "target": target, "entry_fee": fee, "opened_t": t, "entry_type": kind}
-        return {"event": "fill", "leg": "entry", "order_type": kind, "side": side, "qty": qty,
-                "price": round(price, 2), "fee": round(fee, 4), "trade_id": signal_id}
+        ev = {"event": "fill", "leg": "entry", "order_type": kind, "side": side, "qty": qty,
+              "price": round(price, 2), "fee": round(fee, 4), "trade_id": signal_id}
+        if trimmed:
+            ev["trimmed_to_cap"] = True
+        return ev
 
     def market_entry(self, side, qty, book, stop, target, signal_id, t):
         slip = 1 + (self.cfg.slippage_bps / 1e4) * (1 if side == "LONG" else -1)
