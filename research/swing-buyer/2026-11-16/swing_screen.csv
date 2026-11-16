@@ -1,0 +1,11 @@
+rank,ticker,status,reason,expiry,dte,strike,ask,bid,delta,oi,cost,breakeven,breakeven_pct,iv30,rv20,iv_rv,mom20,score,spot,earnings,take_profit_at,stop_at,time_exit,ticket,asof
+,BAC,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,32,,,,,,,,,0.2358,0.2478,0.9517,-0.4099,,50.34,2027-01-15,,,,,2026-11-16T15:42:19.369874039Z
+,CSCO,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,32,,,,,,,,,0.3605,0.4946,0.729,-10.9414,,95.056,2027-02-10,,,,,2026-11-16T15:42:20.236519707Z
+,F,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,32,,,,,,,,,0.3407,0.304,1.1208,-4.1834,,11.74,2027-02-09,,,,,2026-11-16T15:42:19.413106584Z
+,INTC,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,32,,,,,,,,,0.7252,1.4321,0.5064,-33.6004,,55.7585,2027-01-21,,,,,2026-11-16T15:42:20.656147919Z
+,KO,fail,"no call fits: delta 0.3-0.6, ask $0.50-$2.00, OI >= 500, tight spread",2026-12-18,32,,,,,,,,,0.1837,0.2065,0.8895,5.6976,,100.09,2027-02-09,,,,,2026-11-16T15:42:18.473462961Z
+,NFLX,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,32,,,,,,,,,0.355,0.3723,0.9536,-11.8815,,61.545,2027-01-19,,,,,2026-11-16T15:42:20.903275752Z
+,PFE,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,32,,,,,,,,,0.2634,0.2528,1.0416,-2.3327,,29.095,2027-02-02,,,,,2026-11-16T15:42:21.406187499Z
+,SOFI,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,32,,,,,,,,,0.5356,0.6693,0.8003,5.9794,,14.825,2027-01-29,,,,,2026-11-16T15:42:20.476244791Z
+,T,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,32,,,,,,,,,0.262,0.4368,0.5999,-5.3754,,22.57,2027-01-27,,,,,2026-11-16T15:42:20.886033198Z
+,VZ,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,32,,,,,,,,,0.2352,0.2722,0.8641,3.5052,,46.75,2027-01-29,,,,,2026-11-16T15:42:20.804900744Z
