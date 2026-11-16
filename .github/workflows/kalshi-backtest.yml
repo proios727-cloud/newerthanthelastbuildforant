@@ -1,0 +1,54 @@
+name: kalshi-backtest
+# Research only: replays settled Kalshi BTC markets (public data, no key) against Binance spot. Never places orders.
+on:
+  workflow_dispatch:
+    inputs:
+      series:
+        description: "Kalshi series ticker"
+        default: "KXBTCD"
+      days:
+        description: "Days of settled markets"
+        default: "60"
+      max_markets:
+        description: "Markets to replay"
+        default: "2000"
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: regime-bot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Replay
+        run: |
+          python kalshi_backtest.py --series "${{ inputs.series }}" --days "${{ inputs.days }}" \
+            --max-markets "${{ inputs.max_markets }}" --rows-cache rows.json --out kalshi_report.md > /dev/null
+          cat kalshi_report.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kalshi-backtest
+          path: |
+            kalshi_report.md
+            kalshi_report.json
+            rows.json
+          if-no-files-found: ignore
+      - name: Save report to regime-bot-reviews
+        run: |
+          git config user.name "regime-bot"
+          git config user.email "regime-bot@users.noreply.github.com"
+          git fetch origin regime-bot-reviews
+          git worktree add --detach /tmp/rev FETCH_HEAD
+          d=$(date -u +%Y-%m-%d)
+          mkdir -p /tmp/rev/reviews
+          cp kalshi_report.md "/tmp/rev/reviews/kalshi-backtest-${{ inputs.series }}-$d.md"
+          cd /tmp/rev && git add -A && git commit -qm "Kalshi backtest ${{ inputs.series }} $(date -u +%FT%H:%MZ)" && git push origin HEAD:regime-bot-reviews
