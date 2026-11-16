@@ -83,8 +83,13 @@ follows this file step by step. Nothing here places, previews or cancels an orde
    python3 scripts/heatseeker_dash_data.py /tmp/hs_dash --chains <today's chains>
    ```
    Check that every one of today's signals now has a final outcome: target, stop, close, not triggered or no trade.
-3. Update the dashboard (step 3) and push (step 4).
-4. Report in two or three lines:
+3. Rebuild the desk ledger, the running journal of every triggered trade and its P&L across all books:
+   ```bash
+   python3 scripts/desk_ledger.py --today <today>
+   ```
+   It rewrites `research/desk-ledger.md` and `research/desk_ledger.csv` from the append-only journals; commit both.
+4. Update the dashboard (step 3) and push (step 4).
+5. Report in two or three lines:
    - today's signals and outcomes;
    - the running totals of signals, triggered trades and total R;
    - any run that failed.
