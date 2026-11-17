@@ -133,7 +133,9 @@ When the user asks to check a signal (usually after an alert fires):
 Rule: `research/premium-screener/RULE.md`, amendment 2. It sells cash-secured puts only. No account is read, and nothing is
 ordered: the owner enters picks by hand in a paper account.
 1. **Collect the data** with read-only subagents, four or five tickers each, across the 17 tickers in the rule.
-   - Daily bars (260) with `mcp-tv-get-ohlcv`.
+   - Daily bars with Robinhood `get_equity_historicals` (`interval: day`, up to 10 symbols per call, `start_time` 14
+     days back; the CSVs already hold the history). TradingView is kept for the Heat Seeker's 15-minute bars only,
+     because its daily call quota ran out on 2026-11-17. A ticker with no CSV yet needs a start 400 days back.
    - The next earnings dates with Robinhood `get_earnings_calendar` (market-wide, filtered by symbol).
    - One expiry 30–45 days out per ticker. Fetch puts from 18% below spot (12% for ETFs) up to the nearest strike, plus
      the at-the-money call, with `get_option_instruments` and `get_option_quotes`.
@@ -142,8 +144,7 @@ ordered: the owner enters picks by hand in a paper account.
 2. **Convert the data:**
    ```bash
    python3 scripts/rh_chain_from_transcript.py <agent transcripts> options/data/chains_premium
-   python3 scripts/tv_from_transcript.py <bars transcript> /tmp/pb
-   python3 scripts/tv_ohlcv_to_csv.py --all-hours --merge chart/data/daily_tv /tmp/pb/*.json
+   python3 scripts/rh_daily_from_transcript.py <bars transcript>
    ```
    Write `research/premium-screener/earnings_<date>.json` (`{"TICKER": "YYYY-MM-DD"}`) from the earnings results.
 3. **Screen and log:**
@@ -181,15 +182,15 @@ ordered: the owner enters picks by hand in a paper account.
 Rule: `research/swing-buyer/RULE.md`. Single long calls, $200 max, one pick a day at most. No account is read and nothing
 is ordered: the owner enters a pick by hand.
 1. **Collect** with one read-only subagent, for the 10 tickers in the rule:
-   - 260 daily bars (`mcp-tv-get-ohlcv`), the spot (`get_equity_quotes`), next earnings (`get_earnings_calendar`);
+   - daily bars (Robinhood `get_equity_historicals`, `interval: day`, all 10 symbols in one call, `start_time` 14 days
+     back), the spot (`get_equity_quotes`), next earnings (`get_earnings_calendar`);
    - `get_option_chains` for the expiries, then the monthly (third Friday) closest to 30 days within 21–45;
    - calls from 5% below spot to 10% above (`get_option_instruments`, `get_option_quotes`);
    - for each open pick, its own contract's quote too.
 2. **Convert:**
    ```bash
    python3 scripts/rh_chain_from_transcript.py <transcript> options/data/chains_swing
-   python3 scripts/tv_from_transcript.py <transcript> /tmp/sb
-   python3 scripts/tv_ohlcv_to_csv.py --all-hours --merge chart/data/daily_tv /tmp/sb/*.json
+   python3 scripts/rh_daily_from_transcript.py <transcript>
    ```
    Write `research/swing-buyer/earnings_<date>.json`.
 3. **Screen, mark and log:**
