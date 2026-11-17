@@ -8,7 +8,7 @@ Reads only the append-only journals (nothing is edited):
 - research/swing-buyer/picks.jsonl: swing-buyer paper calls;
 - research/heatseeker/signals.jsonl, scored against chart/data/intraday/15m: Heat Seeker signals (in R, no dollars).
 Open option positions are marked from the newest chain snapshot of their own ticker and expiry (bid for longs, ask for
-shorts); a position with no snapshot is left unmarked.
+shorts); a position with no snapshot is left unmarked. Ids in EXCLUDE are left out at the owner's request.
 Writes research/desk-ledger.md (the readable journal) and research/desk_ledger.csv (one row per trade).
 """
 import argparse
@@ -30,6 +30,8 @@ BARS = ROOT / "chart/data/intraday/15m"
 CHAIN_DIRS = [ROOT / "options/data/chains_swing", ROOT / "options/data/chains_premium", ROOT / "options/data/chains"]
 FIELDS = ["book", "id", "opened", "closed", "ticker", "contract", "side", "entry", "exit", "mark", "status", "pnl",
           "reason"]
+# Journal entries the owner asked to keep out of the ledger. The journal line stays (append-only); the ledger skips it.
+EXCLUDE = {"P-2026-11-06-PFE-30C-LEAP"}
 
 
 def book_of(p):
@@ -72,7 +74,7 @@ def rows(today):
     out = []
     pos = read_jsonl(POSITIONS)
     closes = {r["id"]: r for r in pos if r.get("event") == "close"}
-    for p in (r for r in pos if r.get("event") == "open"):
+    for p in (r for r in pos if r.get("event") == "open" and r["id"] not in EXCLUDE):
         c, sign, qty = closes.get(p["id"]), (1 if p["side"] == "long" else -1), p.get("qty", 1)
         row = {"book": book_of(p), "id": p["id"], "opened": p["date"], "ticker": p["ticker"],
                "contract": p["contract"], "side": p["side"], "entry": p["entry"]}
