@@ -29,3 +29,10 @@ class DeskLedgerTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ExcludeTest(unittest.TestCase):
+    def test_pfe_leap_left_out(self):
+        self.assertIn("P-2026-11-06-PFE-30C-LEAP", L.EXCLUDE)
+        self.assertNotIn("P-2026-11-06-PFE-30C-LEAP", {r["id"] for r in L.rows("2026-11-17")})
+
