@@ -482,6 +482,80 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual(bad, {"XLK": "25 requests per day"})
 
 
+    def test_theta_backup_feed(self):
+        import importlib.util
+        import shutil
+        from chart.update import parse_av_csv
+        root = pathlib.Path(__file__).parents[1] / "scripts"
+        spec = importlib.util.spec_from_file_location("tft", root / "theta_from_transcript.py")
+        tft = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(tft)
+        name = "mcp__ThetaData__stock_history_eod"
+        sample = ('{"response": [{"ask_size":100,"last_trade":"2026-11-10T17:15:09.945","created":"2026-11-10T17:15:11.370","count":146292,'
+                  '"volume":33148017,"high":62.4300,"low":60.4301,"close":62.2100,"open":60.8900},'
+                  '{"ask_size":100,"last_trade":"2026-11-16T17:14:50.104","created":"2026-11-16T17:15:04.669","count":136026,'
+                  '"volume":30618424,"high":64.6906,"low":63.4950,"close":63.6900,"open":64.5200},'
+                  '{"created":"2026-11-17T17:00:00","volume":0,"high":0,"low":0,"close":0,"open":0}]}')
+
+        def use(i, sym):
+            return json.dumps({"message": {"content": [{"type": "tool_use", "id": i, "name": name, "input": {"symbol": sym}}]}})
+
+        def res(i, body):
+            return json.dumps({"message": {"content": [{"type": "tool_result", "tool_use_id": i, "content": body}]}})
+
+        def stamp(ts, line):
+            return json.dumps({**json.loads(line), "timestamp": ts})
+
+        root_d = pathlib.Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: shutil.rmtree(root_d))
+        fwd, out = root_d / "fwd", root_d / "out"
+        (fwd / "etf").mkdir(parents=True)
+        (fwd / "etf" / "XLE.csv").write_text("date,open,high,low,close,volume\n2026-11-09,60,61,59,60.5,1\n"
+                                           "2026-11-10,60.87,62.43,60.4301,62.21,33125489\n2026-11-16,64.52,64.6906,63.495,63.69,30585890\n")
+        (fwd / "data").mkdir()
+        (fwd / "data" / "AAA.csv").write_text("date,open,high,low,close,volume\n2026-11-10,1,1,1,62.21,1\n")
+        (fwd / "data" / "BBB.csv").write_text("date,open,high,low,close,volume\n2026-11-01,1,1,1,62.21,1\n")
+        (fwd / "data" / "CCC.csv").write_text("date,open,high,low,close,volume\n2026-11-10,1,1,1,62.21,1\n")
+        (fwd / "data" / "DDD.csv").write_text("date,open,high,low,close,volume\n2026-11-10,1,1,1,62.21,1\n")
+        lines = []
+        for i, sym in enumerate(("xle", "AAA", "BBB", "CCC", "DDD")):
+            lines += [stamp("2026-11-17T00:10:00Z", use(str(i), sym)), stamp("2026-11-17T00:10:01Z", res(str(i), sample))]
+        lines += [use("z", "XLE"), res("z", json.dumps({"error": "no data"}))]       # a later failure keeps the good XLE
+        # the sample converts to a csv that parse_av_csv accepts, and the zero-close row is dropped
+        rows = parse_av_csv(tft.to_av_csv(sample))
+        self.assertEqual(rows, [("2026-11-10", 60.89, 62.43, 60.4301, 62.21, 33148017.0),
+                                ("2026-11-16", 64.52, 64.6906, 63.495, 63.69, 30618424.0)])
+        big = '{"response": [{"created": "2026-11-10T17:00:00", "volume": 5, "high": 1240.1234, "low": 1200.0001, "close": 1234.5678, "open": 1201.9876}]}'
+        self.assertEqual(parse_av_csv(tft.to_av_csv(big)), [("2026-11-10", 1201.9876, 1240.1234, 1200.0001, 1234.5678, 5.0)])
+        good, bad = tft.extract(lines)
+        self.assertEqual((sorted(good), bad), (["AAA", "BBB", "CCC", "DDD", "XLE"], {}))
+        tr = root_d / "t.jsonl"
+        tr.write_text("\n".join(lines))
+        (out).mkdir()
+        (out / "CCC.csv").write_text("primary")
+        # DDD's stored close is off by more than 0.1%
+        (fwd / "data" / "DDD.csv").write_text("date,open,high,low,close,volume\n2026-11-10,1,1,1,62.30,1\n")
+        import contextlib
+        import io
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            tft.main(["x", str(out), str(tr), "--check-dir", str(fwd)])
+        rep = json.loads(buf.getvalue())
+        self.assertEqual(rep["saved"], ["AAA", "XLE"])
+        self.assertEqual(rep["skipped_primary"], ["CCC"])
+        self.assertEqual(sorted(rep["rejected"]), ["BBB", "DDD"])
+        self.assertIn("no overlap", rep["rejected"]["BBB"])
+        self.assertIn("mismatch", rep["rejected"]["DDD"])
+        self.assertEqual((out / "CCC.csv").read_text(), "primary")                    # Alpha Vantage is never overwritten
+        self.assertFalse((out / "BBB.csv").exists())
+        self.assertEqual(len(parse_av_csv((out / "XLE.csv").read_text())), 2)
+        # --since: results before the cut-off don't count
+        out2 = root_d / "out2"
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            tft.main(["x", str(out2), str(tr), "--since", "2026-11-18T00:00:00Z"])
+        self.assertEqual(json.loads(buf.getvalue())["saved"], [])
+
     def test_feed_scripts_parse(self):
         import subprocess
         for name in ("forward_feed.sh", "forward_run.sh"):
