@@ -21,3 +21,13 @@ Baseline regime, TAKE/SKIP, book-control and entry questions.
 ## v5 — 2026-11-14
 Evidence: rolling 7-day regime accuracy 57.1% (219 scored), mean Brier 0.709 (worse than uniform 0.667). Across all 574 scored calls, TRENDING calls made when the move was already stretched (rsi14 < 32 or > 68, or atr_ratio_vs_100 > 1.1 with price > 0.4% below its 48h high) were right 23/92 (25%) vs 23/55 (42%) otherwise. On the 148 calls made since 2026-11-09 (after this rule was first drafted), 15 stretched TRENDING calls were right 1/15 (14 resolved CHOPPY), e.g. candle_t 2026-11-09T06:15Z–07:00Z. The v4 "spent move" clause (RSI 30/70, ATR 1.5x) was too loose to stop them.
 Change: TRENDING criterion's exclusion sentence now names the state fields and tighter cut-offs (rsi14 ~32/~68; atr_ratio_vs_100 ~1.1 with a >0.4% drawdown from the 48h high) and says where such calls belong (CHOPPY, or PANIC if whipsawing). No other text, labels, thresholds or code changed.
+
+## v6 — 2026-11-17
+Evidence (review 2026-11-17, 348 scored calls in the last 168h, accuracy 62.9%, Brier 0.600; 15 confident misses with p ≥ 0.7):
+- PANIC calls made with ATR already elevated (atr_ratio_vs_100 ≥ 1.3) were right 1 of 24 across all versions, 0 of 9 under v5
+  (7 resolved CHOPPY, 2 TRENDING). PANIC calls below 1.3× ATR were right 2 of 2.
+- The only real PANIC (risk-switch exit) so far fired at ATR 1.09×, i.e. as ATR started to jump, not after.
+Change: PANIC criterion. "ATR jumping far above its recent average" → "ATR starting to jump from a normal level", plus:
+once atr_ratio_vs_100 is above ~1.3 the shock has happened and the next 3 hours usually chop, so call CHOPPY.
+Not changed (noted for later): CHOPPY called during a Bollinger squeeze (bb_width_pct < 0.8) went TRENDING 10 of 16 under v5;
+sample too small for a rewrite yet. Drafted 2026-11-16, held back then only by the flaky pipeline test (since fixed).
