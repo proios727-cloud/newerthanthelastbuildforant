@@ -1,6 +1,6 @@
 # Desk ledger — running journal
 
-As of 2026-11-16. Rebuilt from the append-only journals after each close; never edited by hand.
+As of 2026-11-17. Rebuilt from the append-only journals after each close; never edited by hand.
 
 ## Net by book
 
@@ -9,10 +9,10 @@ As of 2026-11-16. Rebuilt from the append-only journals after each close; never 
 | Real account | 2 | 2 | 0 / 2 | −$198 | +$0 | −$198 |
 | Paper: other | 1 | 0 | 0 / 0 | +$0 | +$0 | +$0 |
 | Paper: premium screener | 3 | 3 | 2 / 1 | +$443 | +$0 | +$443 |
-| Paper: swing buyer | 1 | 0 | 0 / 0 | +$0 | +$72 | +$72 |
-| **All books** | 7 | | | **+$245** | **+$72** | **+$317** |
+| Paper: swing buyer | 1 | 0 | 0 / 0 | +$0 | +$46 | +$46 |
+| **All books** | 7 | | | **+$245** | **+$46** | **+$291** |
 
-Heat Seeker (scored in R, no dollars): 25 signals logged, 20 no-trade, 5 not triggered, **0 triggered**, total +0.00 R.
+Heat Seeker (scored in R, no dollars): 27 signals logged, 22 no-trade, 5 not triggered, **0 triggered**, total +0.00 R.
 
 ## Every trade
 
@@ -24,4 +24,4 @@ Heat Seeker (scored in R, no dollars): 25 signals logged, 20 no-trade, 5 not tri
 | 2026-11-06 | Paper: other | PFE 2028-01-21 30 call | long | 3.03 | — | open | — | no quote snapshot |
 | 2026-11-09 | Real account | IWM 2026-11-10 287 call | long | 0.23 | 0.00 | closed 2026-11-10 | −$23 | expired worthless: IWM well below 287 |
 | 2026-11-09 | Real account | QQQ 2026-11-10 685 call | long | 1.75 | 0.00 | closed 2026-11-10 | −$175 | expired worthless: QQQ closed 674.81 < 685 |
-| 2026-11-12 | Paper: swing buyer | KO 2026-12-18 100 call | long | 1.62 | 2.34 | open | +$72 |  |
+| 2026-11-12 | Paper: swing buyer | KO 2026-12-18 100 call | long | 1.62 | 2.08 | open | +$46 |  |
