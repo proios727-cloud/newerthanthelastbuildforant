@@ -1,0 +1,2 @@
+id,date,ticker,expiry,strike,ask,cost,breakeven,take_profit_at,stop_at,time_exit,status,exit,pnl,reason,ticket
+2026-11-12-KO-100C,2026-11-12,KO,2026-12-18,100.0,1.62,162.0,101.62,2.59,0.81,2026-12-08,open,,,,BUY TO OPEN 1 KO 2026-12-18 100 CALL · LIMIT 1.62 or better · DAY · cost $162
