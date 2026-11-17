@@ -73,6 +73,7 @@ def main(argv=None):
     f.add_argument("--tickets", help="rotation-tickets: ticket log path (default ledger/rotation_tickets.jsonl)")
     f.add_argument("--nav", type=float, help="rotation-tickets: paper NAV (default desk.json starting_nav)")
     f.add_argument("--trend-log", help="rotation-brief: the defensive variant's log, to show its call")
+    f.add_argument("--variant-log", help="rotation-brief: variant A's paper log, to show its call")
     f.add_argument("--doctor", help="rotation-brief: a `chart doctor` JSON file, to list blockers")
     f.add_argument("--overlay", help="rotation-brief: a `chart overlay --status` JSON file, for the regime flag")
     f.add_argument("--trend", type=int, default=0, help="rotation-record/replay: basket trend filter length (sessions)")
@@ -150,7 +151,7 @@ def main(argv=None):
             if a.action == "rotation-brief":
                 doc = json.loads(pathlib.Path(a.doctor).read_text()) if a.doctor else None
                 ovl = json.loads(pathlib.Path(a.overlay).read_text()) if a.overlay else None
-                text = forward.rotation_brief(bars, log, a.tickets or forward.TICKETS_LOG, a.trend_log, doc, ovl)
+                text = forward.rotation_brief(bars, log, a.tickets or forward.TICKETS_LOG, a.trend_log, doc, ovl, a.variant_log)
                 print(text or "no decision logged yet")
             elif a.action == "rotation-tickets":
                 row = forward.rotation_tickets(bars, log, a.tickets or forward.TICKETS_LOG,

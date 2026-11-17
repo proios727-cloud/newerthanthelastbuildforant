@@ -85,8 +85,9 @@ def review(d):
     rot = json.loads((d / "ROTATION.json").read_text()) if (d / "ROTATION.json").exists() else {}
     overlay = json.loads((d / "OVERLAY.json").read_text()) if (d / "OVERLAY.json").exists() else {}
     trend = _jsonl(d / "rotation_trend200.jsonl")
+    v120 = [r for r in _jsonl(d / "rotation_v120.jsonl") if dec and r["as_of"] == dec["as_of"]]
     context = {"decision": dec, "prev": prev, "rotation": rot, "overlay": overlay,
-               "trend": trend[-1] if trend else None, "latest": latest}
+               "trend": trend[-1] if trend else None, "v120": v120[-1] if v120 else None, "latest": latest}
     return dec, checks, context
 
 
@@ -118,6 +119,8 @@ def render(dec, checks, ctx):
                 "## Context", "",
                 f"- **Defensive variant (cash below the basket's 200-session average):** "
                 + (f"holds {', '.join(tr['picks']) or 'cash'}." if tr else "not logged."),
+                f"- **Variant A (120-session momentum, top 3), paper comparison only:** "
+                + (f"holds {', '.join(ctx['v120']['picks']) or 'cash'}." if ctx.get("v120") else "no decision logged for this date."),
                 f"- **SPY regime flag:** " + (f"{'above' if ov.get('hold') else 'below'} its 10-month average, {pct(ov.get('close_vs_average_now'))} now "
                                                f"(information only, not on the book)." if ov else "not logged."),
                 "- **Long history:** the rule trailed the equal-weight basket by about 1 point a year over 2004–2026 and roughly "

@@ -5,7 +5,7 @@ next decides (the first weekday of next month; exchange holidays are not modelle
 """
 import os
 import pathlib
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from . import load_csv
 
@@ -33,10 +33,23 @@ def next_decision(today):
     return nxt
 
 
+def market_today(env=None):
+    """Today's date in New York, where the sessions are. The nightly run starts after 00:00 UTC, so the UTC date is a
+    day ahead. CHART_TODAY (YYYY-MM-DD) overrides it, for scripts/rehearse_decision.py."""
+    env = os.environ if env is None else env
+    if env.get("CHART_TODAY"):
+        return date.fromisoformat(env["CHART_TODAY"])
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("America/New_York")).date()
+    except Exception:                    # no tz database: fall back to UTC
+        return date.today()
+
+
 def check(folders, today=None, env=None, max_stale=3, feed="key"):
     """`feed="connector"`: bars arrive through the Claude connector feed, so no API key is needed."""
-    today = today or date.today()
     env = os.environ if env is None else env
+    today = today or market_today(env)
     problems, data = [], {}
     if feed == "key" and not env.get("ALPHAVANTAGE_API_KEY"):
         problems.append("ALPHAVANTAGE_API_KEY is not set: `chart update` cannot fetch bars, so nothing new is logged. "

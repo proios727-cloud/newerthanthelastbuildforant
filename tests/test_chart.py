@@ -559,6 +559,12 @@ class UpdateTests(unittest.TestCase):
         self.assertIn("Sessions this week:** 2, none missing", text)
         self.assertIn("flagged: Rule settings unchanged", text)
         self.assertIn("Variant A (120 sessions, top 3), paper comparison only:** first decision due 2026-12-01", text)
+        doc = json.loads((d / "DOCTOR.json").read_text())
+        (d / "DOCTOR.json").write_text(json.dumps({**doc, "today": "2026-11-02", "next_rotation_decision": "2026-11-02",
+                                                   "days_to_decision": 0}))
+        st = fd.build(d)["status"][0]                 # the 11-02 decision is logged, so the next is December's
+        self.assertEqual((st["next_decision"], st["days_to_decision"]), ("2026-12-01", 29))
+        (d / "DOCTOR.json").write_text(json.dumps(doc))
         (d / "rotation_v120.jsonl").write_text(json.dumps({"as_of": "2026-11-03", "picks": ["AAA"]}) + "\n")
         (d / "ROTATION_V120.json").write_text(json.dumps({"periods": [{"from": "2026-11-04"}], "cumulative": {"rule_net": 0.01}}))
         st = fd.build(d)["status"][0]
@@ -606,6 +612,10 @@ class UpdateTests(unittest.TestCase):
         (d / "rotation.jsonl").write_text(json.dumps(dec) + "\n")
         _, checks, _ = rr.review(d)
         self.assertTrue(all(ok for _, ok, _ in checks), checks)
+        self.assertIn("**Variant A (120-session momentum, top 3), paper comparison only:** no decision logged", rr.render(*rr.review(d))[0])
+        (d / "rotation_v120.jsonl").write_text(json.dumps({**dec, "picks": ["AAA", "BBB", "CCC"]}) + "\n")
+        self.assertIn("paper comparison only:** holds AAA, BBB, CCC.", rr.render(*rr.review(d))[0])
+        (d / "rotation_v120.jsonl").unlink()
         self.assertEqual(dec["picks"], ["AAA", "CCC", "DDD"])
         (d / "rotation.jsonl").write_text(json.dumps({**dec, "picks": ["AAA", "BBB", "CCC"], "late": True}) + "\n")
         tickets["tickets"][0]["qty"] += 1
@@ -920,6 +930,17 @@ class DoctorTests(unittest.TestCase):
         feed = check([d], today=date(2026, 10, 27), env={}, feed="connector")
         self.assertEqual(len(feed["problems"]), 1)          # no key complaint, only the lagging file
 
+    def test_market_today_override(self):
+        from datetime import date
+        from chart.doctor import check, market_today
+        self.assertEqual(market_today({"CHART_TODAY": "2026-12-01"}), date(2026, 12, 1))
+        self.assertIsInstance(market_today({}), date)
+        d = tempfile.mkdtemp()
+        with open(os.path.join(d, "AAA.csv"), "w") as f:
+            f.write("date,open,high,low,close,volume\n2026-11-30,1,1,1,1,0\n")
+        r = check([d], env={"CHART_TODAY": "2026-11-30"}, feed="connector")
+        self.assertEqual((r["today"], r["next_rotation_decision"], r["days_to_decision"]), ("2026-11-30", "2026-12-01", 1))
+
 
 class LongrunTests(unittest.TestCase):
     def periods(self):
@@ -957,12 +978,16 @@ class BriefTests(unittest.TestCase):
             if record_rotation(cut, log, lookback=60, top=2):
                 rotation_tickets(cut, log, tix)
             record_rotation(cut, tr, lookback=60, top=2, trend=20)
+        va = os.path.join(d, "va.jsonl")
+        for i in range(90):
+            record_rotation({s: v[:i + 1] for s, v in b.items()}, va, lookback=40, top=2)
         text = rotation_brief(b, log, tix, tr, {"problems": ["key missing"]},
-                              {"hold": False, "decided": "2026-03-31", "close_vs_average_now": -0.02})
+                              {"hold": False, "decided": "2026-03-31", "close_vs_average_now": -0.02}, va)
         self.assertIn("Below: cash as of 2026-03-31", text)
         self.assertIn("**Hold: A, D**", text)
         self.assertIn("## Paper tickets", text)
         self.assertIn("## Defensive variant", text)
+        self.assertIn("## Variant A (40-session momentum, top 2): paper comparison only", text)
         self.assertIn("- key missing", text)
         self.assertIn("| 1 | A |", text)
 

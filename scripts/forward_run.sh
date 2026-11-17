@@ -35,5 +35,6 @@ python -m chart overlay "$D/data/SPY.csv" --status > "$D/OVERLAY.json"     # reg
 python -m chart doctor "$D/data" "$D/etf" --feed "$FEED" > "$D/DOCTOR.json" || true
 if [ -s "$D/rotation.jsonl" ]; then
   python -m chart forward rotation-brief "$D/etf" --log "$D/rotation.jsonl" --tickets "$D/rotation_tickets.jsonl" \
-    --trend-log "$D/rotation_trend200.jsonl" --doctor "$D/DOCTOR.json" --overlay "$D/OVERLAY.json" > "$D/BRIEF.md"
+    --trend-log "$D/rotation_trend200.jsonl" --variant-log "$D/rotation_v120.jsonl" --doctor "$D/DOCTOR.json" \
+    --overlay "$D/OVERLAY.json" > "$D/BRIEF.md"
 fi

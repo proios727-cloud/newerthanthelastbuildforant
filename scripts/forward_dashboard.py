@@ -14,6 +14,7 @@ the latest daily row matches ROTATION.json; the `_net` columns take off each per
 import json
 import pathlib
 import sys
+from datetime import date, timedelta
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 from chart import load_csv  # noqa: E402
@@ -93,13 +94,20 @@ def build(d):
               for name, ok, detail in checks]
 
     cum = rotation.get("cumulative", {})
+    # The doctor counts today as the decision day until the night is over; once that decision is logged, show the next one.
+    nxt, days = doctor.get("next_rotation_decision"), doctor.get("days_to_decision")
+    if nxt and last.get("as_of", "") >= nxt and doctor.get("today"):
+        from chart.doctor import next_decision
+        today = date.fromisoformat(doctor["today"])
+        nd = next_decision(date.fromisoformat(last["as_of"]) + timedelta(days=1))
+        nxt, days = nd.isoformat(), (nd - today).days
     # Variant A, paper comparison only: its result since its own first fill, and the live rule's over the same sessions.
     v120_from = v120_rep["periods"][0]["from"] if v120_rep.get("periods") else None
     before = next((r for r in reversed(daily) if v120_from and r["day"] < v120_from), None)
     live_same = (round((1 + daily[-1]["rule_net"]) / (1 + (before["rule_net"] if before else 0)) - 1, 5)
                  if v120_from and daily and daily[-1]["day"] >= v120_from else None)
     status = [{"latest_bar": latest, "data_ok": doctor["ok"], "problems": len(doctor["problems"]),
-               "next_decision": doctor.get("next_rotation_decision"), "days_to_decision": doctor.get("days_to_decision"),
+               "next_decision": nxt, "days_to_decision": days,
                "decided": last.get("as_of"), "picks": " ".join(last.get("picks", [])),
                "rule": cum.get("rule"), "basket": cum.get("basket"),
                "excess": None if cum.get("rule") is None else round(cum["rule"] - cum["basket"], 5),

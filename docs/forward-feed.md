@@ -66,6 +66,18 @@ only: no tickets, no brief, and it changes nothing about the live rule. Its firs
 after it was added (2026-12-01); it is not backfilled. The dashboard's status row and the weekly digest show its
 result since its own first fill next to the live rule's over the same sessions, both after costs.
 
+**Rehearsing a decision night.** `python3 scripts/rehearse_decision.py SHADOW_CHECKOUT --to 2026-12-02` copies
+`chart-forward` to a scratch folder and plays each night from the newest stored bar to `--to`. Each night it appends a
+synthetic bar per fund, a seeded random walk and never real data, then runs `forward_run.sh` and the files `finish`
+writes, with the doctor's date set to that night (`CHART_TODAY`). It then checks that the live rule, the defensive
+variant and variant A each log one decision on the decision day, that the tickets, brief, review, dashboard and digest
+cover it, and that the next period fills the next session. It prints a pass/fail list and commits nothing. Run before
+2026-12-01 it passed every check.
+
+**Dates.** `chart doctor` takes today's date in New York (`CHART_TODAY` overrides it). The nightly run starts after
+00:00 UTC, so the UTC date would put it a day ahead. Once a decision for the doctor's decision day is logged, the
+dashboard and the digest show the following month's.
+
 **Costs.** `ROTATION.json` scores each period before and after costs: 3 bp a side (the 1 bp fee and 2 bp slippage the
 backtests charge), paid at each fill on the weight the decision trades (`traded`: 1.0 for the first fill, the sum of
 weight changes after that). The basket pays one side once, at the first fill. The `_net` fields carry these figures into
