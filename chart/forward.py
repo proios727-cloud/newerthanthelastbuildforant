@@ -272,7 +272,8 @@ def rotation_tickets(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, nav=
     return row
 
 
-def rotation_brief(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, trend_log=None, doctor=None, overlay=None):
+def rotation_brief(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, trend_log=None, doctor=None, overlay=None,
+                   variant_log=None):
     """One Markdown page for the desk on decision day: the picks and why, what changes, the paper tickets, the defensive
     variant's call, the forward record so far and anything blocking the job. None if nothing has been decided yet."""
     decisions = _rows(log)
@@ -305,6 +306,13 @@ def rotation_brief(bars_by_symbol, log=ROTATION_LOG, tickets=TICKETS_LOG, trend_
             gap = t.get("basket_vs_trend")
             lines += ["", "## Defensive variant (cash below the basket's 200-session average)", "",
                       f"Hold: {', '.join(t['picks']) or 'cash'}" + (f" · basket {pct(gap)} vs its average" if gap is not None else "")]
+    if variant_log:
+        v = next((r for r in reversed(_rows(variant_log)) if r["as_of"] == d["as_of"]), None)
+        if v:
+            same = sorted(v["picks"]) == sorted(d["picks"])
+            lines += ["", f"## Variant A ({v['rule']['lookback']}-session momentum, top {v['rule']['top']}): paper comparison only", "",
+                      f"Hold: {', '.join(v['picks']) or 'cash'}" + (" (same as the rule)" if same else "")
+                      + ". Not on the book (research/rotation-variants/VERDICT.md)."]
     if overlay:
         lines += ["", "## Market regime flag (SPY vs its 10-month average)", "",
                   f"{'Above: hold' if overlay['hold'] else 'Below: cash'} as of {overlay['decided']}; "
