@@ -88,6 +88,9 @@ follows this file step by step. Nothing here places, previews or cancels an orde
    python3 scripts/desk_ledger.py --today <today>
    ```
    It rewrites `research/desk-ledger.md` and `research/desk_ledger.csv` from the append-only journals; commit both.
+   Then refresh the dashboard's Journal tab: upload `research/desk_ledger.csv` as an asset (Artifact publish, `asset: true`)
+   and point the `desk_ledger` dataset's `source.url` at it, with new `updated`/`edit` stamps (ArtifactData update pinned
+   to the version you read).
 4. Update the dashboard (step 3) and push (step 4).
 5. Report in two or three lines:
    - today's signals and outcomes;
