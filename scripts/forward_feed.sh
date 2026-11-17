@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
-# The Claude connector feed's nightly run in two steps around the fetch (docs/forward-feed.md). Research only: it never
+# The Claude connector feed's nightly run in steps around the fetch (docs/forward-feed.md). Research only: it never
 # previews, fills or places an order.
 #   scripts/forward_feed.sh start    # fresh worktrees of the base branch and shadow-data, stamp the start time, list symbols,
 #                                    # and work out when the first call may go (scripts/feed_window.py)
 #   scripts/forward_feed.sh wait     # sleep until then (at most WAIT_CAP seconds, default 1200)
 #   ... the Claude session calls Alpha Vantage TIME_SERIES_DAILY once per listed symbol ...
+#   scripts/forward_feed.sh missing  # save what AV returned, then print one `backup: SYM from YYYYMMDD to YYYYMMDD` line per symbol
+#                                    # still missing, for the ThetaData stock_history_eod backup calls (docs/forward-feed.md)
+#   ... the session calls mcp__ThetaData__stock_history_eod for each line printed ...
 #   scripts/forward_feed.sh finish   # save tonight's results, run the forward test, commit and push shadow-data, report,
 #                                    # and write the dashboard's files to $FEED_DIR/dash, the review to $FEED_DIR/REVIEW.md
 #                                    # and the weekly digest to $FEED_DIR/DIGEST.md
@@ -39,10 +42,26 @@ wait)
   date -u +%Y-%m-%dT%H:%M:%SZ > "$F/fetch_after"     # the time the calls really start, recorded by finish
   echo "fetch from $(cat "$F/fetch_after")"
   ;;
+missing)
+  [ -f "$F/since" ] || { echo "run '$0 start' first" >&2; exit 2; }
+  cd "$F/code"
+  python3 scripts/av_from_transcript.py "$F/incoming" --since "$(cat "$F/since")" > "$F/saved.json" || true
+  to="$(TZ=America/New_York date +%Y%m%d)"
+  none=1
+  for s in $(ls chart/data/*.csv chart/data/etf/*.csv | xargs -n1 basename | sed 's/\.csv$//'); do
+    [ -f "$F/incoming/$s.csv" ] && continue
+    stored="$F/data/chart-forward/data/$s.csv"; [ -f "$stored" ] || stored="$F/data/chart-forward/etf/$s.csv"
+    [ -f "$stored" ] || { echo "backup: $s has no stored bars in chart-forward" >&2; continue; }
+    from="$(tail -n 1 "$stored" | cut -d, -f1 | tr -d -)"
+    echo "backup: $s from $from to $to"; none=0
+  done
+  if [ "$none" = 1 ]; then echo "backup: none"; fi
+  ;;
 finish)
   [ -f "$F/since" ] || { echo "run '$0 start' first" >&2; exit 2; }
   cd "$F/code"
   python3 scripts/av_from_transcript.py "$F/incoming" --since "$(cat "$F/since")" > "$F/saved.json" || true
+  python3 scripts/theta_from_transcript.py "$F/incoming" --since "$(cat "$F/since")" --check-dir "$F/data/chart-forward" > "$F/backup.json" || true
   scripts/forward_run.sh "$F/data" --from-dir "$F/incoming" > "$F/run.log" 2>&1
   first="$(cat "$F/fetch_after" 2>/dev/null || cat "$F/since")"    # tonight's first call, for tomorrow's start
   printf '{"started": "%s", "fetch_after": "%s", "finished": "%s"}\n' "$(cat "$F/since")" "$first" \
@@ -68,9 +87,12 @@ f, commit = pathlib.Path(sys.argv[1]), sys.argv[2]
 code, d = f / "code", f / "data" / "chart-forward"
 want = sorted(p.stem for p in [*(code / "chart/data").glob("*.csv"), *(code / "chart/data/etf").glob("*.csv")])
 saved = json.loads((f / "saved.json").read_text()) if (f / "saved.json").stat().st_size else {"saved": [], "errors": {}}
+bk = f / "backup.json"
+backup = json.loads(bk.read_text()) if bk.exists() and bk.stat().st_size else {"saved": [], "rejected": {}}
 doctor = json.loads((d / "DOCTOR.json").read_text())
-out = {"commit": commit, "saved": len(saved["saved"]), "missing": [s for s in want if s not in saved["saved"]],
-       "fetch_errors": saved["errors"], "doctor_ok": doctor["ok"], "doctor_problems": doctor["problems"]}
+got = set(saved["saved"]) | set(backup["saved"])
+out = {"commit": commit, "saved": len(saved["saved"]), "backup": backup["saved"], "backup_rejected": backup["rejected"],
+       "missing": [s for s in want if s not in got], "fetch_errors": saved["errors"], "doctor_ok": doctor["ok"], "doctor_problems": doctor["problems"]}
 rot = d / "ROTATION.json"
 if rot.exists():
     periods = json.loads(rot.read_text()).get("periods", [])
@@ -95,5 +117,5 @@ PY
   git -C "$REPO" worktree remove --force "$F/code"
   ;;
 *)
-  echo "usage: $0 start|wait|finish" >&2; exit 2 ;;
+  echo "usage: $0 start|wait|missing|finish" >&2; exit 2 ;;
 esac

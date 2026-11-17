@@ -87,3 +87,18 @@ the dashboard and the monthly review; the gross fields are unchanged.
 winter). It reads `shadow-data` and fails, so GitHub emails you, when the newest stored bar is more than 2 weekdays old
 (two nightly runs missed) or one fund lags the rest. It needs no key and pushes nothing. A market holiday counts as a
 weekday, so a run missed next to a holiday alerts one morning earlier.
+
+## Backup feed (ThetaData)
+
+Alpha Vantage stays the primary source. When its free-tier quota leaves a fund without bars, run
+`scripts/forward_feed.sh missing` after the Alpha Vantage calls. It saves what Alpha Vantage returned, then prints one
+line per fund still missing, `backup: SYM from YYYYMMDD to YYYYMMDD`, where `from` is the fund's last stored bar and `to`
+is today's New York date (`backup: none` when nothing is missing). The session calls the ThetaData connector tool
+`mcp__ThetaData__stock_history_eod` (`symbol`, `start_date`, `end_date`) for each line.
+
+`finish` then runs `scripts/theta_from_transcript.py`, which converts those results to the Alpha Vantage csv format and
+writes `incoming/<SYM>.csv` only if no Alpha Vantage file exists, so Alpha Vantage is never overwritten. Each fund is checked
+against its stored bars: on every date present in both, the close must match within 0.1%. A mismatch, or no overlapping
+date at all (hence the request starts at the last stored bar), rejects the fund; it is listed as `backup_rejected` in the
+report and stays `missing`. Saved funds are listed under `backup`. Volume differs from Alpha Vantage by a few tenths of a
+percent and a bar's open can differ slightly; only the close is checked.
