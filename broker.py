@@ -48,6 +48,9 @@ class PaperBroker:
         trimmed = qty * price > cap
         if trimmed:
             qty = math.floor(cap / price * 1e5) / 1e5
+            if qty <= 0:  # cap too small for even the minimum lot: refuse rather than open an empty position
+                return {"event": "fill_rejected", "reason": "cap_below_min_qty", "side": side,
+                        "price": round(price, 2), "cap": round(cap, 2), "trade_id": signal_id}
         fee = self._fee(qty * price)
         self.s["equity"] -= fee
         self.s["day_pnl"] -= fee

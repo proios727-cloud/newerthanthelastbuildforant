@@ -78,6 +78,12 @@ class Bot:
         base = {"candle_t": k["t"], "q_version": qv, "snapshot": snap.name,
                 "snapshot_sha256": hashlib.sha256(snap.read_bytes()).hexdigest()}
 
+        # Shadow swing desks (no Drex): run before the regime call so a Drex failure can't delay them.
+        try:
+            self.desk_step(k, base)
+        except Exception as e:  # shadow desks must never stop the main cycle
+            self.journal.log("error", stage="desks", error=repr(e), **base)
+
         # Step 3: regime with probabilities
         try:
             ra = self.drex.decide(state, Q["regime"], image=snap)
@@ -96,10 +102,6 @@ class Bot:
             self.core_step(k, p_panic, base)
         except Exception as e:  # the core sleeve must never stop the main cycle
             self.journal.log("error", stage="core", error=repr(e), **base)
-        try:
-            self.desk_step(k, base)
-        except Exception as e:  # shadow desks must never stop the main cycle
-            self.journal.log("error", stage="desks", error=repr(e), **base)
 
         # Step 4: PANIC = hands off (and optionally flatten)
         if p_panic >= cfg.panic_threshold:
@@ -183,13 +185,20 @@ class Bot:
 
     def desk_step(self, k: dict, base: dict):
         """Shadow paper desks (desks.py): six swing strategies on BTC 4h candles, fixed default settings
-        (walk-forward showed re-tuning hurt). Runs once per closed 4h candle; state key "desks"."""
+        (walk-forward showed re-tuning hurt). Steps once per newly closed 4h candle, catching up any it missed;
+        state key "desks"."""
         import desks
-        if (k["t"] + 900_000) % desks.BAR_MS:
-            return
+        from binance import INTERVAL_MS
         st = self.broker.s.setdefault("desks", {})
+        # Open time of the newest fully closed 4h bar; skip the fetch until one closes that a desk hasn't seen.
+        closed = (k["t"] + INTERVAL_MS[self.cfg.interval]) // desks.BAR_MS * desks.BAR_MS - desks.BAR_MS
+        seen = [d.get("last_t", 0) for d in st.values() if isinstance(d, dict)]
+        if len(seen) == len(desks.DESKS) and min(seen) >= closed:
+            return
         for ev in desks.live_step(st, self.cfg, {}, self.cfg.symbol):
             self.journal.log("desk", **ev, **base)
+            if "note" in ev:
+                continue
             ping(self.cfg, f"DESK {ev['desk']} {ev['from']:.0%} -> {ev['to']:.0%} BTC",
                  f"at {ev['price']:,.2f}  desk value {ev['value']:,.2f}  [paper]")
         vals = [d["value"] for d in st.values() if isinstance(d, dict) and "value" in d]

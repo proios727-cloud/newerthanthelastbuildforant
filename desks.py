@@ -6,12 +6,14 @@ the exposure is held over the NEXT bar. Costs: (fee + slippage) bps per side on 
 Walk-forward:  python desks.py --walkforward [--symbols BTCUSDT,ETHUSDT,SOLUSDT] [--fit 180 --test 30]
   For every window, each desk picks the setting with the best Sharpe on the previous `fit` days,
   then trades the next `test` days unseen. Only the unseen test slices are stitched into the result.
-Live paper:    desks.live_step(state, cfg) is called by the bot; it advances each desk's paper sleeve on
-  every newly closed 4h candle using the setting the walk-forward chose most recently.
+Live paper:    desks.live_step(state, cfg, picks) is called by the bot; it advances each desk's paper sleeve on
+  every newly closed 4h candle. The bot passes picks={}, so every desk runs its fixed default setting
+  (the walk-forward showed re-tuning hurt); research/desk_picks.json is a record, not an input.
 """
 from __future__ import annotations
 
 import argparse
+import calendar
 import itertools
 import json
 import math
@@ -193,7 +195,7 @@ def load(symbol: str, cfg: Config, since="2019-01-01") -> dict:
     rows = json.loads(f.read_text()) if f.exists() else []
     bx = Binance(cfg.binance_base)
     now = int(time.time() * 1000)
-    t = rows[-1][0] + BAR_MS if rows else int(time.mktime(time.strptime(since, "%Y-%m-%d")) * 1000)
+    t = rows[-1][0] + BAR_MS if rows else calendar.timegm(time.strptime(since, "%Y-%m-%d")) * 1000
     while t < now - BAR_MS:
         raw = bx._get("/api/v3/klines", symbol=symbol, interval="4h", startTime=t, limit=1000)
         if not raw:
@@ -235,7 +237,7 @@ def walk_forward(K, cost, fit_days=180, test_days=30, warmup_days=220):
     for name, (fn, params, default) in DESKS.items():
         series = [(p, fn(K, **p)) for p in params]
         rets = [bar_returns(pos, c, cost) for _, pos in series]
-        oos_r, oos_pos, picks, windows = [], [], [], []
+        oos_pos, picks, windows = [], [], []
         i = start + fit
         while i + 1 < n:
             j = min(n, i + test)
@@ -245,10 +247,17 @@ def walk_forward(K, cost, fit_days=180, test_days=30, warmup_days=220):
                 sh = s.mean() / s.std() * math.sqrt(PER_YEAR) if s.std() > 0 else -9.0
                 scores.append(sh)
             k = int(np.argmax(scores))
-            oos_r.append(rets[k][i:j]); oos_pos.append(series[k][1][i:j]); picks.append(k)
-            windows.append(float(np.prod(1 + rets[k][i:j]) - 1))
+            oos_pos.append(series[k][1][i:j]); picks.append(k)
             i = j
-        r, pos = np.concatenate(oos_r), np.concatenate(oos_pos)
+        # Re-cost the stitched exposure path as one series: the switch between picks at each window edge pays
+        # turnover, and each bar earns the exposure actually held going into it.
+        s0 = start + fit
+        pos = np.concatenate(oos_pos)
+        held = np.concatenate([[series[picks[0]][1][s0 - 1]], pos])
+        r = bar_returns(held, c[s0 - 1:], cost)[1:]
+        b = 0
+        for p in oos_pos:
+            windows.append(float(np.prod(1 + r[b:b + len(p)]) - 1)); b += len(p)
         d = DESKS[name][2]
         dpos = fn(K, **d)
         dr = bar_returns(dpos, c, cost)[start + fit:]
@@ -319,7 +328,9 @@ def live_step(state: dict, cfg: Config, picks: dict, symbol="BTCUSDT") -> list[d
         p = picks.get(name, default)
         pos = fn(K, **p)
         s = state.setdefault(name, {"value": 10_000.0, "exposure": 0.0, "last_t": int(K["t"][-2]), "entries": 0})
-        for i in range(len(K["t"])):
+        if int(K["t"][0]) > s["last_t"] + BAR_MS:
+            events.append({"desk": name, "gap_from": s["last_t"], "gap_to": int(K["t"][0]), "note": "bars missing; skipped"})
+        for i in range(1, len(K["t"])):
             t = int(K["t"][i])
             if t <= s["last_t"]:
                 continue
@@ -354,4 +365,5 @@ if __name__ == "__main__":
         Path(a.out, f"desks-walkforward-{day}.md").write_text(md + "\n")
         Path(a.out, "desk_picks.json").write_text(json.dumps(
             {"date": day, "fit": a.fit, "test": a.test, "summary": summ,
-             "picks": {k: v["last_pick"] for k, v in summ["BTCUSDT"].items() if not k.startswith("_")}}, indent=1))
+             "picks": {sym: {k: v["last_pick"] for k, v in s.items() if not k.startswith("_")} for sym, s in summ.items()}},
+            indent=1))

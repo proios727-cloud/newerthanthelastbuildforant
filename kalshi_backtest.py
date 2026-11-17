@@ -10,7 +10,7 @@ Binance BTC price and realised volatility up to that minute. It then scores simp
   longshot    sell overpriced longshots / buy heavy favourites (the favourite-longshot bias)
 
 Each rule takes at most one trade per market (its first signal), pays the ask (taker), and pays Kalshi's taker
-fee 0.07 * P * (1 - P) per contract. Thresholds are walk-forward: each month uses the threshold that did best
+fee 0.07 * P * (1 - P) per 1-contract order, rounded up to the cent. Thresholds are walk-forward: each month uses the threshold that did best
 on all earlier months. Also reports calibration (Brier score) of the market's own price vs the model.
 
   python kalshi_backtest.py [--series KXBTCD] [--days 60] [--max-markets 2000] [--out kalshi_report.md]
@@ -91,8 +91,6 @@ def list_markets(series: str, days: int) -> list[dict]:
             cursor = r.get("cursor")
             if not cursor or not ms:
                 break
-        if out:
-            break
     seen, uniq = set(), []
     for m in out:
         if m["ticker"] not in seen and m.get("result") in ("yes", "no"):
@@ -232,7 +230,8 @@ def build_rows(series: str, days: int, max_markets: int, per_event: int) -> tupl
 # ---------- strategies ----------
 
 def fee(p):
-    return 0.07 * p * (1 - p)
+    """Kalshi taker fee for a 1-contract order: 0.07 * P * (1 - P) dollars, rounded UP to the next cent."""
+    return math.ceil(round(7 * p * (1 - p), 9)) / 100
 
 
 def signal(rule, r, th, max_spread):

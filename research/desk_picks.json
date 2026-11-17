@@ -1,23 +1,23 @@
 {
- "date": "2026-11-16",
+ "date": "2026-11-17",
  "fit": 180,
  "test": 30,
  "summary": {
   "BTCUSDT": {
    "trend": {
-    "cagr": 0.2353,
-    "max_dd": 0.7269,
-    "sharpe": 0.706,
+    "cagr": 0.215,
+    "max_dd": 0.7296,
+    "sharpe": 0.668,
     "last_pick": {
      "fast": 50,
      "slow": 30
     },
-    "win_windows": 0.373
+    "win_windows": 0.398
    },
    "volgate_trend": {
-    "cagr": 0.2095,
+    "cagr": 0.2083,
     "max_dd": 0.5174,
-    "sharpe": 0.787,
+    "sharpe": 0.784,
     "last_pick": {
      "fast": 10,
      "slow": 50,
@@ -27,7 +27,7 @@
    },
    "pullback": {
     "cagr": 0.0179,
-    "max_dd": 0.4572,
+    "max_dd": 0.4581,
     "sharpe": 0.195,
     "last_pick": {
      "rsi_in": 25,
@@ -38,9 +38,9 @@
     "win_windows": 0.277
    },
    "breakout": {
-    "cagr": 0.3069,
-    "max_dd": 0.6807,
-    "sharpe": 0.905,
+    "cagr": 0.3038,
+    "max_dd": 0.6846,
+    "sharpe": 0.898,
     "last_pick": {
      "enter_d": 20,
      "exit_d": 20
@@ -48,9 +48,9 @@
     "win_windows": 0.41
    },
    "range_revert": {
-    "cagr": -0.0485,
-    "max_dd": 0.3885,
-    "sharpe": -0.319,
+    "cagr": -0.0487,
+    "max_dd": 0.388,
+    "sharpe": -0.32,
     "last_pick": {
      "z_in": 1.5,
      "adx_max": 20,
@@ -59,9 +59,9 @@
     "win_windows": 0.205
    },
    "shock_rebound": {
-    "cagr": -0.0577,
+    "cagr": -0.0575,
     "max_dd": 0.4445,
-    "sharpe": -0.258,
+    "sharpe": -0.257,
     "last_pick": {
      "drop_atr": 3.0,
      "hold": 6,
@@ -70,31 +70,31 @@
     "win_windows": 0.157
    },
    "_ensemble": {
-    "cagr": 0.1276,
-    "max_dd": 0.4298,
-    "sharpe": 0.704
+    "cagr": 0.1238,
+    "max_dd": 0.432,
+    "sharpe": 0.688
    },
    "_hold": {
-    "cagr": 0.3285,
+    "cagr": 0.3282,
     "max_dd": 0.7704,
     "sharpe": 0.778
    }
   },
   "ETHUSDT": {
    "trend": {
-    "cagr": 0.3186,
-    "max_dd": 0.735,
-    "sharpe": 0.774,
+    "cagr": 0.3107,
+    "max_dd": 0.7383,
+    "sharpe": 0.763,
     "last_pick": {
      "fast": 10,
      "slow": 30
     },
-    "win_windows": 0.373
+    "win_windows": 0.398
    },
    "volgate_trend": {
-    "cagr": 0.2547,
-    "max_dd": 0.5956,
-    "sharpe": 0.78,
+    "cagr": 0.2582,
+    "max_dd": 0.5989,
+    "sharpe": 0.788,
     "last_pick": {
      "fast": 10,
      "slow": 50,
@@ -103,21 +103,21 @@
     "win_windows": 0.386
    },
    "pullback": {
-    "cagr": 0.0412,
-    "max_dd": 0.6384,
-    "sharpe": 0.287,
+    "cagr": 0.0508,
+    "max_dd": 0.6299,
+    "sharpe": 0.316,
     "last_pick": {
      "rsi_in": 30,
      "rsi_out": 65,
      "stop_atr": 2.0,
      "trend_d": 50
     },
-    "win_windows": 0.313
+    "win_windows": 0.325
    },
    "breakout": {
-    "cagr": 0.5031,
+    "cagr": 0.4998,
     "max_dd": 0.5479,
-    "sharpe": 1.074,
+    "sharpe": 1.069,
     "last_pick": {
      "enter_d": 20,
      "exit_d": 20
@@ -125,9 +125,9 @@
     "win_windows": 0.386
    },
    "range_revert": {
-    "cagr": 0.0353,
-    "max_dd": 0.2817,
-    "sharpe": 0.288,
+    "cagr": 0.0355,
+    "max_dd": 0.2809,
+    "sharpe": 0.289,
     "last_pick": {
      "z_in": 1.5,
      "adx_max": 15,
@@ -136,7 +136,7 @@
     "win_windows": 0.373
    },
    "shock_rebound": {
-    "cagr": 0.03,
+    "cagr": 0.0299,
     "max_dd": 0.3151,
     "sharpe": 0.251,
     "last_pick": {
@@ -147,42 +147,42 @@
     "win_windows": 0.193
    },
    "_ensemble": {
-    "cagr": 0.2343,
-    "max_dd": 0.3951,
-    "sharpe": 0.949
+    "cagr": 0.2351,
+    "max_dd": 0.397,
+    "sharpe": 0.951
    },
    "_hold": {
-    "cagr": 0.3869,
+    "cagr": 0.3873,
     "max_dd": 0.8112,
     "sharpe": 0.812
    }
   },
   "SOLUSDT": {
    "trend": {
-    "cagr": 0.0373,
-    "max_dd": 0.8593,
-    "sharpe": 0.402,
+    "cagr": 0.0601,
+    "max_dd": 0.8382,
+    "sharpe": 0.432,
     "last_pick": {
      "fast": 10,
      "slow": 100
     },
-    "win_windows": 0.365
+    "win_windows": 0.381
    },
    "volgate_trend": {
-    "cagr": 0.191,
-    "max_dd": 0.5054,
-    "sharpe": 0.636,
+    "cagr": 0.19,
+    "max_dd": 0.4972,
+    "sharpe": 0.634,
     "last_pick": {
      "fast": 10,
      "slow": 100,
      "target_vol": 0.3
     },
-    "win_windows": 0.27
+    "win_windows": 0.286
    },
    "pullback": {
-    "cagr": 0.0802,
-    "max_dd": 0.6042,
-    "sharpe": 0.394,
+    "cagr": 0.0839,
+    "max_dd": 0.601,
+    "sharpe": 0.403,
     "last_pick": {
      "rsi_in": 25,
      "rsi_out": 55,
@@ -192,19 +192,19 @@
     "win_windows": 0.302
    },
    "breakout": {
-    "cagr": 0.3043,
-    "max_dd": 0.7719,
-    "sharpe": 0.749,
+    "cagr": 0.3063,
+    "max_dd": 0.7697,
+    "sharpe": 0.752,
     "last_pick": {
      "enter_d": 20,
      "exit_d": 5
     },
-    "win_windows": 0.365
+    "win_windows": 0.381
    },
    "range_revert": {
-    "cagr": -0.1061,
-    "max_dd": 0.5522,
-    "sharpe": -0.69,
+    "cagr": -0.1101,
+    "max_dd": 0.5625,
+    "sharpe": -0.718,
     "last_pick": {
      "z_in": 2.0,
      "adx_max": 20,
@@ -224,46 +224,110 @@
     "win_windows": 0.222
    },
    "_ensemble": {
-    "cagr": 0.1425,
-    "max_dd": 0.4683,
-    "sharpe": 0.616
+    "cagr": 0.1463,
+    "max_dd": 0.4556,
+    "sharpe": 0.628
    },
    "_hold": {
-    "cagr": -0.1398,
+    "cagr": -0.1382,
     "max_dd": 0.966,
-    "sharpe": 0.308
+    "sharpe": 0.31
    }
   }
  },
  "picks": {
-  "trend": {
-   "fast": 50,
-   "slow": 30
+  "BTCUSDT": {
+   "trend": {
+    "fast": 50,
+    "slow": 30
+   },
+   "volgate_trend": {
+    "fast": 10,
+    "slow": 50,
+    "target_vol": 0.5
+   },
+   "pullback": {
+    "rsi_in": 25,
+    "rsi_out": 65,
+    "stop_atr": 5.0,
+    "trend_d": 50
+   },
+   "breakout": {
+    "enter_d": 20,
+    "exit_d": 20
+   },
+   "range_revert": {
+    "z_in": 1.5,
+    "adx_max": 20,
+    "hold_max": 36
+   },
+   "shock_rebound": {
+    "drop_atr": 3.0,
+    "hold": 6,
+    "atr_ratio": 1.3
+   }
   },
-  "volgate_trend": {
-   "fast": 10,
-   "slow": 50,
-   "target_vol": 0.5
+  "ETHUSDT": {
+   "trend": {
+    "fast": 10,
+    "slow": 30
+   },
+   "volgate_trend": {
+    "fast": 10,
+    "slow": 50,
+    "target_vol": 0.8
+   },
+   "pullback": {
+    "rsi_in": 30,
+    "rsi_out": 65,
+    "stop_atr": 2.0,
+    "trend_d": 50
+   },
+   "breakout": {
+    "enter_d": 20,
+    "exit_d": 20
+   },
+   "range_revert": {
+    "z_in": 1.5,
+    "adx_max": 15,
+    "hold_max": 18
+   },
+   "shock_rebound": {
+    "drop_atr": 3.0,
+    "hold": 6,
+    "atr_ratio": 1.0
+   }
   },
-  "pullback": {
-   "rsi_in": 25,
-   "rsi_out": 65,
-   "stop_atr": 5.0,
-   "trend_d": 50
-  },
-  "breakout": {
-   "enter_d": 20,
-   "exit_d": 20
-  },
-  "range_revert": {
-   "z_in": 1.5,
-   "adx_max": 20,
-   "hold_max": 36
-  },
-  "shock_rebound": {
-   "drop_atr": 3.0,
-   "hold": 6,
-   "atr_ratio": 1.3
+  "SOLUSDT": {
+   "trend": {
+    "fast": 10,
+    "slow": 100
+   },
+   "volgate_trend": {
+    "fast": 10,
+    "slow": 100,
+    "target_vol": 0.3
+   },
+   "pullback": {
+    "rsi_in": 25,
+    "rsi_out": 55,
+    "stop_atr": 2.0,
+    "trend_d": 50
+   },
+   "breakout": {
+    "enter_d": 20,
+    "exit_d": 5
+   },
+   "range_revert": {
+    "z_in": 2.0,
+    "adx_max": 20,
+    "hold_max": 6
+   },
+   "shock_rebound": {
+    "drop_atr": 3.0,
+    "hold": 6,
+    "atr_ratio": 1.0
+   }
   }
  }
 }
