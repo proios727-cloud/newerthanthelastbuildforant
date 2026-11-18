@@ -116,6 +116,10 @@ Flow: capture, chain, snapshot, dashboard. Nothing here places, previews, cancel
 3. **Snapshot.** `python scripts/gex_snapshot.py CHAIN.json [--out DIR]` writes `DIR/gex.json` (net GEX, flip, king, walls, regime, strikes within 5% of spot), appends to `DIR/gex_log.jsonl` and prints a 3-line summary.
 4. **Dashboard.** `python scripts/build_dashboard.py --gex CHAIN.json` shows that chain in the options panel instead of the sample.
 
+### Nightly GEX capture
+
+Flow: plan, calls, `gex_nightly.sh`. (1) `python scripts/gex_plan.py SPOT [--expiries 3] [--width 10] [--today YYYY-MM-DD]` prints the expiries (next N weekdays from the New York date; exchange holidays are not modeled), the 20 strikes nearest spot (`round(SPOT)-9 .. round(SPOT)+10`), the paging `cursor` (base64 of `p=<strike_lo-4>`; SPOT 732.38 gives strikes 723-742 and `cD03MTkuMDAwMA==`) and the steps: 1 equity quote, then per expiry 2 instrument pages (call, put) and 2 quote calls. (2) The Claude session makes those READ-ONLY connector calls and notes the ISO time it began. (3) `SINCE=<that time> scripts/gex_nightly.sh [SYMBOL=SPY]` (env `BASE`, `GEX_DIR` default `/tmp/gex-nightly`, `DRY_RUN=1`) converts the transcript results from fresh worktrees of `BASE` and `shadow-data`, requires a chain for the symbol with at least 40 contracts (otherwise exit 1, nothing staged; exit 2 if `SINCE` is missing), copies it to `gex-desk/chains/`, runs the snapshot into `gex-desk/` (`gex.json`, growing `gex_log.jsonl`), builds `$GEX_DIR/dashboard.html`, commits as `chart-forward`, pushes (3 tries, `pull --rebase`) and prints one JSON summary line. Research only; no orders.
+
 ## Live Kalshi scan (read-only)
 
 `python -m kalshi.feed --series KXBTC15M KXETH15M [--log shadow.jsonl]` reads open markets from Kalshi's public API (no key), shows the top of book and the maker pair the desk would rest, and logs it. It only sends GET requests. Markets stay unquoted until TypeSafe verifies their settlement rules. Needs `api.elections.kalshi.com` allowed in the network policy.
