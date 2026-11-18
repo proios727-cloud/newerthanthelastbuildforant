@@ -91,5 +91,12 @@ class EndToEnd(unittest.TestCase):
             self.assertEqual(build_board.validate(desk.board_config(r)), [])
 
 
+class NightlyScript(unittest.TestCase):
+    def test_bash_syntax(self):
+        import subprocess
+        r = subprocess.run(["bash", "-n", str(ROOT / "scripts" / "kalshi_nightly.sh")], capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
