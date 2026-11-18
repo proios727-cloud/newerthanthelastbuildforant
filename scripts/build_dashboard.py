@@ -55,7 +55,10 @@ def options_state():
             "bars": [(s, *by[s]) for s in sorted(by)]}
 
 
-def kalshi_state():
+def kalshi_state(scan_path=None):
+    if scan_path:
+        scan = json.loads(pathlib.Path(scan_path).read_text(encoding="utf-8"))
+        return {"scan": scan, "quotes": [], "scenarios": []}
     rows = []
     for label, p, skew in (("Fair 50¢, no skew", 0.50, 0), ("Fair 60¢, lean YES 1¢", 0.60, 1), ("Fair 35¢, no skew", 0.35, 0)):
         q = kalshi.quote(p, edge_c=2, skew_c=skew)
@@ -137,8 +140,24 @@ def pill(text, tone):
     return f'<span class="pill {tone}">{E(text)}</span>'
 
 
-def render():
-    f, o, k, s, r = fund_state(), options_state(), kalshi_state(), sportsbook_state(), research_state()
+def scan_panel(scan, pill):
+    """Kalshi panel from a kalshi.desk scan.json: ranked fee-net edges, top 5 rows."""
+    sm = scan["summary"]
+    cell = lambda v, p=1: "—" if v is None else f"{v:.{p}f}"
+    rows = "".join(
+        f'<tr><td class="tk">{E(r["ticker"])}</td><td class="mono num">{cell(r["yes_ask"])}</td>'
+        f'<td class="mono num">{cell(r["no_ask"])}</td><td class="mono num">{cell(r["edge_c"], 2)}</td>'
+        f'<td>{pill("LOCK", "green") if r["lock"] else pill("none", "dim")}</td></tr>' for r in scan["rows"][:5])
+    return (f'<section><div class="head"><h2>Kalshi · book scan</h2>'
+            f'{pill(str(sm["locks"]) + " LOCK" if sm["locks"] else "No edge", "green" if sm["locks"] else "amber")}</div>'
+            f'<div class="tbl"><table><thead><tr><th>Market</th><th class="num">YES ask</th><th class="num">NO ask</th>'
+            f'<th class="num">Edge ¢</th><th>Flag</th></tr></thead><tbody>{rows}</tbody></table></div>'
+            f'<p class="note">{E(sm["message"])}. Edge = 100 − (YES ask + NO ask) − taker fees, cents per contract. '
+            f'Scanned {E(scan["as_of"])}. Paper observation only.</p></section>')
+
+
+def render(kalshi_scan=None):
+    f, o, k, s, r = fund_state(), options_state(), kalshi_state(kalshi_scan), sportsbook_state(), research_state()
     live = judge.from_env().live
     m, ch = o["map"], o["chain"]
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -151,6 +170,18 @@ def render():
     scen = "".join(
         f'<tr><td>{E(l)}</td><td class="mono num">{"+" if e < 0 else "−"}{abs(e) / 100:.2f}</td>'
         f'<td>{pill("Cut", "red") if c else pill("Hold", "green")}</td></tr>' for l, e, c in k["scenarios"])
+    sample_panel = f"""<section>
+      <div class="head"><h2>Kalshi · 15-min BTC/ETH maker</h2>{pill("Sample scenarios", "dim")}</div>
+      <div class="tbl"><table>
+        <thead><tr><th>Quote pair</th><th class="num">YES bid</th><th class="num">NO bid</th><th class="num">Lock / pair</th></tr></thead>
+        <tbody>{quotes}</tbody></table></div>
+      <div class="tbl"><table>
+        <thead><tr><th>Fills on a 49¢ / 49¢ pair</th><th class="num">P&amp;L at risk ($)</th><th>Action</th></tr></thead>
+        <tbody>{scen}</tbody></table></div>
+      <p class="note">Markets are quoted only after TypeSafe confirms their rules settle on the CF Benchmarks index for the stated window. Positive numbers are locked profit; negative are money at risk.</p>
+    </section>"""
+    kalshi_panel = scan_panel(k["scan"], pill) if k.get("scan") else sample_panel
+
     steam = s["steam"]
     fair_h, fair_a = s["fair"]
     regime_tone = "green" if o["regime"] == "positive_gamma" else "amber"
@@ -192,6 +223,7 @@ def render():
   .kv {{ display: flex; justify-content: space-between; gap: 12px; padding-block: 5px; border-bottom: 1px solid var(--border); }}
   .kv span {{ color: var(--muted); }} .kv b {{ font-weight: 500; }}
   .tbl {{ overflow-x: auto; }}
+  td.tk {{ overflow-wrap: anywhere; min-width: 0; }}
   table {{ width: 100%; border-collapse: collapse; }}
   th {{ text-align: left; font-weight: 500; color: var(--dim); font-size: 11px; padding: 6px 8px 6px 0; border-bottom: 1px solid var(--border); }}
   td {{ padding: 7px 8px 7px 0; border-bottom: 1px solid var(--border); }}
@@ -250,16 +282,7 @@ def render():
       <p class="note">Sample: {E(ch["source"])}, {E(ch["captured_at"])}. Dollars of dealer delta per 1% move, per strike.</p>
     </section>
 
-    <section>
-      <div class="head"><h2>Kalshi · 15-min BTC/ETH maker</h2>{pill("Sample scenarios", "dim")}</div>
-      <div class="tbl"><table>
-        <thead><tr><th>Quote pair</th><th class="num">YES bid</th><th class="num">NO bid</th><th class="num">Lock / pair</th></tr></thead>
-        <tbody>{quotes}</tbody></table></div>
-      <div class="tbl"><table>
-        <thead><tr><th>Fills on a 49¢ / 49¢ pair</th><th class="num">P&amp;L at risk ($)</th><th>Action</th></tr></thead>
-        <tbody>{scen}</tbody></table></div>
-      <p class="note">Markets are quoted only after TypeSafe confirms their rules settle on the CF Benchmarks index for the stated window. Positive numbers are locked profit; negative are money at risk.</p>
-    </section>
+    {kalshi_panel}
 
     <section>
       <div class="head"><h2>Sportsbook · line tracker</h2>{pill("Sample game", "dim")}</div>
@@ -290,8 +313,10 @@ def render():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "dashboard.html"))
-    out = pathlib.Path(ap.parse_args().out)
-    out.write_text(render(), encoding="utf-8")
+    ap.add_argument("--kalshi-scan", help="scan.json from `python -m kalshi.desk scan` for the Kalshi panel")
+    a = ap.parse_args()
+    out = pathlib.Path(a.out)
+    out.write_text(render(a.kalshi_scan), encoding="utf-8")
     print(f"ok: wrote {out}")
 
 
