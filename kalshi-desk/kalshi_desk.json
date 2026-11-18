@@ -1,0 +1,107 @@
+{
+  "name": "Kalshi Book Scan (paper)",
+  "mission": "Read Kalshi 15-minute order books and report whether buying both sides ever locks a profit after taker fees. Observation only: no orders, no previews.",
+  "mode": "PAPER",
+  "session": "Scan as of 2026-11-18T01:37:33Z · series KXBTC15M, KXETH15M",
+  "domain": "kalshi-book-scan",
+  "approval_word": "NONE-PAPER-ONLY",
+  "coordinator": {
+    "name": "Scan Router",
+    "brief": [
+      "Every number comes from the public Kalshi order book at scan time; no outside price model.",
+      "Edge = 100 - (YES ask + NO ask) - taker fees on both legs, in cents per contract.",
+      "LOCK means the edge is positive after fees. If none, the honest answer is that there is none.",
+      "Nothing here places, previews or approves an order."
+    ],
+    "go_line": "Paper observation only. There is no execution path from this board."
+  },
+  "tiles": [
+    {
+      "label": "Markets scanned",
+      "value": 2,
+      "trend": "flat"
+    },
+    {
+      "label": "LOCK markets",
+      "value": 0,
+      "trend": "flat"
+    },
+    {
+      "label": "Best fee-net edge",
+      "value": "-2.10¢",
+      "trend": "flat"
+    }
+  ],
+  "funnel": [
+    {
+      "stage": "Open markets",
+      "count": 2,
+      "seat": "router"
+    },
+    {
+      "stage": "Priced both sides",
+      "count": 2,
+      "seat": "scanner"
+    },
+    {
+      "stage": "LOCK after fees",
+      "count": 0,
+      "seat": "scanner"
+    }
+  ],
+  "seats": [
+    {
+      "id": "router",
+      "name": "Scan Router",
+      "role": "router",
+      "color": "green",
+      "status": "idle",
+      "task": "Run the scan and publish the summary.",
+      "done": "scan.json written.",
+      "trigger": "On each `python -m kalshi.desk scan` run"
+    },
+    {
+      "id": "scanner",
+      "name": "Book Scanner",
+      "role": "scanner",
+      "color": "blue",
+      "status": "idle",
+      "task": "Compute ask, lock cost and fee-net edge per market.",
+      "done": "Rows ranked by fee-net edge.",
+      "trigger": "On each `python -m kalshi.desk scan` run"
+    }
+  ],
+  "queue": [
+    {
+      "id": "Q1",
+      "title": "KXBTC15M-26NOV172045-45: edge -2.10¢",
+      "owner": "scanner",
+      "pct": 100
+    },
+    {
+      "id": "Q2",
+      "title": "KXETH15M-26NOV172045-45: edge -3.00¢",
+      "owner": "scanner",
+      "pct": 100
+    }
+  ],
+  "watch": [
+    {
+      "label": "Series",
+      "value": "KXBTC15M, KXETH15M"
+    },
+    {
+      "label": "As of (UTC)",
+      "value": "2026-11-18T01:37:33Z"
+    }
+  ],
+  "feed": [
+    {
+      "t": "01:37:33",
+      "agent": "router",
+      "msg": "No fee-net edge: best KXBTC15M-26NOV172045-45 at -2.10c/contract after fees"
+    }
+  ],
+  "handoffs": [],
+  "gates": []
+}
