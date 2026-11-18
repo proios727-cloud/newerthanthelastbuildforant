@@ -115,6 +115,10 @@ This desk supports decisions. It is not investment advice, and nothing in it exe
 
 `python -m kalshi.desk scan --series KXBTC15M KXETH15M [--out DIR] [--min-edge-cents N] [--offline FIXTURE.json]` reads each open market's order book (public GET only, no key) and computes, from the book alone, the YES and NO asks, the both-sides lock cost, its fee-net edge (`100 − cost − taker fees` on both legs, cents per contract, via `kalshi.taker_fee_cents`), spread and top-of-book depth. Rows are ranked by edge; a positive fee-net edge is flagged `LOCK`. Most runs find none, and the summary says so. It writes `scan.json`, `kalshi_desk.json` (a PAPER board config: `python scripts/build_board.py DIR/kalshi_desk.json`) and appends a line to `paper_log.jsonl`. `python scripts/build_dashboard.py --kalshi-scan DIR/scan.json` shows the scan in the dashboard's Kalshi panel. No orders, previews or LIVE mode.
 
+### Nightly Kalshi scan
+
+`scripts/kalshi_nightly.sh` (env: `BASE`, `KALSHI_DIR` default `/tmp/kalshi-nightly`, `SERIES`, `DRY_RUN=1`) runs the scan from fresh worktrees of `BASE` and `shadow-data`, writes `kalshi-desk/scan.json`, `kalshi_desk.json`, the growing `paper_log.jsonl` and a dated `kalshi-desk/scans/YYYY-MM-DD.json` (New York date) into `shadow-data`, builds `$KALSHI_DIR/dashboard.html` with the Kalshi panel, commits as `chart-forward` and pushes (3 tries, `pull --rebase`), then prints one JSON summary line. A failed scan exits non-zero and pushes nothing; `DRY_RUN=1` stages without committing. Public GET only, paper only.
+
 ## Desks in this repo
 
 Four desks share one TypeSafe judgment layer. Strategy notes and the Heatseeker signal ledger from 456CASH are in `docs/`. Everything runs in paper or shadow mode; nothing places a bet or an order.
