@@ -162,6 +162,23 @@ ordered: the owner enters picks by hand in a paper account.
    ```
 5. Upload `premium_screen.csv` to the dashboard dataset `premium_screen` (as in step 3), then commit and push (step 4).
 6. **Report:** today's passes with each order ticket, open paper picks with their P&L, and any exit rule hit.
+7. **Hybrid watchlist** (Positions tab, "Watchlist"). The core is every ticker the swing run (10:41) and this run already
+   pulled; the scan adds at most 5 outsiders.
+   - **Scan** once, read-only: the Robinhood scanner (`get_scans`, then `preview_scan` or `run_scan`), or one TradingView
+     `mcp-tv-run-screener` call if Robinhood has no fitting scan. Filters: price at least $5, average volume at least
+     2M shares, relative volume at least 2, has listed options, not already in the core. Keep the top 5 by relative volume.
+   - **Collect** for each outsider, with one read-only subagent: the spot (`get_equity_quotes`), the monthly expiry closest
+     to 30 days within 21–45, and calls and puts from 5% below spot to 5% above (`get_option_instruments`,
+     `get_option_quotes`). Convert with `python3 scripts/rh_chain_from_transcript.py <transcript> options/data/chains_watch`.
+   - **Score:**
+     ```bash
+     python3 scripts/watchlist.py --today <date> --new <OUTSIDER1,OUTSIDER2,...>
+     ```
+     It writes `research/watchlist/<date>/watchlist.csv`: liquid chains only (grade A or B), ranked by action.
+     An outsider has no history at first, so its "volume vs usual" is blank until it has been scanned before.
+   - Upload `watchlist.csv` to the dataset `watchlist` (as in step 3), and delete the dataset's previous asset.
+   - If the scan or a pull fails, score the core alone and say so; never invent an outsider.
+   - **Report:** the top 5 rows (ticker, liquidity, what's happening, the $200 call if any).
 
 ## 7. Paper positions (Positions tab)
 
