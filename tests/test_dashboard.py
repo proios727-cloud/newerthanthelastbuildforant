@@ -14,6 +14,13 @@ class DashboardTests(unittest.TestCase):
         self.assertIn("<svg", page)
         self.assertNotIn("None", page)
 
+    def test_gex_flag_uses_recorded_chain(self):
+        page = build_dashboard.render(gex_chain="options/data/chains/SPY-2026-11-02T1739.json")
+        self.assertIn("SPY gamma map", page)
+        self.assertIn("758.28", page)
+        self.assertIn("<svg", page)
+        self.assertNotIn("None", page)
+
 
 if __name__ == "__main__":
     unittest.main()

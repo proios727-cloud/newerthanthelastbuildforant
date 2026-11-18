@@ -43,6 +43,22 @@ class GexTests(unittest.TestCase):
         self.assertIn(m.put_wall, strikes)
         self.assertIn(options.regime(m), ("positive_gamma", "negative_gamma"))
 
+    def test_map_on_both_recorded_key_styles(self):
+        for name in ("SPY-2026-08-03T1506.json", "SPY-2026-11-02T1739.json", "QQQ-2026-11-02T1739.json"):
+            m = options.gex_map(options.load_chain(name))
+            self.assertIsNotNone(m.king, name)
+
+    def test_key_styles_give_identical_results(self):
+        old = {"spot": 100.0, "contracts": [
+            {"strike": 95, "option_type": "put", "gamma": 0.05, "open_interest": 1000},
+            {"strike": 105, "option_type": "call", "gamma": 0.06, "open_interest": 700}]}
+        new = {"spot": 100.0, "contracts": [
+            {"strike": 95, "type": "put", "gamma": 0.05, "oi": 1000},
+            {"strike": 105, "type": "call", "gamma": 0.06, "oi": 700}]}
+        self.assertEqual(options.gex_by_strike(old), options.gex_by_strike(new))
+        self.assertEqual(options.gex_map(old), options.gex_map(new))
+        self.assertNotEqual(options.gex_by_strike(new)[105.0][0], 0.0)
+
     def test_flip_and_walls_on_synthetic_chain(self):
         ch = {"spot": 100.0, "contracts": [
             {"strike": 95, "option_type": "put", "gamma": 0.05, "open_interest": 1000},

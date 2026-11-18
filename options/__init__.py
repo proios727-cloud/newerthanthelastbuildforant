@@ -101,15 +101,17 @@ def mid(c):
 
 
 def gex_by_strike(chain):
-    """{strike: (call_gex, put_gex)} in dollars per 1% move; put_gex is ≤ 0."""
+    """{strike: (call_gex, put_gex)} in dollars per 1% move; put_gex is ≤ 0.
+    Contracts may use `option_type`/`open_interest` (older files) or `type`/`oi` (newer recorded chains)."""
     spot = chain["spot"]
     k = 100 * spot * spot * 0.01
     out = {}
     for c in chain["contracts"]:
         g = c.get("gamma") or 0.0
-        oi = c.get("open_interest") or 0
+        oi = c.get("open_interest") or c.get("oi") or 0
+        kind = c.get("option_type") or c.get("type")
         call, put = out.get(float(c["strike"]), (0.0, 0.0))
-        if c["option_type"] == "call":
+        if kind == "call":
             call += g * oi * k
         else:
             put -= g * oi * k

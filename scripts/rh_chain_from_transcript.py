@@ -4,14 +4,17 @@ A subagent (or this session) calls get_equity_quotes, get_option_instruments and
 transcript JSONL. This joins each instrument (symbol, strike, type, expiry) to its quote (open interest, volume, IV, greeks)
 and writes options/data/chains/<SYMBOL>-<asof>.json in the shape gex_map.py documents. Contracts whose IV is missing or a
 placeholder (below 1%) are left out and counted, since the map's Black-Scholes rescan needs a real IV.
-    python3 scripts/rh_chain_from_transcript.py TRANSCRIPT.jsonl [OUTDIR]
+    python3 scripts/rh_chain_from_transcript.py [TRANSCRIPT.jsonl] [OUTDIR] [--since ISO]
+TRANSCRIPT defaults to the newest session transcript; --since skips records stamped before that ISO time.
+Read-only: only the three quote/instrument lookups above are matched. Prints a JSON summary {saved, symbols, contracts}.
 """
+import argparse
 import json
 import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from _transcript import tool_results  # noqa: E402
+from _transcript import newest_transcript, tool_results  # noqa: E402
 
 WANTED = ("get_option_instruments", "get_option_quotes", "get_equity_quotes")
 
@@ -23,9 +26,9 @@ def _num(x):
         return None
 
 
-def collect(lines):
+def collect(lines, since=""):
     instruments, quotes, spots = {}, {}, {}
-    for name, _, raw in tool_results(lines, lambda n: n.split("__")[-1] in WANTED):
+    for name, _, raw in tool_results(lines, lambda n: n.split("__")[-1] in WANTED, since):
         try:
             data = json.loads(raw).get("data", {})
         except (json.JSONDecodeError, AttributeError):
@@ -70,19 +73,26 @@ def build(instruments, quotes, spots):
     return out
 
 
-def main(argv):
-    if len(argv) < 2:
-        raise SystemExit(__doc__)
-    outdir = pathlib.Path(argv[2] if len(argv) > 2 else "options/data/chains")
-    with open(argv[1]) as f:
-        chains = build(*collect(f))
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("transcript", nargs="?", help="session transcript JSONL (default: newest)")
+    ap.add_argument("outdir", nargs="?", default="options/data/chains")
+    ap.add_argument("--since", default="", help="ISO time; ignore transcript records before it")
+    a = ap.parse_args(argv)
+    path = a.transcript or newest_transcript()
+    with open(path) as f:
+        chains = build(*collect(f, a.since))
+    outdir = pathlib.Path(a.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
+    saved = []
     for sym, c in chains.items():
         stamp = (c["asof"] or "")[:16].replace(":", "")
         dest = outdir / f"{sym}-{stamp}.json"
         dest.write_text(json.dumps(c, indent=1))
-        print(f"{dest}: spot {c['spot']}, {len(c['contracts'])} contracts, {c['skipped_no_iv']} skipped (no IV)")
+        saved.append(str(dest))
+    print(json.dumps({"saved": saved, "symbols": sorted(chains),
+                      "contracts": sum(len(c["contracts"]) for c in chains.values())}))
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()
