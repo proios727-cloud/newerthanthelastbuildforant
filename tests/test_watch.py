@@ -47,5 +47,21 @@ class WatchTest(unittest.TestCase):
         self.assertEqual((b[0]["source"], b[1]["held"]), ("new", "yes"))
 
 
+class HeldTest(unittest.TestCase):
+    def test_only_real_account_counts(self):
+        import csv, tempfile, pathlib, sys
+        sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
+        import watchlist
+        with tempfile.TemporaryDirectory() as d:
+            p = pathlib.Path(d) / "ledger.csv"
+            with open(p, "w", newline="") as f:
+                w = csv.DictWriter(f, fieldnames=["book", "ticker", "status"])
+                w.writeheader()
+                w.writerows([{"book": "Paper: swing buyer", "ticker": "KO", "status": "open"},
+                             {"book": "Real account", "ticker": "SPY", "status": "open"},
+                             {"book": "Real account", "ticker": "QQQ", "status": "closed"}])
+            self.assertEqual(watchlist.held_tickers(p), {"SPY"})
+
+
 if __name__ == "__main__":
     unittest.main()
