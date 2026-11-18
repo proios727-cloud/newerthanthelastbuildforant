@@ -162,12 +162,17 @@ def _basket_return(bars_by_symbol, syms, start, end):
     return sum(rets) / len(rets)
 
 
-def report_rotation(bars_by_symbol, path=ROTATION_LOG):
-    """Score each logged decision from its next open to the session before the next decision's fill (or the latest bar)."""
+COST_BPS = 3.0  # per side: the 1 bp fee + 2 bp slippage the backtests charge (chart/robust.py)
+
+
+def report_rotation(bars_by_symbol, path=ROTATION_LOG, cost_bps=COST_BPS):
+    """Score each logged decision from its next open to the session before the next decision's fill (or the latest bar).
+    `rule_net` charges `cost_bps` per side on the weight each decision trades (all of it on the first fill); `basket_net`
+    charges one side once, at the first fill. Gross figures stay as they were."""
     from . import rotate
     _, dates, _ = rotate.align(bars_by_symbol)
     rows = [json.loads(l) for l in pathlib.Path(path).read_text().splitlines() if l.strip()] if pathlib.Path(path).exists() else []
-    periods, pending = [], []
+    periods, pending, held = [], [], {}
     for k, r in enumerate(rows):
         later = [d for d in dates if d > r["as_of"]]
         if not later:
@@ -179,14 +184,24 @@ def report_rotation(bars_by_symbol, path=ROTATION_LOG):
         end = max(d for d in dates if d < fill) if fill else dates[-1]
         rule = _basket_return(bars_by_symbol, r["picks"], start, end)
         hold = _basket_return(bars_by_symbol, r["basket"], start, end)
+        weights = {s: 1 / len(r["picks"]) for s in r["picks"]}
+        traded = sum(abs(weights.get(s, 0) - held.get(s, 0)) for s in set(weights) | set(held)) if held else sum(weights.values())
+        held = weights
+        cost = cost_bps / 1e4
+        rule_net = (1 - cost * traded) * (1 + rule) - 1
+        hold_net = (1 - cost * (0 if periods else 1)) * (1 + hold) - 1
         periods.append({"decided": r["as_of"], "from": start, "to": end, "picks": r["picks"], "complete": fill is not None,
                         **({"late": True} if r.get("late") else {}),
-                        "rule": round(rule, 5), "basket": round(hold, 5), "excess": round(rule - hold, 5)})
+                        "rule": round(rule, 5), "basket": round(hold, 5), "excess": round(rule - hold, 5),
+                        "traded": round(traded, 4), "rule_net": round(rule_net, 5), "basket_net": round(hold_net, 5),
+                        "excess_net": round(rule_net - hold_net, 5)})
     done = [p for p in periods if p["complete"]]
     growth = lambda key: round(math.prod(1 + p[key] for p in periods) - 1, 5) if periods else 0.0
     return {"decisions_logged": len(rows), "waiting_for_first_fill": pending, "periods": periods,
             "completed_periods": len(done), "months_beat_basket": sum(p["excess"] > 0 for p in done),
-            "cumulative": {"rule": growth("rule"), "basket": growth("basket")}}
+            "cost_bps_per_side": cost_bps,
+            "cumulative": {"rule": growth("rule"), "basket": growth("basket"),
+                           "rule_net": growth("rule_net"), "basket_net": growth("basket_net")}}
 
 
 def replay_rotation(bars_by_symbol, since=None, **rule):
