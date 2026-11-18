@@ -5,7 +5,7 @@
 Scores every ticker with a chain snapshot dated --today in options/data/chains_swing, chains_premium and chains_watch
 (the core is whatever the swing and premium runs pulled; outsiders are the scanned names saved to chains_watch). Each
 ticker is compared only with its own earlier snapshots in the same folder. --new names the scanned outsiders so the board
-tags them "new" (at most 5 are kept). Tickers with an open position in research/desk_ledger.csv are tagged held.
+tags them "new" (at most 5 are kept). Tickers with an open real-account position in research/desk_ledger.csv are tagged held (paper picks are not).
 Writes OUTDIR/watchlist.csv (default research/watchlist/<today>/). Read-only: nothing here places an order.
 """
 import argparse
@@ -55,10 +55,11 @@ def rows_for(today, snaps):
 
 
 def held_tickers(path=LEDGER):
+    """Tickers with an open position in the owner's real account; paper books never count as held."""
     if not path.exists():
         return set()
     with open(path, newline="") as f:
-        return {r["ticker"] for r in csv.DictReader(f) if r["status"] == "open"}
+        return {r["ticker"] for r in csv.DictReader(f) if r["status"] == "open" and r["book"] == "Real account"}
 
 
 def main(argv=None):
