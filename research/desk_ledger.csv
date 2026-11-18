@@ -1,0 +1,7 @@
+book,id,opened,closed,ticker,contract,side,entry,exit,mark,status,pnl,reason
+Paper: premium screener,P-2026-11-02-SPY-720P,2026-11-02,2026-11-06,SPY,SPY 2026-12-11 720 put,short,6.03,12.38,,closed,-635,stop: debit 12.38 >= 2x credit (12.06)
+Paper: premium screener,P-2026-11-05-QQQ-600P,2026-11-05,2026-11-09,QQQ,QQQ 2026-12-11 600 put,short,9.69,4.27,,closed,542,take profit: debit 4.27 <= 50% of credit (4.85)
+Paper: premium screener,P-2026-11-05-TSLA-300P,2026-11-05,2026-11-09,TSLA,TSLA 2026-12-11 300 put,short,7.8,2.44,,closed,536,take profit: debit 2.44 <= 50% of credit (3.90)
+Real account,P-2026-11-09-IWM-287C,2026-11-09,2026-11-10,IWM,IWM 2026-11-10 287 call,long,0.23,0.0,,closed,-23,expired worthless: IWM well below 287
+Real account,P-2026-11-09-QQQ-685C,2026-11-09,2026-11-10,QQQ,QQQ 2026-11-10 685 call,long,1.75,0.0,,closed,-175,expired worthless: QQQ closed 674.81 < 685
+Paper: swing buyer,2026-11-12-KO-100C,2026-11-12,,KO,KO 2026-12-18 100 call,long,1.62,,2.08,open,46.0,

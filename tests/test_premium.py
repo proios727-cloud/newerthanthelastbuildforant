@@ -94,6 +94,8 @@ class PremiumTests(unittest.TestCase):
     def test_pick_expiry(self):
         self.assertEqual(P.pick_expiry(["2026-11-20", "2026-12-11", "2026-12-18"], "2026-11-02"), "2026-12-11")
         self.assertEqual(P.pick_expiry(["2026-11-20"], "2026-11-02"), "2026-11-20")   # nothing 30-45 out: earliest
+        # closest to 38 days, not the earliest in the window: 12-11 is 32 days out, 12-18 is 39
+        self.assertEqual(P.pick_expiry(["2026-12-11", "2026-12-18"], "2026-11-09"), "2026-12-18")
 
 
 class ChainIndexTests(unittest.TestCase):

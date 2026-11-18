@@ -34,7 +34,10 @@ def load_response(path):
 
 def rows_from(body, all_hours=False):
     b = body["bars"]
-    cols = [b[k] for k in ("t", "o", "h", "l", "c", "v")]
+    keys = ("t", "o", "h", "l", "c", "v")
+    if isinstance(b, list):  # format="rows": one dict per bar
+        b = {k: [bar.get(k) for bar in b] for k in keys}
+    cols = [b[k] for k in keys]
     if len({len(c) for c in cols}) != 1:
         raise ValueError("column lengths differ")
     out = []
