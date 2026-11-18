@@ -107,6 +107,15 @@ This desk supports decisions. It is not investment advice, and nothing in it exe
 
 `python scripts/build_dashboard.py` writes `dashboard.html`: one page showing all four desks (fund limits, SPY gamma map, Kalshi quotes and fill scenarios, sportsbook signals), computed by the desks' own code. CI builds it on every push.
 
+## GEX desk (read-only, research only)
+
+Flow: capture, chain, snapshot, dashboard. Nothing here places, previews, cancels or exercises an order.
+
+1. **Capture.** A Claude session with the Robinhood connector makes READ-ONLY calls: `get_equity_quotes` for `[SYM]` (spot and `venue_last_trade_time`); `get_option_instruments` with `chain_symbol=SYM`, `expiration_dates=<next 0-7 DTE dates>`, `state=active`, following the paging `cursor` until exhausted; then `get_option_quotes` for those instrument ids (20 per call or fewer is safest). The converter needs all three: equity quote (spot), instruments (id, `chain_symbol`, `strike_price`, `type`, `expiration_date`) and option quotes (`instrument_id`, `implied_volatility`, `open_interest`, `volume`, `gamma`, `vega`, `delta`, `bid_price`, `ask_price`). Contracts with IV below 1% are dropped and counted.
+2. **Chain.** `python scripts/rh_chain_from_transcript.py [TRANSCRIPT.jsonl] [OUTDIR] [--since ISO]` joins those results from the session transcript (default: the newest one) into `options/data/chains/<SYM>-<asof>.json` and prints `{saved, symbols, contracts}`. Chains use `type`/`oi`; older files with `option_type`/`open_interest` still load.
+3. **Snapshot.** `python scripts/gex_snapshot.py CHAIN.json [--out DIR]` writes `DIR/gex.json` (net GEX, flip, king, walls, regime, strikes within 5% of spot), appends to `DIR/gex_log.jsonl` and prints a 3-line summary.
+4. **Dashboard.** `python scripts/build_dashboard.py --gex CHAIN.json` shows that chain in the options panel instead of the sample.
+
 ## Live Kalshi scan (read-only)
 
 `python -m kalshi.feed --series KXBTC15M KXETH15M [--log shadow.jsonl]` reads open markets from Kalshi's public API (no key), shows the top of book and the maker pair the desk would rest, and logs it. It only sends GET requests. Markets stay unquoted until TypeSafe verifies their settlement rules. Needs `api.elections.kalshi.com` allowed in the network policy.

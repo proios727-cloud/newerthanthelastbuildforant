@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build dashboard.html: one page showing the state of all four desks, computed by the desks' own code.
 
-Usage: python scripts/build_dashboard.py [--out dashboard.html]
+Usage: python scripts/build_dashboard.py [--out dashboard.html] [--gex CHAIN.json] [--kalshi-scan scan.json]
 
 Sample inputs (the SPY chain, the Kalshi and sportsbook scenarios) are labelled as samples on the page.
 Stdlib only.
@@ -47,12 +47,18 @@ def fund_state():
     }
 
 
-def options_state():
-    ch = options.load_chain(CHAIN)
+def options_state(chain_path=None):
+    if chain_path:
+        ch = json.loads(pathlib.Path(chain_path).read_text(encoding="utf-8"))
+        ch.setdefault("source", "recorded chain " + pathlib.Path(chain_path).name)
+        ch.setdefault("captured_at", ch.get("asof") or "unknown time")
+    else:
+        ch = options.load_chain(CHAIN)
     m = options.gex_map(ch)
     by = options.gex_by_strike(ch)
+    lo, hi = (ch["spot"] * 0.95, ch["spot"] * 1.05) if chain_path else (float("-inf"), float("inf"))
     return {"chain": ch, "map": m, "regime": options.regime(m),
-            "bars": [(s, *by[s]) for s in sorted(by)]}
+            "bars": [(s, *by[s]) for s in sorted(by) if lo <= s <= hi] or [(s, *by[s]) for s in sorted(by)]}
 
 
 def kalshi_state(scan_path=None):
@@ -156,8 +162,8 @@ def scan_panel(scan, pill):
             f'Scanned {E(scan["as_of"])}. Paper observation only.</p></section>')
 
 
-def render(kalshi_scan=None):
-    f, o, k, s, r = fund_state(), options_state(), kalshi_state(kalshi_scan), sportsbook_state(), research_state()
+def render(kalshi_scan=None, gex_chain=None):
+    f, o, k, s, r = fund_state(), options_state(gex_chain), kalshi_state(kalshi_scan), sportsbook_state(), research_state()
     live = judge.from_env().live
     m, ch = o["map"], o["chain"]
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -254,7 +260,7 @@ def render(kalshi_scan=None):
   <div class="strip">
     <div><span class="eyebrow">Fund mode</span><b>{pill(f["mode"], "amber")}</b></div>
     <div><span class="eyebrow">Paper NAV</span><b class="mono">${f["nav"]:,.0f}</b></div>
-    <div><span class="eyebrow">SPY dealer regime</span><b>{pill(regime_txt, regime_tone)}</b></div>
+    <div><span class="eyebrow">{E(ch.get("symbol", "SPY"))} dealer regime</span><b>{pill(regime_txt, regime_tone)}</b></div>
     <div><span class="eyebrow">Kalshi mode</span><b>{pill("SHADOW · live refused", "amber")}</b></div>
     <div><span class="eyebrow">SPY trend flag</span><b>{pill(trend_txt, trend_tone)}</b></div>
     <div><span class="eyebrow">TypeSafe judgments</span><b>{pill("Live", "green") if live else pill("Stub · never blocks", "dim")}</b></div>
@@ -268,7 +274,7 @@ def render(kalshi_scan=None):
     </section>
 
     <section>
-      <div class="head"><h2>Options · SPY gamma map</h2>{pill(regime_txt, regime_tone)}</div>
+      <div class="head"><h2>Options · {E(ch.get('symbol', 'SPY'))} gamma map</h2>{pill(regime_txt, regime_tone)}</div>
       <div class="levels">
         <div class="level"><span class="eyebrow">Spot</span><b>{ch["spot"]:g}</b></div>
         <div class="level"><span class="eyebrow">King node</span><b>{m.king:g}</b></div>
@@ -279,7 +285,7 @@ def render(kalshi_scan=None):
       </div>
       <div class="chart">{gex_svg(o["bars"], ch["spot"], m)}</div>
       <div class="legend"><span><i class="sw" style="background:var(--green)"></i>Call gamma</span><span><i class="sw" style="background:var(--red)"></i>Put gamma</span><span><i class="sw" style="background:var(--blue)"></i>Spot</span></div>
-      <p class="note">Sample: {E(ch["source"])}, {E(ch["captured_at"])}. Dollars of dealer delta per 1% move, per strike.</p>
+      <p class="note">{"Recorded chain" if gex_chain else "Sample"}: {E(ch["source"])}, {E(ch["captured_at"])}. Dollars of dealer delta per 1% move, per strike.</p>
     </section>
 
     {kalshi_panel}
@@ -313,10 +319,11 @@ def render(kalshi_scan=None):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "dashboard.html"))
+    ap.add_argument("--gex", help="chain JSON (options/data/chains/*.json) for the gamma-map panel instead of the sample")
     ap.add_argument("--kalshi-scan", help="scan.json from `python -m kalshi.desk scan` for the Kalshi panel")
     a = ap.parse_args()
     out = pathlib.Path(a.out)
-    out.write_text(render(a.kalshi_scan), encoding="utf-8")
+    out.write_text(render(a.kalshi_scan, a.gex), encoding="utf-8")
     print(f"ok: wrote {out}")
 
 
