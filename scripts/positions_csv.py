@@ -14,6 +14,9 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from chart import read_jsonl  # noqa: E402
 
+sys.path.insert(0, str(ROOT / "scripts"))
+from desk_ledger import EXCLUDE  # noqa: E402  (positions the owner asked to drop; their journal lines stay)
+
 JOURNAL = ROOT / "research/paper/positions.jsonl"
 FIELDS = ["id", "source", "date", "ticker", "contract", "instrument_id", "type", "strike", "expiry", "side", "qty", "entry",
           "take_profit_at", "stop_at", "time_exit", "cash_needed"]
@@ -23,7 +26,7 @@ def open_positions(path=None):
     """Open events without a later close event for the same id."""
     rows = read_jsonl(path or JOURNAL)
     closed = {r["id"] for r in rows if r.get("event") == "close"}
-    return [r for r in rows if r.get("event") == "open" and r["id"] not in closed]
+    return [r for r in rows if r.get("event") == "open" and r["id"] not in closed and r["id"] not in EXCLUDE]
 
 
 def main(argv):
