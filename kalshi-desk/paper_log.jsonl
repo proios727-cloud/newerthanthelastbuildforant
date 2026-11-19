@@ -1,1 +1,2 @@
 {"as_of": "2026-11-18T01:37:33Z", "series": ["KXBTC15M", "KXETH15M"], "mode": "PAPER", "markets": 2, "priced": 2, "locks": 0, "best_edge_c": -2.1, "min_edge_c": 1, "message": "No fee-net edge: best KXBTC15M-26NOV172045-45 at -2.10c/contract after fees"}
+{"as_of": "2026-11-19T00:42:46Z", "series": ["KXBTC15M", "KXETH15M"], "mode": "PAPER", "markets": 2, "priced": 2, "locks": 0, "best_edge_c": -2.1, "min_edge_c": 1, "message": "No fee-net edge: best KXBTC15M-26NOV181945-45 at -2.10c/contract after fees"}
