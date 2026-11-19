@@ -4,7 +4,8 @@
 Usage: python scripts/gex_plan.py SPOT [--expiries N=3] [--width 10] [--today YYYY-MM-DD]
 
 Definitions (exact):
-  expiries   the next N weekday dates starting today (New York date unless --today). Weekends are skipped; exchange
+  expiries   the next N weekday dates starting today (New York date unless --today). From 16:00 New York time on,
+             today's options have expired, so the count starts the next day. Weekends are skipped; exchange
              holidays are NOT modeled (no holiday helper exists in this repo), so drop a holiday date by hand.
   strikes    the 2*width integer strikes nearest spot: strike_lo = round(SPOT) - width + 1 .. strike_hi = round(SPOT) + width.
   cursor     base64("p=%.4f" % (strike_lo - 4)); get_option_instruments pages ascend by strike and the cursor returns
@@ -29,8 +30,15 @@ def next_weekdays(start, n):
     return out
 
 
-def make_plan(spot, expiries=3, width=10, today=None):
-    today = today or dt.datetime.now(ZoneInfo("America/New_York")).date()
+def start_date(now=None):
+    """First expiry date to consider: the New York date, or the next day once the 16:00 close has passed."""
+    now = now or dt.datetime.now(ZoneInfo("America/New_York"))
+    d = now.date()
+    return d + dt.timedelta(days=1) if now.hour >= 16 else d
+
+
+def make_plan(spot, expiries=3, width=10, today=None, now=None):
+    today = today or start_date(now)
     lo, hi = round(spot) - width + 1, round(spot) + width
     cursor = base64.b64encode(("p=%.4f" % (lo - 4)).encode()).decode()
     exps = next_weekdays(today, expiries)

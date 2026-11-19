@@ -3,7 +3,7 @@
 # previews, fills or places an order.
 #   scripts/forward_feed.sh start    # fresh worktrees of the base branch and shadow-data, stamp the start time, list symbols,
 #                                    # and work out when the first call may go (scripts/feed_window.py)
-#   scripts/forward_feed.sh wait     # sleep until then (at most WAIT_CAP seconds, default 1200)
+#   scripts/forward_feed.sh wait     # sleep until then (at most WAIT_CAP seconds, default 1200; exits 3 if still shut)
 #   ... the Claude session calls Alpha Vantage TIME_SERIES_DAILY once per listed symbol ...
 #   scripts/forward_feed.sh missing  # save what AV returned, then print one `backup: SYM from YYYYMMDD to YYYYMMDD` line per symbol
 #                                    # still missing, for the ThetaData stock_history_eod backup calls (docs/forward-feed.md)
@@ -37,7 +37,13 @@ wait)
   [ -f "$F/fetch_after" ] || { echo "run '$0 start' first" >&2; exit 2; }
   left=$(( $(date -u -d "$(cat "$F/fetch_after")" +%s) - $(date -u +%s) ))
   cap="${WAIT_CAP:-1200}"
-  if [ "$left" -gt "$cap" ]; then echo "first call due in $left s; waiting only $cap s" >&2; left="$cap"; fi
+  if [ "$left" -gt "$cap" ]; then
+    # Capped: the window is still shut, so keep the stored time; run 'wait' again before any call.
+    echo "first call due in $left s; waiting only $cap s" >&2
+    sleep "$cap"
+    echo "not yet: first call due at $(cat "$F/fetch_after"); run 'scripts/forward_feed.sh wait' again" >&2
+    exit 3
+  fi
   if [ "$left" -gt 0 ]; then sleep "$left"; fi
   date -u +%Y-%m-%dT%H:%M:%SZ > "$F/fetch_after"     # the time the calls really start, recorded by finish
   echo "fetch from $(cat "$F/fetch_after")"
