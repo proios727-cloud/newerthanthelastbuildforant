@@ -1,0 +1,11 @@
+rank,ticker,status,reason,expiry,dte,strike,ask,bid,delta,oi,cost,breakeven,breakeven_pct,iv30,rv20,iv_rv,mom20,score,spot,earnings,take_profit_at,stop_at,time_exit,ticket,asof
+1,KO,pass,,2026-12-18,29,97.5,1.39,1.27,0.386,5345,139.0,98.89,3.5064,0.1854,0.2063,0.8989,5.8373,6.4938,95.54,,2.22,0.69,2026-12-08,BUY TO OPEN 1 KO 2026-12-18 97.5 CALL · LIMIT 1.39 or better · DAY · cost $139,2026-11-19T15:42:29.693956724Z
+,BAC,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,29,,,,,,,,,0.2467,0.2544,0.9695,-3.6826,,48.79,,,,,,2026-11-19T15:42:28.715265394Z
+,CSCO,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,29,,,,,,,,,0.3467,0.5042,0.6875,-9.3977,,96.98,,,,,,2026-11-19T15:42:29.142108089Z
+,F,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,29,,,,,,,,,0.3421,0.3119,1.0967,-5.2101,,11.255,,,,,,2026-11-19T15:42:27.812851285Z
+,INTC,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,29,,,,,,,,,0.7408,1.4271,0.5191,-41.1898,,56.3866,,,,,,2026-11-19T15:42:30.015847384Z
+,NFLX,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,29,,,,,,,,,0.3625,0.3335,1.0869,-8.0258,,59.44,,,,,,2026-11-19T15:42:29.485140796Z
+,PFE,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,29,,,,,,,,,0.2687,0.2429,1.1063,-5.9966,,27.575,,,,,,2026-11-19T15:42:29.651368945Z
+,SOFI,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,29,,,,,,,,,0.5469,0.6879,0.7951,-5.302,,13.9959,,,,,,2026-11-19T15:42:28.546950545Z
+,T,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,29,,,,,,,,,0.2635,0.368,0.7161,0.1826,,21.565,,,,,,2026-11-19T15:42:26.951159295Z
+,VZ,fail,no uptrend: needs close > 20-day > 50-day average,2026-12-18,29,,,,,,,,,0.2458,0.2523,0.9742,5.8999,,45.26,,,,,,2026-11-19T15:42:25.433183273Z
