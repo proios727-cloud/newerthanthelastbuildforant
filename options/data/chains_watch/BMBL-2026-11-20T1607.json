@@ -1,0 +1,21 @@
+{
+ "symbol": "BMBL",
+ "spot": 5.985,
+ "asof": "2026-11-20T16:07:22.478010273Z",
+ "contracts": [
+  {
+   "strike": 6.0,
+   "type": "call",
+   "expiry": "2026-12-18",
+   "oi": 845,
+   "volume": 0,
+   "iv": 0.011697,
+   "gamma": 20.049401,
+   "vega": 0.006491,
+   "delta": 0.583498,
+   "bid": 0.0,
+   "ask": 0.05
+  }
+ ],
+ "skipped_no_iv": 1
+}
