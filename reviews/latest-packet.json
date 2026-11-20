@@ -981,16 +981,17 @@
   ],
   "confusion": {
     "CHOPPY": {
-      "CHOPPY": 320,
-      "TRENDING": 138,
-      "PANIC": 38
+      "CHOPPY": 373,
+      "TRENDING": 154,
+      "PANIC": 43
     },
     "TRENDING": {
-      "CHOPPY": 17,
-      "TRENDING": 15
+      "CHOPPY": 24,
+      "TRENDING": 19,
+      "PANIC": 9
     },
     "PANIC": {
-      "CHOPPY": 7,
+      "CHOPPY": 9,
       "TRENDING": 2,
       "PANIC": 3
     }
