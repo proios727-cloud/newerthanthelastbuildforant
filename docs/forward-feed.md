@@ -15,7 +15,8 @@ and the second run is a no-op that only spends quota.
 1. `bash <(git show origin/claude/great-keller-rf23ab:scripts/forward_feed.sh) start` prints the 21 symbols and a
    `fetch after` time: last night's first call plus 24 hours and 3 minutes (`scripts/feed_window.py`, `MARGIN` seconds).
 2. `scripts/forward_feed.sh wait` sleeps until that time, at most 20 minutes (`WAIT_CAP`), and records when the calls
-   really start. `finish` writes that time to `chart-forward/FEED_RUN.json` for the next night's `start`.
+   really start. If the time is further off than the cap, it sleeps the cap, leaves the stored time alone and exits 3:
+   run `wait` again (or reorder other work first) and make no call until it exits 0. `finish` writes that time to `chart-forward/FEED_RUN.json` for the next night's `start`.
 3. One `TIME_SERIES_DAILY` call per symbol (`outputsize` compact, `datatype` csv, `return_full_data` true), **one at a
    time**. On a "25 requests per day" error, wait about a minute and retry that symbol once (see Quota below).
 4. `scripts/forward_feed.sh finish` (from the same checkout) reports `saved`, `missing`, the doctor's problems, the open
