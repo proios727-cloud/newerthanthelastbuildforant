@@ -1,3 +1,4 @@
 {"symbol": "SPY", "spot": 732.38, "asof": "2026-11-17T20:59:59.996488957Z", "net_gex": -5289708571.951073, "flip": null, "king": 725.0, "call_wall": 740.0, "put_wall": 730.0, "regime": "negative"}
 {"symbol": "SPY", "spot": 730.325, "asof": "2026-11-18T20:59:59.949621851Z", "net_gex": -5951263821.368892, "flip": null, "king": 725.0, "call_wall": 730.0, "put_wall": 725.0, "regime": "negative"}
 {"symbol": "SPY", "spot": 715.84, "asof": "2026-11-19T20:59:59.999442118Z", "net_gex": -6613026407.820709, "flip": null, "king": 725.0, "call_wall": 725.0, "put_wall": 725.0, "regime": "negative"}
+{"symbol": "SPY", "spot": 690.91, "asof": "2026-11-20T20:59:59.998169875Z", "net_gex": -301192085.50703824, "flip": null, "king": 695.0, "call_wall": 700.0, "put_wall": 695.0, "regime": "negative"}
