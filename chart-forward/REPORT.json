@@ -1,39 +1,39 @@
 {
-  "scans_logged": 14,
-  "signals_waiting_for_next_bar": 13,
+  "scans_logged": 15,
+  "signals_waiting_for_next_bar": 14,
   "by_strategy": {
     "bollinger_revert": {
       "1d": {
-        "n": 46,
-        "mean": -0.00067,
-        "hit_rate": 0.609
+        "n": 48,
+        "mean": -0.00425,
+        "hit_rate": 0.583
       },
       "5d": {
-        "n": 38,
-        "mean": 0.00115,
-        "hit_rate": 0.447
+        "n": 40,
+        "mean": -0.00651,
+        "hit_rate": 0.425
       },
       "10d": {
-        "n": 20,
-        "mean": -0.0392,
-        "hit_rate": 0.35
+        "n": 26,
+        "mean": -0.05497,
+        "hit_rate": 0.269
       }
     },
     "donchian_breakout": {
       "1d": {
-        "n": 24,
-        "mean": -0.01329,
-        "hit_rate": 0.375
+        "n": 26,
+        "mean": -0.01725,
+        "hit_rate": 0.346
       },
       "5d": {
-        "n": 14,
-        "mean": -0.02801,
-        "hit_rate": 0.143
+        "n": 17,
+        "mean": -0.03925,
+        "hit_rate": 0.118
       },
       "10d": {
-        "n": 6,
-        "mean": -0.01523,
-        "hit_rate": 0.5
+        "n": 7,
+        "mean": -0.02879,
+        "hit_rate": 0.429
       }
     },
     "macd_trend": {
@@ -43,9 +43,9 @@
         "hit_rate": 0.318
       },
       "5d": {
-        "n": 18,
-        "mean": -0.02993,
-        "hit_rate": 0.167
+        "n": 19,
+        "mean": -0.0305,
+        "hit_rate": 0.158
       },
       "10d": {
         "n": 7,
@@ -55,25 +55,25 @@
     },
     "momentum_rotation": {
       "1d": {
-        "n": 13,
-        "mean": -0.00041,
-        "hit_rate": 0.462
+        "n": 14,
+        "mean": -0.00247,
+        "hit_rate": 0.429
       },
       "5d": {
-        "n": 9,
-        "mean": 0.02098,
-        "hit_rate": 0.556
+        "n": 10,
+        "mean": 0.0148,
+        "hit_rate": 0.5
       },
       "10d": {
-        "n": 4,
-        "mean": 0.00857,
-        "hit_rate": 0.75
+        "n": 5,
+        "mean": -0.00116,
+        "hit_rate": 0.6
       }
     },
     "rsi_dip_trend": {
       "1d": {
-        "n": 1,
-        "mean": -0.08134,
+        "n": 2,
+        "mean": -0.05527,
         "hit_rate": 0.0
       },
       "5d": {
@@ -89,36 +89,36 @@
     },
     "rsi_revert": {
       "1d": {
-        "n": 62,
-        "mean": -0.00702,
-        "hit_rate": 0.452
+        "n": 67,
+        "mean": -0.01145,
+        "hit_rate": 0.418
       },
       "5d": {
-        "n": 42,
-        "mean": -0.01853,
-        "hit_rate": 0.333
+        "n": 47,
+        "mean": -0.02957,
+        "hit_rate": 0.298
       },
       "10d": {
-        "n": 17,
-        "mean": -0.05323,
-        "hit_rate": 0.235
+        "n": 22,
+        "mean": -0.06865,
+        "hit_rate": 0.182
       }
     },
     "sma_cross": {
       "1d": {
-        "n": 36,
-        "mean": -0.00364,
-        "hit_rate": 0.444
+        "n": 38,
+        "mean": -0.00685,
+        "hit_rate": 0.421
       },
       "5d": {
-        "n": 26,
-        "mean": -0.00129,
-        "hit_rate": 0.385
+        "n": 29,
+        "mean": -0.00766,
+        "hit_rate": 0.345
       },
       "10d": {
-        "n": 9,
-        "mean": -0.00407,
-        "hit_rate": 0.444
+        "n": 11,
+        "mean": -0.00761,
+        "hit_rate": 0.364
       }
     }
   }
