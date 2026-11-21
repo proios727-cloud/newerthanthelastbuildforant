@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-20T00:42:48Z",
+  "as_of": "2026-11-21T00:43:05Z",
   "series": [
     "KXBTC15M",
     "KXETH15M"
@@ -7,27 +7,27 @@
   "mode": "PAPER",
   "rows": [
     {
-      "ticker": "KXBTC15M-26NOV191945-45",
-      "close_time": "2026-11-20T00:45:00Z",
-      "yes_ask": 3.4,
-      "no_ask": 96.7,
-      "cost_c": 100.1,
-      "fees_c": 2,
-      "edge_c": -2.1,
-      "spread_c": 0.1,
-      "depth": 444.02,
+      "ticker": "KXBTC15M-26NOV201945-45",
+      "close_time": "2026-11-21T00:45:00Z",
+      "yes_ask": 72.0,
+      "no_ask": 29.0,
+      "cost_c": 101.0,
+      "fees_c": 4,
+      "edge_c": -5.0,
+      "spread_c": 1.0,
+      "depth": 53.65,
       "lock": false
     },
     {
-      "ticker": "KXETH15M-26NOV191945-45",
-      "close_time": "2026-11-20T00:45:00Z",
-      "yes_ask": 1.7,
-      "no_ask": 98.4,
-      "cost_c": 100.1,
-      "fees_c": 2,
-      "edge_c": -2.1,
-      "spread_c": 0.1,
-      "depth": 400.0,
+      "ticker": "KXETH15M-26NOV201945-45",
+      "close_time": "2026-11-21T00:45:00Z",
+      "yes_ask": 47.0,
+      "no_ask": 54.0,
+      "cost_c": 101.0,
+      "fees_c": 4,
+      "edge_c": -5.0,
+      "spread_c": 1.0,
+      "depth": 19.88,
       "lock": false
     }
   ],
@@ -35,8 +35,8 @@
     "markets": 2,
     "priced": 2,
     "locks": 0,
-    "best_edge_c": -2.1,
+    "best_edge_c": -5.0,
     "min_edge_c": 1,
-    "message": "No fee-net edge: best KXBTC15M-26NOV191945-45 at -2.10c/contract after fees"
+    "message": "No fee-net edge: best KXBTC15M-26NOV201945-45 at -5.00c/contract after fees"
   }
 }
