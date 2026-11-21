@@ -67,7 +67,7 @@ def main():
     a = ap.parse_args()
     cfg = Config.load()
     jpath = STATE_DIR / "decisions.jsonl"
-    ok, n = verify(jpath)
+    ok, n, forks = verify(jpath, with_forks=True)
     rows = read(jpath)
     since = int(time.time() * 1000) - int(a.hours * 3_600_000)
     rows = [r for r in rows if r.get("candle_t", r["ts"]) >= since]
@@ -145,7 +145,8 @@ def main():
     day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     REPORTS.mkdir(parents=True, exist_ok=True)
     md = [f"# Review {day}  ({cfg.symbol} {cfg.interval}, last {a.hours:.0f}h)", "",
-          f"- Log integrity: {'OK' if ok else 'BROKEN at line ' + str(n)} ({n} records)",
+          f"- Log integrity: {'OK' if ok else 'BROKEN at line ' + str(n)} ({n} records)"
+          + (f"; {len(forks)} fork(s) from concurrent writes at line(s) {', '.join(str(x) for x in forks)}, nothing missing" if forks else ""),
           f"- Drex errors: {dict(errors) or 'none'}",
           f"- Paper P&L (closed): {pnl:+.2f} over {len(exits)} trades, win rate {wins / len(exits):.0%}" if exits else "- No closed trades",
           "", "## Regime calls vs realized (next 12 candles)",
