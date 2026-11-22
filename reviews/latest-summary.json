@@ -1,1 +1,1 @@
-{"day": "2026-11-21", "closed_trades": 0, "pnl": 0, "win_rate": null, "regime_scored": 659, "regime_accuracy": 0.653, "brier": 0.555, "take_n": 0, "take_avg_r": null, "skip_n": 55, "skip_avg_r": -0.02, "tuned": {"take_threshold": 0.5}, "drex_errors": 0, "log_ok": false}
+{"day": "2026-11-22", "closed_trades": 0, "pnl": 0, "win_rate": null, "regime_scored": 659, "regime_accuracy": 0.657, "brier": 0.567, "take_n": 0, "take_avg_r": null, "skip_n": 52, "skip_avg_r": 0.2, "tuned": {"take_threshold": 0.45}, "drex_errors": 0, "log_ok": true}
