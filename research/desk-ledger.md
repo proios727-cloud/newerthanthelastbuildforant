@@ -1,6 +1,6 @@
 # Desk ledger — running journal
 
-As of 2026-11-20. Rebuilt from the append-only journals after each close; never edited by hand.
+As of 2026-11-23. Rebuilt from the append-only journals after each close; never edited by hand.
 
 ## Net by book
 
