@@ -325,6 +325,60 @@
       }
     },
     {
+      "candle_t": 1795442400000,
+      "called": "CHOPPY",
+      "p": 0.9725810274023382,
+      "actual": "TRENDING",
+      "q_version": 6,
+      "snapshot": "1795442400000.png",
+      "candle": {
+        "close": 63503.5,
+        "ret_1": -0.53,
+        "ret_12": 3.527,
+        "ret_48": 4.267,
+        "atr": 616.46,
+        "atr_pct": 0.971,
+        "atr_ratio_vs_100": 2.463,
+        "realized_vol_24_pct": 0.84,
+        "adx14": 36.48,
+        "rsi14": 80.69,
+        "ema20": 61788.41,
+        "ema50": 61490.13,
+        "ema20_slope_pct": 0.641,
+        "bb_mid": 61619.46,
+        "bb_upper": 63005.39,
+        "bb_lower": 60233.54,
+        "bb_width_pct": 4.498,
+        "vol_ratio_vs_50": 7.906,
+        "taker_buy_share": 0.525,
+        "range_pct_last": 1.677,
+        "drawdown_from_48h_high_pct": -0.619
+      },
+      "book": {
+        "best_bid": 63392.79,
+        "best_ask": 63392.8,
+        "mid": 63392.79,
+        "spread_bps": 0.002,
+        "bid_btc_0.1pct": 77.571,
+        "ask_btc_0.1pct": 60.951,
+        "imbalance_0.1pct": 0.12,
+        "bid_btc_0.5pct": 150.234,
+        "ask_btc_0.5pct": 154.928,
+        "imbalance_0.5pct": -0.015,
+        "bid_btc_1.0pct": 197.823,
+        "ask_btc_1.0pct": 225.486,
+        "imbalance_1.0pct": -0.065,
+        "largest_bid_wall": {
+          "price": 62000.02,
+          "btc": 30.002
+        },
+        "largest_ask_wall": {
+          "price": 64500.0,
+          "btc": 35.488
+        }
+      }
+    },
+    {
       "candle_t": 1795238100000,
       "called": "CHOPPY",
       "p": 0.9717194827123897,
@@ -649,60 +703,6 @@
       }
     },
     {
-      "candle_t": 1794798900000,
-      "called": "CHOPPY",
-      "p": 0.9660403195417321,
-      "actual": "TRENDING",
-      "q_version": 5,
-      "snapshot": "1794798900000.png",
-      "candle": {
-        "close": 65098.01,
-        "ret_1": -0.126,
-        "ret_12": 0.154,
-        "ret_48": 0.715,
-        "atr": 286.74,
-        "atr_pct": 0.44,
-        "atr_ratio_vs_100": 0.862,
-        "realized_vol_24_pct": 0.234,
-        "adx14": 20.15,
-        "rsi14": 53.55,
-        "ema20": 65031.38,
-        "ema50": 64997.5,
-        "ema20_slope_pct": 0.129,
-        "bb_mid": 65044.75,
-        "bb_upper": 65432.63,
-        "bb_lower": 64656.88,
-        "bb_width_pct": 1.193,
-        "vol_ratio_vs_50": 0.659,
-        "taker_buy_share": 0.511,
-        "range_pct_last": 0.295,
-        "drawdown_from_48h_high_pct": -0.627
-      },
-      "book": {
-        "best_bid": 65068.0,
-        "best_ask": 65068.01,
-        "mid": 65068.01,
-        "spread_bps": 0.002,
-        "bid_btc_0.1pct": 62.549,
-        "ask_btc_0.1pct": 67.903,
-        "imbalance_0.1pct": -0.041,
-        "bid_btc_0.5pct": 141.023,
-        "ask_btc_0.5pct": 146.948,
-        "imbalance_0.5pct": -0.021,
-        "bid_btc_1.0pct": 187.257,
-        "ask_btc_1.0pct": 165.846,
-        "imbalance_1.0pct": 0.061,
-        "largest_bid_wall": {
-          "price": 63894.72,
-          "btc": 25.0
-        },
-        "largest_ask_wall": {
-          "price": 66000.0,
-          "btc": 14.967
-        }
-      }
-    },
-    {
       "candle_t": 1795239000000,
       "called": "CHOPPY",
       "p": 0.9657964508537931,
@@ -814,83 +814,6 @@
   "takes_that_stopped": [],
   "skips_that_would_have_won": [
     {
-      "trade_id": "1813c441fe34",
-      "take_p": 0.1408177486183904,
-      "regime_p": 0.9171941656214588,
-      "playbook": "mean_reversion",
-      "decision": "SKIP",
-      "entry": "LIMIT",
-      "outcome": "TARGET",
-      "r": 1.0507185370163667,
-      "book_control": "BALANCED"
-    },
-    {
-      "trade_id": "0640129be231",
-      "take_p": 0.23585599660873413,
-      "regime_p": 0.8750043381004879,
-      "playbook": "mean_reversion",
-      "decision": "SKIP",
-      "entry": "WAIT",
-      "outcome": "TARGET",
-      "r": 1.135966944081092,
-      "book_control": "SELLERS"
-    },
-    {
-      "trade_id": "39de46c1da8b",
-      "take_p": 0.28817641735076904,
-      "regime_p": 0.8608440096613466,
-      "playbook": "mean_reversion",
-      "decision": "SKIP",
-      "entry": "LIMIT",
-      "outcome": "TARGET",
-      "r": 1.4519818109678024,
-      "book_control": "BALANCED"
-    },
-    {
-      "trade_id": "c5795b36c144",
-      "take_p": 0.2881763193554783,
-      "regime_p": 0.8555132150650024,
-      "playbook": "mean_reversion",
-      "decision": "SKIP",
-      "entry": "LIMIT",
-      "outcome": "TARGET",
-      "r": 1.170504176046819,
-      "book_control": "BUYERS"
-    },
-    {
-      "trade_id": "0b04fff7e10e",
-      "take_p": 0.43259362675528606,
-      "regime_p": 0.8492049448310592,
-      "playbook": "mean_reversion",
-      "decision": "SKIP",
-      "entry": "LIMIT",
-      "outcome": "TARGET",
-      "r": 1.378224139792789,
-      "book_control": "BUYERS"
-    },
-    {
-      "trade_id": "57fbcf60a2e3",
-      "take_p": 0.4774089144115993,
-      "regime_p": 0.898933374481401,
-      "playbook": "mean_reversion",
-      "decision": "SKIP",
-      "entry": "MARKET",
-      "outcome": "TARGET",
-      "r": 1.6665016900787795,
-      "book_control": "BUYERS"
-    },
-    {
-      "trade_id": "74ec14240e34",
-      "take_p": 0.5225910855884007,
-      "regime_p": 0.8506702806351145,
-      "playbook": "mean_reversion",
-      "decision": "SKIP",
-      "entry": "LIMIT",
-      "outcome": "TARGET",
-      "r": 1.273116221517157,
-      "book_control": "BUYERS"
-    },
-    {
       "trade_id": "e84144dfa7c6",
       "take_p": 0.41054727403678676,
       "regime_p": 0.8520030975341797,
@@ -977,18 +900,62 @@
       "outcome": "TARGET",
       "r": 2.302200302565135,
       "book_control": "BUYERS"
+    },
+    {
+      "trade_id": "74e039a6402f",
+      "take_p": 0.18361799692538375,
+      "regime_p": 0.8941209153219011,
+      "playbook": "mean_reversion",
+      "decision": "SKIP",
+      "entry": "LIMIT",
+      "outcome": "TARGET",
+      "r": 1.8725926083438948,
+      "book_control": "BUYERS"
+    },
+    {
+      "trade_id": "86343341c8f9",
+      "take_p": 0.25254034996032715,
+      "regime_p": 0.7290615981142103,
+      "playbook": "mean_reversion",
+      "decision": "SKIP",
+      "entry": "WAIT",
+      "outcome": "TARGET",
+      "r": 0.9892165854586009,
+      "book_control": "BALANCED"
+    },
+    {
+      "trade_id": "2c1cc9c87aff",
+      "take_p": 0.11561980498970136,
+      "regime_p": 0.8830895160707976,
+      "playbook": "mean_reversion",
+      "decision": "SKIP",
+      "entry": "WAIT",
+      "outcome": "TARGET",
+      "r": 3.0659606742927923,
+      "book_control": "BUYERS"
+    },
+    {
+      "trade_id": "7c43e164f806",
+      "take_p": 0.1302284391122264,
+      "regime_p": 0.9282532161427063,
+      "playbook": "mean_reversion",
+      "decision": "SKIP",
+      "entry": "LIMIT",
+      "outcome": "TARGET",
+      "r": 3.2195802737326202,
+      "book_control": "BUYERS"
     }
   ],
   "confusion": {
     "CHOPPY": {
-      "CHOPPY": 390,
-      "TRENDING": 172,
-      "PANIC": 39
+      "CHOPPY": 377,
+      "TRENDING": 176,
+      "PANIC": 41
     },
     "TRENDING": {
       "TRENDING": 12,
-      "CHOPPY": 12,
-      "PANIC": 9
+      "CHOPPY": 16,
+      "PANIC": 11
     },
     "PANIC": {
       "PANIC": 3,
