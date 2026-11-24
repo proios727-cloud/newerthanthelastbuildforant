@@ -9,12 +9,28 @@ fund that failed tonight is reported as missing instead of silently reusing an e
 """
 import json
 import pathlib
+import re
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from _transcript import newest_transcript, tool_results  # noqa: E402
 from chart.update import parse_av_csv  # noqa: E402
+
+
+# Alpha Vantage quotes the caller's API key in some errors ("We have detected your API key as XXXX ..."), and these
+# messages are saved to saved.json and the nightly report. Strip the key before the text goes anywhere.
+_KEY_PATTERNS = (
+    re.compile(r"(API key as\s+)[A-Za-z0-9_\-]+", re.IGNORECASE),
+    re.compile(r"(api_?key=)[^&\s\"']+", re.IGNORECASE),
+)
+
+
+def redact(text):
+    """`text` with any Alpha Vantage API key replaced by [redacted]."""
+    for pat in _KEY_PATTERNS:
+        text = pat.sub(r"\1[redacted]", text)
+    return text
 
 
 def extract(lines, since=""):
@@ -34,7 +50,7 @@ def extract(lines, since=""):
         except (ValueError, KeyError):
             if sym not in good:                   # a retry that failed doesn't undo an earlier good fetch
                 err = body.get("error", {}).get("message") if isinstance(body, dict) else None
-                bad[sym] = (err or raw)[:200]
+                bad[sym] = redact(err or raw)[:200]
     return good, bad
 
 
