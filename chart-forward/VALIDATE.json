@@ -2,9 +2,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/AAPL.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -12,9 +12,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/AMD.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -22,9 +22,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/IWM.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -32,29 +32,31 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/MSFT.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
   },
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/NVDA.csv",
-    "ok": true,
-    "bars": 789,
+    "ok": false,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
-    "problems": []
+    "problems": [
+      "2026-11-23: close moved +31.5% in one day"
+    ]
   },
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/QQQ.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -62,9 +64,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/SPY.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -72,9 +74,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/TSLA.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -82,9 +84,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/GLD.csv",
     "ok": true,
-    "bars": 788,
+    "bars": 789,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -92,9 +94,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/TLT.csv",
     "ok": true,
-    "bars": 788,
+    "bars": 789,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -102,9 +104,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLB.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -112,9 +114,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLC.csv",
     "ok": true,
-    "bars": 787,
+    "bars": 788,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -122,9 +124,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLE.csv",
     "ok": true,
-    "bars": 788,
+    "bars": 789,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -132,9 +134,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLF.csv",
     "ok": true,
-    "bars": 788,
+    "bars": 789,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -142,9 +144,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLI.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -152,9 +154,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLK.csv",
     "ok": true,
-    "bars": 788,
+    "bars": 789,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -162,9 +164,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLP.csv",
     "ok": true,
-    "bars": 788,
+    "bars": 789,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -172,9 +174,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLRE.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -182,9 +184,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLU.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -192,9 +194,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLV.csv",
     "ok": true,
-    "bars": 787,
+    "bars": 788,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -202,9 +204,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLY.csv",
     "ok": true,
-    "bars": 789,
+    "bars": 790,
     "from": "2023-10-02",
-    "to": "2026-11-20",
+    "to": "2026-11-23",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
