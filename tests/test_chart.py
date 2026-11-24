@@ -481,6 +481,16 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual(good, {})
         self.assertEqual(bad, {"XLK": "25 requests per day"})
 
+        # Alpha Vantage quotes the API key in its rate-limit error; it must not reach saved.json or the report
+        key = "FAKEKEY0123456789_ab-c"
+        msg = f"We have detected your API key as {key} and our standard API rate limit is 25 requests per day."
+        leak = [use("g", "XLY"), res("g", json.dumps({"error": {"message": msg}})),
+                use("h", "XLB"), res("h", f"Invalid call: https://www.alphavantage.co/query?function=X&apikey={key}&symbol=XLB")]
+        bad = avt.extract(leak)[1]
+        self.assertNotIn(key, json.dumps(bad))
+        self.assertTrue(bad["XLY"].startswith("We have detected your API key as [redacted] and"))
+        self.assertIn("apikey=[redacted]&symbol=XLB", bad["XLB"])
+
 
     def test_theta_backup_feed(self):
         import importlib.util
