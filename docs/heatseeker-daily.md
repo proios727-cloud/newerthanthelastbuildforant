@@ -221,3 +221,41 @@ is ordered: the owner enters a pick by hand.
 4. Update the dashboard's Swing tab: upload `swing_screen.csv` and `swing_picks.csv` from `research/swing-buyer/<date>/`
    to the datasets `swing_screen` and `swing_picks`, as in step 3.
 5. Commit and push (step 4). Report the pick with its ticket, the backup, open picks with P&L, and any exit hit.
+
+## 9. Robinhood offline: fallback board
+
+When a run's first Robinhood call is refused (connector error, sign-in needed), do not stop silently and never invent
+chain data. Instead:
+1. Say in the reply that Robinhood is offline and the run's own output is skipped (no map, screen or watchlist).
+2. For the watchlist tickers that matter today (at most 10, to stay inside Alpha Vantage's free 25 calls a day), call
+   Alpha Vantage `REALTIME_VOLUME_OPEN_INTEREST_RATIO` with `return_full_data: true`, one per second. Each result is
+   saved to a file under the session's `tool-results/`; note each path.
+3. Fetch their quotes with one TradingView `mcp-tv-get-symbol-data-batch` call (columns close, change, high, low) and save
+   the JSON result to a file.
+4. Build the board and record the outage:
+   ```bash
+   python3 scripts/fallback_board.py --today <date> --quotes <quotes.json> --offline <run name> \
+     <av file>:<TICKER> [<av file>:<TICKER> ...]
+   ```
+   It writes `research/fallback/<date>/flow_board.csv` (source "fallback") and appends a line to
+   `research/connector_status.jsonl`. The board shows where option trading is concentrated and which side leans; it has
+   no prices, so it never produces an order ticket.
+5. Commit both files with the day's log (section 4) and post the board's top rows.
+
+## 10. Flow-confirmed swing call, paper mode (after the fallback board or the 11:05 watchlist)
+
+Rule: `research/flow-swing/RULE.md`. Once a flow board for today exists (and the time is at or after 11:00 ET):
+```bash
+python3 scripts/flow_swing.py --today <date> --board research/fallback/<date>/flow_board.csv \
+  --chains options/data/chains_swing
+```
+With a quoted chain for the top candidate it logs a paper pick with its ticket; without one it logs a candidate. It never
+logs a day twice. Report the line it prints.
+
+## 11. Desk hygiene (2026-11-24, owner's request)
+
+- **No 0-1 day calls in the real account.** Both real trades so far (IWM, QQQ, 1 day to expiry) expired worthless. Ideas
+  posted for the real account use expiries of 14 days or more.
+- **Heat Seeker morning map paused.** 33 signals, 0 triggered since 2026-11-02 under the Robinhood-reconstructed map. The
+  scheduled morning run is disabled (not deleted); the after-close run still keeps the bars and the desk ledger current.
+  Re-enable it once its gate is revisited.
