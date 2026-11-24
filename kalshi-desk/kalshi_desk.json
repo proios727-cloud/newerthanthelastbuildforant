@@ -2,7 +2,7 @@
   "name": "Kalshi Book Scan (paper)",
   "mission": "Read Kalshi 15-minute order books and report whether buying both sides ever locks a profit after taker fees. Observation only: no orders, no previews.",
   "mode": "PAPER",
-  "session": "Scan as of 2026-11-21T00:43:05Z · series KXBTC15M, KXETH15M",
+  "session": "Scan as of 2026-11-24T00:45:38Z · series KXBTC15M, KXETH15M",
   "domain": "kalshi-book-scan",
   "approval_word": "NONE-PAPER-ONLY",
   "coordinator": {
@@ -74,13 +74,13 @@
   "queue": [
     {
       "id": "Q1",
-      "title": "KXBTC15M-26NOV201945-45: edge -5.00¢",
+      "title": "KXBTC15M-26NOV232000-00: edge -5.00¢",
       "owner": "scanner",
       "pct": 100
     },
     {
       "id": "Q2",
-      "title": "KXETH15M-26NOV201945-45: edge -5.00¢",
+      "title": "KXETH15M-26NOV232000-00: edge -5.00¢",
       "owner": "scanner",
       "pct": 100
     }
@@ -92,14 +92,14 @@
     },
     {
       "label": "As of (UTC)",
-      "value": "2026-11-21T00:43:05Z"
+      "value": "2026-11-24T00:45:38Z"
     }
   ],
   "feed": [
     {
-      "t": "00:43:05",
+      "t": "00:45:38",
       "agent": "router",
-      "msg": "No fee-net edge: best KXBTC15M-26NOV201945-45 at -5.00c/contract after fees"
+      "msg": "No fee-net edge: best KXBTC15M-26NOV232000-00 at -5.00c/contract after fees"
     }
   ],
   "handoffs": [],
