@@ -1,22 +1,22 @@
 {
-  "equity": 10000.0,
+  "equity": 9980.043051183031,
   "position": null,
   "pending": null,
-  "day": "2026-11-23",
+  "day": "2026-11-24",
   "day_start_equity": 10000.0,
-  "day_pnl": 0.0,
-  "trades_today": 0,
+  "day_pnl": -19.956948816969543,
+  "trades_today": 1,
   "cooldown": 0,
-  "last_candle_t": 1795477500000,
-  "closed_trades": 0,
-  "last_review_day": "2026-11-23",
+  "last_candle_t": 1795563900000,
+  "closed_trades": 1,
+  "last_review_day": "2026-11-24",
   "core": {
-    "block": 0,
+    "block": 13,
     "sleeve": {
       "cash": 10000.0,
       "btc": 0.0,
       "exposure": 0.0,
-      "since_change": 1426,
+      "since_change": 1522,
       "fees": 0.0,
       "trades": 0
     },
@@ -26,9 +26,9 @@
     "trend": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795464000000,
+      "last_t": 1795550400000,
       "entries": 0,
-      "price": 61270.93,
+      "price": 59832.0,
       "setting": {
         "fast": 20,
         "slow": 50
@@ -37,9 +37,9 @@
     "volgate_trend": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795464000000,
+      "last_t": 1795550400000,
       "entries": 0,
-      "price": 61270.93,
+      "price": 59832.0,
       "setting": {
         "fast": 20,
         "slow": 50,
@@ -49,9 +49,9 @@
     "pullback": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795464000000,
+      "last_t": 1795550400000,
       "entries": 0,
-      "price": 61270.93,
+      "price": 59832.0,
       "setting": {
         "rsi_in": 35,
         "rsi_out": 65,
@@ -62,9 +62,9 @@
     "breakout": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795464000000,
+      "last_t": 1795550400000,
       "entries": 0,
-      "price": 61270.93,
+      "price": 59832.0,
       "setting": {
         "enter_d": 20,
         "exit_d": 10
@@ -73,9 +73,9 @@
     "range_revert": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795464000000,
+      "last_t": 1795550400000,
       "entries": 0,
-      "price": 61270.93,
+      "price": 59832.0,
       "setting": {
         "z_in": 2.0,
         "adx_max": 20,
@@ -85,9 +85,9 @@
     "shock_rebound": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795464000000,
+      "last_t": 1795550400000,
       "entries": 0,
-      "price": 61270.93,
+      "price": 59832.0,
       "setting": {
         "drop_atr": 4.0,
         "hold": 12,
