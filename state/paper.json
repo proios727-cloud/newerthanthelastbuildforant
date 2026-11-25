@@ -7,7 +7,7 @@
   "day_pnl": 0.0,
   "trades_today": 0,
   "cooldown": 0,
-  "last_candle_t": 1795590000000,
+  "last_candle_t": 1795608900000,
   "closed_trades": 1,
   "last_review_day": "2026-11-25",
   "core": {
@@ -16,7 +16,7 @@
       "cash": 10000.0,
       "btc": 0.0,
       "exposure": 0.0,
-      "since_change": 1551,
+      "since_change": 1572,
       "fees": 0.0,
       "trades": 0
     },
@@ -26,9 +26,9 @@
     "trend": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795564800000,
+      "last_t": 1795593600000,
       "entries": 0,
-      "price": 59421.85,
+      "price": 58640.34,
       "setting": {
         "fast": 20,
         "slow": 50
@@ -37,9 +37,9 @@
     "volgate_trend": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795564800000,
+      "last_t": 1795593600000,
       "entries": 0,
-      "price": 59421.85,
+      "price": 58640.34,
       "setting": {
         "fast": 20,
         "slow": 50,
@@ -49,9 +49,9 @@
     "pullback": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795564800000,
+      "last_t": 1795593600000,
       "entries": 0,
-      "price": 59421.85,
+      "price": 58640.34,
       "setting": {
         "rsi_in": 35,
         "rsi_out": 65,
@@ -62,9 +62,9 @@
     "breakout": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795564800000,
+      "last_t": 1795593600000,
       "entries": 0,
-      "price": 59421.85,
+      "price": 58640.34,
       "setting": {
         "enter_d": 20,
         "exit_d": 10
@@ -73,9 +73,9 @@
     "range_revert": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795564800000,
+      "last_t": 1795593600000,
       "entries": 0,
-      "price": 59421.85,
+      "price": 58640.34,
       "setting": {
         "z_in": 2.0,
         "adx_max": 20,
@@ -85,9 +85,9 @@
     "shock_rebound": {
       "value": 10000.0,
       "exposure": 0.0,
-      "last_t": 1795564800000,
+      "last_t": 1795593600000,
       "entries": 0,
-      "price": 59421.85,
+      "price": 58640.34,
       "setting": {
         "drop_atr": 4.0,
         "hold": 12,
