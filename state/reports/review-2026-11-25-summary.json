@@ -1,0 +1,1 @@
+{"day": "2026-11-25", "closed_trades": 1, "pnl": -19.96, "win_rate": 0.0, "regime_scored": 638, "regime_accuracy": 0.632, "brier": 0.605, "take_n": 1, "take_avg_r": -1.0, "skip_n": 40, "skip_avg_r": -0.4, "tuned": {}, "drex_errors": 0, "log_ok": true}
