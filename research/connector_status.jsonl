@@ -1,1 +1,2 @@
 {"date": "2026-11-25", "run": "premium", "robinhood": "offline", "fallback": null, "note": "Alpha Vantage daily quota (25) exhausted; no fallback board built"}
+{"date": "2026-11-27", "run": "premium", "robinhood": "offline", "fallback": null, "note": "Alpha Vantage refused first call (daily limit reached before this run); no fallback board built"}
