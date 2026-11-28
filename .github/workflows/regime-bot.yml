@@ -28,6 +28,8 @@ jobs:
       GITHUB_REVIEWS_BRANCH: regime-bot-reviews
       GITHUB_BOT_BRANCH: regime-bot
       BOT_STATE_DIR: /tmp/state/state
+      BOT_TAKE_THRESHOLD: "0.65"  # locked by owner 2026-11-28; overrides tuned.json
+      BOT_AUTO_TUNE: "false"  # no nightly auto-tuning of thresholds
       PYTHONUNBUFFERED: "1"
     steps:
       - uses: actions/checkout@v4
