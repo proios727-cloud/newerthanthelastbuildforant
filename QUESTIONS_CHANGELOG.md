@@ -31,3 +31,12 @@ Change: PANIC criterion. "ATR jumping far above its recent average" → "ATR sta
 once atr_ratio_vs_100 is above ~1.3 the shock has happened and the next 3 hours usually chop, so call CHOPPY.
 Not changed (noted for later): CHOPPY called during a Bollinger squeeze (bb_width_pct < 0.8) went TRENDING 10 of 16 under v5;
 sample too small for a rewrite yet. Drafted 2026-11-16, held back then only by the flaky pipeline test (since fixed).
+
+## v7 — 2026-11-28 (requested by the owner; outside the nightly 24h rule)
+Evidence (all 1,060 scored v6 calls): CHOPPY calls were right at the same rate whatever confidence Drex gave —
+p < 0.7: 63% (n=122), 0.7–0.9: 63% (n=494), 0.9–0.95: 67% (n=232), ≥ 0.95: 64% (n=125); always-CHOPPY base rate 63.3%.
+Mean stated confidence on CHOPPY calls was ~0.85, so Brier was inflated. Re-scoring v6 with CHOPPY capped at 0.70
+(excess moved to TRENDING/PANIC in proportion): Brier 0.615 → 0.554. Accuracy unchanged by construction.
+Change: one calibration sentence appended to the regime instructions (CHOPPY ≤ ~0.70). No criteria, labels or code changed.
+Side effect to watch: CHOPPY calls with p below the 0.60 regime threshold no longer run a playbook, so fewer CHOPPY setups.
+Same day, separately: take_threshold locked at 0.65 and auto-tune disabled via the regime-bot workflow env.
