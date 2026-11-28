@@ -2,9 +2,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/AAPL.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -12,9 +12,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/AMD.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -22,9 +22,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/IWM.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -32,9 +32,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/MSFT.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -42,9 +42,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/NVDA.csv",
     "ok": false,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": [
@@ -54,9 +54,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/QQQ.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -64,9 +64,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/SPY.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -74,9 +74,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/data/TSLA.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -84,9 +84,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/GLD.csv",
     "ok": true,
-    "bars": 791,
+    "bars": 792,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -94,9 +94,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/TLT.csv",
     "ok": true,
-    "bars": 791,
+    "bars": 792,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -104,9 +104,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLB.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -114,9 +114,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLC.csv",
     "ok": true,
-    "bars": 790,
+    "bars": 791,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -124,9 +124,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLE.csv",
     "ok": true,
-    "bars": 791,
+    "bars": 792,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -134,9 +134,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLF.csv",
     "ok": true,
-    "bars": 791,
+    "bars": 792,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -144,9 +144,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLI.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -154,9 +154,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLK.csv",
     "ok": true,
-    "bars": 791,
+    "bars": 792,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -164,9 +164,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLP.csv",
     "ok": true,
-    "bars": 791,
+    "bars": 792,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -174,9 +174,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLRE.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -184,9 +184,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLU.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -194,9 +194,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLV.csv",
     "ok": true,
-    "bars": 790,
+    "bars": 791,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
@@ -204,9 +204,9 @@
   {
     "file": "/tmp/chart-feed/data/chart-forward/etf/XLY.csv",
     "ok": true,
-    "bars": 792,
+    "bars": 793,
     "from": "2023-10-02",
-    "to": "2026-11-25",
+    "to": "2026-11-27",
     "reference_overlap": 0,
     "reference_matched": 0,
     "problems": []
