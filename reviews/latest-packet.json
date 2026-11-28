@@ -163,6 +163,60 @@
       }
     },
     {
+      "candle_t": 1795743000000,
+      "called": "CHOPPY",
+      "p": 0.9750810879749825,
+      "actual": "TRENDING",
+      "q_version": 6,
+      "snapshot": "1795743000000.png",
+      "candle": {
+        "close": 60702.78,
+        "ret_1": -0.153,
+        "ret_12": 0.088,
+        "ret_48": -0.327,
+        "atr": 151.89,
+        "atr_pct": 0.25,
+        "atr_ratio_vs_100": 0.768,
+        "realized_vol_24_pct": 0.14,
+        "adx14": 32.21,
+        "rsi14": 53.6,
+        "ema20": 60663.05,
+        "ema50": 60645.32,
+        "ema20_slope_pct": 0.09,
+        "bb_mid": 60670.46,
+        "bb_upper": 60948.56,
+        "bb_lower": 60392.37,
+        "bb_width_pct": 0.917,
+        "vol_ratio_vs_50": 0.453,
+        "taker_buy_share": 0.553,
+        "range_pct_last": 0.217,
+        "drawdown_from_48h_high_pct": -0.497
+      },
+      "book": {
+        "best_bid": 60700.82,
+        "best_ask": 60700.83,
+        "mid": 60700.82,
+        "spread_bps": 0.002,
+        "bid_btc_0.1pct": 65.435,
+        "ask_btc_0.1pct": 84.52,
+        "imbalance_0.1pct": -0.127,
+        "bid_btc_0.5pct": 137.585,
+        "ask_btc_0.5pct": 178.421,
+        "imbalance_0.5pct": -0.129,
+        "bid_btc_1.0pct": 163.451,
+        "ask_btc_1.0pct": 209.068,
+        "imbalance_1.0pct": -0.122,
+        "largest_bid_wall": {
+          "price": 60000.0,
+          "btc": 15.174
+        },
+        "largest_ask_wall": {
+          "price": 61500.0,
+          "btc": 20.504
+        }
+      }
+    },
+    {
       "candle_t": 1795560300000,
       "called": "CHOPPY",
       "p": 0.9744996873200729,
@@ -213,60 +267,6 @@
         "largest_ask_wall": {
           "price": 61000.0,
           "btc": 10.494
-        }
-      }
-    },
-    {
-      "candle_t": 1795175100000,
-      "called": "CHOPPY",
-      "p": 0.9733143421635563,
-      "actual": "PANIC",
-      "q_version": 6,
-      "snapshot": "1795175100000.png",
-      "candle": {
-        "close": 61808.0,
-        "ret_1": 0.039,
-        "ret_12": -0.041,
-        "ret_48": -0.289,
-        "atr": 216.84,
-        "atr_pct": 0.351,
-        "atr_ratio_vs_100": 0.735,
-        "realized_vol_24_pct": 0.234,
-        "adx14": 14.68,
-        "rsi14": 46.54,
-        "ema20": 61860.08,
-        "ema50": 61972.22,
-        "ema20_slope_pct": -0.004,
-        "bb_mid": 61849.51,
-        "bb_upper": 62148.87,
-        "bb_lower": 61550.15,
-        "bb_width_pct": 0.968,
-        "vol_ratio_vs_50": 0.406,
-        "taker_buy_share": 0.632,
-        "range_pct_last": 0.178,
-        "drawdown_from_48h_high_pct": -1.327
-      },
-      "book": {
-        "best_bid": 61800.0,
-        "best_ask": 61800.01,
-        "mid": 61800.01,
-        "spread_bps": 0.002,
-        "bid_btc_0.1pct": 84.337,
-        "ask_btc_0.1pct": 100.007,
-        "imbalance_0.1pct": -0.085,
-        "bid_btc_0.5pct": 238.675,
-        "ask_btc_0.5pct": 198.677,
-        "imbalance_0.5pct": 0.091,
-        "bid_btc_1.0pct": 329.068,
-        "ask_btc_1.0pct": 227.58,
-        "imbalance_1.0pct": 0.182,
-        "largest_bid_wall": {
-          "price": 61000.0,
-          "btc": 156.443
-        },
-        "largest_ask_wall": {
-          "price": 62500.0,
-          "btc": 32.072
         }
       }
     },
@@ -826,17 +826,6 @@
   ],
   "skips_that_would_have_won": [
     {
-      "trade_id": "86343341c8f9",
-      "take_p": 0.25254034996032715,
-      "regime_p": 0.7290615981142103,
-      "playbook": "mean_reversion",
-      "decision": "SKIP",
-      "entry": "WAIT",
-      "outcome": "TARGET",
-      "r": 0.9892165854586009,
-      "book_control": "BALANCED"
-    },
-    {
       "trade_id": "2c1cc9c87aff",
       "take_p": 0.11561980498970136,
       "regime_p": 0.8830895160707976,
@@ -938,14 +927,14 @@
   ],
   "confusion": {
     "CHOPPY": {
-      "PANIC": 71,
-      "CHOPPY": 388,
-      "TRENDING": 148
+      "TRENDING": 151,
+      "PANIC": 67,
+      "CHOPPY": 370
     },
     "TRENDING": {
-      "CHOPPY": 19,
-      "TRENDING": 5,
-      "PANIC": 4
+      "CHOPPY": 33,
+      "TRENDING": 9,
+      "PANIC": 5
     },
     "PANIC": {
       "TRENDING": 1,
